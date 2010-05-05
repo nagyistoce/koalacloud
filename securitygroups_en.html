@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Security Groups</b>
+</h3>
+<br>
+<b>Create a new security group inside the region {{ zone }} {{ zone_amazon }}</b>
+
+<p>&nbsp;</p>
+
+<form action="/gruppenerzeugen" method="post" accept-charset="utf-8">
+Name: <input name="gruppenname" type="text" size="20" maxlength="20">
+Description: <input name="gruppenbeschreibung" type="text" size="30" maxlength="30">
+<input type="submit" value="create new security group">
+</form>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>List of security groups inside the region {{ zone }} {{ zone_amazon }}</b>
+
+<p>&nbsp;</p>
+
+{{ securitygroupsliste }}
+
+{% endblock %}

@@ -1,0 +1,5 @@
+cron:
+#- description: Get Amazon EC2 AMIs for us-west-1
+#  url: /cron_amis_amazon_us_west
+#  schedule: every 1 hours synchronized
+

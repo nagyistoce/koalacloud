@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+<p>&nbsp;</p>
+
+Are you absolutely sure, you want to stop <b>all</b> instances?
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tr>
+<td align="center">
+<form action="/alle_instanzen_beenden_definitiv" method="get">
+<input type="submit" value="yes! stop all instances">
+</form>
+</td>
+<td align="center">
+<form action="/instanzen" method="get">
+<input type="submit" value="no">
+</form>
+</td>
+</tr>
+</table>
+
+{% endblock %}

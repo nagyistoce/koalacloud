@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Instanzen</b>
+</h3>
+<!--<br>-->
+<!--<b>Instanzen starten</b>
+
+<p>&nbsp;</p>
+
+<form action="/instanzstarten" method="post" accept-charset="utf-8">
+<input type="submit" value="Instanz starten (zum Testen)">
+</form>-->
+
+<p>&nbsp;</p>
+
+<b>Liste der Instanzen in der Zone {{ zone }}</b>
+
+<p>&nbsp;</p>
+
+{{ input_error_message }}
+
+{{ reservationliste }}
+
+{{ alle_instanzen_loeschen_button }}
+
+{% endblock %}

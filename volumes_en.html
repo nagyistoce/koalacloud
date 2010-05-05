@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Elastic Block Store (EBS) Volumes</b>
+</h3>
+<br>
+<b>Create new volume inside the region {{ zone }} {{ zone_amazon }}</b>
+
+<p>&nbsp;</p>
+
+<form action="/volumeerzeugen" method="post" accept-charset="utf-8">
+Size: <input name="groesse" type="text" size="3" maxlength="3">
+    <select name="GB_oder_TB" size="1">
+      <option selected="selected">GB</option>
+      <option>TB</option>
+    </select>
+Availabiliy Zone:
+    <select name="zone" size="1">
+{{ zonen_in_der_region }}
+    </select>
+<input type="submit" value="create volume">
+</form>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>List of volumes inside the region {{ zone }}</b>
+
+<p>&nbsp;</p>
+
+{{ volumestabelle }}
+
+{{ alle_volumes_loeschen_button }}
+
+{% endblock %}
