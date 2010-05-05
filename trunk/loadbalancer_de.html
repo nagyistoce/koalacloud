@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3><b>Elastische Load Balancer (ELB)</b></h3>
+
+<p>&nbsp;</p>
+
+<form action="/create_load_balancer" method="get" accept-charset="utf-8">
+<input type="submit" value="Load Balancer erzeugen">
+</form>
+
+<p>&nbsp;</p>
+
+<b>Liste der elastischen Load Balancer in der Region {{ zone }} {{ zone_amazon }}</b>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+{{ loadbalancertabelle }}
+
+
+{% endblock %}

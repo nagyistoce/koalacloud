@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h2>
+Last 10 Coin Change Requests:
+	<br>
+{% for input in inputs %}
+    ${{input}}
+	<div id="divider"></div>
+{% endfor %}
+</h2>
+{% endblock %}
+

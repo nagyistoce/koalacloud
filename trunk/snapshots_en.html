@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Snapshots</b>
+</h3>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>List of snapshots inside the region {{ zone }}</b>
+
+<p>&nbsp;</p>
+
+{{ snapshotstabelle }}
+
+{% endblock %}

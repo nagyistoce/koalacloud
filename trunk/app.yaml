@@ -1,0 +1,23 @@
+application: koalacloud
+version: 4
+runtime: python
+api_version: 1
+
+handlers:
+- url: /favicon.ico
+  static_files: favicon/favicon.ico
+  upload: favicon/favicon.ico
+
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
+
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /bilder
+  static_dir: bilder
+
+- url: /.*
+  script: koala.py
+
