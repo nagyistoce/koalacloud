@@ -8364,10 +8364,7 @@ def main():
                                           ('/volumeerzeugen', VolumesErzeugen),
                                           ('/volumeloesen', VolumesLoesen),
                                           ('/alle_volumes_loeschen', AlleVolumesLoeschenFrage),
-                                          ('/alle_volumes_loeschen_definitiv', AlleVolumesLoeschenDefinitiv),
-                                          ('/cron_amis_amazon_us_east', CronAMIsAmazonUS_EAST),
-                                          ('/cron_amis_amazon_us_west', CronAMIsAmazonUS_WEST),
-                                          ('/cron_amis_amazon_eu_west', CronAMIsAmazonEU_WEST)],
+                                          ('/alle_volumes_loeschen_definitiv', AlleVolumesLoeschenDefinitiv)],
                                           debug=True)
     wsgiref.handlers.CGIHandler().run(application)
 
