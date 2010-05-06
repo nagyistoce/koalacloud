@@ -530,11 +530,12 @@ class Regionen(webapp.RequestHandler):
             'version_warnung': version_warnung,
             }
 
-            if sprache == "de":
-              naechse_seite = "index_de.html"
-            else:
-              naechse_seite = "index_en.html"
-            path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            #if sprache == "de":
+              #naechse_seite = "index_de.html"
+            #else:
+              #naechse_seite = "index_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "index.html")
             self.response.out.write(template.render(path,template_values))
         else:
             self.redirect('/')
