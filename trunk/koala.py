@@ -135,6 +135,8 @@ class Regionen(webapp.RequestHandler):
         username = users.get_current_user()
         # self.response.out.write('posted!')
 
+        # Wir müssen das so machen, weil wir sonst nicht weiterkommen,
+        # wenn ein Benutzer noch keinen Zugang eingerichtet hat.
         if users.get_current_user():
             sprache = aktuelle_sprache(username)
             navigations_bar = navigations_bar_funktion(sprache)
