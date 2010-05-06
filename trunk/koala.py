@@ -3438,89 +3438,89 @@ class Allocate_IP(webapp.RequestHandler):
 class Zonen(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
-        username = users.get_current_user()  
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              try:
-                # Liste mit den Zonen
-                liste_zonen = conn_region.get_all_zones()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  zonentabelle = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  zonentabelle = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_zonen = len(liste_zonen)
-
-                zonentabelle = ''
-                zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                zonentabelle = zonentabelle + '<tr>'
-                zonentabelle = zonentabelle + '<th align="center">Name</th>'
-                zonentabelle = zonentabelle + '<th align="center">Status</th>'
-                zonentabelle = zonentabelle + '</tr>'
-                for i in range(laenge_liste_zonen):
-                    zonentabelle = zonentabelle + '<tr>'
-                    zonentabelle = zonentabelle + '<td>'+liste_zonen[i].name+'</td>'
-                    if liste_zonen[i].state == u'available':
-                      zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
-                      if sprache == "de":
-                        zonentabelle = zonentabelle + 'verf&uuml;gbar'
-                      else:
-                        zonentabelle = zonentabelle + liste_zonen[i].state
-                    else:
-                      zonentabelle = zonentabelle + '<td align="center">'
-                      zonentabelle = zonentabelle + liste_zonen[i].state
-                    zonentabelle = zonentabelle + '</td>'
-                    zonentabelle = zonentabelle + '</tr>'
-                zonentabelle = zonentabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonenliste': zonentabelle,
-              'zonen_liste': zonen_liste,
-              }
-
-              #if sprache == "de": naechse_seite = "zonen_de.html"
-              #else:               naechse_seite = "zonen_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "zonen.html")
-              self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
+        username = users.get_current_user()
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          try:
+            # Liste mit den Zonen
+            liste_zonen = conn_region.get_all_zones()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              zonentabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              zonentabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_zonen = len(liste_zonen)
+
+            zonentabelle = ''
+            zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+            zonentabelle = zonentabelle + '<tr>'
+            zonentabelle = zonentabelle + '<th align="center">Name</th>'
+            zonentabelle = zonentabelle + '<th align="center">Status</th>'
+            zonentabelle = zonentabelle + '</tr>'
+            for i in range(laenge_liste_zonen):
+                zonentabelle = zonentabelle + '<tr>'
+                zonentabelle = zonentabelle + '<td>'+liste_zonen[i].name+'</td>'
+                if liste_zonen[i].state == u'available':
+                  zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
+                  if sprache == "de":
+                    zonentabelle = zonentabelle + 'verf&uuml;gbar'
+                  else:
+                    zonentabelle = zonentabelle + liste_zonen[i].state
+                else:
+                  zonentabelle = zonentabelle + '<td align="center">'
+                  zonentabelle = zonentabelle + liste_zonen[i].state
+                zonentabelle = zonentabelle + '</td>'
+                zonentabelle = zonentabelle + '</tr>'
+            zonentabelle = zonentabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonenliste': zonentabelle,
+          'zonen_liste': zonen_liste,
+          }
+
+          #if sprache == "de": naechse_seite = "zonen_de.html"
+          #else:               naechse_seite = "zonen_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "zonen.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
+
 
 class InstanzReboot(webapp.RequestHandler):
     def get(self):
@@ -3828,284 +3828,284 @@ class SnapshotsErzeugen(webapp.RequestHandler):
         volume_zone  = self.request.get('zone')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              tabelle_snapshot = ''
-              tabelle_snapshot = tabelle_snapshot + '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
-              tabelle_snapshot = tabelle_snapshot + '<input type="hidden" name="volume" value="'+volume+'"> \n'
-              tabelle_snapshot = tabelle_snapshot + '<table border="3" cellspacing="0" cellpadding="5">'
-              tabelle_snapshot = tabelle_snapshot + '<tr>'
-              tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Volume:</B></td>'
-              tabelle_snapshot = tabelle_snapshot + '<td>'+volume+'</td>'
-              tabelle_snapshot = tabelle_snapshot + '</tr>'
-              tabelle_snapshot = tabelle_snapshot + '<tr>'
-              if sprache == "de":
-                tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Beschreibung:</B></td>'
-              else:
-                tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Description:</B></td>'
-              tabelle_snapshot = tabelle_snapshot + '<td>'
-              tabelle_snapshot = tabelle_snapshot + '<input name="beschreibung" type="text" size="80" maxlength="80"> \n'
-              tabelle_snapshot = tabelle_snapshot + '</td>'
-              tabelle_snapshot = tabelle_snapshot + '</tr>'
-              tabelle_snapshot = tabelle_snapshot + '</table>'
-              tabelle_snapshot = tabelle_snapshot + '<p>&nbsp;</p> \n'
-              if sprache == "de":
-                tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="Snapshot erzeugen"> \n'
-              else:
-                tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="create snapshot"> \n'
-              tabelle_snapshot = tabelle_snapshot + '</form>'
-
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'tabelle_snapshot': tabelle_snapshot,
-              }
-
-              #if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
-              #else:               naechse_seite = "snapshot_erzeugen_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshot_erzeugen.html")
-              self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          tabelle_snapshot = ''
+          tabelle_snapshot = tabelle_snapshot + '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
+          tabelle_snapshot = tabelle_snapshot + '<input type="hidden" name="volume" value="'+volume+'"> \n'
+          tabelle_snapshot = tabelle_snapshot + '<table border="3" cellspacing="0" cellpadding="5">'
+          tabelle_snapshot = tabelle_snapshot + '<tr>'
+          tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Volume:</B></td>'
+          tabelle_snapshot = tabelle_snapshot + '<td>'+volume+'</td>'
+          tabelle_snapshot = tabelle_snapshot + '</tr>'
+          tabelle_snapshot = tabelle_snapshot + '<tr>'
+          if sprache == "de":
+            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Beschreibung:</B></td>'
+          else:
+            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Description:</B></td>'
+          tabelle_snapshot = tabelle_snapshot + '<td>'
+          tabelle_snapshot = tabelle_snapshot + '<input name="beschreibung" type="text" size="80" maxlength="80"> \n'
+          tabelle_snapshot = tabelle_snapshot + '</td>'
+          tabelle_snapshot = tabelle_snapshot + '</tr>'
+          tabelle_snapshot = tabelle_snapshot + '</table>'
+          tabelle_snapshot = tabelle_snapshot + '<p>&nbsp;</p> \n'
+          if sprache == "de":
+            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="Snapshot erzeugen"> \n'
+          else:
+            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="create snapshot"> \n'
+          tabelle_snapshot = tabelle_snapshot + '</form>'
+
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'tabelle_snapshot': tabelle_snapshot,
+          }
+
+          #if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
+          #else:               naechse_seite = "snapshot_erzeugen_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshot_erzeugen.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 
 class Snapshots(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was erased successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the snapshot, an error occured</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich erzeugt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was created successfully</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the snapshot, an error occured</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
-              else:
-                input_error_message = ""
-
-              try:
-                # Liste mit den Snapshots
-                #liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
-                #liste_snapshots = conn_region.get_all_snapshots(owner="self")
-                liste_snapshots = conn_region.get_all_snapshots()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  snapshotstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  snapshotstabelle = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  snapshotstabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  snapshotstabelle = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Snapshots in der Liste
-                laenge_liste_snapshots = len(liste_snapshots)
-
-                if laenge_liste_snapshots == 0:
-                  if sprache == "de":
-                    snapshotstabelle = 'Es sind keine Snapshots in der Region vorhanden.'
-                  else:
-                    snapshotstabelle = 'No snapshots exist inside this region.'
-                else: 
-                  snapshotstabelle = ''
-                  snapshotstabelle = snapshotstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  snapshotstabelle = snapshotstabelle + '<tr>'
-                  snapshotstabelle = snapshotstabelle + '<th>&nbsp;&nbsp;</th>'
-                  snapshotstabelle = snapshotstabelle + '<th align="center">Snapshot ID</th>'
-                  snapshotstabelle = snapshotstabelle + '<th align="center">Volume ID</th>'
-                  if sprache == "de":
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Besitzer</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Beschreibung</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Startzeitpunkt</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Fortschritt</th>'
-                  else: # Wenn die Sprache Englisch ist...
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Size [GB]</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Owner</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Description</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Start Time</th>'
-                    snapshotstabelle = snapshotstabelle + '<th align="center">Progress</th>'
-                  snapshotstabelle = snapshotstabelle + '</tr>'
-                  for i in range(laenge_liste_snapshots):
-                      snapshotstabelle = snapshotstabelle + '<tr>'
-                      snapshotstabelle = snapshotstabelle + '<td>'
-                      snapshotstabelle = snapshotstabelle + '<a href="/snapshotsentfernen?snapshot='
-                      snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
-                      if sprache == "de":
-                        snapshotstabelle = snapshotstabelle + '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
-                      else:
-                        snapshotstabelle = snapshotstabelle + '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td>'
-                      snapshotstabelle = snapshotstabelle + '<tt>'
-                      snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
-                      snapshotstabelle = snapshotstabelle + '</tt>'
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td>'
-                      snapshotstabelle = snapshotstabelle + '<tt>'
-                      snapshotstabelle = snapshotstabelle + liste_snapshots[i].volume_id
-                      snapshotstabelle = snapshotstabelle + '</tt>'
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td align="right">'
-                      snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].volume_size)
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      if liste_snapshots[i].status == u'completed':
-                        snapshotstabelle = snapshotstabelle + '<td bgcolor="#c3ddc3" align="center">'
-                        snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                      elif liste_snapshots[i].status == u'pending':
-                        snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffffcc" align="center">'
-                        snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                      elif liste_snapshots[i].status == u'deleting':
-                        snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffcc99" align="center">'
-                        snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                      else:
-                        snapshotstabelle = snapshotstabelle + '<td align="center">'
-                        snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td align="left">'
-                      snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].owner_id)
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td align="left">'
-                      snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].description)
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td>'
-                      # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                      datum_der_erzeugung = parse(liste_snapshots[i].start_time)
-                      snapshotstabelle = snapshotstabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '<td align="right">'
-                      snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].progress)
-                      snapshotstabelle = snapshotstabelle + '</td>'
-                      snapshotstabelle = snapshotstabelle + '</tr>'
-                  snapshotstabelle = snapshotstabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'snapshotstabelle': snapshotstabelle,
-              'zonen_liste': zonen_liste,
-              'input_error_message': input_error_message,
-              }
-
-              #if sprache == "de": naechse_seite = "snapshots_de.html"
-              #else:               naechse_seite = "snapshots_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshots.html")
-              self.response.out.write(template.render(path,template_values))
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich gel&ouml;scht</font>'
             else:
-              self.redirect('/') 
+              input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was erased successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the snapshot, an error occured</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich erzeugt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was created successfully</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the snapshot, an error occured</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
+          else:
+            input_error_message = ""
+
+          try:
+            # Liste mit den Snapshots
+            #liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
+            #liste_snapshots = conn_region.get_all_snapshots(owner="self")
+            liste_snapshots = conn_region.get_all_snapshots()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              snapshotstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              snapshotstabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              snapshotstabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              snapshotstabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Snapshots in der Liste
+            laenge_liste_snapshots = len(liste_snapshots)
+
+            if laenge_liste_snapshots == 0:
+              if sprache == "de":
+                snapshotstabelle = 'Es sind keine Snapshots in der Region vorhanden.'
+              else:
+                snapshotstabelle = 'No snapshots exist inside this region.'
+            else: 
+              snapshotstabelle = ''
+              snapshotstabelle = snapshotstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              snapshotstabelle = snapshotstabelle + '<tr>'
+              snapshotstabelle = snapshotstabelle + '<th>&nbsp;&nbsp;</th>'
+              snapshotstabelle = snapshotstabelle + '<th align="center">Snapshot ID</th>'
+              snapshotstabelle = snapshotstabelle + '<th align="center">Volume ID</th>'
+              if sprache == "de":
+                snapshotstabelle = snapshotstabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Besitzer</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Beschreibung</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Startzeitpunkt</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Fortschritt</th>'
+              else: # Wenn die Sprache Englisch ist...
+                snapshotstabelle = snapshotstabelle + '<th align="center">Size [GB]</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Owner</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Description</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Start Time</th>'
+                snapshotstabelle = snapshotstabelle + '<th align="center">Progress</th>'
+              snapshotstabelle = snapshotstabelle + '</tr>'
+              for i in range(laenge_liste_snapshots):
+                  snapshotstabelle = snapshotstabelle + '<tr>'
+                  snapshotstabelle = snapshotstabelle + '<td>'
+                  snapshotstabelle = snapshotstabelle + '<a href="/snapshotsentfernen?snapshot='
+                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
+                  if sprache == "de":
+                    snapshotstabelle = snapshotstabelle + '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
+                  else:
+                    snapshotstabelle = snapshotstabelle + '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td>'
+                  snapshotstabelle = snapshotstabelle + '<tt>'
+                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
+                  snapshotstabelle = snapshotstabelle + '</tt>'
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td>'
+                  snapshotstabelle = snapshotstabelle + '<tt>'
+                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].volume_id
+                  snapshotstabelle = snapshotstabelle + '</tt>'
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td align="right">'
+                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].volume_size)
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  if liste_snapshots[i].status == u'completed':
+                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#c3ddc3" align="center">'
+                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+                  elif liste_snapshots[i].status == u'pending':
+                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffffcc" align="center">'
+                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+                  elif liste_snapshots[i].status == u'deleting':
+                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffcc99" align="center">'
+                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+                  else:
+                    snapshotstabelle = snapshotstabelle + '<td align="center">'
+                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td align="left">'
+                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].owner_id)
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td align="left">'
+                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].description)
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td>'
+                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                  datum_der_erzeugung = parse(liste_snapshots[i].start_time)
+                  snapshotstabelle = snapshotstabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '<td align="right">'
+                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].progress)
+                  snapshotstabelle = snapshotstabelle + '</td>'
+                  snapshotstabelle = snapshotstabelle + '</tr>'
+              snapshotstabelle = snapshotstabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'snapshotstabelle': snapshotstabelle,
+          'zonen_liste': zonen_liste,
+          'input_error_message': input_error_message,
+          }
+
+          #if sprache == "de": naechse_seite = "snapshots_de.html"
+          #else:               naechse_seite = "snapshots_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshots.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
+
 
 class AlleVolumesLoeschenFrage(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
-        username = users.get_current_user()  
+        username = users.get_current_user()
+        if not username:
+            self.redirect('/')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              }
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          }
 
-              #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
-              #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_volumes_loeschen_frage.html")
-              self.response.out.write(template.render(path,template_values))
+          #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
+          #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_volumes_loeschen_frage.html")
+          self.response.out.write(template.render(path,template_values))
 
 
 class AlleVolumesLoeschenDefinitiv(webapp.RequestHandler):
@@ -4157,354 +4157,353 @@ class Volumes(webapp.RequestHandler):
         message = self.request.get('message')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich angelegt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The volume was created successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Gr&ouml;&szlig;e angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No size for the new volume given</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Zahl angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The size was not a number</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Volume zu erzeugen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new volume</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume zu entfernen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to delete the volume</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to detach the volume from the instance</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume mit der Instanz zu verbinden, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to attach the volume with the instance</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The volume was erased successfully</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich mit der Instanz verbunden</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The volume was attached with the instance successfully</font>'
-              elif message == "9":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich von der Instanz gel&ouml;st</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The volume was detached from the instance successfully</font>'
-              elif message == "10":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-              elif message == "11":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">EBS allows to create storage volumes from 1 GB to 1 TB </font>'
-              elif message == "12":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-              elif message == "13":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Volumes zu l&ouml;schen ist ein Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the volumes, an error occured</font>'
-              elif message == "14":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Volumes wurden gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The volumes were erased successfully</font>'
-              else:
-                input_error_message = ""
-
-              # Liste mit den Zonen
-              liste_zonen = conn_region.get_all_zones()
-              # Anzahl der Elemente in der Liste
-              laenge_liste_zonen = len(liste_zonen)
-
-              # Hier wird die Auswahlliste der Zonen erzeugt
-              # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
-              zonen_in_der_region = ''
-              for i in range(laenge_liste_zonen):
-                  zonen_in_der_region = zonen_in_der_region + "<option>"
-                  zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
-                  zonen_in_der_region = zonen_in_der_region + "</option>"
-
-              try:
-                # Liste mit den Volumes
-                liste_volumes = conn_region.get_all_volumes()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  volumestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  volumestabelle = '<font color="red">An error occured</font>'
-                # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-                laenge_liste_volumes = 0
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  volumestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  volumestabelle = '<font color="red">A timeout error occured</font>'
-                # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-                laenge_liste_volumes = 0
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Volumes in der Liste
-                laenge_liste_volumes = len(liste_volumes)
-
-                if laenge_liste_volumes == 0:
-                  if sprache == "de":
-                    volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
-                  else:
-                    volumestabelle = 'No volumes exist inside this region.'
-                else: 
-                  volumestabelle = ''
-                  volumestabelle = volumestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  volumestabelle = volumestabelle + '<tr>'
-                  volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
-                  volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
-                  volumestabelle = volumestabelle + '<th>&nbsp;</th>'
-                  volumestabelle = volumestabelle + '<th align="center">Volume ID</th>'
-                  volumestabelle = volumestabelle + '<th align="center">Snapshot ID</th>'
-                  if sprache == "de":
-                    volumestabelle = volumestabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Status</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Zone</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Datum der Erzeugung</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Device</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Datum des Verkn&uuml;pfung</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Instanz ID</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Status der Verkn&uuml;pfung</th>'
-                  else: # Wenn die Sprache Englisch ist...
-                    volumestabelle = volumestabelle + '<th align="center">Size [GB]</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Status</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Zone</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Creation Date</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Device</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Attach Date</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Instance ID</th>'
-                    volumestabelle = volumestabelle + '<th align="center">Attach Status</th>'
-                  volumestabelle = volumestabelle + '</tr>'
-                  for i in range(laenge_liste_volumes):
-                      volumestabelle = volumestabelle + '<tr>'
-                      volumestabelle = volumestabelle + '<td>'
-                      # Nur wenn der Zustand des Volumes "available" ist, darf  man es löschen.
-                      # Darum wird hier überprüft, ob der Wert von "attach_data.status" gesetzt ist.
-                      # Wenn er nicht gesetzt ist, kann/darf das Volume gelöscht werden.
-                      if liste_volumes[i].attach_data.status == None:
-                        volumestabelle = volumestabelle + '<a href="/volumeentfernen?volume='
-                        volumestabelle = volumestabelle + liste_volumes[i].id
-                        if sprache == "de":
-                          volumestabelle = volumestabelle + '" title="Volume l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Volume l&ouml;schen"></a>'
-                        else:
-                          volumestabelle = volumestabelle + '" title="erase volume"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase volume"></a>'
-                      # Das Volume kann/darf nicht gelöscht werden.
-                      else:
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      volumestabelle = volumestabelle + '</td>'
-  
-                      volumestabelle = volumestabelle + '<td>'
-                      volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
-                      volumestabelle = volumestabelle + liste_volumes[i].id
-                      if sprache == "de":
-                        volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
-                      else:
-                        volumestabelle = volumestabelle + '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
-                      volumestabelle = volumestabelle + '</td>'
-  
-                      if liste_volumes[i].attach_data.status == None:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
-                        volumestabelle = volumestabelle + liste_volumes[i].id
-                        volumestabelle = volumestabelle + "&amp;zone="
-                        volumestabelle = volumestabelle + str(liste_volumes[i].zone)
-                        if sprache == "de":
-                          volumestabelle = volumestabelle + '" title="Volume anh&auml;ngen">'
-                          volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Volume anh&auml;ngen"></a>'
-                        else:
-                          volumestabelle = volumestabelle + '" title="attach volume">'
-                          volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="attach volume"></a>'
-                      elif liste_volumes[i].attach_data.status == u'attaching':
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + 'attaching'
-                      elif liste_volumes[i].attach_data.status == u'deleting':
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + 'deleting'
-                      elif liste_volumes[i].attach_data.status == u'busy':
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + 'busy'
-                      elif liste_volumes[i].attach_data.status == u'attached':
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + '<a href="/volumeloesen?volume='
-                        volumestabelle = volumestabelle + liste_volumes[i].id
-                        if sprache == "de":
-                          volumestabelle = volumestabelle + '" title="Volume l&ouml;sen">'
-                          volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Detach Volume"></a>'
-                        else:
-                          volumestabelle = volumestabelle + '" title="detach volume">'
-                          volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="detach volume"></a>'
-                      else:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '<td>'
-                      volumestabelle = volumestabelle + '<tt>'
-                      volumestabelle = volumestabelle + str(liste_volumes[i].id)
-                      volumestabelle = volumestabelle + '</tt>'
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '<td>'
-                      volumestabelle = volumestabelle + '<tt>'
-                      volumestabelle = volumestabelle + str(liste_volumes[i].snapshot_id)
-                      volumestabelle = volumestabelle + '</tt>'
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '<td align="right">'
-                      volumestabelle = volumestabelle + str(liste_volumes[i].size)
-                      volumestabelle = volumestabelle + '</td>'
-                      if liste_volumes[i].status == u'available':
-                        volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                        volumestabelle = volumestabelle + liste_volumes[i].status
-                      elif liste_volumes[i].status == u'in-use':
-                        volumestabelle = volumestabelle + '<td bgcolor="#ffffcc" align="center">'
-                        volumestabelle = volumestabelle + liste_volumes[i].status
-                      elif liste_volumes[i].status == u'deleting':
-                        volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
-                        volumestabelle = volumestabelle + liste_volumes[i].status
-                      else:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + liste_volumes[i].status
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '<td align="center">'
-                      volumestabelle = volumestabelle + str(liste_volumes[i].zone)
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '<td>'
-                      # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                      datum_der_erzeugung = parse(liste_volumes[i].create_time)
-                      volumestabelle = volumestabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                      #volumestabelle = volumestabelle + str(datum_der_erzeugung)
-                      #volumestabelle = volumestabelle + str(liste_volumes[i].create_time)
-                      volumestabelle = volumestabelle + '</td>'
-                      if liste_volumes[i].attach_data.device == None:
-                        volumestabelle = volumestabelle + '<td>'
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      else:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + '<tt>'
-                        volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.device)
-                        volumestabelle = volumestabelle + '</tt>'
-                      volumestabelle = volumestabelle + '</td>'
-                      if liste_volumes[i].attach_data.attach_time == None:
-                        volumestabelle = volumestabelle + '<td>'
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      else:
-                        volumestabelle = volumestabelle + '<td>'
-                        # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                        datum_des_anhaengens = parse(liste_volumes[i].attach_data.attach_time)
-                        volumestabelle = volumestabelle + str(datum_des_anhaengens.strftime("%Y-%m-%d  %H:%M:%S"))
-                        #volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.attach_time)
-                      volumestabelle = volumestabelle + '</td>'
-                      if liste_volumes[i].attach_data.instance_id == None:
-                        volumestabelle = volumestabelle + '<td>'
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      else:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.instance_id)
-                      volumestabelle = volumestabelle + '</td>'
-                      if liste_volumes[i].attach_data.status == None:
-                        volumestabelle = volumestabelle + '<td>'
-                        volumestabelle = volumestabelle + '&nbsp;'
-                      elif liste_volumes[i].attach_data.status == u'attached':
-                        volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                        volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                      elif liste_volumes[i].attach_data.status == u'busy':
-                        volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
-                        volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                      else:
-                        volumestabelle = volumestabelle + '<td align="center">'
-                        volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                      volumestabelle = volumestabelle + '</td>'
-                      volumestabelle = volumestabelle + '</tr>'
-                  volumestabelle = volumestabelle + '</table>'
-
-              if laenge_liste_volumes >= 1:
-                alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<tr>\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<td align="center">\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<form action="/alle_volumes_loeschen" method="get">\n'
-                if sprache == "de":
-                  alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumes l&ouml;schen">\n'
-                else:
-                  alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="erase all volumes">\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</form>\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</td>\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</tr>\n'
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</table>\n'
-              else:
-                alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'volumestabelle': volumestabelle,
-              'zonen_in_der_region': zonen_in_der_region,
-              'input_error_message': input_error_message,
-              'zonen_liste': zonen_liste,
-              'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
-              }
-
-              #if sprache == "de": naechse_seite = "volumes_de.html"
-              #else:               naechse_seite = "volumes_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volumes.html")
-              self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich angelegt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was created successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Gr&ouml;&szlig;e angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No size for the new volume given</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Zahl angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The size was not a number</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Volume zu erzeugen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new volume</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume zu entfernen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to delete the volume</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to detach the volume from the instance</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume mit der Instanz zu verbinden, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to attach the volume with the instance</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was erased successfully</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich mit der Instanz verbunden</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was attached with the instance successfully</font>'
+          elif message == "9":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich von der Instanz gel&ouml;st</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was detached from the instance successfully</font>'
+          elif message == "10":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          elif message == "11":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">EBS allows to create storage volumes from 1 GB to 1 TB </font>'
+          elif message == "12":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
+          elif message == "13":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Volumes zu l&ouml;schen ist ein Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the volumes, an error occured</font>'
+          elif message == "14":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Volumes wurden gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The volumes were erased successfully</font>'
+          else:
+            input_error_message = ""
+
+          # Liste mit den Zonen
+          liste_zonen = conn_region.get_all_zones()
+          # Anzahl der Elemente in der Liste
+          laenge_liste_zonen = len(liste_zonen)
+
+          # Hier wird die Auswahlliste der Zonen erzeugt
+          # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
+          zonen_in_der_region = ''
+          for i in range(laenge_liste_zonen):
+              zonen_in_der_region = zonen_in_der_region + "<option>"
+              zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
+              zonen_in_der_region = zonen_in_der_region + "</option>"
+
+          try:
+            # Liste mit den Volumes
+            liste_volumes = conn_region.get_all_volumes()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              volumestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              volumestabelle = '<font color="red">An error occured</font>'
+            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+            laenge_liste_volumes = 0
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              volumestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              volumestabelle = '<font color="red">A timeout error occured</font>'
+            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+            laenge_liste_volumes = 0
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Volumes in der Liste
+            laenge_liste_volumes = len(liste_volumes)
+
+            if laenge_liste_volumes == 0:
+              if sprache == "de":
+                volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
+              else:
+                volumestabelle = 'No volumes exist inside this region.'
+            else: 
+              volumestabelle = ''
+              volumestabelle = volumestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              volumestabelle = volumestabelle + '<tr>'
+              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
+              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
+              volumestabelle = volumestabelle + '<th>&nbsp;</th>'
+              volumestabelle = volumestabelle + '<th align="center">Volume ID</th>'
+              volumestabelle = volumestabelle + '<th align="center">Snapshot ID</th>'
+              if sprache == "de":
+                volumestabelle = volumestabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
+                volumestabelle = volumestabelle + '<th align="center">Status</th>'
+                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
+                volumestabelle = volumestabelle + '<th align="center">Datum der Erzeugung</th>'
+                volumestabelle = volumestabelle + '<th align="center">Device</th>'
+                volumestabelle = volumestabelle + '<th align="center">Datum des Verkn&uuml;pfung</th>'
+                volumestabelle = volumestabelle + '<th align="center">Instanz ID</th>'
+                volumestabelle = volumestabelle + '<th align="center">Status der Verkn&uuml;pfung</th>'
+              else: # Wenn die Sprache Englisch ist...
+                volumestabelle = volumestabelle + '<th align="center">Size [GB]</th>'
+                volumestabelle = volumestabelle + '<th align="center">Status</th>'
+                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
+                volumestabelle = volumestabelle + '<th align="center">Creation Date</th>'
+                volumestabelle = volumestabelle + '<th align="center">Device</th>'
+                volumestabelle = volumestabelle + '<th align="center">Attach Date</th>'
+                volumestabelle = volumestabelle + '<th align="center">Instance ID</th>'
+                volumestabelle = volumestabelle + '<th align="center">Attach Status</th>'
+              volumestabelle = volumestabelle + '</tr>'
+              for i in range(laenge_liste_volumes):
+                  volumestabelle = volumestabelle + '<tr>'
+                  volumestabelle = volumestabelle + '<td>'
+                  # Nur wenn der Zustand des Volumes "available" ist, darf  man es löschen.
+                  # Darum wird hier überprüft, ob der Wert von "attach_data.status" gesetzt ist.
+                  # Wenn er nicht gesetzt ist, kann/darf das Volume gelöscht werden.
+                  if liste_volumes[i].attach_data.status == None:
+                    volumestabelle = volumestabelle + '<a href="/volumeentfernen?volume='
+                    volumestabelle = volumestabelle + liste_volumes[i].id
+                    if sprache == "de":
+                      volumestabelle = volumestabelle + '" title="Volume l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Volume l&ouml;schen"></a>'
+                    else:
+                      volumestabelle = volumestabelle + '" title="erase volume"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase volume"></a>'
+                  # Das Volume kann/darf nicht gelöscht werden.
+                  else:
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  volumestabelle = volumestabelle + '</td>'
+
+                  volumestabelle = volumestabelle + '<td>'
+                  volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
+                  volumestabelle = volumestabelle + liste_volumes[i].id
+                  if sprache == "de":
+                    volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
+                  else:
+                    volumestabelle = volumestabelle + '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
+                  volumestabelle = volumestabelle + '</td>'
+
+                  if liste_volumes[i].attach_data.status == None:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
+                    volumestabelle = volumestabelle + liste_volumes[i].id
+                    volumestabelle = volumestabelle + "&amp;zone="
+                    volumestabelle = volumestabelle + str(liste_volumes[i].zone)
+                    if sprache == "de":
+                      volumestabelle = volumestabelle + '" title="Volume anh&auml;ngen">'
+                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Volume anh&auml;ngen"></a>'
+                    else:
+                      volumestabelle = volumestabelle + '" title="attach volume">'
+                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="attach volume"></a>'
+                  elif liste_volumes[i].attach_data.status == u'attaching':
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + 'attaching'
+                  elif liste_volumes[i].attach_data.status == u'deleting':
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + 'deleting'
+                  elif liste_volumes[i].attach_data.status == u'busy':
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + 'busy'
+                  elif liste_volumes[i].attach_data.status == u'attached':
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + '<a href="/volumeloesen?volume='
+                    volumestabelle = volumestabelle + liste_volumes[i].id
+                    if sprache == "de":
+                      volumestabelle = volumestabelle + '" title="Volume l&ouml;sen">'
+                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Detach Volume"></a>'
+                    else:
+                      volumestabelle = volumestabelle + '" title="detach volume">'
+                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="detach volume"></a>'
+                  else:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '<td>'
+                  volumestabelle = volumestabelle + '<tt>'
+                  volumestabelle = volumestabelle + str(liste_volumes[i].id)
+                  volumestabelle = volumestabelle + '</tt>'
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '<td>'
+                  volumestabelle = volumestabelle + '<tt>'
+                  volumestabelle = volumestabelle + str(liste_volumes[i].snapshot_id)
+                  volumestabelle = volumestabelle + '</tt>'
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '<td align="right">'
+                  volumestabelle = volumestabelle + str(liste_volumes[i].size)
+                  volumestabelle = volumestabelle + '</td>'
+                  if liste_volumes[i].status == u'available':
+                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
+                    volumestabelle = volumestabelle + liste_volumes[i].status
+                  elif liste_volumes[i].status == u'in-use':
+                    volumestabelle = volumestabelle + '<td bgcolor="#ffffcc" align="center">'
+                    volumestabelle = volumestabelle + liste_volumes[i].status
+                  elif liste_volumes[i].status == u'deleting':
+                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
+                    volumestabelle = volumestabelle + liste_volumes[i].status
+                  else:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + liste_volumes[i].status
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '<td align="center">'
+                  volumestabelle = volumestabelle + str(liste_volumes[i].zone)
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '<td>'
+                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                  datum_der_erzeugung = parse(liste_volumes[i].create_time)
+                  volumestabelle = volumestabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+                  #volumestabelle = volumestabelle + str(datum_der_erzeugung)
+                  #volumestabelle = volumestabelle + str(liste_volumes[i].create_time)
+                  volumestabelle = volumestabelle + '</td>'
+                  if liste_volumes[i].attach_data.device == None:
+                    volumestabelle = volumestabelle + '<td>'
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  else:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + '<tt>'
+                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.device)
+                    volumestabelle = volumestabelle + '</tt>'
+                  volumestabelle = volumestabelle + '</td>'
+                  if liste_volumes[i].attach_data.attach_time == None:
+                    volumestabelle = volumestabelle + '<td>'
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  else:
+                    volumestabelle = volumestabelle + '<td>'
+                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                    datum_des_anhaengens = parse(liste_volumes[i].attach_data.attach_time)
+                    volumestabelle = volumestabelle + str(datum_des_anhaengens.strftime("%Y-%m-%d  %H:%M:%S"))
+                    #volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.attach_time)
+                  volumestabelle = volumestabelle + '</td>'
+                  if liste_volumes[i].attach_data.instance_id == None:
+                    volumestabelle = volumestabelle + '<td>'
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  else:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.instance_id)
+                  volumestabelle = volumestabelle + '</td>'
+                  if liste_volumes[i].attach_data.status == None:
+                    volumestabelle = volumestabelle + '<td>'
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  elif liste_volumes[i].attach_data.status == u'attached':
+                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
+                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+                  elif liste_volumes[i].attach_data.status == u'busy':
+                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
+                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+                  else:
+                    volumestabelle = volumestabelle + '<td align="center">'
+                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+                  volumestabelle = volumestabelle + '</td>'
+                  volumestabelle = volumestabelle + '</tr>'
+              volumestabelle = volumestabelle + '</table>'
+
+          if laenge_liste_volumes >= 1:
+            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<tr>\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<td align="center">\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<form action="/alle_volumes_loeschen" method="get">\n'
+            if sprache == "de":
+              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumes l&ouml;schen">\n'
+            else:
+              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="erase all volumes">\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</form>\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</td>\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</tr>\n'
+            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</table>\n'
+          else:
+            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'volumestabelle': volumestabelle,
+          'zonen_in_der_region': zonen_in_der_region,
+          'input_error_message': input_error_message,
+          'zonen_liste': zonen_liste,
+          'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
+          }
+
+          #if sprache == "de": naechse_seite = "volumes_de.html"
+          #else:               naechse_seite = "volumes_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volumes.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 
 class VolumesEntfernen(webapp.RequestHandler):
@@ -4576,170 +4575,169 @@ class VolumesAnhaengen(webapp.RequestHandler):
         volume_zone  = self.request.get('zone')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              liste_reservations = conn_region.get_all_instances()
-              # Anzahl der Elemente in der Liste
-              laenge_liste_reservations = len(liste_reservations)
-
-              if laenge_liste_reservations == "0":
-                # Wenn es keine laufenden Instanzen gibt
-                instanzen_in_region = 0
-              else:
-                # Wenn es laufenden Instanzen gibt
-                instanzen_in_region = 0
-                for i in liste_reservations:
-                  for x in i.instances:
-                    # Für jede Instanz wird geschaut...
-                    # ...ob die Instanz in der Region des Volumes liegt und läuft
-                    if x.placement == volume_zone and x.state == u'running':
-                      instanzen_in_region = instanzen_in_region + 1
-
-              tabelle_anhaengen = ''
-              tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
-              tabelle_anhaengen = tabelle_anhaengen + volume
-              tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">'
-              tabelle_anhaengen = tabelle_anhaengen + '\n'
-              tabelle_anhaengen = tabelle_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-              tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Volume:</B></td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              tabelle_anhaengen = tabelle_anhaengen + volume
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              if sprache == "de":
-                tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
-              else:
-                tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-              tabelle_anhaengen = tabelle_anhaengen + volume_zone
-              tabelle_anhaengen = tabelle_anhaengen + '</B>'
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-              tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-              if sprache == "de":
-                tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
-              else:
-                tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instances:</B></td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              if instanzen_in_region == 0:
-                if sprache == "de":
-                  tabelle_anhaengen = tabelle_anhaengen + 'Sie haben keine Instanz'
-                else:
-                  tabelle_anhaengen = tabelle_anhaengen + 'You have still no instance'
-              else:
-                if instanzen_in_region > 0:
-                  tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'
-                  for i in liste_reservations:
-                    for x in i.instances:
-                      if x.placement == volume_zone and x.state == u'running':
-                        tabelle_anhaengen = tabelle_anhaengen + '<option>'
-                        tabelle_anhaengen = tabelle_anhaengen + x.id
-                        tabelle_anhaengen = tabelle_anhaengen + '</option>'
-                  tabelle_anhaengen = tabelle_anhaengen + '</select>'
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              if sprache == "de":
-                tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
-              else:
-                tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-              tabelle_anhaengen = tabelle_anhaengen + volume_zone
-              tabelle_anhaengen = tabelle_anhaengen + '</B>'
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-              tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<select name="device" size="1">'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sda</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdb</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option selected="selected">/dev/sdc</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdd</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sde</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdf</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdg</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdh</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdj</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdk</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdl</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdm</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdn</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdo</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdp</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdq</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdr</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sds</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdt</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdv</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdw</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdx</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdy</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdz</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '</select>'
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '<td>'
-              tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
-              tabelle_anhaengen = tabelle_anhaengen + '</td>'
-              tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-              tabelle_anhaengen = tabelle_anhaengen + '</table>'
-              tabelle_anhaengen = tabelle_anhaengen + '<p>&nbsp;</p>'
-              tabelle_anhaengen = tabelle_anhaengen + '\n'
-              if instanzen_in_region == 0:
-                tabelle_anhaengen = tabelle_anhaengen + ' '
-              else:
-                if sprache == "de":
-                  tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volume anh&auml;ngen">'
-                else:
-                  tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
-              tabelle_anhaengen = tabelle_anhaengen + '\n'
-              tabelle_anhaengen = tabelle_anhaengen + '</form>'
-
-              if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
-                if sprache == "de":        # ... und die Sprache deutsch ist ...
-                  ebs_volumes_eucalyptus_warnung = '<font color="red">Achtung! Das Verbinden von Volumes mit Instanzen dauert unter Eucalyptus teilweise mehrere Minuten.</font>'
-                else:                      # ... und die Sprache englisch ist ...
-                  ebs_volumes_eucalyptus_warnung = '<font color="red">Attention! Attaching volumes with Instances at Eucalyptus needs some time (several minutes).</font>'
-              else:                        # Wenn die Region Amazon EC2 ist...
-                ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'tabelle_anhaengen': tabelle_anhaengen,
-              'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
-              }
-
-              #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
-              #else:               naechse_seite = "volume_anhaengen_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
-              self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          liste_reservations = conn_region.get_all_instances()
+          # Anzahl der Elemente in der Liste
+          laenge_liste_reservations = len(liste_reservations)
+
+          if laenge_liste_reservations == "0":
+            # Wenn es keine laufenden Instanzen gibt
+            instanzen_in_region = 0
+          else:
+            # Wenn es laufenden Instanzen gibt
+            instanzen_in_region = 0
+            for i in liste_reservations:
+              for x in i.instances:
+                # Für jede Instanz wird geschaut...
+                # ...ob die Instanz in der Region des Volumes liegt und läuft
+                if x.placement == volume_zone and x.state == u'running':
+                  instanzen_in_region = instanzen_in_region + 1
+
+          tabelle_anhaengen = ''
+          tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
+          tabelle_anhaengen = tabelle_anhaengen + volume
+          tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">'
+          tabelle_anhaengen = tabelle_anhaengen + '\n'
+          tabelle_anhaengen = tabelle_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
+          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Volume:</B></td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          tabelle_anhaengen = tabelle_anhaengen + volume
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          if sprache == "de":
+            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
+          else:
+            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
+          tabelle_anhaengen = tabelle_anhaengen + volume_zone
+          tabelle_anhaengen = tabelle_anhaengen + '</B>'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+          if sprache == "de":
+            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
+          else:
+            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instances:</B></td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          if instanzen_in_region == 0:
+            if sprache == "de":
+              tabelle_anhaengen = tabelle_anhaengen + 'Sie haben keine Instanz'
+            else:
+              tabelle_anhaengen = tabelle_anhaengen + 'You have still no instance'
+          else:
+            if instanzen_in_region > 0:
+              tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'
+              for i in liste_reservations:
+                for x in i.instances:
+                  if x.placement == volume_zone and x.state == u'running':
+                    tabelle_anhaengen = tabelle_anhaengen + '<option>'
+                    tabelle_anhaengen = tabelle_anhaengen + x.id
+                    tabelle_anhaengen = tabelle_anhaengen + '</option>'
+              tabelle_anhaengen = tabelle_anhaengen + '</select>'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          if sprache == "de":
+            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
+          else:
+            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
+          tabelle_anhaengen = tabelle_anhaengen + volume_zone
+          tabelle_anhaengen = tabelle_anhaengen + '</B>'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<select name="device" size="1">'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sda</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdb</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option selected="selected">/dev/sdc</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdd</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sde</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdf</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdg</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdh</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdj</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdk</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdl</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdm</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdn</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdo</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdp</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdq</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdr</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sds</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdt</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdv</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdw</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdx</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdy</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdz</option>'
+          tabelle_anhaengen = tabelle_anhaengen + '</select>'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '</table>'
+          tabelle_anhaengen = tabelle_anhaengen + '<p>&nbsp;</p>'
+          tabelle_anhaengen = tabelle_anhaengen + '\n'
+          if instanzen_in_region == 0:
+            tabelle_anhaengen = tabelle_anhaengen + ' '
+          else:
+            if sprache == "de":
+              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volume anh&auml;ngen">'
+            else:
+              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
+          tabelle_anhaengen = tabelle_anhaengen + '\n'
+          tabelle_anhaengen = tabelle_anhaengen + '</form>'
+
+          if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
+            if sprache == "de":        # ... und die Sprache deutsch ist ...
+              ebs_volumes_eucalyptus_warnung = '<font color="red">Achtung! Das Verbinden von Volumes mit Instanzen dauert unter Eucalyptus teilweise mehrere Minuten.</font>'
+            else:                      # ... und die Sprache englisch ist ...
+              ebs_volumes_eucalyptus_warnung = '<font color="red">Attention! Attaching volumes with Instances at Eucalyptus needs some time (several minutes).</font>'
+          else:                        # Wenn die Region Amazon EC2 ist...
+            ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'tabelle_anhaengen': tabelle_anhaengen,
+          'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
+          }
+
+          #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
+          #else:               naechse_seite = "volume_anhaengen_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 class VolumesErzeugen(webapp.RequestHandler):
     def post(self):
@@ -5062,391 +5060,390 @@ class Images(webapp.RequestHandler):
         username = users.get_current_user()
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
+        if not username:
+            self.redirect('/')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          # So wird der HTML-Code korrekt
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+          # Herausfinden, in welcher Zone wird gerade sind
+          # Die Ergebnisse des SELECT durchlaufen (ist nur eins) 
+          for result in results:
+            zone_in_der_wir_uns_befinden = result.aktivezone
+
+          if regionname == "Amazon":
+
+            if message == "0":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="green">Der Favorit wurde erfolgreich angelegt</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="green">The favourite was created successfully</font>'
+            elif message == "1":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen AMI angegeben</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">AMI was missing</font>'
+            elif message == "2":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">The input did not start wirh <B><TT>ami-</TT></B></font>'
+            elif message == "3":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe hatte nicht die korrekte L&auml;nge</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">The input length was not correct</font>'
+            elif message == "4":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe enthielt nicht erlaubte Zeichen</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">The input had characters that are not allowed</font>'
+            elif message == "5":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Das von Ihnen eingegebene AMI existiert nicht</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">The AMI is not existing</font>'
+            else:
+              input_error_message = ''
+
+            # Nachsehen, ob schon AMI-Favoriten existieren
+            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND zone = :zone_db", username_db=username, zone_db=zone_in_der_wir_uns_befinden)
             results = aktivezone.fetch(100)
-
             if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              # So wird der HTML-Code korrekt
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-              # Herausfinden, in welcher Zone wird gerade sind
-              # Die Ergebnisse des SELECT durchlaufen (ist nur eins) 
+              # Eine leere Liste mit den AMIs der Favoriten erzeugen
+              liste_ami_favoriten = []
+              # Die Ergebnisse des SELECT durchlaufen
               for result in results:
-                zone_in_der_wir_uns_befinden = result.aktivezone
+                # Die AMIs in die Liste einfügen
+                liste_ami_favoriten.append(result.ami)
 
-              if regionname == "Amazon":
+              liste_favoriten_ami_images = conn_region.get_all_images(image_ids=liste_ami_favoriten)
+              laenge_liste_favoriten_ami_images = len(liste_favoriten_ami_images)
 
-                if message == "0":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="green">Der Favorit wurde erfolgreich angelegt</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="green">The favourite was created successfully</font>'
-                elif message == "1":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen AMI angegeben</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">AMI was missing</font>'
-                elif message == "2":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">The input did not start wirh <B><TT>ami-</TT></B></font>'
-                elif message == "3":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe hatte nicht die korrekte L&auml;nge</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">The input length was not correct</font>'
-                elif message == "4":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe enthielt nicht erlaubte Zeichen</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">The input had characters that are not allowed</font>'
-                elif message == "5":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Das von Ihnen eingegebene AMI existiert nicht</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">The AMI is not existing</font>'
-                else:
-                  input_error_message = ''
-
-                # Nachsehen, ob schon AMI-Favoriten existieren
-                aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND zone = :zone_db", username_db=username, zone_db=zone_in_der_wir_uns_befinden)
-                results = aktivezone.fetch(100)
-                if results:
-                  # Eine leere Liste mit den AMIs der Favoriten erzeugen
-                  liste_ami_favoriten = []
-                  # Die Ergebnisse des SELECT durchlaufen
-                  for result in results:
-                    # Die AMIs in die Liste einfügen
-                    liste_ami_favoriten.append(result.ami)
-
-                  liste_favoriten_ami_images = conn_region.get_all_images(image_ids=liste_ami_favoriten)
-                  laenge_liste_favoriten_ami_images = len(liste_favoriten_ami_images)
-
-                  liste_favouriten = ''
-                  liste_favouriten = liste_favouriten + '<table border="3" cellspacing="0" cellpadding="5">'
+              liste_favouriten = ''
+              liste_favouriten = liste_favouriten + '<table border="3" cellspacing="0" cellpadding="5">'
+              liste_favouriten = liste_favouriten + '<tr>'
+              liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
+              liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
+              liste_favouriten = liste_favouriten + '<th align="center">Image ID</th>'
+              liste_favouriten = liste_favouriten + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+              if sprache == "de":
+                liste_favouriten = liste_favouriten + '<th align="center">Typ</th>'
+              else:
+                liste_favouriten = liste_favouriten + '<th align="center">Type</th>'
+              liste_favouriten = liste_favouriten + '<th align="center">Manifest</th>'
+              if sprache == "de":
+                liste_favouriten = liste_favouriten + '<th align="center">Architektur</th>'
+              else:
+                liste_favouriten = liste_favouriten + '<th align="center">Architecture</th>'
+              liste_favouriten = liste_favouriten + '<th align="center">Status</th>'
+              if sprache == "de":
+                liste_favouriten = liste_favouriten + '<th align="center">Besitzer</th>'
+              else:
+                liste_favouriten = liste_favouriten + '<th align="center">Owner</th>'
+              liste_favouriten = liste_favouriten + '</tr>'
+              for i in range(laenge_liste_favoriten_ami_images):
                   liste_favouriten = liste_favouriten + '<tr>'
-                  liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
-                  liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
-                  liste_favouriten = liste_favouriten + '<th align="center">Image ID</th>'
-                  liste_favouriten = liste_favouriten + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
-                  if sprache == "de":
-                    liste_favouriten = liste_favouriten + '<th align="center">Typ</th>'
-                  else:
-                    liste_favouriten = liste_favouriten + '<th align="center">Type</th>'
-                  liste_favouriten = liste_favouriten + '<th align="center">Manifest</th>'
-                  if sprache == "de":
-                    liste_favouriten = liste_favouriten + '<th align="center">Architektur</th>'
-                  else:
-                    liste_favouriten = liste_favouriten + '<th align="center">Architecture</th>'
-                  liste_favouriten = liste_favouriten + '<th align="center">Status</th>'
-                  if sprache == "de":
-                    liste_favouriten = liste_favouriten + '<th align="center">Besitzer</th>'
-                  else:
-                    liste_favouriten = liste_favouriten + '<th align="center">Owner</th>'
-                  liste_favouriten = liste_favouriten + '</tr>'
-                  for i in range(laenge_liste_favoriten_ami_images):
-                      liste_favouriten = liste_favouriten + '<tr>'
-                      #liste_favouriten = liste_favouriten + '<td>&nbsp;</td>'
-                      liste_favouriten = liste_favouriten + '<td>'
-                      if liste_favoriten_ami_images[i].type == u'machine':
-                        if sprache == "de":
-                          liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
-                          liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                          liste_favouriten = liste_favouriten + '&amp;arch='
-                          liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                          liste_favouriten = liste_favouriten + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
-                        else:
-                          liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
-                          liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                          liste_favouriten = liste_favouriten + '&amp;arch='
-                          liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                          liste_favouriten = liste_favouriten + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
-                      else:
-                        # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                        liste_favouriten = liste_favouriten + '&nbsp;'
-                      liste_favouriten = liste_favouriten + '</td>'
-                      liste_favouriten = liste_favouriten + '<td>'
-                      if sprache == "de":
-                        liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                        liste_favouriten = liste_favouriten + '&amp;zone='
-                        liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                        liste_favouriten = liste_favouriten + '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
-                      else:
-                        liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                        liste_favouriten = liste_favouriten + '&amp;zone='
-                        liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                        liste_favouriten = liste_favouriten + '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
-                      liste_favouriten = liste_favouriten + '</td>'
-
-                      # Hier kommt die Spalte mit der Image-ID
-                      liste_favouriten = liste_favouriten + '<td>'
-                      liste_favouriten = liste_favouriten + '<tt>'
+                  #liste_favouriten = liste_favouriten + '<td>&nbsp;</td>'
+                  liste_favouriten = liste_favouriten + '<td>'
+                  if liste_favoriten_ami_images[i].type == u'machine':
+                    if sprache == "de":
+                      liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                      liste_favouriten = liste_favouriten + '</tt>'
-                      liste_favouriten = liste_favouriten + '</td>'
+                      liste_favouriten = liste_favouriten + '&amp;arch='
+                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
+                      liste_favouriten = liste_favouriten + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                    else:
+                      liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
+                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
+                      liste_favouriten = liste_favouriten + '&amp;arch='
+                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
+                      liste_favouriten = liste_favouriten + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+                  else:
+                    # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+                    liste_favouriten = liste_favouriten + '&nbsp;'
+                  liste_favouriten = liste_favouriten + '</td>'
+                  liste_favouriten = liste_favouriten + '<td>'
+                  if sprache == "de":
+                    liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
+                    liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
+                    liste_favouriten = liste_favouriten + '&amp;zone='
+                    liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                    liste_favouriten = liste_favouriten + '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
+                  else:
+                    liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
+                    liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
+                    liste_favouriten = liste_favouriten + '&amp;zone='
+                    liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                    liste_favouriten = liste_favouriten + '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
+                  liste_favouriten = liste_favouriten + '</td>'
 
-                      liste_favouriten = liste_favouriten + '<td align="center">'
-                      beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
+                  # Hier kommt die Spalte mit der Image-ID
+                  liste_favouriten = liste_favouriten + '<td>'
+                  liste_favouriten = liste_favouriten + '<tt>'
+                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
+                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '</td>'
+
+                  liste_favouriten = liste_favouriten + '<td align="center">'
+                  beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
+                  if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                  elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                  elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                  elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                  elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                  elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                  elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                  elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                  elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+                    imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                  elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                  elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                  elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                  else:
+                    liste_favouriten = liste_favouriten + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+                  liste_favouriten = liste_favouriten + '</td>'
+
+                  # Hier kommt die Spalte mit dem Instanztyp
+                  liste_favouriten = liste_favouriten + '<td align="center">'
+                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].type
+                  liste_favouriten = liste_favouriten + '</td>'
+
+                  # Hier kommt die Spalte mit der Manifest-Datei
+                  liste_favouriten = liste_favouriten + '<td>'
+                  liste_favouriten = liste_favouriten + '<tt>'
+                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].location
+                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '</td>'
+                  liste_favouriten = liste_favouriten + '<td align="center">'
+                  liste_favouriten = liste_favouriten + '<tt>'
+                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
+                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '</td>'
+                  if liste_favoriten_ami_images[i].state == u'available':
+                    liste_favouriten = liste_favouriten + '<td bgcolor="#c3ddc3" align="center">'
+                    liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].state
+                  else:
+                    liste_favouriten = liste_favouriten + '<td align="center">'
+                    liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].state
+                  liste_favouriten = liste_favouriten + '</td>'
+                  liste_favouriten = liste_favouriten + '<td>'
+                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].ownerId
+                  liste_favouriten = liste_favouriten + '</td>'
+                  liste_favouriten = liste_favouriten + '</tr>'
+              liste_favouriten = liste_favouriten + '</table>'
+
+            else:
+              if sprache == "de":
+                liste_favouriten = 'Es wurden noch keine Favoriten in der Zone '
+                liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                liste_favouriten = liste_favouriten + ' festgelegt'
+              else:
+                liste_favouriten = 'No favourite AMIs exist in the zone '
+                liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            'liste_favouriten': liste_favouriten,
+            'zone_in_der_wir_uns_befinden': zone_in_der_wir_uns_befinden,
+            'input_error_message': input_error_message,
+            }
+
+            #if sprache == "de": naechse_seite = "images_amazon_de.html"
+            #else:               naechse_seite = "images_amazon_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images_amazon.html")
+            self.response.out.write(template.render(path,template_values))
+
+          # Die Region ist Eucalyptus oder Nimbus
+          else:
+
+            try:
+              # Liste mit den Images
+              liste_images = conn_region.get_all_images()
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
+              if sprache == "de":
+                imagestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+              else:
+                imagestabelle = '<font color="red">An error occured</font>'
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              if sprache == "de":
+                imagestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+              else:
+                imagestabelle = '<font color="red">A timeout error occured</font>'
+            else:
+              # Wenn es geklappt hat...
+              # Anzahl der Images in der Liste
+              laenge_liste_images = len(liste_images)
+
+              #self.response.out.write(laenge_liste_images)
+
+              if laenge_liste_images == 0:
+                # Wenn noch keine Images in der Region existieren
+                if sprache == "de":
+                  imagestabelle = 'Es sind keine Images in der Region vorhanden.'
+                else:
+                  imagestabelle = 'Still no images exist inside this region.'
+              else:
+                # Wenn schon Images in der Region existieren
+                imagestabelle = ''
+                imagestabelle = imagestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                imagestabelle = imagestabelle + '<tr>'
+                imagestabelle = imagestabelle + '<th>&nbsp;</th>'
+                imagestabelle = imagestabelle + '<th align="center">Image ID</th>'
+                imagestabelle = imagestabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+                if sprache == "de":
+                  imagestabelle = imagestabelle + '<th align="center">Typ</th>'
+                else:
+                  imagestabelle = imagestabelle + '<th align="center">Type</th>'
+                imagestabelle = imagestabelle + '<th align="center">Manifest</th>'
+                if sprache == "de":
+                  imagestabelle = imagestabelle + '<th align="center">Architektur</th>'
+                else:
+                  imagestabelle = imagestabelle + '<th align="center">Architecture</th>'
+                imagestabelle = imagestabelle + '<th align="center">Status</th>'
+                if sprache == "de":
+                  imagestabelle = imagestabelle + '<th align="center">Besitzer</th>'
+                else:
+                  imagestabelle = imagestabelle + '<th align="center">Owner</th>'
+                imagestabelle = imagestabelle + '</tr>'
+                for i in range(laenge_liste_images):
+                    imagestabelle = imagestabelle + '<tr>'
+                    #imagestabelle = imagestabelle + '<td>&nbsp;</td>'
+                    imagestabelle = imagestabelle + '<td>'
+                    if liste_images[i].type == u'machine':
+                      if sprache == "de":
+                        imagestabelle = imagestabelle + '<a href="/imagestarten?image='
+                        imagestabelle = imagestabelle + liste_images[i].id
+                        imagestabelle = imagestabelle + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                      else:
+                        imagestabelle = imagestabelle + '<a href="/imagestarten?image='
+                        imagestabelle = imagestabelle + liste_images[i].id
+                        imagestabelle = imagestabelle + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+                    else:
+                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+                      imagestabelle = imagestabelle + '&nbsp;'
+                    imagestabelle = imagestabelle + '</td>'
+                    imagestabelle = imagestabelle + '<td>'
+                    imagestabelle = imagestabelle + '<tt>'
+                    imagestabelle = imagestabelle + liste_images[i].id
+                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '</td>'
+
+
+                    imagestabelle = imagestabelle + '<td align="center">'
+                    beschreibung_in_kleinbuchstaben = liste_images[i].location.lower()
+                    if str(liste_images[i].type) == "kernel":
+                      imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                    elif str(liste_images[i].type) == "ramdisk":
+                      imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                    elif str(liste_images[i].type) == "machine":
                       if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                        imagestabelle = imagestabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
                       elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                        imagestabelle = imagestabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
                       elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                        imagestabelle = imagestabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
                       elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                        imagestabelle = imagestabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
                       elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                        imagestabelle = imagestabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
                       elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                        imagestabelle = imagestabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
                       elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                        imagestabelle = imagestabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
                       elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                        imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                       elif beschreibung_in_kleinbuchstaben.find('win') != -1:
                         imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                       elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                        imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                       elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                        imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                       elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                        imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                       else:
-                        liste_favouriten = liste_favouriten + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
-                      liste_favouriten = liste_favouriten + '</td>'
-
-                      # Hier kommt die Spalte mit dem Instanztyp
-                      liste_favouriten = liste_favouriten + '<td align="center">'
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].type
-                      liste_favouriten = liste_favouriten + '</td>'
-
-                      # Hier kommt die Spalte mit der Manifest-Datei
-                      liste_favouriten = liste_favouriten + '<td>'
-                      liste_favouriten = liste_favouriten + '<tt>'
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].location
-                      liste_favouriten = liste_favouriten + '</tt>'
-                      liste_favouriten = liste_favouriten + '</td>'
-                      liste_favouriten = liste_favouriten + '<td align="center">'
-                      liste_favouriten = liste_favouriten + '<tt>'
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                      liste_favouriten = liste_favouriten + '</tt>'
-                      liste_favouriten = liste_favouriten + '</td>'
-                      if liste_favoriten_ami_images[i].state == u'available':
-                        liste_favouriten = liste_favouriten + '<td bgcolor="#c3ddc3" align="center">'
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].state
-                      else:
-                        liste_favouriten = liste_favouriten + '<td align="center">'
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].state
-                      liste_favouriten = liste_favouriten + '</td>'
-                      liste_favouriten = liste_favouriten + '<td>'
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].ownerId
-                      liste_favouriten = liste_favouriten + '</td>'
-                      liste_favouriten = liste_favouriten + '</tr>'
-                  liste_favouriten = liste_favouriten + '</table>'
-
-                else:
-                  if sprache == "de":
-                    liste_favouriten = 'Es wurden noch keine Favoriten in der Zone '
-                    liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                    liste_favouriten = liste_favouriten + ' festgelegt'
-                  else:
-                    liste_favouriten = 'No favourite AMIs exist in the zone '
-                    liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'zonen_liste': zonen_liste,
-                'liste_favouriten': liste_favouriten,
-                'zone_in_der_wir_uns_befinden': zone_in_der_wir_uns_befinden,
-                'input_error_message': input_error_message,
-                }
- 
-                #if sprache == "de": naechse_seite = "images_amazon_de.html"
-                #else:               naechse_seite = "images_amazon_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images_amazon.html")
-                self.response.out.write(template.render(path,template_values))
-
-              # Die Region ist Eucalyptus oder Nimbus
-              else:
-
-                try:
-                  # Liste mit den Images
-                  liste_images = conn_region.get_all_images()
-                except EC2ResponseError:
-                  # Wenn es nicht klappt...
-                  if sprache == "de":
-                    imagestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                  else:
-                    imagestabelle = '<font color="red">An error occured</font>'
-                except DownloadError:
-                  # Diese Exception hilft gegen diese beiden Fehler:
-                  # DownloadError: ApplicationError: 2 timed out
-                  # DownloadError: ApplicationError: 5
-                  if sprache == "de":
-                    imagestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                  else:
-                    imagestabelle = '<font color="red">A timeout error occured</font>'
-                else:
-                  # Wenn es geklappt hat...
-                  # Anzahl der Images in der Liste
-                  laenge_liste_images = len(liste_images)
-
-                  #self.response.out.write(laenge_liste_images)
-
-                  if laenge_liste_images == 0:
-                    # Wenn noch keine Images in der Region existieren
-                    if sprache == "de":
-                      imagestabelle = 'Es sind keine Images in der Region vorhanden.'
+                        imagestabelle = imagestabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
                     else:
-                      imagestabelle = 'Still no images exist inside this region.'
-                  else:
-                    # Wenn schon Images in der Region existieren
-                    imagestabelle = ''
-                    imagestabelle = imagestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                    imagestabelle = imagestabelle + '<tr>'
-                    imagestabelle = imagestabelle + '<th>&nbsp;</th>'
-                    imagestabelle = imagestabelle + '<th align="center">Image ID</th>'
-                    imagestabelle = imagestabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
-                    if sprache == "de":
-                      imagestabelle = imagestabelle + '<th align="center">Typ</th>'
+                      imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                    imagestabelle = imagestabelle + '</td>'
+
+                    imagestabelle = imagestabelle + '<td align="center">'
+                    imagestabelle = imagestabelle + liste_images[i].type
+                    imagestabelle = imagestabelle + '</td>'
+                    imagestabelle = imagestabelle + '<td>'
+                    imagestabelle = imagestabelle + '<tt>'
+                    imagestabelle = imagestabelle + liste_images[i].location
+                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '</td>'
+                    imagestabelle = imagestabelle + '<td align="center">'
+                    imagestabelle = imagestabelle + '<tt>'
+                    imagestabelle = imagestabelle + liste_images[i].architecture
+                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '</td>'
+                    if liste_images[i].state == u'available':
+                      imagestabelle = imagestabelle + '<td bgcolor="#c3ddc3" align="center">'
+                      imagestabelle = imagestabelle + liste_images[i].state
                     else:
-                      imagestabelle = imagestabelle + '<th align="center">Type</th>'
-                    imagestabelle = imagestabelle + '<th align="center">Manifest</th>'
-                    if sprache == "de":
-                      imagestabelle = imagestabelle + '<th align="center">Architektur</th>'
-                    else:
-                      imagestabelle = imagestabelle + '<th align="center">Architecture</th>'
-                    imagestabelle = imagestabelle + '<th align="center">Status</th>'
-                    if sprache == "de":
-                      imagestabelle = imagestabelle + '<th align="center">Besitzer</th>'
-                    else:
-                      imagestabelle = imagestabelle + '<th align="center">Owner</th>'
+                      imagestabelle = imagestabelle + '<td align="center">'
+                      imagestabelle = imagestabelle + liste_images[i].state
+                    imagestabelle = imagestabelle + '</td>'
+                    imagestabelle = imagestabelle + '<td>'
+                    imagestabelle = imagestabelle + liste_images[i].ownerId
+                    imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '</tr>'
-                    for i in range(laenge_liste_images):
-                        imagestabelle = imagestabelle + '<tr>'
-                        #imagestabelle = imagestabelle + '<td>&nbsp;</td>'
-                        imagestabelle = imagestabelle + '<td>'
-                        if liste_images[i].type == u'machine':
-                          if sprache == "de":
-                            imagestabelle = imagestabelle + '<a href="/imagestarten?image='
-                            imagestabelle = imagestabelle + liste_images[i].id
-                            imagestabelle = imagestabelle + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
-                          else:
-                            imagestabelle = imagestabelle + '<a href="/imagestarten?image='
-                            imagestabelle = imagestabelle + liste_images[i].id
-                            imagestabelle = imagestabelle + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
-                        else:
-                          # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                          imagestabelle = imagestabelle + '&nbsp;'
-                        imagestabelle = imagestabelle + '</td>'
-                        imagestabelle = imagestabelle + '<td>'
-                        imagestabelle = imagestabelle + '<tt>'
-                        imagestabelle = imagestabelle + liste_images[i].id
-                        imagestabelle = imagestabelle + '</tt>'
-                        imagestabelle = imagestabelle + '</td>'
-  
-  
-                        imagestabelle = imagestabelle + '<td align="center">'
-                        beschreibung_in_kleinbuchstaben = liste_images[i].location.lower()
-                        if str(liste_images[i].type) == "kernel":
-                          imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
-                        elif str(liste_images[i].type) == "ramdisk":
-                          imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
-                        elif str(liste_images[i].type) == "machine":
-                          if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                          elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                          elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                          elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                          elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                          elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                          elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                          elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                          elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                          elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                          elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                          elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                            imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                          else:
-                            imagestabelle = imagestabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
-                        else:
-                          imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
-                        imagestabelle = imagestabelle + '</td>'
+                imagestabelle = imagestabelle + '</table>'
 
-                        imagestabelle = imagestabelle + '<td align="center">'
-                        imagestabelle = imagestabelle + liste_images[i].type
-                        imagestabelle = imagestabelle + '</td>'
-                        imagestabelle = imagestabelle + '<td>'
-                        imagestabelle = imagestabelle + '<tt>'
-                        imagestabelle = imagestabelle + liste_images[i].location
-                        imagestabelle = imagestabelle + '</tt>'
-                        imagestabelle = imagestabelle + '</td>'
-                        imagestabelle = imagestabelle + '<td align="center">'
-                        imagestabelle = imagestabelle + '<tt>'
-                        imagestabelle = imagestabelle + liste_images[i].architecture
-                        imagestabelle = imagestabelle + '</tt>'
-                        imagestabelle = imagestabelle + '</td>'
-                        if liste_images[i].state == u'available':
-                          imagestabelle = imagestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                          imagestabelle = imagestabelle + liste_images[i].state
-                        else:
-                          imagestabelle = imagestabelle + '<td align="center">'
-                          imagestabelle = imagestabelle + liste_images[i].state
-                        imagestabelle = imagestabelle + '</td>'
-                        imagestabelle = imagestabelle + '<td>'
-                        imagestabelle = imagestabelle + liste_images[i].ownerId
-                        imagestabelle = imagestabelle + '</td>'
-                        imagestabelle = imagestabelle + '</tr>'
-                    imagestabelle = imagestabelle + '</table>'
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'imagestabelle': imagestabelle,
+            'zonen_liste': zonen_liste,
+            }
 
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'imagestabelle': imagestabelle,
-                'zonen_liste': zonen_liste,
-                }
-
-                #if sprache == "de": naechse_seite = "images_de.html"
-                #else:               naechse_seite = "images_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images.html")
-                self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
+            #if sprache == "de": naechse_seite = "images_de.html"
+            #else:               naechse_seite = "images_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images.html")
+            self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
 
 class ImageStarten(webapp.RequestHandler):
     def get(self):
@@ -5818,117 +5815,116 @@ class ConsoleOutput(webapp.RequestHandler):
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()  
+        if not username:
+            self.redirect('/')
         # Die ID der zu löschenden Instanz holen
         instance_id = self.request.get('id')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
-              fehlermeldung = ""
+          zonen_liste = zonen_liste_funktion(username,sprache)
+          fehlermeldung = ""
 
-              try:
-                console_output = conn_region.get_console_output(str(instance_id))
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  fehlermeldung = '<p>&nbsp;</p> <font color="red">Beim Versuch die Konsolenausgabe der Instanz zu holen, kam es zu einem Fehler</font>'
-                else:
-                  fehlermeldung = '<p>&nbsp;</p> <font color="red">While the system tried to get the console output, an error occured</font>'
-                console_ausgabe = ''
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'instance_id': instance_id,
-                'zone': regionname,
-                'fehlermeldung': fehlermeldung,
-                'zone_amazon': zone_amazon,
-                'console_ausgabe': console_ausgabe,
-                'zonen_liste': zonen_liste,
-                }
-
-                #if sprache == "de": naechse_seite = "console_output.html"
-                #else:               naechse_seite = "console_output_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
-                self.response.out.write(template.render(path,template_values))
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  fehlermeldung = '<p>&nbsp;</p> <font color="red">Beim Versuch die Konsolenausgabe der Instanz zu holen, kam es zu einem Timeout-Fehler.</font>'
-                else:
-                  fehlermeldung = '<p>&nbsp;</p> <font color="red">While the system tried to get the console output, a timeout error occured.</font>'
-                console_ausgabe = ''
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'instance_id': instance_id,
-                'zone': regionname,
-                'fehlermeldung': fehlermeldung,
-                'zone_amazon': zone_amazon,
-                'console_ausgabe': console_ausgabe,
-                'zonen_liste': zonen_liste,
-                }
-
-                #if sprache == "de": naechse_seite = "console_output.html"
-                #else:               naechse_seite = "console_output_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
-                self.response.out.write(template.render(path,template_values))
-              else:
-                # Wenn es geklappt hat...
-
-                if console_output.output == '':
-                  if sprache == "de":
-                    console_ausgabe = '<font color="green">Es liegt noch keine Konsolenausgabe vor</font>'
-                  else:
-                    console_ausgabe = '<font color="green">Still no console output exists</font>'
-                else:
-                  console_ausgabe = ''
-                  console_ausgabe = console_ausgabe + '<tt>'
-                  console_ausgabe = console_ausgabe + console_output.output.replace("\n","<BR>").replace(" ", "&nbsp;").replace("", "&nbsp;")
-                  console_ausgabe = console_ausgabe + '</tt>'
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'instance_id': instance_id,
-                'zone': regionname,
-                'fehlermeldung': fehlermeldung,
-                'zone_amazon': zone_amazon,
-                'console_ausgabe': console_ausgabe,
-                'zonen_liste': zonen_liste,
-                }
-
-                #if sprache == "de": naechse_seite = "console_output_de.html"
-                #else:               naechse_seite = "console_output_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
-                self.response.out.write(template.render(path,template_values))
+          try:
+            console_output = conn_region.get_console_output(str(instance_id))
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              fehlermeldung = '<p>&nbsp;</p> <font color="red">Beim Versuch die Konsolenausgabe der Instanz zu holen, kam es zu einem Fehler</font>'
             else:
-              self.redirect('/')
+              fehlermeldung = '<p>&nbsp;</p> <font color="red">While the system tried to get the console output, an error occured</font>'
+            console_ausgabe = ''
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'instance_id': instance_id,
+            'zone': regionname,
+            'fehlermeldung': fehlermeldung,
+            'zone_amazon': zone_amazon,
+            'console_ausgabe': console_ausgabe,
+            'zonen_liste': zonen_liste,
+            }
+
+            #if sprache == "de": naechse_seite = "console_output.html"
+            #else:               naechse_seite = "console_output_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            self.response.out.write(template.render(path,template_values))
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              fehlermeldung = '<p>&nbsp;</p> <font color="red">Beim Versuch die Konsolenausgabe der Instanz zu holen, kam es zu einem Timeout-Fehler.</font>'
+            else:
+              fehlermeldung = '<p>&nbsp;</p> <font color="red">While the system tried to get the console output, a timeout error occured.</font>'
+            console_ausgabe = ''
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'instance_id': instance_id,
+            'zone': regionname,
+            'fehlermeldung': fehlermeldung,
+            'zone_amazon': zone_amazon,
+            'console_ausgabe': console_ausgabe,
+            'zonen_liste': zonen_liste,
+            }
+
+            #if sprache == "de": naechse_seite = "console_output.html"
+            #else:               naechse_seite = "console_output_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            self.response.out.write(template.render(path,template_values))
+          else:
+            # Wenn es geklappt hat...
+
+            if console_output.output == '':
+              if sprache == "de":
+                console_ausgabe = '<font color="green">Es liegt noch keine Konsolenausgabe vor</font>'
+              else:
+                console_ausgabe = '<font color="green">Still no console output exists</font>'
+            else:
+              console_ausgabe = ''
+              console_ausgabe = console_ausgabe + '<tt>'
+              console_ausgabe = console_ausgabe + console_output.output.replace("\n","<BR>").replace(" ", "&nbsp;").replace("", "&nbsp;")
+              console_ausgabe = console_ausgabe + '</tt>'
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'instance_id': instance_id,
+            'zone': regionname,
+            'fehlermeldung': fehlermeldung,
+            'zone_amazon': zone_amazon,
+            'console_ausgabe': console_ausgabe,
+            'zonen_liste': zonen_liste,
+            }
+
+            #if sprache == "de": naechse_seite = "console_output_de.html"
+            #else:               naechse_seite = "console_output_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
 
 
 class PersoenlicheDatanLoeschen(webapp.RequestHandler):
