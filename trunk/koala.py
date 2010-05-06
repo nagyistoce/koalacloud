@@ -119,10 +119,11 @@ class MainPage(webapp.RequestHandler):
         'zonen_liste': zonen_liste,
         }
 
-        if sprache == "en":   naechse_seite = "start_en.html"
-        elif sprache == "de": naechse_seite = "start_de.html"
-        else:                 naechse_seite = "start_en.html"
-        path = os.path.join(os.path.dirname(__file__), naechse_seite)
+        #if sprache == "en":   naechse_seite = "start_en.html"
+        #elif sprache == "de": naechse_seite = "start_de.html"
+        #else:                 naechse_seite = "start_en.html"
+        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "start.html")
         self.response.out.write(template.render(path,template_values))
 
 
@@ -998,9 +999,10 @@ class Instanzen(webapp.RequestHandler):
               'alle_instanzen_loeschen_button': alle_instanzen_loeschen_button,
               }
 
-              if sprache == "de": naechse_seite = "instanzen_de.html"
-              else:               naechse_seite = "instanzen_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "instanzen_de.html"
+              #else:               naechse_seite = "instanzen_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "instanzen.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -1037,9 +1039,10 @@ class AlleInstanzenBeendenFrage(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
 
-              if sprache == "de": naechse_seite = "alle_images_beenden_frage_de.html"
-              else:               naechse_seite = "alle_images_beenden_frage_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "alle_images_beenden_frage_de.html"
+              #else:               naechse_seite = "alle_images_beenden_frage_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_images_beenden_frage.html")
               self.response.out.write(template.render(path,template_values))
 
 
@@ -1206,9 +1209,10 @@ class SecurityGroups(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
 
-              if sprache == "de": naechse_seite = "securitygroups_de.html"
-              else:               naechse_seite = "securitygroups_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "securitygroups_de.html"
+              #else:               naechse_seite = "securitygroups_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygroups.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -1398,9 +1402,10 @@ class GruppeAendern(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
 
-              if sprache == "de": naechse_seite = "securitygrouprules_de.html"
-              else:               naechse_seite = "securitygrouprules_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "securitygrouprules_de.html"
+              #else:               naechse_seite = "securitygrouprules_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygrouprules.html")
               self.response.out.write(template.render(path,template_values))
         else:
             self.redirect('/')
@@ -1905,7 +1910,7 @@ class Keys(webapp.RequestHandler):
                 else:
                   bodycommand = " "
                   javascript_funktion = " "
-  
+
                 template_values = {
                 'navigations_bar': navigations_bar,
                 'url': url,
@@ -1918,10 +1923,11 @@ class Keys(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 'input_error_message': input_error_message,
                 }
-  
-                if sprache == "de": naechse_seite = "keys_de.html"
-                else:               naechse_seite = "keys_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+
+                #if sprache == "de": naechse_seite = "keys_de.html"
+                #else:               naechse_seite = "keys_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "keys.html")
                 self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -2100,9 +2106,10 @@ class CreateLoadBalancer(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           }
 
-          if sprache == "de": naechse_seite = "elb_create_de.html"
-          else:               naechse_seite = "elb_create_en.html"
-          path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          #if sprache == "de": naechse_seite = "elb_create_de.html"
+          #else:               naechse_seite = "elb_create_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "elb_create.html")
           self.response.out.write(template.render(path,template_values))
         else:
           self.redirect('/')
@@ -2327,9 +2334,10 @@ class LoadBalancer(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 }
   
-                if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
-                else:               naechse_seite = "loadbalancer_non_aws_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
+                #else:               naechse_seite = "loadbalancer_non_aws_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_non_aws.html")
                 self.response.out.write(template.render(path,template_values))
               else:
 
@@ -2494,9 +2502,10 @@ class LoadBalancer(webapp.RequestHandler):
                 'input_error_message': input_error_message,
                 }
 
-                if sprache == "de": naechse_seite = "loadbalancer_de.html"
-                else:               naechse_seite = "loadbalancer_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "loadbalancer_de.html"
+                #else:               naechse_seite = "loadbalancer_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer.html")
                 self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -2693,7 +2702,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                   # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
                   if len(liste_load_balancers[0].instances) != 0:
                     tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>&nbsp;</td>\n'
-                  
+
                   if instanzen_in_region == 0:
                     tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center" colspan="2">\n'
                     if sprache == "de":
@@ -2825,9 +2834,10 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                   'input_error_message': input_error_message,
                   }
 
-                  if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
-                  else:               naechse_seite = "loadbalancer_change_en.html"
-                  path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                  #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
+                  #else:               naechse_seite = "loadbalancer_change_en.html"
+                  #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                  path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_change.html")
                   self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -3169,9 +3179,10 @@ class Elastic_IPs(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
 
-              if sprache == "de": naechse_seite = "adressen_de.html"
-              else:               naechse_seite = "adressen_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "adressen_de.html"
+              #else:               naechse_seite = "adressen_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "adressen.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -3297,9 +3308,10 @@ class Associate_IP(webapp.RequestHandler):
                 'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
                 }
 
-                if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
-                else:               naechse_seite = "ip_anhaengen_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
+                #else:               naechse_seite = "ip_anhaengen_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "ip_anhaengen.html")
                 self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -3499,9 +3511,10 @@ class Zonen(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
 
-              if sprache == "de": naechse_seite = "zonen_de.html"
-              else:               naechse_seite = "zonen_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "zonen_de.html"
+              #else:               naechse_seite = "zonen_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "zonen.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -3869,9 +3882,10 @@ class SnapshotsErzeugen(webapp.RequestHandler):
               'tabelle_snapshot': tabelle_snapshot,
               }
 
-              if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
-              else:               naechse_seite = "snapshot_erzeugen_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
+              #else:               naechse_seite = "snapshot_erzeugen_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshot_erzeugen.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -4046,9 +4060,10 @@ class Snapshots(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
 
-              if sprache == "de": naechse_seite = "snapshots_de.html"
-              else:               naechse_seite = "snapshots_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "snapshots_de.html"
+              #else:               naechse_seite = "snapshots_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshots.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/') 
@@ -4085,9 +4100,10 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
 
-              if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
-              else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
+              #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_volumes_loeschen_frage.html")
               self.response.out.write(template.render(path,template_values))
 
 
@@ -4479,9 +4495,10 @@ class Volumes(webapp.RequestHandler):
               'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
               }
 
-              if sprache == "de": naechse_seite = "volumes_de.html"
-              else:               naechse_seite = "volumes_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "volumes_de.html"
+              #else:               naechse_seite = "volumes_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volumes.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -4713,9 +4730,10 @@ class VolumesAnhaengen(webapp.RequestHandler):
               'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
               }
 
-              if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
-              else:               naechse_seite = "volume_anhaengen_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
+              #else:               naechse_seite = "volume_anhaengen_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -5030,12 +5048,11 @@ class Info(webapp.RequestHandler):
         'zonen_liste': zonen_liste,
         }
 
-        if sprache == "de": naechse_seite = "info_de.html"
-        else:               naechse_seite = "info_en.html"
-        path = os.path.join(os.path.dirname(__file__), naechse_seite)
+        #if sprache == "de": naechse_seite = "info_de.html"
+        #else:               naechse_seite = "info_en.html"
+        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "info.html")
         self.response.out.write(template.render(path,template_values))
-
-
 
 
 class Images(webapp.RequestHandler):
@@ -5261,9 +5278,10 @@ class Images(webapp.RequestHandler):
                 'input_error_message': input_error_message,
                 }
  
-                if sprache == "de": naechse_seite = "images_amazon_de.html"
-                else:               naechse_seite = "images_amazon_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "images_amazon_de.html"
+                #else:               naechse_seite = "images_amazon_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images_amazon.html")
                 self.response.out.write(template.render(path,template_values))
 
               # Die Region ist Eucalyptus oder Nimbus
@@ -5419,9 +5437,10 @@ class Images(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 }
 
-                if sprache == "de": naechse_seite = "images_de.html"
-                else:               naechse_seite = "images_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "images_de.html"
+                #else:               naechse_seite = "images_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "images.html")
                 self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -5515,7 +5534,8 @@ class ImageStarten(webapp.RequestHandler):
               'value_button_image_starten': value_button_image_starten,
               }
 
-              path = os.path.join(os.path.dirname(__file__), 'image_starten_nimbus.html')
+              #path = os.path.join(os.path.dirname(__file__), 'image_starten_nimbus.html')
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten_nimbus.html")
               self.response.out.write(template.render(path,template_values))
 
             else: # Wenn es nicht Nimbus ist
@@ -5786,7 +5806,7 @@ class ImageStarten(webapp.RequestHandler):
               'zonen_anfang': zonen_anfang,
               }
 
-              path = os.path.join(os.path.dirname(__file__), 'image_starten.html')
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten.html")
               self.response.out.write(template.render(path,template_values))
         else:
             self.redirect('/')
@@ -5841,9 +5861,10 @@ class ConsoleOutput(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 }
 
-                if sprache == "de": naechse_seite = "console_output.html"
-                else:               naechse_seite = "console_output_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "console_output.html"
+                #else:               naechse_seite = "console_output_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
                 self.response.out.write(template.render(path,template_values))
               except DownloadError:
                 # Diese Exception hilft gegen diese beiden Fehler:
@@ -5867,9 +5888,10 @@ class ConsoleOutput(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 }
 
-                if sprache == "de": naechse_seite = "console_output.html"
-                else:               naechse_seite = "console_output_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "console_output.html"
+                #else:               naechse_seite = "console_output_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
                 self.response.out.write(template.render(path,template_values))
               else:
                 # Wenn es geklappt hat...
@@ -5897,9 +5919,10 @@ class ConsoleOutput(webapp.RequestHandler):
                 'zonen_liste': zonen_liste,
                 }
 
-                if sprache == "de": naechse_seite = "console_output_de.html"
-                else:               naechse_seite = "console_output_en.html"
-                path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                #if sprache == "de": naechse_seite = "console_output_de.html"
+                #else:               naechse_seite = "console_output_en.html"
+                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
                 self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -6525,9 +6548,10 @@ class S3(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
 
-              if sprache == "de": naechse_seite = "s3_de.html"
-              else:               naechse_seite = "s3_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "s3_de.html"
+              #else:               naechse_seite = "s3_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -7148,8 +7172,6 @@ class BucketInhalt(webapp.RequestHandler):
                 else:
                   keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
 
-
-
               template_values = {
               'navigations_bar': navigations_bar,
               'url': url,
@@ -7165,9 +7187,10 @@ class BucketInhalt(webapp.RequestHandler):
               'verzeichnis_warnung': verzeichnis_warnung,
               }
 
-              if sprache == "de": naechse_seite = "s3_keys_de.html"
-              else:               naechse_seite = "s3_keys_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "s3_keys_de.html"
+              #else:               naechse_seite = "s3_keys_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -7211,7 +7234,6 @@ class BucketInhaltPur(webapp.RequestHandler):
 
               AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
               AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
-              
 
               input_error_message = ""
 
@@ -7493,9 +7515,10 @@ class BucketInhaltPur(webapp.RequestHandler):
               'alle_keys_loeschen_button': alle_keys_loeschen_button,
               }
 
-              if sprache == "de": naechse_seite = "s3_keys_pur_de.html"
-              else:               naechse_seite = "s3_keys_pur_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "s3_keys_pur_de.html"
+              #else:               naechse_seite = "s3_keys_pur_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys_pur.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -7832,9 +7855,10 @@ class ACL_einsehen(webapp.RequestHandler):
               'eucalyptus_warnung': eucalyptus_warnung,
               }
 
-              if sprache == "de": naechse_seite = "acl_de.html"
-              else:               naechse_seite = "acl_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "acl_de.html"
+              #else:               naechse_seite = "acl_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "acl.html")
               self.response.out.write(template.render(path,template_values))
             else:
               self.redirect('/')
@@ -7924,9 +7948,10 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
               's3_ansicht': s3_ansicht,
               }
 
-              if sprache == "de": naechse_seite = "alle_keys_loeschen_frage_de.html"
-              else:               naechse_seite = "alle_keys_loeschen_frage_en.html"
-              path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              #if sprache == "de": naechse_seite = "alle_keys_loeschen_frage_de.html"
+              #else:               naechse_seite = "alle_keys_loeschen_frage_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_keys_loeschen_frage.html")
               self.response.out.write(template.render(path,template_values))
 
 
