@@ -1745,6 +1745,8 @@ class Keys(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Wurde ein neuer Schlüssel angelegt?
         neu = self.request.get('neu')
         # Name des neuen Schlüssels
@@ -1758,125 +1760,124 @@ class Keys(webapp.RequestHandler):
         #Content-disposition: attachment; filename="fname.ext"
 
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich angelegt</font>'
-                  # <br><a href="Hier">Hier</a> k&ouml;nnen Sie den Geheimen Schl&uuml;ssel herunterladen
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was created successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new keypair had characters that are not allowed</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new keypair, an error occured</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A keypair with the given name already exists</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was erased successfully</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the keypair, an error occured</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich angelegt</font>'
+              # <br><a href="Hier">Hier</a> k&ouml;nnen Sie den Geheimen Schl&uuml;ssel herunterladen
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was created successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new keypair had characters that are not allowed</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new keypair, an error occured</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A keypair with the given name already exists</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was erased successfully</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the keypair, an error occured</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          else:
+            input_error_message = ""
+
+          try:
+            # Liste mit den Keys
+            liste_key_pairs = conn_region.get_all_key_pairs()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              keytabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              keytabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              keytabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              keytabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
+
+            if laenge_liste_keys == 0:
+              keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
+            else:
+              keytabelle = ''
+              keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              keytabelle = keytabelle + '<tr>'
+              keytabelle = keytabelle + '<th>&nbsp;</th>'
+              keytabelle = keytabelle + '<th align="center">Name</th>'
+              if sprache == "de":
+                keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
               else:
-                input_error_message = ""
-
-              try:
-                # Liste mit den Keys
-                liste_key_pairs = conn_region.get_all_key_pairs()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  keytabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  keytabelle = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  keytabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  keytabelle = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
-
-                if laenge_liste_keys == 0:
-                  keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
-                else:
-                  keytabelle = ''
-                  keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
+              keytabelle = keytabelle + '</tr>'
+              for i in range(laenge_liste_keys):
                   keytabelle = keytabelle + '<tr>'
-                  keytabelle = keytabelle + '<th>&nbsp;</th>'
-                  keytabelle = keytabelle + '<th align="center">Name</th>'
-                  if sprache == "de":
-                    keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
-                  else:
-                    keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
+                  keytabelle = keytabelle + '<td>'
+                  keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
+                  keytabelle = keytabelle + liste_key_pairs[i].name
+                  keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
+                  keytabelle = keytabelle + '</td>'
+                  keytabelle = keytabelle + '<td>'
+                  keytabelle = keytabelle + '<tt>'
+                  keytabelle = keytabelle + liste_key_pairs[i].name
+                  keytabelle = keytabelle + '</tt>'
+                  keytabelle = keytabelle + '</td><td>'
+                  keytabelle = keytabelle + '<tt>'
+                  keytabelle = keytabelle + liste_key_pairs[i].fingerprint
+                  keytabelle = keytabelle + '</tt>'
+                  keytabelle = keytabelle + '</td>'
                   keytabelle = keytabelle + '</tr>'
-                  for i in range(laenge_liste_keys):
-                      keytabelle = keytabelle + '<tr>'
-                      keytabelle = keytabelle + '<td>'
-                      keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
-                      keytabelle = keytabelle + liste_key_pairs[i].name
-                      keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
-                      keytabelle = keytabelle + '</td>'
-                      keytabelle = keytabelle + '<td>'
-                      keytabelle = keytabelle + '<tt>'
-                      keytabelle = keytabelle + liste_key_pairs[i].name
-                      keytabelle = keytabelle + '</tt>'
-                      keytabelle = keytabelle + '</td><td>'
-                      keytabelle = keytabelle + '<tt>'
-                      keytabelle = keytabelle + liste_key_pairs[i].fingerprint
-                      keytabelle = keytabelle + '</tt>'
-                      keytabelle = keytabelle + '</td>'
-                      keytabelle = keytabelle + '</tr>'
-                  keytabelle = keytabelle + '</table>'
-  
-                if neu == "ja":
-                  secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
-                  secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
-                  bodycommand = ' onLoad="newkey()" '
-                  secretkey = "test"
-                  javascript_funktion = '''<SCRIPT LANGUAGE="JavaScript">
+              keytabelle = keytabelle + '</table>'
+
+            if neu == "ja":
+              secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
+              secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
+              bodycommand = ' onLoad="newkey()" '
+              secretkey = "test"
+              javascript_funktion = '''<SCRIPT LANGUAGE="JavaScript">
   function newkey()
   {
   OpenWindow=window.open("", "newwin", "height=600, width=600,toolbar=no,scrollbars="+scroll+",menubar=no");
@@ -1885,55 +1886,53 @@ class Keys(webapp.RequestHandler):
   OpenWindow.document.write("<h1>Secret Key</h1>")
   OpenWindow.document.write("<P></P>")
   OpenWindow.document.write("<tt>'''
-                  javascript_funktion = javascript_funktion + secretkey_memcache
-                  if sprache == "de":
-                    javascript_funktion = javascript_funktion + '''</tt>")
-                    OpenWindow.document.write("<P></P>")
-                    OpenWindow.document.write("<B>Achtung!</B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
-                    OpenWindow.document.write("Am besten in einer Datei <tt>'''
-                  else:
-                    javascript_funktion = javascript_funktion + '''</tt>")
-                    OpenWindow.document.write("<P></P>")
-                    OpenWindow.document.write("<B>Attention!</B> The secret key need to be saved.<BR>")
-                    OpenWindow.document.write("As an advise use the filename <tt>'''
-                  javascript_funktion = javascript_funktion + neuerkeyname
-                  javascript_funktion = javascript_funktion + '''.secret</tt>.")
-                  OpenWindow.document.write("<P></P>")
-                  OpenWindow.document.write("<tt>chmod 600 '''
-                  javascript_funktion = javascript_funktion + neuerkeyname
-                  javascript_funktion = javascript_funktion + '''.secret</tt>")
+              javascript_funktion = javascript_funktion + secretkey_memcache
+              if sprache == "de":
+                javascript_funktion = javascript_funktion + '''</tt>")
+                OpenWindow.document.write("<P></P>")
+                OpenWindow.document.write("<B>Achtung!</B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
+                OpenWindow.document.write("Am besten in einer Datei <tt>'''
+              else:
+                javascript_funktion = javascript_funktion + '''</tt>")
+                OpenWindow.document.write("<P></P>")
+                OpenWindow.document.write("<B>Attention!</B> The secret key need to be saved.<BR>")
+                OpenWindow.document.write("As an advise use the filename <tt>'''
+              javascript_funktion = javascript_funktion + neuerkeyname
+              javascript_funktion = javascript_funktion + '''.secret</tt>.")
+              OpenWindow.document.write("<P></P>")
+              OpenWindow.document.write("<tt>chmod 600 '''
+              javascript_funktion = javascript_funktion + neuerkeyname
+              javascript_funktion = javascript_funktion + '''.secret</tt>")
   OpenWindow.document.write("</BODY>")
   OpenWindow.document.write("</HTML>")
   OpenWindow.document.close()
   self.name="main"
   }
   </SCRIPT>'''
-                else:
-                  bodycommand = " "
-                  javascript_funktion = " "
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'keytabelle': keytabelle,
-                'bodycommand': bodycommand,
-                'javascript_funktion': javascript_funktion,
-                'zonen_liste': zonen_liste,
-                'input_error_message': input_error_message,
-                }
-
-                #if sprache == "de": naechse_seite = "keys_de.html"
-                #else:               naechse_seite = "keys_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "keys.html")
-                self.response.out.write(template.render(path,template_values))
             else:
-              self.redirect('/')
+              bodycommand = " "
+              javascript_funktion = " "
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'keytabelle': keytabelle,
+            'bodycommand': bodycommand,
+            'javascript_funktion': javascript_funktion,
+            'zonen_liste': zonen_liste,
+            'input_error_message': input_error_message,
+            }
+
+            #if sprache == "de": naechse_seite = "keys_de.html"
+            #else:               naechse_seite = "keys_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "keys.html")
+            self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
 
 
 class CreateLoadBalancer(webapp.RequestHandler):
@@ -1941,179 +1940,178 @@ class CreateLoadBalancer(webapp.RequestHandler):
         #self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
 
-        if users.get_current_user():
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-          # Nachsehen, ob eine Region/Zone ausgewählte wurde
-          aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-          results = aktivezone.fetch(100)
+        sprache = aktuelle_sprache(username)
+        navigations_bar = navigations_bar_funktion(sprache)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-          if not results:
-            regionname = 'keine'
-            zone_amazon = ""
-          else:
-            conn_region, regionname = login(username)
-            zone_amazon = amazon_region(username)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The name cannot contain characters that are not letters, or digits or the dash</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port given</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen EC2 Instanz Port angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No EC2 instance port given</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port and no EC2 instance port given</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port enthielt unerlaubt Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The load balancer port hat characters that are not allowed</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 Instanz Port enthielt unerlaubt Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The EC2 instance port hat characters that are not allowed</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu erzeugen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the load balancer, an error occured</font>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Verf&uuml;gbarkeitszone angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No availability zone given</font>'
-          elif message == "11":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">Load balancer port must be either 80, 443 or 1024-65535 inclusive</font>'
-          elif message == "12":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 instance port muss kleiner gleich 65535 sein</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">EC2 instance port must less than or equal to 65535</font>'
-          else:
-            input_error_message = ''
-
-          try:
-            # Liste mit den Zonen
-            liste_zonen = conn_region.get_all_zones()
-          except EC2ResponseError:
-            # Wenn es nicht geklappt hat...
-            fehlermeldung = "3"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "2"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_zonen = len(liste_zonen)
-
-          elb_erzeugen_tabelle = ''
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Name</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="elb_name" type="text" size="40" maxlength="40"></td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
-          else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
-          for i in range(laenge_liste_zonen):
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
-          else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<select name="elb_protokoll" size="1">\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option selected="selected">TCP</option>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option>HTTP</option>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</select>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Load Balancer Port</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="ELBPort" type="text" size="10" maxlength="10"></td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
-          else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-
-
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + ''
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-          if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
-          else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</table>'
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</form>'
-
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'elb_erzeugen_tabelle': elb_erzeugen_tabelle,
-          'input_error_message': input_error_message,
-          'zonen_liste': zonen_liste,
-          }
-
-          #if sprache == "de": naechse_seite = "elb_create_de.html"
-          #else:               naechse_seite = "elb_create_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "elb_create.html")
-          self.response.out.write(template.render(path,template_values))
+        if not results:
+          regionname = 'keine'
+          zone_amazon = ""
         else:
-          self.redirect('/')
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+        url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+        url_linktext = 'Logout'
+
+        zonen_liste = zonen_liste_funktion(username,sprache)
+
+        if message == "1":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
+        elif message == "2":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The name cannot contain characters that are not letters, or digits or the dash</font>'
+        elif message == "3":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port given</font>'
+        elif message == "4":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen EC2 Instanz Port angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">No EC2 instance port given</font>'
+        elif message == "5":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port and no EC2 instance port given</font>'
+        elif message == "6":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port enthielt unerlaubt Zeichen</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The load balancer port hat characters that are not allowed</font>'
+        elif message == "7":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 Instanz Port enthielt unerlaubt Zeichen</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The EC2 instance port hat characters that are not allowed</font>'
+        elif message == "8":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu erzeugen, kam es zu einem Fehler</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the load balancer, an error occured</font>'
+        elif message == "9":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+        elif message == "10":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Verf&uuml;gbarkeitszone angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">No availability zone given</font>'
+        elif message == "11":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">Load balancer port must be either 80, 443 or 1024-65535 inclusive</font>'
+        elif message == "12":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 instance port muss kleiner gleich 65535 sein</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">EC2 instance port must less than or equal to 65535</font>'
+        else:
+          input_error_message = ''
+
+        try:
+          # Liste mit den Zonen
+          liste_zonen = conn_region.get_all_zones()
+        except EC2ResponseError:
+          # Wenn es nicht geklappt hat...
+          fehlermeldung = "3"
+          self.redirect('/loadbalancer?message='+fehlermeldung)
+        except DownloadError:
+          # Diese Exception hilft gegen diese beiden Fehler:
+          # DownloadError: ApplicationError: 2 timed out
+          # DownloadError: ApplicationError: 5
+          fehlermeldung = "2"
+          self.redirect('/loadbalancer?message='+fehlermeldung)
+        else:
+          # Wenn es geklappt hat...
+          # Anzahl der Elemente in der Liste
+          laenge_liste_zonen = len(liste_zonen)
+
+        elb_erzeugen_tabelle = ''
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Name</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="elb_name" type="text" size="40" maxlength="40"></td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        if sprache == "de":
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
+        else:
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
+        for i in range(laenge_liste_zonen):
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        if sprache == "de":
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
+        else:
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<select name="elb_protokoll" size="1">\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option selected="selected">TCP</option>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option>HTTP</option>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</select>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Load Balancer Port</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="ELBPort" type="text" size="10" maxlength="10"></td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        if sprache == "de":
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
+        else:
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+
+
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + ''
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+        if sprache == "de":
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
+        else:
+          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</table>'
+        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</form>'
+
+
+        template_values = {
+        'navigations_bar': navigations_bar,
+        'url': url,
+        'url_linktext': url_linktext,
+        'zone': regionname,
+        'zone_amazon': zone_amazon,
+        'elb_erzeugen_tabelle': elb_erzeugen_tabelle,
+        'input_error_message': input_error_message,
+        'zonen_liste': zonen_liste,
+        }
+
+        #if sprache == "de": naechse_seite = "elb_create_de.html"
+        #else:               naechse_seite = "elb_create_en.html"
+        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "elb_create.html")
+        self.response.out.write(template.render(path,template_values))
 
 
 class CreateLoadBalancerWirklich(webapp.RequestHandler):
@@ -2299,221 +2297,218 @@ class LoadBalancer(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-            
-            for db_eintrag in aktivezone:
-              zugangstyp = db_eintrag.zugangstyp
-              
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')  
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
+        for db_eintrag in aktivezone:
+          zugangstyp = db_eintrag.zugangstyp
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')  
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
 
-              if zugangstyp != 'Amazon':
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'zonen_liste': zonen_liste,
-                }
-  
-                #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
-                #else:               naechse_seite = "loadbalancer_non_aws_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_non_aws.html")
-                self.response.out.write(template.render(path,template_values))
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          if zugangstyp != 'Amazon':
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            }
+
+            #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
+            #else:               naechse_seite = "loadbalancer_non_aws_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_non_aws.html")
+            self.response.out.write(template.render(path,template_values))
+          else:
+
+            if message == "0":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich gel&ouml;scht</font>'
               else:
-
-                if message == "0":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich gel&ouml;scht</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was deleted successfully</font>'
-                elif message == "1":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu l&ouml;schen, kam es zu einem Fehler</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to delete the load balancer, an error occured</font>'
-                elif message == "2":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-                elif message == "3":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-                elif message == "4":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich angelegt</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was created successfully</font>'
-                elif message == "5":
-                  if sprache == "de":
-                    input_error_message = '<p>&nbsp;</p> <font color="green">Es ist ein Timeout-Fehler aufgetreten</font>'
-                  else:
-                    input_error_message = '<p>&nbsp;</p> <font color="green">A timeout error occured</font>'
-                else:
-                  input_error_message = ""
-
-                # Mit ELB verbinden
-                conn_elb = loginselb(username)
-
-                try:
-                  # Liste mit den LoadBalancern
-                  liste_load_balancers = conn_elb.get_all_load_balancers()
-                except EC2ResponseError:
-                  # Wenn es nicht klappt...
-                  if sprache == "de":
-                    loadbalancertabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                  else:
-                    loadbalancertabelle = '<font color="red">An error occured</font>'
-                except DownloadError:
-                  # Diese Exception hilft gegen diese beiden Fehler:
-                  # DownloadError: ApplicationError: 2 timed out
-                  # DownloadError: ApplicationError: 5
-                  if sprache == "de":
-                    loadbalancertabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                  else:
-                    loadbalancertabelle = '<font color="red">A timeout error occured</font>'
-                else:
-                  # Wenn es geklappt hat...
-
-                  # Anzahl der Elemente in der Liste
-                  laenge_liste_load_balancers = len(liste_load_balancers)
-
-                  if laenge_liste_load_balancers == 0:
-                    if sprache == "de":
-                      loadbalancertabelle = 'Es sind keine Load Balancer in der Region vorhanden.'
-                    else:
-                      loadbalancertabelle = 'No load balancer exist inside this region.'
-                  else:
-                    loadbalancertabelle = ''
-                    loadbalancertabelle = loadbalancertabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                    loadbalancertabelle = loadbalancertabelle + '<tr>'
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">&nbsp;</th>'
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Name</th>'
-                    loadbalancertabelle = loadbalancertabelle + '<th>&nbsp;</th>'
-                    if sprache == "de":
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Instanzen</th>'
-                    else:
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Instances</th>'
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">DNS Name</th>'
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Ports</th>'
-                    if sprache == "de":
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Zonen</th>'
-                    else:
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Zones</th>'
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Health Check</th>'
-                    if sprache == "de":
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Datum der Erzeugung</th>'
-                    else:
-                      loadbalancertabelle = loadbalancertabelle + '<th align="center">Creation Date</th>'
-                    loadbalancertabelle = loadbalancertabelle + '</tr>'
-                    for i in range(laenge_liste_load_balancers):
-                        loadbalancertabelle = loadbalancertabelle + '<tr>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<a href="/delete_load_balancer?name='
-                        loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                        if sprache == "de":
-                          loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer l&ouml;schen">'
-                          loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
-                        else:
-                          loadbalancertabelle = loadbalancertabelle + '" title="delete load balancer">'
-                          loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<a href="/loadbalanceraendern?name='
-                        loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                        if sprache == "de":
-                          loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
-                        else:
-                          loadbalancertabelle = loadbalancertabelle + '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td align="center">'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        loadbalancertabelle = loadbalancertabelle + str(len(liste_load_balancers[i].instances))
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].dns_name
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        for x in range(len(liste_load_balancers[i].listeners)):
-                          loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].listeners[x])
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        for x in range(len(liste_load_balancers[i].availability_zones)):
-                          loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].availability_zones[x])
-                          loadbalancertabelle = loadbalancertabelle + '&nbsp;'
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
-                        loadbalancertabelle = loadbalancertabelle + health_check_final
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '<td>'
-                        loadbalancertabelle = loadbalancertabelle + '<tt>'
-                        datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
-                        loadbalancertabelle = loadbalancertabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                        loadbalancertabelle = loadbalancertabelle + '</tt>'
-                        loadbalancertabelle = loadbalancertabelle + '</td>'
-                        loadbalancertabelle = loadbalancertabelle + '</tr>'
-                    loadbalancertabelle = loadbalancertabelle + '</table>'
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'loadbalancertabelle': loadbalancertabelle,
-                'zonen_liste': zonen_liste,
-                'input_error_message': input_error_message,
-                }
-
-                #if sprache == "de": naechse_seite = "loadbalancer_de.html"
-                #else:               naechse_seite = "loadbalancer_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer.html")
-                self.response.out.write(template.render(path,template_values))
+                input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was deleted successfully</font>'
+            elif message == "1":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu l&ouml;schen, kam es zu einem Fehler</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to delete the load balancer, an error occured</font>'
+            elif message == "2":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+            elif message == "3":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
+            elif message == "4":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich angelegt</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was created successfully</font>'
+            elif message == "5":
+              if sprache == "de":
+                input_error_message = '<p>&nbsp;</p> <font color="green">Es ist ein Timeout-Fehler aufgetreten</font>'
+              else:
+                input_error_message = '<p>&nbsp;</p> <font color="green">A timeout error occured</font>'
             else:
-              self.redirect('/')
+              input_error_message = ""
+
+            # Mit ELB verbinden
+            conn_elb = loginselb(username)
+
+            try:
+              # Liste mit den LoadBalancern
+              liste_load_balancers = conn_elb.get_all_load_balancers()
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
+              if sprache == "de":
+                loadbalancertabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+              else:
+                loadbalancertabelle = '<font color="red">An error occured</font>'
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              if sprache == "de":
+                loadbalancertabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+              else:
+                loadbalancertabelle = '<font color="red">A timeout error occured</font>'
+            else:
+              # Wenn es geklappt hat...
+
+              # Anzahl der Elemente in der Liste
+              laenge_liste_load_balancers = len(liste_load_balancers)
+
+              if laenge_liste_load_balancers == 0:
+                if sprache == "de":
+                  loadbalancertabelle = 'Es sind keine Load Balancer in der Region vorhanden.'
+                else:
+                  loadbalancertabelle = 'No load balancer exist inside this region.'
+              else:
+                loadbalancertabelle = ''
+                loadbalancertabelle = loadbalancertabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                loadbalancertabelle = loadbalancertabelle + '<tr>'
+                loadbalancertabelle = loadbalancertabelle + '<th align="center">&nbsp;</th>'
+                loadbalancertabelle = loadbalancertabelle + '<th align="center">Name</th>'
+                loadbalancertabelle = loadbalancertabelle + '<th>&nbsp;</th>'
+                if sprache == "de":
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instanzen</th>'
+                else:
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instances</th>'
+                loadbalancertabelle = loadbalancertabelle + '<th align="center">DNS Name</th>'
+                loadbalancertabelle = loadbalancertabelle + '<th align="center">Ports</th>'
+                if sprache == "de":
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zonen</th>'
+                else:
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zones</th>'
+                loadbalancertabelle = loadbalancertabelle + '<th align="center">Health Check</th>'
+                if sprache == "de":
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Datum der Erzeugung</th>'
+                else:
+                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Creation Date</th>'
+                loadbalancertabelle = loadbalancertabelle + '</tr>'
+                for i in range(laenge_liste_load_balancers):
+                    loadbalancertabelle = loadbalancertabelle + '<tr>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<a href="/delete_load_balancer?name='
+                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+                    if sprache == "de":
+                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer l&ouml;schen">'
+                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
+                    else:
+                      loadbalancertabelle = loadbalancertabelle + '" title="delete load balancer">'
+                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<a href="/loadbalanceraendern?name='
+                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+                    if sprache == "de":
+                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
+                    else:
+                      loadbalancertabelle = loadbalancertabelle + '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td align="center">'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    loadbalancertabelle = loadbalancertabelle + str(len(liste_load_balancers[i].instances))
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].dns_name
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    for x in range(len(liste_load_balancers[i].listeners)):
+                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].listeners[x])
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    for x in range(len(liste_load_balancers[i].availability_zones)):
+                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].availability_zones[x])
+                      loadbalancertabelle = loadbalancertabelle + '&nbsp;'
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
+                    loadbalancertabelle = loadbalancertabelle + health_check_final
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '<td>'
+                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+                    datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
+                    loadbalancertabelle = loadbalancertabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+                    loadbalancertabelle = loadbalancertabelle + '</td>'
+                    loadbalancertabelle = loadbalancertabelle + '</tr>'
+                loadbalancertabelle = loadbalancertabelle + '</table>'
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'loadbalancertabelle': loadbalancertabelle,
+            'zonen_liste': zonen_liste,
+            'input_error_message': input_error_message,
+            }
+
+            #if sprache == "de": naechse_seite = "loadbalancer_de.html"
+            #else:               naechse_seite = "loadbalancer_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer.html")
+            self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
-
-
+          self.redirect('/')
 
 class LoadBalancer_Aendern(webapp.RequestHandler):
     def get(self):
@@ -2523,329 +2518,326 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
         loadbalancer_name = self.request.get('name')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The instance was attached to the load balancer successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the instance to the load balancer, an error occured</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich deregistriert</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The instance was deregistered successfully</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz zu deregistrieren kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the instance, an error occured</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone zu deregistrieren kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the zone, an error occured</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich deregistriert</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The zone was deregistered successfully</font>'
+          elif message == "9":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es muss mindestens eine Zone registriert sein</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">It is impossible to deregister all zones</font>'
+          elif message == "10":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The zone was attached to the load balancer successfully</font>'
+          elif message == "11":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the zone to the load balancer, an error occured</font>'
+          else:
+            input_error_message = ""
+
+          try:
+            # Liste mit den Instanzen
+            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+            # gibt es eine Fehlermeldung
+            liste_reservations = conn_region.get_all_instances()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            fehlermeldung = "3"
+            self.redirect('/loadbalancer?message='+fehlermeldung)
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "5"
+            self.redirect('/loadbalancer?message='+fehlermeldung)
+          else:
+            # Wenn es geklappt hat und die Liste geholt wurde...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_reservations = len(liste_reservations)
+
+            if laenge_liste_reservations == "0":
+              # Wenn es keine laufenden Instanzen gibt
+              instanzen_in_region = 0
+            else:
+              # Wenn es laufenden Instanzen gibt
+              instanzen_in_region = 0
+              for i in liste_reservations:
+                for x in i.instances:
+                  # Für jede Instanz wird geschaut...
+                  # ...ob die Instanz in der Region des Volumes liegt und läuft
+                  if x.state == u'running':
+                    instanzen_in_region = instanzen_in_region + 1
+
+            # Mit ELB verbinden
+            conn_elb = loginselb(username)
+
+            try:
+              # Liste mit den LoadBalancern
+              liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
+              fehlermeldung = "3"
+              self.redirect('/loadbalancer?message='+fehlermeldung)
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              fehlermeldung = "5"
+              self.redirect('/loadbalancer?message='+fehlermeldung)
+            else:
+              # Wenn es geklappt hat...
+
+              tabelle_instanz_anhaengen = ''
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/loadbalancer_instanz_zuordnen?loadbalancer='
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">\n'
+
+              # Wenn dem Load Balancer noch keine Instanzen zugewiesen wurden...
+              if len(liste_load_balancers[0].instances) == 0:
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
                 if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Dem Load Balancer wurden noch keine Instanzen zugewiesen'
                 else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The instance was attached to the load balancer successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the instance to the load balancer, an error occured</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich deregistriert</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The instance was deregistered successfully</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz zu deregistrieren kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the instance, an error occured</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone zu deregistrieren kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the zone, an error occured</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich deregistriert</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The zone was deregistered successfully</font>'
-              elif message == "9":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es muss mindestens eine Zone registriert sein</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">It is impossible to deregister all zones</font>'
-              elif message == "10":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The zone was attached to the load balancer successfully</font>'
-              elif message == "11":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the zone to the load balancer, an error occured</font>'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'This load balancer is not asigned with any instances'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+              # Wenn dem Load Balancer schon Instanzen zugewiesen wurden...
               else:
-                input_error_message = ""
+                for z in range(len(liste_load_balancers[0].instances)):
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<a href="/loadbalancer_deregister_instance?loadbalancer='
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '&amp;instanz='
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
+                  if sprache == "de":
+                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="Instanz deregistrieren">'
+                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz deregistrieren"></a>'
+                  else:
+                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="deregister instance">'
+                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister instance"></a>'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tt>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tt>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+              # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
+              # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
+              if len(liste_load_balancers[0].instances) != 0:
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>&nbsp;</td>\n'
+
+              if instanzen_in_region == 0:
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center" colspan="2">\n'
+                if sprache == "de":
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanzen'
+                else:
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have no instances'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+              else:
+                if instanzen_in_region > 0:
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">\n'
+                  for i in liste_reservations:
+                    for x in i.instances:
+                      if x.state == u'running':
+                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
+                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
+                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>\n'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>\n'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
+                if sprache == "de":
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
+                else:
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
+
 
               try:
-                # Liste mit den Instanzen
-                # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-                # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-                # gibt es eine Fehlermeldung
-                liste_reservations = conn_region.get_all_instances()
+                # Liste mit den Zonen
+                liste_zonen = conn_region.get_all_zones()
               except EC2ResponseError:
-                # Wenn es nicht klappt...
-                fehlermeldung = "3"
-                self.redirect('/loadbalancer?message='+fehlermeldung)
+                # Wenn es nicht geklappt hat...
+                if sprache == "de":
+                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+                else:
+                  tabelle_zonen_aendern = '<font color="red">An error occured</font>'
               except DownloadError:
                 # Diese Exception hilft gegen diese beiden Fehler:
                 # DownloadError: ApplicationError: 2 timed out
                 # DownloadError: ApplicationError: 5
-                fehlermeldung = "5"
-                self.redirect('/loadbalancer?message='+fehlermeldung)
+                if sprache == "de":
+                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+                else:
+                  tabelle_zonen_aendern = '<font color="red">A timeout error occured</font>'
               else:
-                # Wenn es geklappt hat und die Liste geholt wurde...
+                # Wenn es geklappt hat...
                 # Anzahl der Elemente in der Liste
-                laenge_liste_reservations = len(liste_reservations)
+                laenge_liste_zonen = len(liste_zonen)
 
-                if laenge_liste_reservations == "0":
-                  # Wenn es keine laufenden Instanzen gibt
-                  instanzen_in_region = 0
-                else:
-                  # Wenn es laufenden Instanzen gibt
-                  instanzen_in_region = 0
-                  for i in liste_reservations:
-                    for x in i.instances:
-                      # Für jede Instanz wird geschaut...
-                      # ...ob die Instanz in der Region des Volumes liegt und läuft
-                      if x.state == u'running':
-                        instanzen_in_region = instanzen_in_region + 1
+                tabelle_zonen_aendern = ''
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<form action="/loadbalancer_zone_zuordnen?loadbalancer='
+                tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '" method="post" accept-charset="utf-8">'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="3" cellspacing="0" cellpadding="5">\n'
 
-                # Mit ELB verbinden
-                conn_elb = loginselb(username)
-
-                try:
-                  # Liste mit den LoadBalancern
-                  liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
-                except EC2ResponseError:
-                  # Wenn es nicht klappt...
-                  fehlermeldung = "3"
-                  self.redirect('/loadbalancer?message='+fehlermeldung)
-                except DownloadError:
-                  # Diese Exception hilft gegen diese beiden Fehler:
-                  # DownloadError: ApplicationError: 2 timed out
-                  # DownloadError: ApplicationError: 5
-                  fehlermeldung = "5"
-                  self.redirect('/loadbalancer?message='+fehlermeldung)
-                else:
-                  # Wenn es geklappt hat...
-
-                  tabelle_instanz_anhaengen = ''
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/loadbalancer_instanz_zuordnen?loadbalancer='
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">\n'
-
-                  # Wenn dem Load Balancer noch keine Instanzen zugewiesen wurden...
-                  if len(liste_load_balancers[0].instances) == 0:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
-                    if sprache == "de":
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Dem Load Balancer wurden noch keine Instanzen zugewiesen'
-                    else:
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'This load balancer is not asigned with any instances'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-                  # Wenn dem Load Balancer schon Instanzen zugewiesen wurden...
-                  else:
-                    for z in range(len(liste_load_balancers[0].instances)):
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<a href="/loadbalancer_deregister_instance?loadbalancer='
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '&amp;instanz='
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
-                      if sprache == "de":
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="Instanz deregistrieren">'
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz deregistrieren"></a>'
-                      else:
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="deregister instance">'
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister instance"></a>'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tt>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tt>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-                  # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
-                  # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
-                  if len(liste_load_balancers[0].instances) != 0:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>&nbsp;</td>\n'
-
-                  if instanzen_in_region == 0:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center" colspan="2">\n'
-                    if sprache == "de":
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanzen'
-                    else:
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have no instances'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                  else:
-                    if instanzen_in_region > 0:
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">\n'
-                      for i in liste_reservations:
-                        for x in i.instances:
-                          if x.state == u'running':
-                            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
-                            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
-                            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>\n'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>\n'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
-                    if sprache == "de":
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
-                    else:
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
-
-
-                  try:
-                    # Liste mit den Zonen
-                    liste_zonen = conn_region.get_all_zones()
-                  except EC2ResponseError:
-                    # Wenn es nicht geklappt hat...
-                    if sprache == "de":
-                      tabelle_zonen_aendern = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                    else:
-                      tabelle_zonen_aendern = '<font color="red">An error occured</font>'
-                  except DownloadError:
-                    # Diese Exception hilft gegen diese beiden Fehler:
-                    # DownloadError: ApplicationError: 2 timed out
-                    # DownloadError: ApplicationError: 5
-                    if sprache == "de":
-                      tabelle_zonen_aendern = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                    else:
-                      tabelle_zonen_aendern = '<font color="red">A timeout error occured</font>'
-                  else:
-                    # Wenn es geklappt hat...
-                    # Anzahl der Elemente in der Liste
-                    laenge_liste_zonen = len(liste_zonen)
-
-                    tabelle_zonen_aendern = ''
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<form action="/loadbalancer_zone_zuordnen?loadbalancer='
+                for z in range(len(liste_load_balancers[0].availability_zones)):
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>\n'
+                  # Wenn dem Load Balancer nur eine Zone zugewiesen ist...
+                  if len(liste_load_balancers[0].availability_zones) == 1:
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
                     tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '" method="post" accept-charset="utf-8">'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="3" cellspacing="0" cellpadding="5">\n'
-
-                    for z in range(len(liste_load_balancers[0].availability_zones)):
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>\n'
-                      # Wenn dem Load Balancer nur eine Zone zugewiesen ist...
-                      if len(liste_load_balancers[0].availability_zones) == 1:
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=9'
-                        if sprache == "de":
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
-                        else:
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
-                      # Wenn dem Load Balancer mehr als nur eine Zone zugewiesen ist...
-                      else:
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalancer_deregister_zone?loadbalancer='
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;zone='
-                        tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
-                        if sprache == "de":
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
-                        else:
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
-                          tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<td colspan="2">\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<tt>\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '</tt>\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
-                    # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
-                    # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
-                    if len(liste_load_balancers[0].availability_zones) != 0:
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>&nbsp;</td>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<select name="zonen" size="1">\n'
-                    for i in range(laenge_liste_zonen):
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<option>'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + liste_zonen[i].name
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '</option>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</select>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=9'
                     if sprache == "de":
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="verkn&uuml;pfen">'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
                     else:
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="associate">'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</table>\n'
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
+                  # Wenn dem Load Balancer mehr als nur eine Zone zugewiesen ist...
+                  else:
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalancer_deregister_zone?loadbalancer='
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;zone='
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
+                    if sprache == "de":
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
+                    else:
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
+                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td colspan="2">\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tt>\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tt>\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
+                # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
+                # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
+                if len(liste_load_balancers[0].availability_zones) != 0:
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>&nbsp;</td>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<select name="zonen" size="1">\n'
+                for i in range(laenge_liste_zonen):
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<option>'
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_zonen[i].name
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</option>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</select>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
+                if sprache == "de":
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="verkn&uuml;pfen">'
+                else:
+                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="associate">'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</table>\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
 
 
-                  template_values = {
-                  'navigations_bar': navigations_bar,
-                  'url': url,
-                  'url_linktext': url_linktext,
-                  'zone': regionname,
-                  'zone_amazon': zone_amazon,
-                  'zonen_liste': zonen_liste,
-                  'load_balancer_name': loadbalancer_name,
-                  'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
-                  'tabelle_zonen_aendern': tabelle_zonen_aendern,
-                  'input_error_message': input_error_message,
-                  }
+              template_values = {
+              'navigations_bar': navigations_bar,
+              'url': url,
+              'url_linktext': url_linktext,
+              'zone': regionname,
+              'zone_amazon': zone_amazon,
+              'zonen_liste': zonen_liste,
+              'load_balancer_name': loadbalancer_name,
+              'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
+              'tabelle_zonen_aendern': tabelle_zonen_aendern,
+              'input_error_message': input_error_message,
+              }
 
-                  #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
-                  #else:               naechse_seite = "loadbalancer_change_en.html"
-                  #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                  path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_change.html")
-                  self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
+              #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
+              #else:               naechse_seite = "loadbalancer_change_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_change.html")
+              self.response.out.write(template.render(path,template_values))
         else:
-            #url = users.create_login_url(self.request.uri)
-            #url_linktext = 'Login'
-            self.redirect('/')
+          self.redirect('/')
 
 class LoadBalancer_Instanz_Zuordnen(webapp.RequestHandler):
     def post(self):
@@ -2998,197 +2990,196 @@ class Elastic_IPs(webapp.RequestHandler):
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              # So ist der HTML-Code korrekt
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              # So ist der HTML-Code nicht korrekt
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
+          # So ist der HTML-Code korrekt
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          # So ist der HTML-Code nicht korrekt
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The IP was attached to the instance successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP mit der Instanz zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the IP to the instance, an error occured</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP von der Instanz zu l&oumlsen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to detach the IP from the instance, an error occured</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich von der Instanz gel&ouml;st</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The IP was detached from the instance successfully</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP freizugeben, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to release, an error occured</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich freigegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The IP was released successfully</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch eine IP zu erzeugen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to allocate an elastic IP, an error occured</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Es wurde eine IP erzeugt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">An IP was allocated successfully</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-              elif message == "9":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
-              elif message == "10":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-              else:
-                input_error_message = ""
-
-
-              try:
-                # Liste mit den Adressen
-                liste_adressen = conn_region.get_all_addresses()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  adressentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  adressentabelle = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  adressentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  adressentabelle = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_adressen = len(liste_adressen)
-
-                if laenge_liste_adressen == 0:
-                  if sprache == "de":
-                    adressentabelle = 'Es sind keine elastischen IPs in der Region vorhanden.'
-                  else:
-                    adressentabelle = 'No elastic IPs exist inside this region.'
-                else:
-                  adressentabelle = ''
-                  adressentabelle = adressentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  adressentabelle = adressentabelle + '<tr>'
-                  adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-                  if sprache == "de":
-                    adressentabelle = adressentabelle + '<th align="center">Adresse</th>'
-                  else:
-                    adressentabelle = adressentabelle + '<th align="center">Address</th>'
-                  if sprache == "de":
-                    adressentabelle = adressentabelle + '<th align="center">Instanz ID</th>'
-                  else:
-                    adressentabelle = adressentabelle + '<th align="center">Instance ID</th>'
-                  adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-                  adressentabelle = adressentabelle + '</tr>'
-                  for i in range(laenge_liste_adressen):
-                      adressentabelle = adressentabelle + '<tr>'
-                      adressentabelle = adressentabelle + '<td>'
-                      adressentabelle = adressentabelle + '<a href="/release_address?address='
-                      adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                      if sprache == "de":
-                        adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
-                        adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
-                      else:
-                        adressentabelle = adressentabelle + '" title="release elastic IP">'
-                        adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
-                      adressentabelle = adressentabelle + '</td>'
-                      adressentabelle = adressentabelle + '<td>'
-                      adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                      adressentabelle = adressentabelle + '</td>'
-                      adressentabelle = adressentabelle + '<td>'
-                      adressentabelle = adressentabelle + '<tt>'
-                      if liste_adressen[i].instance_id:
-                        adressentabelle = adressentabelle + liste_adressen[i].instance_id
-                      else:
-                        adressentabelle = adressentabelle + '&nbsp;'
-                      adressentabelle = adressentabelle + '</tt>'
-                      adressentabelle = adressentabelle + '</td>'
-                      adressentabelle = adressentabelle + '<td>'
-                      if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
-                        adressentabelle = adressentabelle + '<a href="/associate_address?address='
-                        adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                        if sprache == "de":
-                          adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
-                          adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
-                        else:
-                          adressentabelle = adressentabelle + '" title="associate elastic IP with instance">'
-                          adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
-                      else:
-                        adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
-                        adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                        if sprache == "de":
-                          adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
-                          adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
-                        else:
-                          adressentabelle = adressentabelle + '" title="disassociate elastic IP from instance">'
-                          adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
-                      adressentabelle = adressentabelle + '</td>'
-                      adressentabelle = adressentabelle + '</tr>'
-                  adressentabelle = adressentabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'adressentabelle': adressentabelle,
-              'zonen_liste': zonen_liste,
-              'input_error_message': input_error_message,
-              }
-
-              #if sprache == "de": naechse_seite = "adressen_de.html"
-              #else:               naechse_seite = "adressen_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "adressen.html")
-              self.response.out.write(template.render(path,template_values))
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft</font>'
             else:
-              self.redirect('/')
+              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was attached to the instance successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP mit der Instanz zu verkn&uuml;pfen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the IP to the instance, an error occured</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP von der Instanz zu l&oumlsen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to detach the IP from the instance, an error occured</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich von der Instanz gel&ouml;st</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was detached from the instance successfully</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP freizugeben, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to release, an error occured</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich freigegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was released successfully</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch eine IP zu erzeugen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to allocate an elastic IP, an error occured</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Es wurde eine IP erzeugt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">An IP was allocated successfully</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          elif message == "9":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
+          elif message == "10":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
+          else:
+            input_error_message = ""
+
+
+          try:
+            # Liste mit den Adressen
+            liste_adressen = conn_region.get_all_addresses()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              adressentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              adressentabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              adressentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              adressentabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_adressen = len(liste_adressen)
+
+            if laenge_liste_adressen == 0:
+              if sprache == "de":
+                adressentabelle = 'Es sind keine elastischen IPs in der Region vorhanden.'
+              else:
+                adressentabelle = 'No elastic IPs exist inside this region.'
+            else:
+              adressentabelle = ''
+              adressentabelle = adressentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              adressentabelle = adressentabelle + '<tr>'
+              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
+              if sprache == "de":
+                adressentabelle = adressentabelle + '<th align="center">Adresse</th>'
+              else:
+                adressentabelle = adressentabelle + '<th align="center">Address</th>'
+              if sprache == "de":
+                adressentabelle = adressentabelle + '<th align="center">Instanz ID</th>'
+              else:
+                adressentabelle = adressentabelle + '<th align="center">Instance ID</th>'
+              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
+              adressentabelle = adressentabelle + '</tr>'
+              for i in range(laenge_liste_adressen):
+                  adressentabelle = adressentabelle + '<tr>'
+                  adressentabelle = adressentabelle + '<td>'
+                  adressentabelle = adressentabelle + '<a href="/release_address?address='
+                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                  if sprache == "de":
+                    adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
+                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
+                  else:
+                    adressentabelle = adressentabelle + '" title="release elastic IP">'
+                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
+                  adressentabelle = adressentabelle + '</td>'
+                  adressentabelle = adressentabelle + '<td>'
+                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                  adressentabelle = adressentabelle + '</td>'
+                  adressentabelle = adressentabelle + '<td>'
+                  adressentabelle = adressentabelle + '<tt>'
+                  if liste_adressen[i].instance_id:
+                    adressentabelle = adressentabelle + liste_adressen[i].instance_id
+                  else:
+                    adressentabelle = adressentabelle + '&nbsp;'
+                  adressentabelle = adressentabelle + '</tt>'
+                  adressentabelle = adressentabelle + '</td>'
+                  adressentabelle = adressentabelle + '<td>'
+                  if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
+                    adressentabelle = adressentabelle + '<a href="/associate_address?address='
+                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                    if sprache == "de":
+                      adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
+                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                    else:
+                      adressentabelle = adressentabelle + '" title="associate elastic IP with instance">'
+                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                  else:
+                    adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
+                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                    if sprache == "de":
+                      adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
+                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                    else:
+                      adressentabelle = adressentabelle + '" title="disassociate elastic IP from instance">'
+                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                  adressentabelle = adressentabelle + '</td>'
+                  adressentabelle = adressentabelle + '</tr>'
+              adressentabelle = adressentabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'adressentabelle': adressentabelle,
+          'zonen_liste': zonen_liste,
+          'input_error_message': input_error_message,
+          }
+
+          #if sprache == "de": naechse_seite = "adressen_de.html"
+          #else:               naechse_seite = "adressen_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "adressen.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
 
 class Associate_IP(webapp.RequestHandler):
     def get(self):
@@ -3197,129 +3188,126 @@ class Associate_IP(webapp.RequestHandler):
         address = self.request.get('address')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              try:
-                # Liste mit den Instanzen
-                # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-                # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-                # gibt es eine Fehlermeldung
-                liste_reservations = conn_region.get_all_instances()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                fehlermeldung = "10"
-                self.redirect('/elastic_ips?message='+fehlermeldung)
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                fehlermeldung = "9"
-                self.redirect('/elastic_ips?message='+fehlermeldung)
-              else:
-                # Wenn es geklappt hat und die Liste geholt wurde...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_reservations = len(liste_reservations)
-
-                if laenge_liste_reservations == "0":
-                  # Wenn es keine laufenden Instanzen gibt
-                  instanzen_in_region = 0
-                else:
-                  # Wenn es laufenden Instanzen gibt
-                  instanzen_in_region = 0
-                  for i in liste_reservations:
-                    for x in i.instances:
-                      # Für jede Instanz wird geschaut...
-                      # ...ob die Instanz in der Region des Volumes liegt und läuft
-                      if x.state == u'running':
-                        instanzen_in_region = instanzen_in_region + 1
-
-                tabelle_instanz_anhaengen = ''
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/ip_definitiv_anhaengen?address='
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP-Adresse:</B></td>'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP Address:</B></td>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instances:</B></td>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
-                if instanzen_in_region == 0:
-                  if sprache == "de":
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanz'
-                  else:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have still no instance'
-                else:
-                  if instanzen_in_region > 0:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">'
-                    for i in liste_reservations:
-                      for x in i.instances:
-                        if x.state == u'running':
-                          tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
-                          tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
-                          tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<p>&nbsp;</p>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
-
-                template_values = {
-                'navigations_bar': navigations_bar,
-                'url': url,
-                'url_linktext': url_linktext,
-                'zone': regionname,
-                'zone_amazon': zone_amazon,
-                'zonen_liste': zonen_liste,
-                'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
-                }
-
-                #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
-                #else:               naechse_seite = "ip_anhaengen_en.html"
-                #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "ip_anhaengen.html")
-                self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
-            #url = users.create_login_url(self.request.uri)
-            #url_linktext = 'Login'
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          try:
+            # Liste mit den Instanzen
+            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+            # gibt es eine Fehlermeldung
+            liste_reservations = conn_region.get_all_instances()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            fehlermeldung = "10"
+            self.redirect('/elastic_ips?message='+fehlermeldung)
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "9"
+            self.redirect('/elastic_ips?message='+fehlermeldung)
+          else:
+            # Wenn es geklappt hat und die Liste geholt wurde...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_reservations = len(liste_reservations)
+
+            if laenge_liste_reservations == "0":
+              # Wenn es keine laufenden Instanzen gibt
+              instanzen_in_region = 0
+            else:
+              # Wenn es laufenden Instanzen gibt
+              instanzen_in_region = 0
+              for i in liste_reservations:
+                for x in i.instances:
+                  # Für jede Instanz wird geschaut...
+                  # ...ob die Instanz in der Region des Volumes liegt und läuft
+                  if x.state == u'running':
+                    instanzen_in_region = instanzen_in_region + 1
+
+            tabelle_instanz_anhaengen = ''
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/ip_definitiv_anhaengen?address='
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+            if sprache == "de":
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP-Adresse:</B></td>'
+            else:
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP Address:</B></td>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+            if sprache == "de":
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
+            else:
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instances:</B></td>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
+            if instanzen_in_region == 0:
+              if sprache == "de":
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanz'
+              else:
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have still no instance'
+            else:
+              if instanzen_in_region > 0:
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">'
+                for i in liste_reservations:
+                  for x in i.instances:
+                    if x.state == u'running':
+                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
+                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
+                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>'
+                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<p>&nbsp;</p>'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+            if sprache == "de":
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
+            else:
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
+            }
+
+            #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
+            #else:               naechse_seite = "ip_anhaengen_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "ip_anhaengen.html")
+            self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 
 class IP_Definitiv_Anhaengen(webapp.RequestHandler):
@@ -3622,7 +3610,7 @@ class InstanzBeenden(webapp.RequestHandler):
 class AlleInstanzenBeenden(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
-        username = users.get_current_user()      
+        username = users.get_current_user()
 
         conn_region, regionname = login(username)
 
@@ -6283,25 +6271,22 @@ class InstanzAnlegenNimbus(webapp.RequestHandler):
         image_id = self.request.get('image_id')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-
-            conn_region, regionname = login(username)
-
-            try:
-              # Instanz(en) anlegen
-              reservation = conn_region.run_instances(image_id)
-            except EC2ResponseError:
-              # Wenn es nicht geklappt hat
-              fehlermeldung = "5"
-              self.redirect('/instanzen?message='+fehlermeldung)
-            else:
-              # Wenn es geklappt hat
-              fehlermeldung = "4"
-              self.redirect('/instanzen?message='+fehlermeldung)
-        else:
+        if not username:
             self.redirect('/')
 
+        conn_region, regionname = login(username)
+
+        try:
+          # Instanz(en) anlegen
+          reservation = conn_region.run_instances(image_id)
+        except EC2ResponseError:
+          # Wenn es nicht geklappt hat
+          fehlermeldung = "5"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        else:
+          # Wenn es geklappt hat
+          fehlermeldung = "4"
+          self.redirect('/instanzen?message='+fehlermeldung)
 
 class InstanzAnlegen(webapp.RequestHandler):
     def get(self):
@@ -6315,30 +6300,29 @@ class InstanzAnlegen(webapp.RequestHandler):
 
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-
-            conn_region, regionname = login(username)
-
-            try:
-              # Instanz(en) anlegen
-              reservation = conn_region.run_instances(image_id,
-                                                      key_name=keys_liste,
-                                                      instance_type=instance_type,
-                                                      placement=zonen_auswahl,
-                                                      kernel_id=aki_id,
-                                                      ramdisk_id=ari_id)
-                                                      #security_groups=gruppen_liste
-            except EC2ResponseError:
-              # Wenn es nicht geklappt hat
-              fehlermeldung = "5"
-              self.redirect('/instanzen?message='+fehlermeldung)
-            else:
-              # Wenn es geklappt hat
-              fehlermeldung = "4"
-              self.redirect('/instanzen?message='+fehlermeldung)
-        else:
+        if not username:
             self.redirect('/')
+
+        conn_region, regionname = login(username)
+
+        try:
+          # Instanz(en) anlegen
+          reservation = conn_region.run_instances(image_id,
+                                                  key_name=keys_liste,
+                                                  instance_type=instance_type,
+                                                  placement=zonen_auswahl,
+                                                  kernel_id=aki_id,
+                                                  ramdisk_id=ari_id)
+                                                  #security_groups=gruppen_liste
+        except EC2ResponseError:
+          # Wenn es nicht geklappt hat
+          fehlermeldung = "5"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        else:
+          # Wenn es geklappt hat
+          fehlermeldung = "4"
+          self.redirect('/instanzen?message='+fehlermeldung)
+
 
     def post(self):
         #self.response.out.write('posted!')
@@ -6371,32 +6355,30 @@ class InstanzAnlegen(webapp.RequestHandler):
 
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-
-            conn_region, regionname = login(username)
-
-            try:
-              # Instanz(en) anlegen
-              reservation = conn_region.run_instances(image_id,
-                                                      min_count=number_instances_min,
-                                                      max_count=number_instances_max,
-                                                      key_name=keys_liste,
-                                                      instance_type=instance_type,
-                                                      placement=zonen_auswahl,
-                                                      kernel_id=aki_id,
-                                                      ramdisk_id=ari_id)
-                                                      #security_groups=gruppen_liste
-            except EC2ResponseError:
-              # Wenn es nicht geklappt hat
-              fehlermeldung = "5"
-              self.redirect('/instanzen?message='+fehlermeldung)
-            else:
-              # Wenn es geklappt hat
-              fehlermeldung = "4"
-              self.redirect('/instanzen?message='+fehlermeldung)
-        else:
+        if not username:
             self.redirect('/')
+
+        conn_region, regionname = login(username)
+
+        try:
+          # Instanz(en) anlegen
+          reservation = conn_region.run_instances(image_id,
+                                                  min_count=number_instances_min,
+                                                  max_count=number_instances_max,
+                                                  key_name=keys_liste,
+                                                  instance_type=instance_type,
+                                                  placement=zonen_auswahl,
+                                                  kernel_id=aki_id,
+                                                  ramdisk_id=ari_id)
+                                                  #security_groups=gruppen_liste
+        except EC2ResponseError:
+          # Wenn es nicht geklappt hat
+          fehlermeldung = "5"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        else:
+          # Wenn es geklappt hat
+          fehlermeldung = "4"
+          self.redirect('/instanzen?message='+fehlermeldung)
 
 
 class S3(webapp.RequestHandler):
