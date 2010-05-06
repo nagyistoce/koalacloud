@@ -530,11 +530,6 @@ class Regionen(webapp.RequestHandler):
             'version_warnung': version_warnung,
             }
 
-            #if sprache == "de":
-              #naechse_seite = "index_de.html"
-            #else:
-              #naechse_seite = "index_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
             path = os.path.join(os.path.dirname(__file__), "templates", sprache, "index.html")
             self.response.out.write(template.render(path,template_values))
         else:
@@ -621,430 +616,431 @@ class Instanzen(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()  
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message') 
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<font color="green">Die Instanz wurde erfolgreich beendet</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="green">The instance was stopped successfully</font> <p>&nbsp;</p>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">While the system tried to stop the instance, an error occured</font> <p>&nbsp;</p>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Die zu beendende Instanz konnte nicht gefunden werden</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">The instance was not found</font> <p>&nbsp;</p>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Die Instanz war schon im Status <b>terminated</b></font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">The instance had still the state <b>terminated</b></font> <p>&nbsp;</p>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<font color="green">Die Instanz(en) wurde(n) erfolgreich angelegt</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="green">The instance(s) was/were created successfully</font> <p>&nbsp;</p>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">While the system tried to create the instance(s), an error occured</font> <p>&nbsp;</p>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<font color="green">Die Instanz wurde erfolgreich neu gestartet</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="green">The instance was rebooted successfully</font> <p>&nbsp;</p>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">While the system tried to reboot the instance, an error occured</font> <p>&nbsp;</p>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<font color="green">Die Instanzen wurden beendet</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="green">The instances were stopped successfully</font> <p>&nbsp;</p>'
-              elif message == "9":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Es ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">An error occured</font> <p>&nbsp;</p>'
-              elif message == "10":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
-              elif message == "11":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">A timeout error occured</font> <p>&nbsp;</p>'
-              elif message == "12":
-                if sprache == "de":
-                  input_error_message = '<font color="red">Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-                else:
-                  input_error_message = '<font color="red">While the system tried to stop the instances, an error occured</font> <p>&nbsp;</p>'
-              else:
-                input_error_message = ''
-
-              try:
-                liste_reservations = conn_region.get_all_instances()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  instanzentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font> <p>&nbsp;</p>'
-                else:
-                  instanzentabelle = '<font color="red">An error occured</font> <p>&nbsp;</p>'
-                # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-                laenge_liste_reservations = 0
-              except DownloadError:
-                if sprache == "de":
-                  instanzentabelle = '<font color="red">Es ist zu einem Timeout gekommen</font> <p>&nbsp;</p>'
-                else:
-                  instanzentabelle = '<font color="red">an timeout error occured</font> <p>&nbsp;</p>'
-                # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-                laenge_liste_reservations = 0
-              else:
-                # Wenn es geklappt hat...
-                laenge_liste_reservations = len(liste_reservations)     # Anzahl der Elemente in der Liste
-  
-                if laenge_liste_reservations == 0:
-                  if sprache == "de":
-                    instanzentabelle = 'Es sind keine Instanzen in der Region vorhanden.'
-                  else:
-                    instanzentabelle = 'Still no instances exist inside this region.'
-                else:
-                  instanzentabelle = ''
-                  instanzentabelle = instanzentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  instanzentabelle = instanzentabelle + '<tr>'
-                  instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
-                  instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Instance ID</th>'
-                  instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
-                  instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Status</th>'
-                  if sprache == "de":
-                    instanzentabelle = instanzentabelle + '<th align="center">Typ</th>'
-                  else:
-                    instanzentabelle = instanzentabelle + '<th align="center">Type</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Reservation ID</th>'
-                  if sprache == "de":
-                    instanzentabelle = instanzentabelle + '<th align="center">Besitzer</th>'
-                  else:
-                    instanzentabelle = instanzentabelle + '<th align="center">Owner</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Image</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Kernel</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Ramdisk</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Zone</th>'
-                  if sprache == "de":
-                    instanzentabelle = instanzentabelle + '<th align="center">Gruppe</th>'
-                  else:
-                    instanzentabelle = instanzentabelle + '<th align="center">Group</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Public DNS</th>'
-                  instanzentabelle = instanzentabelle + '<th align="center">Private DNS</th>'
-                  if sprache == "de":
-                    instanzentabelle = instanzentabelle + '<th align="center">Schl&uuml;ssel</th>'
-                    instanzentabelle = instanzentabelle + '<th align="center">Startzeitpunkt</th>'
-                  else:
-                    instanzentabelle = instanzentabelle + '<th align="center">Key</th>'
-                    instanzentabelle = instanzentabelle + '<th align="center">Launch Time</th>'
-                  instanzentabelle = instanzentabelle + '</tr>'
-                  for i in liste_reservations:
-                    for x in i.instances:
-                      instanzentabelle = instanzentabelle + '<tr>'
-                      instanzentabelle = instanzentabelle + '<td>'
-                      if sprache == "de":
-                        instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
-                      else:
-                        instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
-                      instanzentabelle = instanzentabelle + '</td>'
-                      instanzentabelle = instanzentabelle + '<td>'
-                      if sprache == "de":
-                        instanzentabelle = instanzentabelle + '<a href="/instanzreboot?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
-                      else:
-                        instanzentabelle = instanzentabelle + '<a href="/instanzreboot?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
-                      instanzentabelle = instanzentabelle + '</td>'
-                      instanzentabelle = instanzentabelle + '<td align="center">'
-                      instanzentabelle = instanzentabelle + '<tt>'+str(x.id)+'</tt>'
-                      instanzentabelle = instanzentabelle + '</td>'
-                      instanzentabelle = instanzentabelle + '<td>'
-                      if sprache == "de":
-                        instanzentabelle = instanzentabelle + '<a href="/console_output?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
-                      else:
-                        instanzentabelle = instanzentabelle + '<a href="/console_output?id='
-                        instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
-                      instanzentabelle = instanzentabelle + '</td>'
-
-                      # Launch more of these
-                      instanzentabelle = instanzentabelle + '<td>'
-                      if sprache == "de":
-                        instanzentabelle = instanzentabelle + '<a href="/instanzanlegen?image='
-                        instanzentabelle = instanzentabelle + str(x.image_id)
-                        instanzentabelle = instanzentabelle + "&amp;zone="
-                        instanzentabelle = instanzentabelle + str(x.placement)
-                        instanzentabelle = instanzentabelle + "&amp;key="
-                        instanzentabelle = instanzentabelle + str(x.key_name)
-                        instanzentabelle = instanzentabelle + "&amp;aki="
-                        instanzentabelle = instanzentabelle + str(x.kernel)
-                        instanzentabelle = instanzentabelle + "&amp;ari="
-                        instanzentabelle = instanzentabelle + str(x.ramdisk)
-                        instanzentabelle = instanzentabelle + "&amp;type="
-                        instanzentabelle = instanzentabelle + str(x.instance_type)
-                        instanzentabelle = instanzentabelle + "&amp;gruppe="
-                        instanzentabelle = instanzentabelle + i.groups[0].id
-                        instanzentabelle = instanzentabelle + '"title="Weitere Instanzen starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Weitere Instanzen starten"></a>'
-                      else:
-                        instanzentabelle = instanzentabelle + '<a href="/instanzanlegen?image='
-                        instanzentabelle = instanzentabelle + str(x.image_id)
-                        instanzentabelle = instanzentabelle + "&amp;zone="
-                        instanzentabelle = instanzentabelle + str(x.placement)
-                        instanzentabelle = instanzentabelle + "&amp;key="
-                        instanzentabelle = instanzentabelle + str(x.key_name)
-                        instanzentabelle = instanzentabelle + "&amp;aki="
-                        instanzentabelle = instanzentabelle + str(x.kernel)
-                        instanzentabelle = instanzentabelle + "&amp;ari="
-                        instanzentabelle = instanzentabelle + str(x.ramdisk)
-                        instanzentabelle = instanzentabelle + "&amp;type="
-                        instanzentabelle = instanzentabelle + str(x.instance_type)
-                        instanzentabelle = instanzentabelle + "&amp;gruppe="
-                        instanzentabelle = instanzentabelle + i.groups[0].id
-                        instanzentabelle = instanzentabelle + '"title="launch more of these"><img src="bilder/plus.png" width="16" height="16" border="0" alt="launch more of these"></a>'
-                      instanzentabelle = instanzentabelle + '</td>'
-
-                      # Die Icons der Betriebssysteme nur unter Amazon
-                      #if regionname == "Amazon":
-                      # Hier kommt die Spalte mit den Icons der Betriebssysteme
-                      instanzentabelle = instanzentabelle + '<td align="center">'
-                      image = conn_region.get_image(str(x.image_id))
-                      if image == None:
-                        # Das hier kommt, wenn das Image der laufenden Instanz nicht mehr existiert!
-                        instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
-                      else:
-                        beschreibung_in_kleinbuchstaben = image.location.lower()
-                        if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                        elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                        elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                        elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                        elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                        elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                        elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                        elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                        elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                        elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                        elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                        else:
-                          instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
-                        instanzentabelle = instanzentabelle + '</td>'
-                      #else:
-                        ## Das hier wird bei Eucalyptus gemacht
-                        #instanzentabelle = instanzentabelle + '<td><img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux"></td>'
-  
-                      # Hier kommt die Spalte "Status"
-                      if x.state == u'running':
-                        instanzentabelle = instanzentabelle + '<td bgcolor="#c3ddc3">'
-                        instanzentabelle = instanzentabelle + 'running'
-                      if x.state == u'pending':
-                        instanzentabelle = instanzentabelle + '<td bgcolor="#ffffcc">'
-                        instanzentabelle = instanzentabelle + 'pending'
-                      if x.state == u'shutting-down':
-                        instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
-                        instanzentabelle = instanzentabelle + 'shutting-down'
-                      if x.state == u'terminated':
-                        instanzentabelle = instanzentabelle + '<td bgcolor="#ffcccc">'
-                        instanzentabelle = instanzentabelle + 'terminated'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + '<tt>'
-                      instanzentabelle = instanzentabelle + x.instance_type
-                      instanzentabelle = instanzentabelle + '</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td align="center">'
-                      instanzentabelle = instanzentabelle + '<tt>'
-                      instanzentabelle = instanzentabelle + i.id
-                      #y = str(i)
-                      #z = y.replace('Reservation:', '')
-                      #instanzentabelle = instanzentabelle + z
-                      instanzentabelle = instanzentabelle + '</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td align="center">'
-                      instanzentabelle = instanzentabelle + '<tt>'
-                      instanzentabelle = instanzentabelle + i.owner_id
-                      #y = str(i)
-                      #z = y.replace('Reservation:', '')
-                      #instanzentabelle = instanzentabelle + z
-                      instanzentabelle = instanzentabelle + '</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + '<tt>'+x.image_id+'</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + '<tt>'+x.kernel+'</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + '<tt>'+x.ramdisk+'</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + x.placement
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      laenge_liste_guppen_reservations = len(i.groups)
-                      if laenge_liste_guppen_reservations == 1:
-                        # Wenn zu der Reservation nur eine Sicherheitsgruppe gehört
-                        for z in range(laenge_liste_guppen_reservations):
-                          instanzentabelle = instanzentabelle + i.groups[z].id
-                      else:
-                        # Wenn zu der Reservation mehrere Sicherheitsgruppen gehören
-                        for z in range(laenge_liste_guppen_reservations):
-                          instanzentabelle = instanzentabelle + i.groups[z].id+' '
-                      #instanzentabelle = instanzentabelle + '</td><td align="center">'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + x.public_dns_name
-                      #if x.public_dns_name != None:
-                        #instanzentabelle = instanzentabelle + '<a href="http://'+x.public_dns_name+'" style="color:blue">Link</a>'
-                      #else:
-                        #instanzentabelle = instanzentabelle + x.private_dns_name
-                      #instanzentabelle = instanzentabelle + '</td><td align="center">'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      instanzentabelle = instanzentabelle + x.private_dns_name
-                      #if x.private_dns_name != None:
-                        #instanzentabelle = instanzentabelle + '<a href="http://'+x.private_dns_name+'" style="color:blue">Link</a>'
-                      #else:
-                        #instanzentabelle = instanzentabelle + x.public_dns_name
-                      instanzentabelle = instanzentabelle + '</td><td align="center">'
-                      # Bei Eucalyptus kommt es manchmal vor, dass der Keyname nicht geholt werden kann. In diesem Fall kommt es zu einer HTML-Warnung, weil <tt></tt> leer ist. Darum lieber nur ein Leerzeichen, wenn der Keyname leer ist.
-                      if x.key_name == "":
-                        instanzentabelle = instanzentabelle + '&nbsp;'
-                      else:
-                        instanzentabelle = instanzentabelle + '<tt>'+str(x.key_name)+'</tt>'
-                      instanzentabelle = instanzentabelle + '</td><td>'
-                      #self.response.out.write(x.private_dns_name+" ")
-                      #self.response.out.write(str(x.state_code)+" ") 
-                      #self.response.out.write(x.key_name+" ")
-                      #self.response.out.write(str(x.shutdown_state)+" ")
-                      #self.response.out.write(str(x.previous_state)+" ")
-                      #self.response.out.write(str(x.ami_launch_index)+" ")
-                      #self.response.out.write(str(x.monitored)+" ")
-                      #self.response.out.write('<BR>')
-                      datum_des_starts = parse(x.launch_time)
-                      #instanzentabelle = instanzentabelle + str(datum_des_starts)
-                      instanzentabelle = instanzentabelle + str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))
-                      #instanzentabelle = instanzentabelle + x.launch_time
-                      instanzentabelle = instanzentabelle + '</td>'
-                      instanzentabelle = instanzentabelle + '</tr>'
-                  instanzentabelle = instanzentabelle + '</table>'
-
-
-              if laenge_liste_reservations >= 1:
-                alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<tr>\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<td align="center">\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<form action="/alle_instanzen_beenden" method="get">\n'
-                if sprache == "de":
-                  alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="Alle Instanzen beenden">\n'
-                else:
-                  alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="stop all instances">\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</form>\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</td>\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</tr>\n'
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</table>\n'
-              else:
-                alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
-
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'reservationliste': instanzentabelle,
-              'zonen_liste': zonen_liste,
-              'input_error_message': input_error_message,
-              'alle_instanzen_loeschen_button': alle_instanzen_loeschen_button,
-              }
-
-              #if sprache == "de": naechse_seite = "instanzen_de.html"
-              #else:               naechse_seite = "instanzen_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "instanzen.html")
-              self.response.out.write(template.render(path,template_values))
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<font color="green">Die Instanz wurde erfolgreich beendet</font> <p>&nbsp;</p>'
             else:
-              self.redirect('/')
+              input_error_message = '<font color="green">The instance was stopped successfully</font> <p>&nbsp;</p>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<font color="red">Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">While the system tried to stop the instance, an error occured</font> <p>&nbsp;</p>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<font color="red">Die zu beendende Instanz konnte nicht gefunden werden</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">The instance was not found</font> <p>&nbsp;</p>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<font color="red">Die Instanz war schon im Status <b>terminated</b></font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">The instance had still the state <b>terminated</b></font> <p>&nbsp;</p>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<font color="green">Die Instanz(en) wurde(n) erfolgreich angelegt</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="green">The instance(s) was/were created successfully</font> <p>&nbsp;</p>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<font color="red">Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">While the system tried to create the instance(s), an error occured</font> <p>&nbsp;</p>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<font color="green">Die Instanz wurde erfolgreich neu gestartet</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="green">The instance was rebooted successfully</font> <p>&nbsp;</p>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<font color="red">Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">While the system tried to reboot the instance, an error occured</font> <p>&nbsp;</p>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<font color="green">Die Instanzen wurden beendet</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="green">The instances were stopped successfully</font> <p>&nbsp;</p>'
+          elif message == "9":
+            if sprache == "de":
+              input_error_message = '<font color="red">Es ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">An error occured</font> <p>&nbsp;</p>'
+          elif message == "10":
+            if sprache == "de":
+              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
+          elif message == "11":
+            if sprache == "de":
+              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">A timeout error occured</font> <p>&nbsp;</p>'
+          elif message == "12":
+            if sprache == "de":
+              input_error_message = '<font color="red">Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
+            else:
+              input_error_message = '<font color="red">While the system tried to stop the instances, an error occured</font> <p>&nbsp;</p>'
+          else:
+            input_error_message = ''
+
+          try:
+            liste_reservations = conn_region.get_all_instances()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              instanzentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font> <p>&nbsp;</p>'
+            else:
+              instanzentabelle = '<font color="red">An error occured</font> <p>&nbsp;</p>'
+            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+            laenge_liste_reservations = 0
+          except DownloadError:
+            if sprache == "de":
+              instanzentabelle = '<font color="red">Es ist zu einem Timeout gekommen</font> <p>&nbsp;</p>'
+            else:
+              instanzentabelle = '<font color="red">an timeout error occured</font> <p>&nbsp;</p>'
+            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+            laenge_liste_reservations = 0
+          else:
+            # Wenn es geklappt hat...
+            laenge_liste_reservations = len(liste_reservations)     # Anzahl der Elemente in der Liste
+
+            if laenge_liste_reservations == 0:
+              if sprache == "de":
+                instanzentabelle = 'Es sind keine Instanzen in der Region vorhanden.'
+              else:
+                instanzentabelle = 'Still no instances exist inside this region.'
+            else:
+              instanzentabelle = ''
+              instanzentabelle = instanzentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              instanzentabelle = instanzentabelle + '<tr>'
+              instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Instance ID</th>'
+              instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Status</th>'
+              if sprache == "de":
+                instanzentabelle = instanzentabelle + '<th align="center">Typ</th>'
+              else:
+                instanzentabelle = instanzentabelle + '<th align="center">Type</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Reservation ID</th>'
+              if sprache == "de":
+                instanzentabelle = instanzentabelle + '<th align="center">Besitzer</th>'
+              else:
+                instanzentabelle = instanzentabelle + '<th align="center">Owner</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Image</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Kernel</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Ramdisk</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Zone</th>'
+              if sprache == "de":
+                instanzentabelle = instanzentabelle + '<th align="center">Gruppe</th>'
+              else:
+                instanzentabelle = instanzentabelle + '<th align="center">Group</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Public DNS</th>'
+              instanzentabelle = instanzentabelle + '<th align="center">Private DNS</th>'
+              if sprache == "de":
+                instanzentabelle = instanzentabelle + '<th align="center">Schl&uuml;ssel</th>'
+                instanzentabelle = instanzentabelle + '<th align="center">Startzeitpunkt</th>'
+              else:
+                instanzentabelle = instanzentabelle + '<th align="center">Key</th>'
+                instanzentabelle = instanzentabelle + '<th align="center">Launch Time</th>'
+              instanzentabelle = instanzentabelle + '</tr>'
+              for i in liste_reservations:
+                for x in i.instances:
+                  instanzentabelle = instanzentabelle + '<tr>'
+                  instanzentabelle = instanzentabelle + '<td>'
+                  if sprache == "de":
+                    instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                  else:
+                    instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                  instanzentabelle = instanzentabelle + '</td>'
+                  instanzentabelle = instanzentabelle + '<td>'
+                  if sprache == "de":
+                    instanzentabelle = instanzentabelle + '<a href="/instanzreboot?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
+                  else:
+                    instanzentabelle = instanzentabelle + '<a href="/instanzreboot?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
+                  instanzentabelle = instanzentabelle + '</td>'
+                  instanzentabelle = instanzentabelle + '<td align="center">'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.id)+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td>'
+                  instanzentabelle = instanzentabelle + '<td>'
+                  if sprache == "de":
+                    instanzentabelle = instanzentabelle + '<a href="/console_output?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
+                  else:
+                    instanzentabelle = instanzentabelle + '<a href="/console_output?id='
+                    instanzentabelle = instanzentabelle + x.id
+                    instanzentabelle = instanzentabelle + '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
+                  instanzentabelle = instanzentabelle + '</td>'
+
+                  # Launch more of these
+                  instanzentabelle = instanzentabelle + '<td>'
+                  if sprache == "de":
+                    instanzentabelle = instanzentabelle + '<a href="/instanzanlegen?image='
+                    instanzentabelle = instanzentabelle + str(x.image_id)
+                    instanzentabelle = instanzentabelle + "&amp;zone="
+                    instanzentabelle = instanzentabelle + str(x.placement)
+                    instanzentabelle = instanzentabelle + "&amp;key="
+                    instanzentabelle = instanzentabelle + str(x.key_name)
+                    instanzentabelle = instanzentabelle + "&amp;aki="
+                    instanzentabelle = instanzentabelle + str(x.kernel)
+                    instanzentabelle = instanzentabelle + "&amp;ari="
+                    instanzentabelle = instanzentabelle + str(x.ramdisk)
+                    instanzentabelle = instanzentabelle + "&amp;type="
+                    instanzentabelle = instanzentabelle + str(x.instance_type)
+                    instanzentabelle = instanzentabelle + "&amp;gruppe="
+                    instanzentabelle = instanzentabelle + i.groups[0].id
+                    instanzentabelle = instanzentabelle + '"title="Weitere Instanzen starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Weitere Instanzen starten"></a>'
+                  else:
+                    instanzentabelle = instanzentabelle + '<a href="/instanzanlegen?image='
+                    instanzentabelle = instanzentabelle + str(x.image_id)
+                    instanzentabelle = instanzentabelle + "&amp;zone="
+                    instanzentabelle = instanzentabelle + str(x.placement)
+                    instanzentabelle = instanzentabelle + "&amp;key="
+                    instanzentabelle = instanzentabelle + str(x.key_name)
+                    instanzentabelle = instanzentabelle + "&amp;aki="
+                    instanzentabelle = instanzentabelle + str(x.kernel)
+                    instanzentabelle = instanzentabelle + "&amp;ari="
+                    instanzentabelle = instanzentabelle + str(x.ramdisk)
+                    instanzentabelle = instanzentabelle + "&amp;type="
+                    instanzentabelle = instanzentabelle + str(x.instance_type)
+                    instanzentabelle = instanzentabelle + "&amp;gruppe="
+                    instanzentabelle = instanzentabelle + i.groups[0].id
+                    instanzentabelle = instanzentabelle + '"title="launch more of these"><img src="bilder/plus.png" width="16" height="16" border="0" alt="launch more of these"></a>'
+                  instanzentabelle = instanzentabelle + '</td>'
+
+                  # Die Icons der Betriebssysteme nur unter Amazon
+                  #if regionname == "Amazon":
+                  # Hier kommt die Spalte mit den Icons der Betriebssysteme
+                  instanzentabelle = instanzentabelle + '<td align="center">'
+                  image = conn_region.get_image(str(x.image_id))
+                  if image == None:
+                    # Das hier kommt, wenn das Image der laufenden Instanz nicht mehr existiert!
+                    instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
+                  else:
+                    beschreibung_in_kleinbuchstaben = image.location.lower()
+                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                    else:
+                      instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
+                    instanzentabelle = instanzentabelle + '</td>'
+                  #else:
+                    ## Das hier wird bei Eucalyptus gemacht
+                    #instanzentabelle = instanzentabelle + '<td><img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux"></td>'
+
+                  # Hier kommt die Spalte "Status"
+                  if x.state == u'running':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#c3ddc3">'
+                    instanzentabelle = instanzentabelle + 'running'
+                  if x.state == u'pending':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#ffffcc">'
+                    instanzentabelle = instanzentabelle + 'pending'
+                  if x.state == u'shutting-down':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
+                    instanzentabelle = instanzentabelle + 'shutting-down'
+                  if x.state == u'terminated':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#ffcccc">'
+                    instanzentabelle = instanzentabelle + 'terminated'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + '<tt>'
+                  instanzentabelle = instanzentabelle + x.instance_type
+                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  instanzentabelle = instanzentabelle + '<tt>'
+                  instanzentabelle = instanzentabelle + i.id
+                  #y = str(i)
+                  #z = y.replace('Reservation:', '')
+                  #instanzentabelle = instanzentabelle + z
+                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  instanzentabelle = instanzentabelle + '<tt>'
+                  instanzentabelle = instanzentabelle + i.owner_id
+                  #y = str(i)
+                  #z = y.replace('Reservation:', '')
+                  #instanzentabelle = instanzentabelle + z
+                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + '<tt>'+x.image_id+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + '<tt>'+x.kernel+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + '<tt>'+x.ramdisk+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + x.placement
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  laenge_liste_guppen_reservations = len(i.groups)
+                  if laenge_liste_guppen_reservations == 1:
+                    # Wenn zu der Reservation nur eine Sicherheitsgruppe gehört
+                    for z in range(laenge_liste_guppen_reservations):
+                      instanzentabelle = instanzentabelle + i.groups[z].id
+                  else:
+                    # Wenn zu der Reservation mehrere Sicherheitsgruppen gehören
+                    for z in range(laenge_liste_guppen_reservations):
+                      instanzentabelle = instanzentabelle + i.groups[z].id+' '
+                  #instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + x.public_dns_name
+                  #if x.public_dns_name != None:
+                    #instanzentabelle = instanzentabelle + '<a href="http://'+x.public_dns_name+'" style="color:blue">Link</a>'
+                  #else:
+                    #instanzentabelle = instanzentabelle + x.private_dns_name
+                  #instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  instanzentabelle = instanzentabelle + x.private_dns_name
+                  #if x.private_dns_name != None:
+                    #instanzentabelle = instanzentabelle + '<a href="http://'+x.private_dns_name+'" style="color:blue">Link</a>'
+                  #else:
+                    #instanzentabelle = instanzentabelle + x.public_dns_name
+                  instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  # Bei Eucalyptus kommt es manchmal vor, dass der Keyname nicht geholt werden kann. In diesem Fall kommt es zu einer HTML-Warnung, weil <tt></tt> leer ist. Darum lieber nur ein Leerzeichen, wenn der Keyname leer ist.
+                  if x.key_name == "":
+                    instanzentabelle = instanzentabelle + '&nbsp;'
+                  else:
+                    instanzentabelle = instanzentabelle + '<tt>'+str(x.key_name)+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td>'
+                  #self.response.out.write(x.private_dns_name+" ")
+                  #self.response.out.write(str(x.state_code)+" ") 
+                  #self.response.out.write(x.key_name+" ")
+                  #self.response.out.write(str(x.shutdown_state)+" ")
+                  #self.response.out.write(str(x.previous_state)+" ")
+                  #self.response.out.write(str(x.ami_launch_index)+" ")
+                  #self.response.out.write(str(x.monitored)+" ")
+                  #self.response.out.write('<BR>')
+                  datum_des_starts = parse(x.launch_time)
+                  #instanzentabelle = instanzentabelle + str(datum_des_starts)
+                  instanzentabelle = instanzentabelle + str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))
+                  #instanzentabelle = instanzentabelle + x.launch_time
+                  instanzentabelle = instanzentabelle + '</td>'
+                  instanzentabelle = instanzentabelle + '</tr>'
+              instanzentabelle = instanzentabelle + '</table>'
+
+
+          if laenge_liste_reservations >= 1:
+            alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<tr>\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<td align="center">\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<form action="/alle_instanzen_beenden" method="get">\n'
+            if sprache == "de":
+              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="Alle Instanzen beenden">\n'
+            else:
+              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="stop all instances">\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</form>\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</td>\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</tr>\n'
+            alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</table>\n'
+          else:
+            alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
+
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'reservationliste': instanzentabelle,
+          'zonen_liste': zonen_liste,
+          'input_error_message': input_error_message,
+          'alle_instanzen_loeschen_button': alle_instanzen_loeschen_button,
+          }
+
+          #if sprache == "de": naechse_seite = "instanzen_de.html"
+          #else:               naechse_seite = "instanzen_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "instanzen.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
+
 
 class AlleInstanzenBeendenFrage(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
-        username = users.get_current_user()  
+        username = users.get_current_user()
+        if not username:
+            self.redirect('/')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              }
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          }
 
-              #if sprache == "de": naechse_seite = "alle_images_beenden_frage_de.html"
-              #else:               naechse_seite = "alle_images_beenden_frage_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_images_beenden_frage.html")
-              self.response.out.write(template.render(path,template_values))
+          #if sprache == "de": naechse_seite = "alle_images_beenden_frage_de.html"
+          #else:               naechse_seite = "alle_images_beenden_frage_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_images_beenden_frage.html")
+          self.response.out.write(template.render(path,template_values))
 
 
 
@@ -1054,171 +1050,170 @@ class SecurityGroups(webapp.RequestHandler):
         message = self.request.get('message')
         # Den Usernamen erfahren 
         username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
-
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-              zonen_liste = zonen_liste_funktion(username,sprache)
-
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich angelegt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The security group was created successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No name and no description for the new security group given</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new security group given</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No description for the new security group given</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A security group with this name sill exists</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Der Name für die neue Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new security group had characters that are not allowed</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Die Beschreibung für die neue  Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The description for the new security group had characters that are not allowed</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new security group, an error occured</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The security group was erased successfully</font>'
-              elif message == "9":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the new security group, an error occured</font>'
-              elif message == "10":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-              else:
-                input_error_message = ""
-
-              try:
-                # Liste mit den Security Groups
-                liste_security_groups = conn_region.get_all_security_groups()
-              except EC2ResponseError:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  gruppentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  gruppentabelle = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  gruppentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  gruppentabelle = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_security_groups = len(liste_security_groups)
-
-                if laenge_liste_security_groups == 0:
-                  gruppentabelle = 'Es sind keine Sicherheitsgruppen in der Zone vorhanden.'
-                else:
-                  gruppentabelle = ''
-                  gruppentabelle = gruppentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  gruppentabelle = gruppentabelle + '<tr>'
-                  gruppentabelle = gruppentabelle + '<th>&nbsp;</th>'
-                  if sprache == "de":
-                    gruppentabelle = gruppentabelle + '<th align="center">Besitzer</th>'
-                  else:
-                    gruppentabelle = gruppentabelle + '<th align="center">Owner</th>'
-                  gruppentabelle = gruppentabelle + '<th align="center">Name</th>'
-                  if sprache == "de":
-                    gruppentabelle = gruppentabelle + '<th align="center">Beschreibung</th>'
-                  else:
-                    gruppentabelle = gruppentabelle + '<th align="center">Description</th>'
-                  gruppentabelle = gruppentabelle + '<th>&nbsp;</th>'
-                  gruppentabelle = gruppentabelle + '</tr>'
-                  for i in range(laenge_liste_security_groups):
-                      gruppentabelle = gruppentabelle + '<tr>'
-                      gruppentabelle = gruppentabelle + '<td>'
-                      gruppentabelle = gruppentabelle + '<a href="/gruppenentfernen?gruppe='
-                      gruppentabelle = gruppentabelle + liste_security_groups[i].name
-                      if sprache == "de":
-                        gruppentabelle = gruppentabelle + '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
-                      else:
-                        gruppentabelle = gruppentabelle + '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
-                      gruppentabelle = gruppentabelle + '</td>'
-                      gruppentabelle = gruppentabelle + '<td>'
-                      gruppentabelle = gruppentabelle + liste_security_groups[i].owner_id
-                      gruppentabelle = gruppentabelle + '</td>'
-                      gruppentabelle = gruppentabelle + '<td>'
-                      gruppentabelle = gruppentabelle + liste_security_groups[i].name
-                      gruppentabelle = gruppentabelle + '</td>'
-                      gruppentabelle = gruppentabelle + '<td>'
-                      gruppentabelle = gruppentabelle + liste_security_groups[i].description
-                      gruppentabelle = gruppentabelle + '</td>'
-                      gruppentabelle = gruppentabelle + '<td>'
-                      gruppentabelle = gruppentabelle + '<a href="/gruppenaendern?gruppe='
-                      gruppentabelle = gruppentabelle + liste_security_groups[i].name
-                      if sprache == "de":
-                        gruppentabelle = gruppentabelle + '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
-                      else:
-                        gruppentabelle = gruppentabelle + '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
-                      gruppentabelle = gruppentabelle + '</td>'
-                      gruppentabelle = gruppentabelle + '</tr>'
-                  gruppentabelle = gruppentabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'securitygroupsliste': gruppentabelle,
-              'input_error_message': input_error_message,
-              'zonen_liste': zonen_liste,
-              }
-
-              #if sprache == "de": naechse_seite = "securitygroups_de.html"
-              #else:               naechse_seite = "securitygroups_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygroups.html")
-              self.response.out.write(template.render(path,template_values))
-            else:
-              self.redirect('/')
-        else:
+        if not username:
             self.redirect('/')
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich angelegt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The security group was created successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No name and no description for the new security group given</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new security group given</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No description for the new security group given</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A security group with this name sill exists</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name für die neue Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new security group had characters that are not allowed</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Die Beschreibung für die neue  Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The description for the new security group had characters that are not allowed</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new security group, an error occured</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The security group was erased successfully</font>'
+          elif message == "9":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the new security group, an error occured</font>'
+          elif message == "10":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          else:
+            input_error_message = ""
+
+          try:
+            # Liste mit den Security Groups
+            liste_security_groups = conn_region.get_all_security_groups()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              gruppentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              gruppentabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              gruppentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              gruppentabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_security_groups = len(liste_security_groups)
+
+            if laenge_liste_security_groups == 0:
+              gruppentabelle = 'Es sind keine Sicherheitsgruppen in der Zone vorhanden.'
+            else:
+              gruppentabelle = ''
+              gruppentabelle = gruppentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              gruppentabelle = gruppentabelle + '<tr>'
+              gruppentabelle = gruppentabelle + '<th>&nbsp;</th>'
+              if sprache == "de":
+                gruppentabelle = gruppentabelle + '<th align="center">Besitzer</th>'
+              else:
+                gruppentabelle = gruppentabelle + '<th align="center">Owner</th>'
+              gruppentabelle = gruppentabelle + '<th align="center">Name</th>'
+              if sprache == "de":
+                gruppentabelle = gruppentabelle + '<th align="center">Beschreibung</th>'
+              else:
+                gruppentabelle = gruppentabelle + '<th align="center">Description</th>'
+              gruppentabelle = gruppentabelle + '<th>&nbsp;</th>'
+              gruppentabelle = gruppentabelle + '</tr>'
+              for i in range(laenge_liste_security_groups):
+                  gruppentabelle = gruppentabelle + '<tr>'
+                  gruppentabelle = gruppentabelle + '<td>'
+                  gruppentabelle = gruppentabelle + '<a href="/gruppenentfernen?gruppe='
+                  gruppentabelle = gruppentabelle + liste_security_groups[i].name
+                  if sprache == "de":
+                    gruppentabelle = gruppentabelle + '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
+                  else:
+                    gruppentabelle = gruppentabelle + '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
+                  gruppentabelle = gruppentabelle + '</td>'
+                  gruppentabelle = gruppentabelle + '<td>'
+                  gruppentabelle = gruppentabelle + liste_security_groups[i].owner_id
+                  gruppentabelle = gruppentabelle + '</td>'
+                  gruppentabelle = gruppentabelle + '<td>'
+                  gruppentabelle = gruppentabelle + liste_security_groups[i].name
+                  gruppentabelle = gruppentabelle + '</td>'
+                  gruppentabelle = gruppentabelle + '<td>'
+                  gruppentabelle = gruppentabelle + liste_security_groups[i].description
+                  gruppentabelle = gruppentabelle + '</td>'
+                  gruppentabelle = gruppentabelle + '<td>'
+                  gruppentabelle = gruppentabelle + '<a href="/gruppenaendern?gruppe='
+                  gruppentabelle = gruppentabelle + liste_security_groups[i].name
+                  if sprache == "de":
+                    gruppentabelle = gruppentabelle + '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
+                  else:
+                    gruppentabelle = gruppentabelle + '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
+                  gruppentabelle = gruppentabelle + '</td>'
+                  gruppentabelle = gruppentabelle + '</tr>'
+              gruppentabelle = gruppentabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'securitygroupsliste': gruppentabelle,
+          'input_error_message': input_error_message,
+          'zonen_liste': zonen_liste,
+          }
+
+          #if sprache == "de": naechse_seite = "securitygroups_de.html"
+          #else:               naechse_seite = "securitygroups_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygroups.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 class GruppeAendern(webapp.RequestHandler):
     def get(self):
@@ -1228,188 +1223,187 @@ class GruppeAendern(webapp.RequestHandler):
         gruppe = self.request.get('gruppe')
         # Den Usernamen erfahren
         username = users.get_current_user()
-
-        if users.get_current_user():
-            sprache = aktuelle_sprache(username)
-            navigations_bar = navigations_bar_funktion(sprache)
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if not results:
-              regionname = 'keine'
-              zone_amazon = ""
-            else:
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-            url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-            url_linktext = 'Logout'
-
-            zonen_liste = zonen_liste_funktion(username,sprache)
-
-            if message == "0":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich angelegt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">The rule was created successfully</font>'
-            elif message == "1":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule was missing</font>'
-            elif message == "2":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port f&uuml;r die neue Regel angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was missing</font>'
-            elif message == "3":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen To Port f&uuml;r die neue Regel angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was missing</font>'
-            elif message == "4":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule have not been numbers</font>'
-            elif message == "5":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port keine Zahl angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was not a number</font>'
-            elif message == "6":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den To Port keine Zahl angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was not a number</font>'
-            elif message == "7":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Die Regel war schon vorhanden</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The rule was still existing</font>'
-            elif message == "8":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu entfernen kam es zu einem Fehler</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to remove the rule, an error occured</font>'
-            elif message == "9":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich entfernt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">The rule was removed successfully</font>'
-            elif message == "10":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Die zu l&ouml;schende Regel konnte nicht gefunden werden</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The rule was not found</font>'
-            elif message == "11":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu anzulegen kam es zu einem Fehler</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the rule, an error occured</font>'
-            elif message == "12":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-            else:
-              input_error_message = ""
-
-            try:
-              # Liste mit den Security Groups
-              # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-              # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-              # gibt es eine Fehlermeldung
-              liste_security_groups = conn_region.get_all_security_groups()
-            except EC2ResponseError:
-              # Wenn es nicht klappt...
-              fehlermeldung = "7"
-              self.redirect('/securitygroups?message='+fehlermeldung)
-            except DownloadError:
-              # Diese Exception hilft gegen diese beiden Fehler:
-              # DownloadError: ApplicationError: 2 timed out
-              # DownloadError: ApplicationError: 5
-              fehlermeldung = "7"
-              self.redirect('/securitygroups?message='+fehlermeldung)
-            else:
-              # Wenn es geklappt hat und die Liste geholt wurde...
-
-              # Anzahl der Elemente in der Liste
-              laenge_liste_security_groups = len(liste_security_groups)
-
-
-              for i in range(laenge_liste_security_groups):
-                # Vergleichen
-                if liste_security_groups[i].name == gruppe:
-                  # Liste mit den Regeln der Security Group holen
-                  liste_regeln = liste_security_groups[i].rules
-                  # Anzahl der Elemente in der Liste mit den Regeln
-                  laenge_liste_regeln = len(liste_regeln)
-                  if laenge_liste_regeln == 0:
-                    if sprache == "de":
-                      regelntabelle = 'Es sind noch keine Regeln in der  Sicherheitsgruppe '+gruppe+' vorhanden'
-                    else:
-                      regelntabelle = 'Still no rules exist inside the security group '+gruppe
-                  else:
-                    for i in range(laenge_liste_regeln):
-
-                      regelntabelle = ''
-                      regelntabelle = regelntabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                      regelntabelle = regelntabelle + '<tr>'
-                      regelntabelle = regelntabelle + '<th>&nbsp;</th>'
-                      if sprache == "de":
-                        regelntabelle = regelntabelle + '<th align="center">Protokoll</th>'
-                      else:
-                        regelntabelle = regelntabelle + '<th align="center">Protocol</th>'
-                      regelntabelle = regelntabelle + '<th align="center">From Port</th>'
-                      regelntabelle = regelntabelle + '<th align="center">To Port</th>'
-                      regelntabelle = regelntabelle + '</tr>'
-                      for i in range(laenge_liste_regeln):
-                          regelntabelle = regelntabelle + '<tr>'
-                          regelntabelle = regelntabelle + '<td>'
-                          regelntabelle = regelntabelle + '<a href="/grupperegelentfernen?regel='
-                          regelntabelle = regelntabelle + str(liste_regeln[i])
-                          regelntabelle = regelntabelle + '&amp;gruppe='
-                          regelntabelle = regelntabelle + gruppe
-                          regelntabelle = regelntabelle + '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
-                          regelntabelle = regelntabelle + '</td>'
-                          regelntabelle = regelntabelle + '<td>'
-                          if str(liste_regeln[i].ip_protocol) == "tcp":
-                            regelntabelle = regelntabelle + 'TCP'
-                          if str(liste_regeln[i].ip_protocol) == "udp":
-                            regelntabelle = regelntabelle + 'UDP'
-                          if str(liste_regeln[i].ip_protocol) == "icmp":
-                            regelntabelle = regelntabelle + 'ICMP'
-                          regelntabelle = regelntabelle + '</td>'
-                          regelntabelle = regelntabelle + '<td>'
-                          regelntabelle = regelntabelle + str(liste_regeln[i].from_port)
-                          regelntabelle = regelntabelle + '</td>'
-                          regelntabelle = regelntabelle + '<td>'
-                          regelntabelle = regelntabelle + str(liste_regeln[i].to_port)
-                          regelntabelle = regelntabelle + '</td>'
-                          regelntabelle = regelntabelle + '</tr>'
-                      regelntabelle = regelntabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'gruppe': gruppe,
-              'regelntabelle': regelntabelle,
-              'input_error_message': input_error_message,
-              'zonen_liste': zonen_liste,
-              }
-
-              #if sprache == "de": naechse_seite = "securitygrouprules_de.html"
-              #else:               naechse_seite = "securitygrouprules_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygrouprules.html")
-              self.response.out.write(template.render(path,template_values))
-        else:
+        if not username:
             self.redirect('/')
+
+        sprache = aktuelle_sprache(username)
+        navigations_bar = navigations_bar_funktion(sprache)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if not results:
+          regionname = 'keine'
+          zone_amazon = ""
+        else:
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+        url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+        url_linktext = 'Logout'
+
+        zonen_liste = zonen_liste_funktion(username,sprache)
+
+        if message == "0":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich angelegt</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="green">The rule was created successfully</font>'
+        elif message == "1":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule was missing</font>'
+        elif message == "2":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port f&uuml;r die neue Regel angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was missing</font>'
+        elif message == "3":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen To Port f&uuml;r die neue Regel angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was missing</font>'
+        elif message == "4":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule have not been numbers</font>'
+        elif message == "5":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port keine Zahl angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was not a number</font>'
+        elif message == "6":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den To Port keine Zahl angegeben</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was not a number</font>'
+        elif message == "7":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Die Regel war schon vorhanden</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The rule was still existing</font>'
+        elif message == "8":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu entfernen kam es zu einem Fehler</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to remove the rule, an error occured</font>'
+        elif message == "9":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich entfernt</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="green">The rule was removed successfully</font>'
+        elif message == "10":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Die zu l&ouml;schende Regel konnte nicht gefunden werden</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">The rule was not found</font>'
+        elif message == "11":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu anzulegen kam es zu einem Fehler</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the rule, an error occured</font>'
+        elif message == "12":
+          if sprache == "de":
+            input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
+          else:
+            input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+        else:
+          input_error_message = ""
+
+        try:
+          # Liste mit den Security Groups
+          # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+          # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+          # gibt es eine Fehlermeldung
+          liste_security_groups = conn_region.get_all_security_groups()
+        except EC2ResponseError:
+          # Wenn es nicht klappt...
+          fehlermeldung = "7"
+          self.redirect('/securitygroups?message='+fehlermeldung)
+        except DownloadError:
+          # Diese Exception hilft gegen diese beiden Fehler:
+          # DownloadError: ApplicationError: 2 timed out
+          # DownloadError: ApplicationError: 5
+          fehlermeldung = "7"
+          self.redirect('/securitygroups?message='+fehlermeldung)
+        else:
+          # Wenn es geklappt hat und die Liste geholt wurde...
+
+          # Anzahl der Elemente in der Liste
+          laenge_liste_security_groups = len(liste_security_groups)
+
+
+          for i in range(laenge_liste_security_groups):
+            # Vergleichen
+            if liste_security_groups[i].name == gruppe:
+              # Liste mit den Regeln der Security Group holen
+              liste_regeln = liste_security_groups[i].rules
+              # Anzahl der Elemente in der Liste mit den Regeln
+              laenge_liste_regeln = len(liste_regeln)
+              if laenge_liste_regeln == 0:
+                if sprache == "de":
+                  regelntabelle = 'Es sind noch keine Regeln in der  Sicherheitsgruppe '+gruppe+' vorhanden'
+                else:
+                  regelntabelle = 'Still no rules exist inside the security group '+gruppe
+              else:
+                for i in range(laenge_liste_regeln):
+
+                  regelntabelle = ''
+                  regelntabelle = regelntabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                  regelntabelle = regelntabelle + '<tr>'
+                  regelntabelle = regelntabelle + '<th>&nbsp;</th>'
+                  if sprache == "de":
+                    regelntabelle = regelntabelle + '<th align="center">Protokoll</th>'
+                  else:
+                    regelntabelle = regelntabelle + '<th align="center">Protocol</th>'
+                  regelntabelle = regelntabelle + '<th align="center">From Port</th>'
+                  regelntabelle = regelntabelle + '<th align="center">To Port</th>'
+                  regelntabelle = regelntabelle + '</tr>'
+                  for i in range(laenge_liste_regeln):
+                      regelntabelle = regelntabelle + '<tr>'
+                      regelntabelle = regelntabelle + '<td>'
+                      regelntabelle = regelntabelle + '<a href="/grupperegelentfernen?regel='
+                      regelntabelle = regelntabelle + str(liste_regeln[i])
+                      regelntabelle = regelntabelle + '&amp;gruppe='
+                      regelntabelle = regelntabelle + gruppe
+                      regelntabelle = regelntabelle + '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
+                      regelntabelle = regelntabelle + '</td>'
+                      regelntabelle = regelntabelle + '<td>'
+                      if str(liste_regeln[i].ip_protocol) == "tcp":
+                        regelntabelle = regelntabelle + 'TCP'
+                      if str(liste_regeln[i].ip_protocol) == "udp":
+                        regelntabelle = regelntabelle + 'UDP'
+                      if str(liste_regeln[i].ip_protocol) == "icmp":
+                        regelntabelle = regelntabelle + 'ICMP'
+                      regelntabelle = regelntabelle + '</td>'
+                      regelntabelle = regelntabelle + '<td>'
+                      regelntabelle = regelntabelle + str(liste_regeln[i].from_port)
+                      regelntabelle = regelntabelle + '</td>'
+                      regelntabelle = regelntabelle + '<td>'
+                      regelntabelle = regelntabelle + str(liste_regeln[i].to_port)
+                      regelntabelle = regelntabelle + '</td>'
+                      regelntabelle = regelntabelle + '</tr>'
+                  regelntabelle = regelntabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'gruppe': gruppe,
+          'regelntabelle': regelntabelle,
+          'input_error_message': input_error_message,
+          'zonen_liste': zonen_liste,
+          }
+
+          #if sprache == "de": naechse_seite = "securitygrouprules_de.html"
+          #else:               naechse_seite = "securitygrouprules_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "securitygrouprules.html")
+          self.response.out.write(template.render(path,template_values))
 
 
 class GruppeRegelErzeugen(webapp.RequestHandler):
@@ -5437,365 +5431,364 @@ class ImageStarten(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Die ID des zu startenden Images holen
         image = self.request.get('image')
         # Die Architektur des zu startenden Images holen
         arch = self.request.get('arch')
 
-        if users.get_current_user():
-            sprache = aktuelle_sprache(username)
-            navigations_bar = navigations_bar_funktion(sprache)
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        sprache = aktuelle_sprache(username)
+        navigations_bar = navigations_bar_funktion(sprache)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if not results:
-              regionname = 'keine'
-              zone_amazon = ""
-            else:
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-            # So wird der HTML-Code korrekt
-            url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-            #url = users.create_logout_url(self.request.uri)
-            url_linktext = 'Logout'
-
-            zonen_liste = zonen_liste_funktion(username,sprache)
-
-            for result in results:
-              if result.zugangstyp == "Amazon":
-                imageliste = [image]
-                # Liste mit den Images
-                liste_images = conn_region.get_all_images(image_ids=imageliste)  
-                # Anzahl der Images in der Liste
-                laenge_liste_images = len(liste_images)
-                for i in range(laenge_liste_images):
-                  if liste_images[i].id == image:
-                    manifest = str(liste_images[i].location)
-              else:
-                # Liste mit den Images
-                liste_images = conn_region.get_all_images()
-                # Anzahl der Images in der Liste
-                laenge_liste_images = len(liste_images)
-                for i in range(laenge_liste_images):
-                  if liste_images[i].id == image:
-                    manifest = str(liste_images[i].location)
-
-
-            if result.zugangstyp == "Nimbus":
-
-              imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
-              imagetextfeld = imagetextfeld + image
-              imagetextfeld = imagetextfeld + '" readonly>'
-
-              manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
-              manifesttextfeld = manifesttextfeld + manifest
-              manifesttextfeld = manifesttextfeld + '" readonly>'
-
-              if sprache == "de": number_instances_min_anfang = "Instanzen (min):"
-              else:               number_instances_min_anfang = "Instances (min):"
-
-              if sprache == "de": number_instances_max_anfang = "Instanzen (max):"
-              else:               number_instances_max_anfang = "Instances (max):"
-
-              if sprache == "de": image_starten_ueberschrift_anfang = "Image starten: "
-              else:               image_starten_ueberschrift_anfang = "Start image: "
-
-              if sprache == "de": value_button_image_starten = "Image starten"
-              else:               value_button_image_starten = "start image"
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'image': imagetextfeld,
-              'manifest': manifesttextfeld,
-              'zonen_liste': zonen_liste,
-              'number_instances_max_anfang': number_instances_max_anfang,
-              'number_instances_min_anfang': number_instances_min_anfang,
-              'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
-              'value_button_image_starten': value_button_image_starten,
-              }
-
-              #path = os.path.join(os.path.dirname(__file__), 'image_starten_nimbus.html')
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten_nimbus.html")
-              self.response.out.write(template.render(path,template_values))
-
-            else: # Wenn es nicht Nimbus ist
-
-
-              # Wenn es Amazon EC2 ist
-              if result.zugangstyp == "Amazon":
-                if arch == "i386":
-                  # Liste mit den Instanz-Typen wenn es ein 32-Bit Image ist
-                  liste_instanztypen_eucalyptus = ["m1.small", "c1.medium"]
-                else:
-                  # Liste mit den Instanz-Typen wenn es ein 64-Bit Image ist
-                  liste_instanztypen_eucalyptus = ["m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.xlarge"]
-                # Anzahl der Elemente in der Liste
-                laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus)
-
-                instance_types_liste = ""
-                for i in range(laenge_liste_instanztypen_eucalyptus):
-                    if i == 0:
-                      instance_types_liste = instance_types_liste + '<option selected="selected">'
-                    else:
-                      instance_types_liste = instance_types_liste + "<option>"
-                    instance_types_liste = instance_types_liste + liste_instanztypen_eucalyptus[i]
-                    instance_types_liste = instance_types_liste + "</option>"
-
-                instance_types_liste_laenge = laenge_liste_instanztypen_eucalyptus
-              elif result.zugangstyp == "Nimbus":
-                # Wenn es Nimbus ist
-                instance_types_liste_laenge = 0
-                liste_instanztypen_eucalyptus = []
-                laenge_liste_instanztypen_eucalyptus = 0
-                instance_types_liste = []
-              else:
-                # Wenn es Eucalyptus ist
-                liste_instanztypen_eucalyptus = ["m1.small", "c1.medium", "m1.large", "m1.xlarge", "c1.xlarge"] 
-                # Anzahl der Elemente in der Liste mit den Instanz-Typen
-                laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus) 
-
-                instance_types_liste = ""
-                for i in range(laenge_liste_instanztypen_eucalyptus):
-                    if i == 0:
-                      instance_types_liste = instance_types_liste + '<option selected="selected">'
-                    else:
-                      instance_types_liste = instance_types_liste + "<option>"
-                    instance_types_liste = instance_types_liste + liste_instanztypen_eucalyptus[i]
-                    instance_types_liste = instance_types_liste + "</option>"
-
-                instance_types_liste_laenge = laenge_liste_instanztypen_eucalyptus
-
-              # Liste mit den Zonen
-              liste_zonen = conn_region.get_all_zones()
-              # Anzahl der Elemente in der Liste
-              laenge_liste_zonen = len(liste_zonen)
-
-              # Hier wird die Auswahlliste der Zonen erzeugt
-              # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
-              zonen_in_der_region = ''
-              for i in range(laenge_liste_zonen):
-                  zonen_in_der_region = zonen_in_der_region + "<option>"
-                  zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
-                  zonen_in_der_region = zonen_in_der_region + "</option>"
-
-              # Liste mit den Schlüsseln
-              liste_key_pairs = conn_region.get_all_key_pairs()
-              # Anzahl der Elemente in der Liste
-              laenge_liste_keys = len(liste_key_pairs)
-
-              keys_liste = ''
-              if laenge_liste_keys == 0:
-                if sprache == "de":
-                  keys_liste = '<font color="red">Es sind keine Schl&uuml in der Zone vorhanden</font>'
-                else:
-                  keys_liste = '<font color="red">No keypairs exist inside this security zone</font>'
-              elif laenge_liste_keys == 1:
-                keys_liste = '<input name="keys_liste" type="text" size="70" maxlength="70" value="'
-                keys_liste = keys_liste + liste_key_pairs[0].name
-                keys_liste = keys_liste + '" readonly>'
-              else:
-                keys_liste = keys_liste + '<select name="keys_liste" size="'
-                keys_liste = keys_liste + str(laenge_liste_keys)
-                keys_liste = keys_liste + '">'
-                for i in range(laenge_liste_keys):
-                  if i == 0:
-                    keys_liste = keys_liste + '<option selected="selected">'
-                  else:
-                    keys_liste = keys_liste + '<option>'
-                  keys_liste = keys_liste + liste_key_pairs[i].name
-                  keys_liste = keys_liste + '</option>'
-                keys_liste = keys_liste + '</select>'
-
-              if sprache == "de": keys_liste_anfang = "Schl&uuml;ssel"
-              else:               keys_liste_anfang = "Keypair"
-
-              if sprache == "de": number_instances_min_anfang = "Instanzen (min):"
-              else:               number_instances_min_anfang = "Instances (min):"
-
-              if sprache == "de": number_instances_max_anfang = "Instanzen (max):"
-              else:               number_instances_max_anfang = "Instances (max):"
-
-              if sprache == "de": typ_anfang = "Typ: "
-              else:               typ_anfang = "Type: "
-
-              if sprache == "de": image_starten_ueberschrift_anfang = "Image starten:"
-              else:               image_starten_ueberschrift_anfang = "Start image:"
-
-              if sprache == "de": value_button_image_starten = "Image starten"
-              else:               value_button_image_starten = "start image"
-
-              if sprache == "de": nicht_zwingend_notwendig = "Nicht zwingend notwendig"
-              else:               nicht_zwingend_notwendig = "Not essential"
-
-              if sprache == "de": zonen_anfang = "Verf&uuml;gbarkeitszone:"
-              else:               zonen_anfang = "Availability Zone:"
-
-              # Liste mit den Security Groups
-              liste_security_groups = conn_region.get_all_security_groups()
-              # Anzahl der Elemente in der Liste
-              laenge_liste_security_groups = len(liste_security_groups)
-
-              gruppen_liste = ''
-              if laenge_liste_security_groups == 0:
-                if sprache == "de":
-                  gruppen_liste = '<font color="red">Es sind keine Sicherheitsgruppen in der Zone vorhanden</font>'
-                else:
-                  gruppen_liste = '<font color="red">No Security Groups exist inside this security zone</font>'
-              elif laenge_liste_security_groups == 1:
-                gruppen_liste = liste_security_groups[0].name
-              else:
-                gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="'
-                gruppen_liste = gruppen_liste + str(laenge_liste_security_groups)
-                gruppen_liste = gruppen_liste + '">'
-                for i in range(laenge_liste_security_groups):
-                  if i == 0:
-                    gruppen_liste = gruppen_liste + '<option selected="selected">'
-                  else:
-                    gruppen_liste = gruppen_liste + '<option>'
-                  gruppen_liste = gruppen_liste + liste_security_groups[i].name
-                  #gruppen_liste = gruppen_liste + ' ('
-                  #gruppen_liste = gruppen_liste + liste_security_groups[i].owner_id
-                  #gruppen_liste = gruppen_liste + ')'
-                  gruppen_liste = gruppen_liste + '</option>'
-                gruppen_liste = gruppen_liste + '</select>'
-
-              imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
-              imagetextfeld = imagetextfeld + image
-              imagetextfeld = imagetextfeld + '" readonly>'
-
-              manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
-              manifesttextfeld = manifesttextfeld + manifest
-              manifesttextfeld = manifesttextfeld + '" readonly>'
-
-              # Wenn es Amazon EC2 ist
-              if result.aktivezone == "us-east-1" or result.aktivezone == "eu-west-1" or result.aktivezone == "us-west-1":
-                if arch == "i386": # 32-Bit Image
-                  tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Instanztyp</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Type</th>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architektur</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.small</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.medium</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">5</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
-                elif arch == "x86_64": # 64-Bit Image
-                  tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Instanztyp</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Type</th>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architektur</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
-                  if sprache == "de": # Wenn die Sprache Deutsch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
-                  else:               # Wenn die Sprache Englisch ist...
-                    tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.large</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.xlarge</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.xlarge</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">6.5</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.2xlarge</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">13</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.4xlarge</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">26</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.xlarge</tt></td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">20</td>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
-                  tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
-                else:
-                  # Wenn es etwas ganz anderes ist...?
-                  tabelle_ec2_instanztypen = ''
-              else:
-                # wenn es Eucalyptus ist
-                tabelle_ec2_instanztypen = ''
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'image': imagetextfeld,
-              'manifest': manifesttextfeld,
-              'instance_types_liste': instance_types_liste,
-              'instance_types_liste_laenge': instance_types_liste_laenge,
-              'keys_liste': keys_liste,
-              'keys_liste_anfang': keys_liste_anfang,
-              'gruppen_liste': gruppen_liste,
-              'zonen_liste': zonen_liste,
-              'number_instances_max_anfang': number_instances_max_anfang,
-              'number_instances_min_anfang': number_instances_min_anfang,
-              'typ_anfang': typ_anfang,
-              'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
-              'value_button_image_starten': value_button_image_starten,
-              'nicht_zwingend_notwendig': nicht_zwingend_notwendig,
-              'tabelle_ec2_instanztypen':tabelle_ec2_instanztypen,
-              'zonen_in_der_region': zonen_in_der_region,
-              'laenge_liste_zonen': laenge_liste_zonen,
-              'zonen_anfang': zonen_anfang,
-              }
-
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten.html")
-              self.response.out.write(template.render(path,template_values))
+        if not results:
+          regionname = 'keine'
+          zone_amazon = ""
         else:
-            self.redirect('/')
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+        # So wird der HTML-Code korrekt
+        url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+        #url = users.create_logout_url(self.request.uri)
+        url_linktext = 'Logout'
+
+        zonen_liste = zonen_liste_funktion(username,sprache)
+
+        for result in results:
+          if result.zugangstyp == "Amazon":
+            imageliste = [image]
+            # Liste mit den Images
+            liste_images = conn_region.get_all_images(image_ids=imageliste)  
+            # Anzahl der Images in der Liste
+            laenge_liste_images = len(liste_images)
+            for i in range(laenge_liste_images):
+              if liste_images[i].id == image:
+                manifest = str(liste_images[i].location)
+          else:
+            # Liste mit den Images
+            liste_images = conn_region.get_all_images()
+            # Anzahl der Images in der Liste
+            laenge_liste_images = len(liste_images)
+            for i in range(laenge_liste_images):
+              if liste_images[i].id == image:
+                manifest = str(liste_images[i].location)
+
+
+        if result.zugangstyp == "Nimbus":
+
+          imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
+          imagetextfeld = imagetextfeld + image
+          imagetextfeld = imagetextfeld + '" readonly>'
+
+          manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
+          manifesttextfeld = manifesttextfeld + manifest
+          manifesttextfeld = manifesttextfeld + '" readonly>'
+
+          if sprache == "de": number_instances_min_anfang = "Instanzen (min):"
+          else:               number_instances_min_anfang = "Instances (min):"
+
+          if sprache == "de": number_instances_max_anfang = "Instanzen (max):"
+          else:               number_instances_max_anfang = "Instances (max):"
+
+          if sprache == "de": image_starten_ueberschrift_anfang = "Image starten: "
+          else:               image_starten_ueberschrift_anfang = "Start image: "
+
+          if sprache == "de": value_button_image_starten = "Image starten"
+          else:               value_button_image_starten = "start image"
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'image': imagetextfeld,
+          'manifest': manifesttextfeld,
+          'zonen_liste': zonen_liste,
+          'number_instances_max_anfang': number_instances_max_anfang,
+          'number_instances_min_anfang': number_instances_min_anfang,
+          'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
+          'value_button_image_starten': value_button_image_starten,
+          }
+
+          #path = os.path.join(os.path.dirname(__file__), 'image_starten_nimbus.html')
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten_nimbus.html")
+          self.response.out.write(template.render(path,template_values))
+
+        else: # Wenn es nicht Nimbus ist
+
+
+          # Wenn es Amazon EC2 ist
+          if result.zugangstyp == "Amazon":
+            if arch == "i386":
+              # Liste mit den Instanz-Typen wenn es ein 32-Bit Image ist
+              liste_instanztypen_eucalyptus = ["m1.small", "c1.medium"]
+            else:
+              # Liste mit den Instanz-Typen wenn es ein 64-Bit Image ist
+              liste_instanztypen_eucalyptus = ["m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.xlarge"]
+            # Anzahl der Elemente in der Liste
+            laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus)
+
+            instance_types_liste = ""
+            for i in range(laenge_liste_instanztypen_eucalyptus):
+                if i == 0:
+                  instance_types_liste = instance_types_liste + '<option selected="selected">'
+                else:
+                  instance_types_liste = instance_types_liste + "<option>"
+                instance_types_liste = instance_types_liste + liste_instanztypen_eucalyptus[i]
+                instance_types_liste = instance_types_liste + "</option>"
+
+            instance_types_liste_laenge = laenge_liste_instanztypen_eucalyptus
+          elif result.zugangstyp == "Nimbus":
+            # Wenn es Nimbus ist
+            instance_types_liste_laenge = 0
+            liste_instanztypen_eucalyptus = []
+            laenge_liste_instanztypen_eucalyptus = 0
+            instance_types_liste = []
+          else:
+            # Wenn es Eucalyptus ist
+            liste_instanztypen_eucalyptus = ["m1.small", "c1.medium", "m1.large", "m1.xlarge", "c1.xlarge"] 
+            # Anzahl der Elemente in der Liste mit den Instanz-Typen
+            laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus) 
+
+            instance_types_liste = ""
+            for i in range(laenge_liste_instanztypen_eucalyptus):
+                if i == 0:
+                  instance_types_liste = instance_types_liste + '<option selected="selected">'
+                else:
+                  instance_types_liste = instance_types_liste + "<option>"
+                instance_types_liste = instance_types_liste + liste_instanztypen_eucalyptus[i]
+                instance_types_liste = instance_types_liste + "</option>"
+
+            instance_types_liste_laenge = laenge_liste_instanztypen_eucalyptus
+
+          # Liste mit den Zonen
+          liste_zonen = conn_region.get_all_zones()
+          # Anzahl der Elemente in der Liste
+          laenge_liste_zonen = len(liste_zonen)
+
+          # Hier wird die Auswahlliste der Zonen erzeugt
+          # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
+          zonen_in_der_region = ''
+          for i in range(laenge_liste_zonen):
+              zonen_in_der_region = zonen_in_der_region + "<option>"
+              zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
+              zonen_in_der_region = zonen_in_der_region + "</option>"
+
+          # Liste mit den Schlüsseln
+          liste_key_pairs = conn_region.get_all_key_pairs()
+          # Anzahl der Elemente in der Liste
+          laenge_liste_keys = len(liste_key_pairs)
+
+          keys_liste = ''
+          if laenge_liste_keys == 0:
+            if sprache == "de":
+              keys_liste = '<font color="red">Es sind keine Schl&uuml in der Zone vorhanden</font>'
+            else:
+              keys_liste = '<font color="red">No keypairs exist inside this security zone</font>'
+          elif laenge_liste_keys == 1:
+            keys_liste = '<input name="keys_liste" type="text" size="70" maxlength="70" value="'
+            keys_liste = keys_liste + liste_key_pairs[0].name
+            keys_liste = keys_liste + '" readonly>'
+          else:
+            keys_liste = keys_liste + '<select name="keys_liste" size="'
+            keys_liste = keys_liste + str(laenge_liste_keys)
+            keys_liste = keys_liste + '">'
+            for i in range(laenge_liste_keys):
+              if i == 0:
+                keys_liste = keys_liste + '<option selected="selected">'
+              else:
+                keys_liste = keys_liste + '<option>'
+              keys_liste = keys_liste + liste_key_pairs[i].name
+              keys_liste = keys_liste + '</option>'
+            keys_liste = keys_liste + '</select>'
+
+          if sprache == "de": keys_liste_anfang = "Schl&uuml;ssel"
+          else:               keys_liste_anfang = "Keypair"
+
+          if sprache == "de": number_instances_min_anfang = "Instanzen (min):"
+          else:               number_instances_min_anfang = "Instances (min):"
+
+          if sprache == "de": number_instances_max_anfang = "Instanzen (max):"
+          else:               number_instances_max_anfang = "Instances (max):"
+
+          if sprache == "de": typ_anfang = "Typ: "
+          else:               typ_anfang = "Type: "
+
+          if sprache == "de": image_starten_ueberschrift_anfang = "Image starten:"
+          else:               image_starten_ueberschrift_anfang = "Start image:"
+
+          if sprache == "de": value_button_image_starten = "Image starten"
+          else:               value_button_image_starten = "start image"
+
+          if sprache == "de": nicht_zwingend_notwendig = "Nicht zwingend notwendig"
+          else:               nicht_zwingend_notwendig = "Not essential"
+
+          if sprache == "de": zonen_anfang = "Verf&uuml;gbarkeitszone:"
+          else:               zonen_anfang = "Availability Zone:"
+
+          # Liste mit den Security Groups
+          liste_security_groups = conn_region.get_all_security_groups()
+          # Anzahl der Elemente in der Liste
+          laenge_liste_security_groups = len(liste_security_groups)
+
+          gruppen_liste = ''
+          if laenge_liste_security_groups == 0:
+            if sprache == "de":
+              gruppen_liste = '<font color="red">Es sind keine Sicherheitsgruppen in der Zone vorhanden</font>'
+            else:
+              gruppen_liste = '<font color="red">No Security Groups exist inside this security zone</font>'
+          elif laenge_liste_security_groups == 1:
+            gruppen_liste = liste_security_groups[0].name
+          else:
+            gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="'
+            gruppen_liste = gruppen_liste + str(laenge_liste_security_groups)
+            gruppen_liste = gruppen_liste + '">'
+            for i in range(laenge_liste_security_groups):
+              if i == 0:
+                gruppen_liste = gruppen_liste + '<option selected="selected">'
+              else:
+                gruppen_liste = gruppen_liste + '<option>'
+              gruppen_liste = gruppen_liste + liste_security_groups[i].name
+              #gruppen_liste = gruppen_liste + ' ('
+              #gruppen_liste = gruppen_liste + liste_security_groups[i].owner_id
+              #gruppen_liste = gruppen_liste + ')'
+              gruppen_liste = gruppen_liste + '</option>'
+            gruppen_liste = gruppen_liste + '</select>'
+
+          imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
+          imagetextfeld = imagetextfeld + image
+          imagetextfeld = imagetextfeld + '" readonly>'
+
+          manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
+          manifesttextfeld = manifesttextfeld + manifest
+          manifesttextfeld = manifesttextfeld + '" readonly>'
+
+          # Wenn es Amazon EC2 ist
+          if result.aktivezone == "us-east-1" or result.aktivezone == "eu-west-1" or result.aktivezone == "us-west-1":
+            if arch == "i386": # 32-Bit Image
+              tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Instanztyp</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Type</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architektur</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.small</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.medium</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">5</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
+            elif arch == "x86_64": # 64-Bit Image
+              tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Instanztyp</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Type</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architektur</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.large</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.xlarge</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.xlarge</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">6.5</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.2xlarge</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">13</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.4xlarge</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">26</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.xlarge</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">20</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
+            else:
+              # Wenn es etwas ganz anderes ist...?
+              tabelle_ec2_instanztypen = ''
+          else:
+            # wenn es Eucalyptus ist
+            tabelle_ec2_instanztypen = ''
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'image': imagetextfeld,
+          'manifest': manifesttextfeld,
+          'instance_types_liste': instance_types_liste,
+          'instance_types_liste_laenge': instance_types_liste_laenge,
+          'keys_liste': keys_liste,
+          'keys_liste_anfang': keys_liste_anfang,
+          'gruppen_liste': gruppen_liste,
+          'zonen_liste': zonen_liste,
+          'number_instances_max_anfang': number_instances_max_anfang,
+          'number_instances_min_anfang': number_instances_min_anfang,
+          'typ_anfang': typ_anfang,
+          'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
+          'value_button_image_starten': value_button_image_starten,
+          'nicht_zwingend_notwendig': nicht_zwingend_notwendig,
+          'tabelle_ec2_instanztypen':tabelle_ec2_instanztypen,
+          'zonen_in_der_region': zonen_in_der_region,
+          'laenge_liste_zonen': laenge_liste_zonen,
+          'zonen_anfang': zonen_anfang,
+          }
+
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "image_starten.html")
+          self.response.out.write(template.render(path,template_values))
 
 
 class ConsoleOutput(webapp.RequestHandler):
@@ -6386,156 +6379,156 @@ class S3(webapp.RequestHandler):
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich angelegt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was created successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new bucket had characters that are not allowed</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket anzulegen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While trying zu create the bucket, an error occured</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben schon einen Bucket mit dem eingegebenen Namen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">You already have a bucket with this name</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich entfernt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was erased successfully</font>'
-              else:
-                input_error_message = ""
-
-              # Mit S3 verbinden
-              conn_s3 = logins3(username)
-
-              try:
-                # Liste der Buckets
-                liste_buckets = conn_s3.get_all_buckets()
-              except:
-                # Wenn es nicht klappt...
-                if sprache == "de":
-                  bucketstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  bucketstabelle = '<font color="red">An error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_buckets = len(liste_buckets)
-
-                if laenge_liste_buckets == 0:
-                  if sprache == "de":
-                    bucketstabelle = 'Es sind keine Buckets in der Region vorhanden.'
-                  else:
-                    bucketstabelle = 'Still no buckets exist inside this region.'
-                else:
-                  bucketstabelle = ''
-                  bucketstabelle = bucketstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  bucketstabelle = bucketstabelle + '<tr>'
-                  bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
-                  bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
-                  bucketstabelle = bucketstabelle + '<th align="left">Buckets</th>'
-                  if sprache == "de":
-                    bucketstabelle = bucketstabelle + '<th>Reine S3-Darstellung</th>'
-                    bucketstabelle = bucketstabelle + '<th>Komfort-Darstellung</th>'
-                  else:
-                    bucketstabelle = bucketstabelle + '<th>Pure S3</th>'
-                    bucketstabelle = bucketstabelle + '<th>S3 with more comfort</th>'
-                  bucketstabelle = bucketstabelle + '</tr>'
-                  for i in range(laenge_liste_buckets):
-                      bucketstabelle = bucketstabelle + '<tr>'
-                      bucketstabelle = bucketstabelle + '<td>'
-                      bucketstabelle = bucketstabelle + '<a href="/bucketentfernen?bucket='
-                      bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                      if sprache == "de":
-                        bucketstabelle = bucketstabelle + '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
-                      else:
-                        bucketstabelle = bucketstabelle + '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
-                      bucketstabelle = bucketstabelle + '</td>'
-                      bucketstabelle = bucketstabelle + '<td>'
-                      bucketstabelle = bucketstabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Bucket">'
-                      bucketstabelle = bucketstabelle + '</td>'
-                      bucketstabelle = bucketstabelle + '<td>'
-                      bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                      bucketstabelle = bucketstabelle + '</td>'
-                      bucketstabelle = bucketstabelle + '<td align="center">'
-                      bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt_pure?bucket='
-                      bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                      if sprache == "de":
-                        bucketstabelle = bucketstabelle + '" title="Bucket einsehen (reine S3-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                      else:
-                        bucketstabelle = bucketstabelle + '" title="List content of this bucket (pure S3)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                      bucketstabelle = bucketstabelle + '</td>'
-                      bucketstabelle = bucketstabelle + '<td align="center">'
-                      bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt?bucket='
-                      bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                      if sprache == "de":
-                        bucketstabelle = bucketstabelle + '" title="Bucket einsehen (Komfort-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                      else:
-                        bucketstabelle = bucketstabelle + '" title="List content of this bucket (S3 with more comfort)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                      bucketstabelle = bucketstabelle + '</td>'
-                      bucketstabelle = bucketstabelle + '</tr>'
-                  bucketstabelle = bucketstabelle + '</table>'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'bucketstabelle': bucketstabelle,
-              'input_error_message': input_error_message,
-              }
-
-              #if sprache == "de": naechse_seite = "s3_de.html"
-              #else:               naechse_seite = "s3_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3.html")
-              self.response.out.write(template.render(path,template_values))
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich angelegt</font>'
             else:
-              self.redirect('/')
+              input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was created successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new bucket had characters that are not allowed</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket anzulegen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While trying zu create the bucket, an error occured</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben schon einen Bucket mit dem eingegebenen Namen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">You already have a bucket with this name</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich entfernt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was erased successfully</font>'
+          else:
+            input_error_message = ""
+
+          # Mit S3 verbinden
+          conn_s3 = logins3(username)
+
+          try:
+            # Liste der Buckets
+            liste_buckets = conn_s3.get_all_buckets()
+          except:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              bucketstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              bucketstabelle = '<font color="red">An error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_buckets = len(liste_buckets)
+
+            if laenge_liste_buckets == 0:
+              if sprache == "de":
+                bucketstabelle = 'Es sind keine Buckets in der Region vorhanden.'
+              else:
+                bucketstabelle = 'Still no buckets exist inside this region.'
+            else:
+              bucketstabelle = ''
+              bucketstabelle = bucketstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              bucketstabelle = bucketstabelle + '<tr>'
+              bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
+              bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
+              bucketstabelle = bucketstabelle + '<th align="left">Buckets</th>'
+              if sprache == "de":
+                bucketstabelle = bucketstabelle + '<th>Reine S3-Darstellung</th>'
+                bucketstabelle = bucketstabelle + '<th>Komfort-Darstellung</th>'
+              else:
+                bucketstabelle = bucketstabelle + '<th>Pure S3</th>'
+                bucketstabelle = bucketstabelle + '<th>S3 with more comfort</th>'
+              bucketstabelle = bucketstabelle + '</tr>'
+              for i in range(laenge_liste_buckets):
+                  bucketstabelle = bucketstabelle + '<tr>'
+                  bucketstabelle = bucketstabelle + '<td>'
+                  bucketstabelle = bucketstabelle + '<a href="/bucketentfernen?bucket='
+                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
+                  if sprache == "de":
+                    bucketstabelle = bucketstabelle + '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
+                  else:
+                    bucketstabelle = bucketstabelle + '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
+                  bucketstabelle = bucketstabelle + '</td>'
+                  bucketstabelle = bucketstabelle + '<td>'
+                  bucketstabelle = bucketstabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Bucket">'
+                  bucketstabelle = bucketstabelle + '</td>'
+                  bucketstabelle = bucketstabelle + '<td>'
+                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
+                  bucketstabelle = bucketstabelle + '</td>'
+                  bucketstabelle = bucketstabelle + '<td align="center">'
+                  bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt_pure?bucket='
+                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
+                  if sprache == "de":
+                    bucketstabelle = bucketstabelle + '" title="Bucket einsehen (reine S3-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                  else:
+                    bucketstabelle = bucketstabelle + '" title="List content of this bucket (pure S3)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                  bucketstabelle = bucketstabelle + '</td>'
+                  bucketstabelle = bucketstabelle + '<td align="center">'
+                  bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt?bucket='
+                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
+                  if sprache == "de":
+                    bucketstabelle = bucketstabelle + '" title="Bucket einsehen (Komfort-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                  else:
+                    bucketstabelle = bucketstabelle + '" title="List content of this bucket (S3 with more comfort)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                  bucketstabelle = bucketstabelle + '</td>'
+                  bucketstabelle = bucketstabelle + '</tr>'
+              bucketstabelle = bucketstabelle + '</table>'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'bucketstabelle': bucketstabelle,
+          'input_error_message': input_error_message,
+          }
+
+          #if sprache == "de": naechse_seite = "s3_de.html"
+          #else:               naechse_seite = "s3_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
+
 
 
 class BucketErzeugen(webapp.RequestHandler):
@@ -6630,6 +6623,8 @@ class BucketInhalt(webapp.RequestHandler):
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Eventuell vorhandes Verzeichnis holen
@@ -6638,545 +6633,540 @@ class BucketInhalt(webapp.RequestHandler):
         bucketname = self.request.get('bucket')
 
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
-              AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
+          AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
+          AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
 
-              input_error_message = ""
+          input_error_message = ""
 
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new directory given</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">The given name for the new directory had characters that are not allowed</font>'
-              elif message == "4":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Das neue Verzeichnis wurde erfolgreich angelegt</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The new directory was successfully created</font>'
-              elif message == "5":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Verzeichnis anzulegen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new directory</font>'
-              elif message == "6":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">A directory with the given name still exists</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new directory given</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">The given name for the new directory had characters that are not allowed</font>'
+          elif message == "4":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Das neue Verzeichnis wurde erfolgreich angelegt</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The new directory was successfully created</font>'
+          elif message == "5":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Verzeichnis anzulegen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new directory</font>'
+          elif message == "6":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">A directory with the given name still exists</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
+          else:
+            input_error_message = ""
+
+          # Mit S3 verbinden
+          conn_s3 = logins3(username)
+          bucket_instance = conn_s3.get_bucket(bucketname)
+
+          # Wenn die Variable "directory" gesetzt ist, also ein Verzeichnis angegeben wurde...
+          if directory:
+            # An das Verzeichnis ein "/" angängen
+            directory = directory + '/'
+            # Liste der Keys im Bucket
+            liste_keys = bucket_instance.get_all_keys(prefix=directory)
+            # Anzahl der Keys in der Liste
+            laenge_liste_keys = len(liste_keys)
+            # Die Variable "level" ist quasi die Ebene im Dateibaum.
+            # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
+            # in dem Verzeichnis drin sind.
+            level = directory.count("/")
+          # Wenn kein Verzeichnis angegeben wurde...
+          else:
+            # Dann wird die Variable "directory" gesetzt und zwar auf "/"
+            directory = '/'
+            # Liste der Keys im Bucket
+            liste_keys = bucket_instance.get_all_keys()
+            # Anzahl der Keys in der Liste
+            laenge_liste_keys = len(liste_keys)
+            # Die Variable "level" ist quasi die Ebene im Dateibaum.
+            # level = 0 heißt, wir sind in der Root-Ebene.
+            level = 0
+
+          # Wenn wir uns im "Root"-Verzeichnis des Buckets befinden, wird aus
+          # der Liste der Keys alle Keys entfernt, die einen / im Keynamen haben
+          if directory == '/':
+            liste_keys2 = []
+            for i in range(laenge_liste_keys):
+              if re.search(r'[/]', str(liste_keys[i].name)) == None:
+                liste_keys2.append(liste_keys[i])
+            laenge_liste_keys2 = len(liste_keys2)
+            laenge_liste_keys = laenge_liste_keys2
+            liste_keys = liste_keys2
+          # Wenn wir uns nicht im "Root"-Verzeichnis des Buckets befinden,
+          # dann wird für jeden Key geschaut, ob er die gleiche Anzahl an "/" im
+          # Namen hat, wie die Variable "level" als Zahl enthält.
+          else:
+            liste_keys2 = []
+            for i in range(laenge_liste_keys):
+              if str(liste_keys[i].name).count("/") == level:
+                liste_keys2.append(liste_keys[i])
+            laenge_liste_keys2 = len(liste_keys2)
+            laenge_liste_keys = laenge_liste_keys2
+            liste_keys = liste_keys2
+
+          # Wenn wir im Root-Verzeichnis sind und es sind keine Keys vorhanden...
+          if laenge_liste_keys == 0 and directory == '/':
+            if sprache == "de":
+              bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
+            else:
+              bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
+          # Wenn wir nicht im Root-Verzeichnis sind und es sind keine Keys vorhanden...
+          elif laenge_liste_keys == 0 and directory != '/':
+            if sprache == "de":
+              bucket_keys_tabelle = 'Das Verzeichnis <B>'+ directory+' </B>ist leer.'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+              bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+              # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+              # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+              # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+              # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+              # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+              # Root-Ansicht zurückkehren.
+              if str(directory).count("/") >= 2:
+                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
+              bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+              bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
+              bucket_keys_tabelle = bucket_keys_tabelle + '"> '
+              bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+            else:
+              bucket_keys_tabelle = 'The directory <B>'+ directory+' </B>is empty.'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+              bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+              # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+              # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+              # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+              # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+              # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+              # Root-Ansicht zurückkehren.
+              if str(directory).count("/") >= 2:
+                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
+              bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+              bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
+              bucket_keys_tabelle = bucket_keys_tabelle + '"> '
+              bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+          # Wenn wir irgendwo sind und es sind Keys vorhanden...
+          else:
+            if regionname == "Amazon": # Bei Amazon geht mehr (alles)
+              bucket_keys_tabelle = ''
+              bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+              if sprache == "de":
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
+                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
+                bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
               else:
-                input_error_message = ""
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
+                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
+                bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+              # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
+              if directory != '/':
+                bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+                # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+                # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+                # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+                # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+                # Root-Ansicht zurückkehren.
+                if str(directory).count("/") >= 2:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
 
-              # Mit S3 verbinden
-              conn_s3 = logins3(username)
-              bucket_instance = conn_s3.get_bucket(bucketname)
-
-              # Wenn die Variable "directory" gesetzt ist, also ein Verzeichnis angegeben wurde...
-              if directory:
-                # An das Verzeichnis ein "/" angängen
-                directory = directory + '/'
-                # Liste der Keys im Bucket
-                liste_keys = bucket_instance.get_all_keys(prefix=directory)
-                # Anzahl der Keys in der Liste
-                laenge_liste_keys = len(liste_keys)
-                # Die Variable "level" ist quasi die Ebene im Dateibaum.
-                # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
-                # in dem Verzeichnis drin sind.
-                level = directory.count("/")
-              # Wenn kein Verzeichnis angegeben wurde...
-              else:
-                # Dann wird die Variable "directory" gesetzt und zwar auf "/"
-                directory = '/'
-                # Liste der Keys im Bucket
-                liste_keys = bucket_instance.get_all_keys()
-                # Anzahl der Keys in der Liste
-                laenge_liste_keys = len(liste_keys)
-                # Die Variable "level" ist quasi die Ebene im Dateibaum.
-                # level = 0 heißt, wir sind in der Root-Ebene.
-                level = 0
-
-              # Wenn wir uns im "Root"-Verzeichnis des Buckets befinden, wird aus
-              # der Liste der Keys alle Keys entfernt, die einen / im Keynamen haben
-              if directory == '/':
-                liste_keys2 = []
-                for i in range(laenge_liste_keys):
-                  if re.search(r'[/]', str(liste_keys[i].name)) == None:
-                    liste_keys2.append(liste_keys[i])
-                laenge_liste_keys2 = len(liste_keys2)
-                laenge_liste_keys = laenge_liste_keys2
-                liste_keys = liste_keys2
-              # Wenn wir uns nicht im "Root"-Verzeichnis des Buckets befinden,
-              # dann wird für jeden Key geschaut, ob er die gleiche Anzahl an "/" im
-              # Namen hat, wie die Variable "level" als Zahl enthält.
-              else:
-                liste_keys2 = []
-                for i in range(laenge_liste_keys):
-                  if str(liste_keys[i].name).count("/") == level:
-                    liste_keys2.append(liste_keys[i])
-                laenge_liste_keys2 = len(liste_keys2)
-                laenge_liste_keys = laenge_liste_keys2
-                liste_keys = liste_keys2
-
-              # Wenn wir im Root-Verzeichnis sind und es sind keine Keys vorhanden...
-              if laenge_liste_keys == 0 and directory == '/':
                 if sprache == "de":
-                  bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
-                else:
-                  bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
-              # Wenn wir nicht im Root-Verzeichnis sind und es sind keine Keys vorhanden...
-              elif laenge_liste_keys == 0 and directory != '/':
-                if sprache == "de":
-                  bucket_keys_tabelle = 'Das Verzeichnis <B>'+ directory+' </B>ist leer.'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                  # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-                  # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-                  # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-                  # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-                  # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-                  # Root-Ansicht zurückkehren.
-                  if str(directory).count("/") >= 2:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
                   bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-                  bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '"> '
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
                 else:
-                  bucket_keys_tabelle = 'The directory <B>'+ directory+' </B>is empty.'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                  # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-                  # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-                  # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-                  # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-                  # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-                  # Root-Ansicht zurückkehren.
-                  if str(directory).count("/") >= 2:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
                   bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
+                bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                if sprache == "de":
+                  bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
+                else:
                   bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '"> '
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-              # Wenn wir irgendwo sind und es sind Keys vorhanden...
-              else:
-                if regionname == "Amazon": # Bei Amazon geht mehr (alles)
-                  bucket_keys_tabelle = ''
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+
+              for i in range(laenge_liste_keys):
                   bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
                   if sprache == "de":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
                   else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-                  # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
-                  if directory != '/':
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
+                  if str(liste_keys[i].name).endswith("$folder$") == True:
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
+                  else:      # Ansonsten ist es eine Datei
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
+                  # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
+                  if str(liste_keys[i].name).endswith("$folder$") == True:
                     bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
                     bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                    # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-                    # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-                    # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-                    # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-                    # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-                    # Root-Ansicht zurückkehren.
-                    if str(directory).count("/") >= 2:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
-
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
                     if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="In das Verzeichnis wechseln">'
                     else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch to directory">'
                     # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                    #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                    name_tmp = liste_keys[i].name.replace( directory, '')
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp[:-9])
                     bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                  # Wenn es sich nicht um ein Verzeichnis handelt
+                  else:
+                    # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
+                    # if liste_keys[i].name != None:
+                    # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
+                    # Darum erst mal nur Links bei Amazon
+                    if regionname == "Amazon":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
+                      bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                      bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                      name_tmp = liste_keys[i].name.replace(directory, '')
+                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
+                      bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                    else:
+                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                      name_tmp = liste_keys[i].name.replace(directory, '')
+                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
                     bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
 
-                  for i in range(laenge_liste_keys):
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                      if sprache == "de":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
+                  if str(liste_keys[i].name) != None:
+                    # Wenn der Keyname auf "$folder" endet, dann wird keine
+                    # Dateigröße ausgegeben.
+                    if str(liste_keys[i].name).endswith("$folder$") == True:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                    # Wenn der Keyname nicht auf $folder$ endet, wird die 
+                    # Dateigröße ausgegeben.
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
 
 
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
-                      if str(liste_keys[i].name).endswith("$folder$") == True:
-                        if sprache == "de":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                      else:      # Ansonsten ist es eine Datei
-                        if sprache == "de":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
-                      # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
-                      if str(liste_keys[i].name).endswith("$folder$") == True:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                        bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
-                        if sprache == "de":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '" title="In das Verzeichnis wechseln">'
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch to directory">'
-                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                        name_tmp = liste_keys[i].name.replace( directory, '')
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp[:-9])
-                        bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                      # Wenn es sich nicht um ein Verzeichnis handelt
-                      else:
-                        # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
-                        # if liste_keys[i].name != None:
-                        # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                        # Darum erst mal nur Links bei Amazon
-                        if regionname == "Amazon":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                          bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                          bucket_keys_tabelle = bucket_keys_tabelle + '">'
-                          # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                          name_tmp = liste_keys[i].name.replace(directory, '')
-                          # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                          bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
-                          bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                        else:
-                          # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                          name_tmp = liste_keys[i].name.replace(directory, '')
-                          # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                          bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
-                        bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                  datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
+                  #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].last_modified)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
 
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
-                      if str(liste_keys[i].name) != None:
-                        # Wenn der Keyname auf "$folder" endet, dann wird keine
-                        # Dateigröße ausgegeben.
-                        if str(liste_keys[i].name).endswith("$folder$") == True:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                        # Wenn der Keyname nicht auf $folder$ endet, wird die 
-                        # Dateigröße ausgegeben.
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                      datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
-                      #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].last_modified)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='+str(liste_keys[i].name)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='+str(directory)
-                      if sprache == "de":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
-                else: # Bei Eucalyptus gibt es eine andere Tabelle mit weniger Informationen
-                  # Bei Eucalyptus (Walrus) gibt es einige Sachen nicht
-                  bucket_keys_tabelle = ''
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Name</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='+str(liste_keys[i].name)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='+str(directory)
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-                  for i in range(laenge_liste_keys):
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                      if sprache == "de":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
-                      if str(liste_keys[i].name).endswith("$folder$") == True:
-                        if sprache == "de":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                      else:      # Ansonsten ist es eine Datei
-                        if sprache == "de":
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                        else:
-                          bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
-                      # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
-                      if str(liste_keys[i].name).endswith("$folder$") == True:
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
-                      else:
-                        # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
+            else: # Bei Eucalyptus gibt es eine andere Tabelle mit weniger Informationen
+              # Bei Eucalyptus (Walrus) gibt es einige Sachen nicht
+              bucket_keys_tabelle = ''
+              bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Name</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+              for i in range(laenge_liste_keys):
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
+                  if str(liste_keys[i].name).endswith("$folder$") == True:
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
+                  else:      # Ansonsten ist es eine Datei
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
+                  # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
+                  if str(liste_keys[i].name).endswith("$folder$") == True:
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
+                  else:
+                    # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
 
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
 
-              # "Verzeichnisse" gehen nur bei Amazon S3
-              # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
-              # In Walrus wird das so gespeichert: _%24folder%24
-              if regionname == "Amazon":
-                if sprache == "de":
-                  eingabeformular_neues_verzeichnis = ''
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<form action="/bucketverzeichniserzeugen" method="post" accept-charset="utf-8">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="bucket" value="'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + str(bucketname)
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="dir" value="'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + directory
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input name="verzeichnisname" type="text" size="25" maxlength="25"> '
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="submit" value="Verzeichnis erzeugen">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '</form>\n'
-                else:
-                  eingabeformular_neues_verzeichnis = ''
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<form action="/bucketverzeichniserzeugen" method="post" accept-charset="utf-8">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="bucket" value="'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + str(bucketname)
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="dir" value="'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + directory
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input name="verzeichnisname" type="text" size="25" maxlength="25"> '
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="submit" value="create directory">\n'
-                  eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '</form>\n'
-              else: 
-                if sprache == "de":
-                  eingabeformular_neues_verzeichnis = 'Das Erzeugen von Verzeichnissen funktioniert unter Eucalyptus noch nicht'
-                else:
-                  eingabeformular_neues_verzeichnis = 'The creation of directories is still not working with Eucaplyptus'
-
-              if sprache == "de":
-                verzeichnis_warnung = 'In S3 existieren keine Verzeichnisse, sondern nur Keys. S3 ist ein flacher Namensraum. <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> z.B. simuliert Verzeichnisse dadurch, dass bestimmte Keys als Platzhalter f&uuml;r das Verzeichnis dienen. Diese enden auf den Namen <b>_&#36;folder&#36;</b>. Ein Key, der einem Verzeichnis zugeordnet werden soll, hat das folgende Namensschema: <b>verzeichnis/unterverzeichnis/dateiname</b>'
-              else:
-                verzeichnis_warnung = 'There are no folders within a S3 bucket. S3 is a completely flat name space. However, you can simulate hierarchical folders with clever use of key names. <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> for instance uses keys that end with <b>_&#36;folder&#36;</b> as directory placeholders and. A key that is meant staying inside are folder has a name following this schema <b>folder/subfolder/filename</b>'
-
-
-
-              # Hier wird das Policy-Dokument erzeugt
-              policy_document = ''
-              policy_document = policy_document + '{'
-              policy_document = policy_document + '"expiration": "2100-01-01T00:00:00Z",'
-              policy_document = policy_document + '"conditions": ['
-              policy_document = policy_document + '{"bucket": "'+bucketname+'"},'
-              policy_document = policy_document + '["starts-with", "$acl", ""],'
-              policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
-              if directory == '/':
-                policy_document = policy_document + '["starts-with", "$key", ""],'
-              else:
-                policy_document = policy_document + '["starts-with", "$key", "'+directory+'"],'
-              policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
-              policy_document = policy_document + ']'
-              policy_document = policy_document + '}'
-
-              policy = base64.b64encode(policy_document)
-
-              signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
-
-              # Das Hochladen von Keys funktioniert nur unter Amazon EC2
-              if regionname == "Amazon":
-                keys_upload_formular = '<p>&nbsp;</p>\n'
-                keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
-                keys_upload_formular = keys_upload_formular + bucketname
-                keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
-                keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                if directory == '/':
-                  keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
-                else:
-                  keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="'+directory+'${filename}">\n'
-                keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
-                keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
-                keys_upload_formular = keys_upload_formular + '</select>\n'
-                keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
-                keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
-                keys_upload_formular = keys_upload_formular + '</select>\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                if directory == '/':
-                  keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
-                  keys_upload_formular = keys_upload_formular + bucketname
-                  keys_upload_formular = keys_upload_formular + '">\n'
-                else:
-                  keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
-                  keys_upload_formular = keys_upload_formular + bucketname
-                  keys_upload_formular = keys_upload_formular + '&amp;dir='
-                  keys_upload_formular = keys_upload_formular + directory[:-1]
-                  keys_upload_formular = keys_upload_formular + '">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                if sprache == "de":
-                  keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
-                else:
-                  keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '</table>'
-                keys_upload_formular = keys_upload_formular + '</form>'
-              # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
-              else:
-                if sprache == "de":
-                  keys_upload_formular = '<p>&nbsp;</p>\n Das Hochladen von Keys funktioniert unter Eucalyptus noch nicht'
-                else:
-                  keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'bucket_keys_tabelle': bucket_keys_tabelle,
-              'input_error_message': input_error_message,
-              'bucketname': bucketname,
-              'eingabeformular_neues_verzeichnis': eingabeformular_neues_verzeichnis,
-              'keys_upload_formular': keys_upload_formular,
-              'verzeichnis_warnung': verzeichnis_warnung,
-              }
-
-              #if sprache == "de": naechse_seite = "s3_keys_de.html"
-              #else:               naechse_seite = "s3_keys_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys.html")
-              self.response.out.write(template.render(path,template_values))
+          # "Verzeichnisse" gehen nur bei Amazon S3
+          # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
+          # In Walrus wird das so gespeichert: _%24folder%24
+          if regionname == "Amazon":
+            if sprache == "de":
+              eingabeformular_neues_verzeichnis = ''
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<form action="/bucketverzeichniserzeugen" method="post" accept-charset="utf-8">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="bucket" value="'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + str(bucketname)
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="dir" value="'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + directory
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input name="verzeichnisname" type="text" size="25" maxlength="25"> '
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="submit" value="Verzeichnis erzeugen">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '</form>\n'
             else:
-              self.redirect('/')
+              eingabeformular_neues_verzeichnis = ''
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<form action="/bucketverzeichniserzeugen" method="post" accept-charset="utf-8">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="bucket" value="'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + str(bucketname)
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="hidden" name="dir" value="'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + directory
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input name="verzeichnisname" type="text" size="25" maxlength="25"> '
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<input type="submit" value="create directory">\n'
+              eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '</form>\n'
+          else: 
+            if sprache == "de":
+              eingabeformular_neues_verzeichnis = 'Das Erzeugen von Verzeichnissen funktioniert unter Eucalyptus noch nicht'
+            else:
+              eingabeformular_neues_verzeichnis = 'The creation of directories is still not working with Eucaplyptus'
+
+          if sprache == "de":
+            verzeichnis_warnung = 'In S3 existieren keine Verzeichnisse, sondern nur Keys. S3 ist ein flacher Namensraum. <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> z.B. simuliert Verzeichnisse dadurch, dass bestimmte Keys als Platzhalter f&uuml;r das Verzeichnis dienen. Diese enden auf den Namen <b>_&#36;folder&#36;</b>. Ein Key, der einem Verzeichnis zugeordnet werden soll, hat das folgende Namensschema: <b>verzeichnis/unterverzeichnis/dateiname</b>'
+          else:
+            verzeichnis_warnung = 'There are no folders within a S3 bucket. S3 is a completely flat name space. However, you can simulate hierarchical folders with clever use of key names. <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> for instance uses keys that end with <b>_&#36;folder&#36;</b> as directory placeholders and. A key that is meant staying inside are folder has a name following this schema <b>folder/subfolder/filename</b>'
+
+
+
+          # Hier wird das Policy-Dokument erzeugt
+          policy_document = ''
+          policy_document = policy_document + '{'
+          policy_document = policy_document + '"expiration": "2100-01-01T00:00:00Z",'
+          policy_document = policy_document + '"conditions": ['
+          policy_document = policy_document + '{"bucket": "'+bucketname+'"},'
+          policy_document = policy_document + '["starts-with", "$acl", ""],'
+          policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
+          if directory == '/':
+            policy_document = policy_document + '["starts-with", "$key", ""],'
+          else:
+            policy_document = policy_document + '["starts-with", "$key", "'+directory+'"],'
+          policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
+          policy_document = policy_document + ']'
+          policy_document = policy_document + '}'
+
+          policy = base64.b64encode(policy_document)
+
+          signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
+
+          # Das Hochladen von Keys funktioniert nur unter Amazon EC2
+          if regionname == "Amazon":
+            keys_upload_formular = '<p>&nbsp;</p>\n'
+            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
+            keys_upload_formular = keys_upload_formular + bucketname
+            keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            if directory == '/':
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
+            else:
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="'+directory+'${filename}">\n'
+            keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
+            keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
+            keys_upload_formular = keys_upload_formular + '</select>\n'
+            keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
+            keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
+            keys_upload_formular = keys_upload_formular + '</select>\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            if directory == '/':
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
+              keys_upload_formular = keys_upload_formular + bucketname
+              keys_upload_formular = keys_upload_formular + '">\n'
+            else:
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
+              keys_upload_formular = keys_upload_formular + bucketname
+              keys_upload_formular = keys_upload_formular + '&amp;dir='
+              keys_upload_formular = keys_upload_formular + directory[:-1]
+              keys_upload_formular = keys_upload_formular + '">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            if sprache == "de":
+              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
+            else:
+              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '</table>'
+            keys_upload_formular = keys_upload_formular + '</form>'
+          # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
+          else:
+            if sprache == "de":
+              keys_upload_formular = '<p>&nbsp;</p>\n Das Hochladen von Keys funktioniert unter Eucalyptus noch nicht'
+            else:
+              keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'bucket_keys_tabelle': bucket_keys_tabelle,
+          'input_error_message': input_error_message,
+          'bucketname': bucketname,
+          'eingabeformular_neues_verzeichnis': eingabeformular_neues_verzeichnis,
+          'keys_upload_formular': keys_upload_formular,
+          'verzeichnis_warnung': verzeichnis_warnung,
+          }
+
+          #if sprache == "de": naechse_seite = "s3_keys_de.html"
+          #else:               naechse_seite = "s3_keys_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            #url = users.create_login_url(self.request.uri)
-            #url_linktext = 'Login'
-            self.redirect('/')
+          self.redirect('/')
 
 
 class BucketInhaltPur(webapp.RequestHandler):
@@ -7184,325 +7174,323 @@ class BucketInhaltPur(webapp.RequestHandler):
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Namen des Buckets holen, dessen Inhalt angezeigt wird
         bucketname = self.request.get('bucket')
 
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+          results = aktivezone.fetch(100)
 
-              results = aktivezone.fetch(100)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          #url = users.create_logout_url(self.request.uri)
+          url_linktext = 'Logout'
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              #url = users.create_logout_url(self.request.uri)
-              url_linktext = 'Logout'
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
+          AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
 
-              AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
-              AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
+          input_error_message = ""
 
-              input_error_message = ""
-
-              if message == "0":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
-              elif message == "1":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
-              elif message == "2":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Keys wurden erfolgreich gel&ouml;scht</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The keys were erased successfully</font>'
-              elif message == "3":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Keys zu l&ouml;schen kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the keys</font>'
-              elif message == "7":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
-              elif message == "8":
-                if sprache == "de":
-                  input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
-                else:
-                  input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
-              else:
-                input_error_message = ""
-
-              # Mit S3 verbinden
-              conn_s3 = logins3(username)
-              bucket_instance = conn_s3.get_bucket(bucketname)
-
-              liste_keys = bucket_instance.get_all_keys()
-              # Anzahl der Keys in der Liste
-              laenge_liste_keys = len(liste_keys)
-
-              # Wenn wir in einer Eucalyputs-Infrastruktur sind, dann muss dieser
-              # dämliche None-Eintrag weg
-              if regionname != "Amazon":
-                liste_keys2 = []
-                for i in range(laenge_liste_keys):
-                  if str(liste_keys[i].name) != 'None':
-                    liste_keys2.append(liste_keys[i])
-                laenge_liste_keys2 = len(liste_keys2)
-                laenge_liste_keys = laenge_liste_keys2
-                liste_keys = liste_keys2
-
-
-              if laenge_liste_keys == 0:
-                if sprache == "de":
-                  bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
-                else:
-                  bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
-              else:
-                bucket_keys_tabelle = ''
-                bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
-                if sprache == "de":
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
-                else:
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-
-                for i in range(laenge_liste_keys):
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                    if liste_keys[i].name == None and regionname != "Amazon":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=pur'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                      if sprache == "de":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    if liste_keys[i].name == None and regionname != "Amazon":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                      # In der reinen S3-Darstellung ist alles eine Datei
-                      if sprache == "de":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                      else:
-                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                    # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                    # Darum erst mal nur Links bei Amazon
-                    #if regionname == "Amazon":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                    bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                    bucket_keys_tabelle = bucket_keys_tabelle + '">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                    # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                    # Darum erst mal nur Links bei Amazon
-                    #if regionname == "Amazon":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
-                    if liste_keys[i].name == None and regionname != "Amazon":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    #bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                    #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].content_type)
-                    #bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                    if liste_keys[i].name == None and regionname != "Amazon":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                    else:
-                      datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=pur'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
-
-              # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
-              if regionname != "Amazon":
-                if sprache == "de":
-                  eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung:<BR><B>Failure: 500 Internal Server Error</B>'
-                else:
-                  eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message:<BR><B>Failure: 500 Internal Server Error</B>'
-              else: 
-                eucalyptus_warnung = ''
-
-
-              #Dokumentation zum Upload von Keys
-              #http://docs.amazonwebservices.com/AmazonS3/latest/index.html?HTTPPOSTForms.html
-              #http://doc.s3.amazonaws.com/proposals/post.html
-              #http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1434
-              #http://s3.amazonaws.com/doc/s3-example-code/post/post_sample.html
-
-              # Hier wird das Policy-Dokument erzeugt
-              policy_document = ''
-              policy_document = policy_document + '{'
-              policy_document = policy_document + '"expiration": "2100-01-01T00:00:00Z",'
-              policy_document = policy_document + '"conditions": ['
-              policy_document = policy_document + '{"bucket": "'+bucketname+'"}, '
-              policy_document = policy_document + '["starts-with", "$acl", ""],'
-              policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
-              policy_document = policy_document + '["starts-with", "$key", ""],'
-              policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
-              policy_document = policy_document + ']'
-              policy_document = policy_document + '}'
-
-              policy = base64.b64encode(policy_document)
-
-              signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
-
-              # Das Hochladen von Keys funktioniert nur unter Amazon EC2
-              if regionname == "Amazon":
-                keys_upload_formular = '<p>&nbsp;</p>\n'
-                keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
-                keys_upload_formular = keys_upload_formular + bucketname
-                keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
-                keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
-                keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
-                keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
-                keys_upload_formular = keys_upload_formular + '</select>\n'
-                keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
-                keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
-                keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
-                keys_upload_formular = keys_upload_formular + '</select>\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt_pure?bucket='
-                keys_upload_formular = keys_upload_formular + bucketname
-                keys_upload_formular = keys_upload_formular + '">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
-                keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '<tr>'
-                keys_upload_formular = keys_upload_formular + '<td>'
-                if sprache == "de":
-                  keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
-                else:
-                  keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
-                keys_upload_formular = keys_upload_formular + '</td>'
-                keys_upload_formular = keys_upload_formular + '</tr>'
-                keys_upload_formular = keys_upload_formular + '</table>'
-                keys_upload_formular = keys_upload_formular + '</form>'
-              # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
-              else:
-                if sprache == "de":
-                  keys_upload_formular = '<p>&nbsp;</p>\n Das Hochladen von Keys funktioniert unter Eucalyptus noch nicht'
-                else:
-                  keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
-
-
-              if laenge_liste_keys != 0:
-                alle_keys_loeschen_button = '<p>&nbsp;</p>\n'
-                alle_keys_loeschen_button = alle_keys_loeschen_button + '<form action="/alle_keys_loeschen" method="get">\n'
-                alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="s3_ansicht" value="pur"> \n'
-                alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="bucket_name" value="'+bucketname+'"> \n'
-                if sprache == "de":
-                  alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Alle Keys l&ouml;schen">\n'
-                else:
-                  alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Erase all keys">\n'
-                alle_keys_loeschen_button = alle_keys_loeschen_button + '</form>\n'
-              else:
-                alle_keys_loeschen_button = ''
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'bucket_keys_tabelle': bucket_keys_tabelle,
-              'input_error_message': input_error_message,
-              'bucketname': bucketname,
-              'keys_upload_formular': keys_upload_formular,
-              'eucalyptus_warnung': eucalyptus_warnung,
-              'alle_keys_loeschen_button': alle_keys_loeschen_button,
-              }
-
-              #if sprache == "de": naechse_seite = "s3_keys_pur_de.html"
-              #else:               naechse_seite = "s3_keys_pur_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys_pur.html")
-              self.response.out.write(template.render(path,template_values))
+          if message == "0":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
             else:
-              self.redirect('/')
+              input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
+          elif message == "1":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
+          elif message == "2":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Keys wurden erfolgreich gel&ouml;scht</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The keys were erased successfully</font>'
+          elif message == "3":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Keys zu l&ouml;schen kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the keys</font>'
+          elif message == "7":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
+          elif message == "8":
+            if sprache == "de":
+              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
+            else:
+              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
+          else:
+            input_error_message = ""
+
+          # Mit S3 verbinden
+          conn_s3 = logins3(username)
+          bucket_instance = conn_s3.get_bucket(bucketname)
+
+          liste_keys = bucket_instance.get_all_keys()
+          # Anzahl der Keys in der Liste
+          laenge_liste_keys = len(liste_keys)
+
+          # Wenn wir in einer Eucalyputs-Infrastruktur sind, dann muss dieser
+          # dämliche None-Eintrag weg
+          if regionname != "Amazon":
+            liste_keys2 = []
+            for i in range(laenge_liste_keys):
+              if str(liste_keys[i].name) != 'None':
+                liste_keys2.append(liste_keys[i])
+            laenge_liste_keys2 = len(liste_keys2)
+            laenge_liste_keys = laenge_liste_keys2
+            liste_keys = liste_keys2
+
+
+          if laenge_liste_keys == 0:
+            if sprache == "de":
+              bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
+            else:
+              bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
+          else:
+            bucket_keys_tabelle = ''
+            bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+            bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+            bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
+            bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
+            if sprache == "de":
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
+            else:
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
+            bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+
+            for i in range(laenge_liste_keys):
+                bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                if liste_keys[i].name == None and regionname != "Amazon":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                else:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=pur'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                if liste_keys[i].name == None and regionname != "Amazon":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                else:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  # In der reinen S3-Darstellung ist alles eine Datei
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
+                # Darum erst mal nur Links bei Amazon
+                #if regionname == "Amazon":
+                bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
+                bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
+                # Darum erst mal nur Links bei Amazon
+                #if regionname == "Amazon":
+                bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
+                if liste_keys[i].name == None and regionname != "Amazon":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                else:
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                #bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].content_type)
+                #bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                if liste_keys[i].name == None and regionname != "Amazon":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                else:
+                  datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=pur'
+                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                if sprache == "de":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                else:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+            bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
+
+          # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
+          if regionname != "Amazon":
+            if sprache == "de":
+              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung:<BR><B>Failure: 500 Internal Server Error</B>'
+            else:
+              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message:<BR><B>Failure: 500 Internal Server Error</B>'
+          else: 
+            eucalyptus_warnung = ''
+
+
+          #Dokumentation zum Upload von Keys
+          #http://docs.amazonwebservices.com/AmazonS3/latest/index.html?HTTPPOSTForms.html
+          #http://doc.s3.amazonaws.com/proposals/post.html
+          #http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1434
+          #http://s3.amazonaws.com/doc/s3-example-code/post/post_sample.html
+
+          # Hier wird das Policy-Dokument erzeugt
+          policy_document = ''
+          policy_document = policy_document + '{'
+          policy_document = policy_document + '"expiration": "2100-01-01T00:00:00Z",'
+          policy_document = policy_document + '"conditions": ['
+          policy_document = policy_document + '{"bucket": "'+bucketname+'"}, '
+          policy_document = policy_document + '["starts-with", "$acl", ""],'
+          policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
+          policy_document = policy_document + '["starts-with", "$key", ""],'
+          policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
+          policy_document = policy_document + ']'
+          policy_document = policy_document + '}'
+
+          policy = base64.b64encode(policy_document)
+
+          signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
+
+          # Das Hochladen von Keys funktioniert nur unter Amazon EC2
+          if regionname == "Amazon":
+            keys_upload_formular = '<p>&nbsp;</p>\n'
+            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
+            keys_upload_formular = keys_upload_formular + bucketname
+            keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
+            keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
+            keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
+            keys_upload_formular = keys_upload_formular + '</select>\n'
+            keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
+            keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
+            keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
+            keys_upload_formular = keys_upload_formular + '</select>\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt_pure?bucket='
+            keys_upload_formular = keys_upload_formular + bucketname
+            keys_upload_formular = keys_upload_formular + '">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '<tr>'
+            keys_upload_formular = keys_upload_formular + '<td>'
+            if sprache == "de":
+              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
+            else:
+              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
+            keys_upload_formular = keys_upload_formular + '</td>'
+            keys_upload_formular = keys_upload_formular + '</tr>'
+            keys_upload_formular = keys_upload_formular + '</table>'
+            keys_upload_formular = keys_upload_formular + '</form>'
+          # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
+          else:
+            if sprache == "de":
+              keys_upload_formular = '<p>&nbsp;</p>\n Das Hochladen von Keys funktioniert unter Eucalyptus noch nicht'
+            else:
+              keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
+
+
+          if laenge_liste_keys != 0:
+            alle_keys_loeschen_button = '<p>&nbsp;</p>\n'
+            alle_keys_loeschen_button = alle_keys_loeschen_button + '<form action="/alle_keys_loeschen" method="get">\n'
+            alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="s3_ansicht" value="pur"> \n'
+            alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="bucket_name" value="'+bucketname+'"> \n'
+            if sprache == "de":
+              alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Alle Keys l&ouml;schen">\n'
+            else:
+              alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Erase all keys">\n'
+            alle_keys_loeschen_button = alle_keys_loeschen_button + '</form>\n'
+          else:
+            alle_keys_loeschen_button = ''
+
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'bucket_keys_tabelle': bucket_keys_tabelle,
+          'input_error_message': input_error_message,
+          'bucketname': bucketname,
+          'keys_upload_formular': keys_upload_formular,
+          'eucalyptus_warnung': eucalyptus_warnung,
+          'alle_keys_loeschen_button': alle_keys_loeschen_button,
+          }
+
+          #if sprache == "de": naechse_seite = "s3_keys_pur_de.html"
+          #else:               naechse_seite = "s3_keys_pur_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "s3_keys_pur.html")
+          self.response.out.write(template.render(path,template_values))
         else:
-            self.redirect('/')
+          self.redirect('/')
 
 
 class BucketKeyEntfernen(webapp.RequestHandler):
@@ -7669,6 +7657,8 @@ class ACL_einsehen(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Namen des Buckets holen, in dem der Key ist
         bucketname = self.request.get('bucket')
         # Namen des Keys holen, dessen ACL angezeigt wird
@@ -7679,171 +7669,167 @@ class ACL_einsehen(webapp.RequestHandler):
         # Verzeichnis holen, wenn es die Komfort-Ansicht war
         directory = self.request.get('dir')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
+        if results:
+          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
 
-              results = aktivezone.fetch(100)
+          results = aktivezone.fetch(100)
 
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              # Mit S3 verbinden
-              conn_s3 = logins3(username)
-              bucket_instance = conn_s3.get_bucket(bucketname)
+          # Mit S3 verbinden
+          conn_s3 = logins3(username)
+          bucket_instance = conn_s3.get_bucket(bucketname)
 
-              key_instance = bucket_instance.get_acl(keyname)
+          key_instance = bucket_instance.get_acl(keyname)
 
-              acl = bucket_instance.get_acl(key_name=keyname)
+          acl = bucket_instance.get_acl(key_name=keyname)
 
-              AllUsersREAD  = ''
-              AllUsersWRITE = ''
-              AllUsersFULL  = ''
-              AuthentUsersREAD   = ''
-              AuthentUsersWRITE  = ''
-              AuthentUsersFULL   = ''
-              OwnerName   = ''
-              OwnerREAD   = ''
-              OwnerWRITE  = ''
-              OwnerFULL   = ''
+          AllUsersREAD  = ''
+          AllUsersWRITE = ''
+          AllUsersFULL  = ''
+          AuthentUsersREAD   = ''
+          AuthentUsersWRITE  = ''
+          AuthentUsersFULL   = ''
+          OwnerName   = ''
+          OwnerREAD   = ''
+          OwnerWRITE  = ''
+          OwnerFULL   = ''
 
-              for grant in acl.acl.grants:
-                if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'READ':
-                  AllUsersREAD  = 'tick.png'
-                if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'WRITE':
-                  AllUsersWRITE = 'tick.png'
-                if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'FULL_CONTROL':
-                  AllUsersREAD  = 'tick.png'
-                  AllUsersWRITE = 'tick.png'
-                  AllUsersFULL  = 'tick.png'
-                if str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'READ':
-                  AuthentUsersREAD  = 'tick.png'
-                elif str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'WRITE':
-                  AuthentUsersWRITE = 'tick.png'
-                elif str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'FULL_CONTROL':
-                  AuthentUsersFULL  = 'tick.png'
-                # Wenn der Besitzer des Keys dieser Eintrag hier ist...
-                if str(key_instance.owner.id) == str(grant.id):
-                  OwnerName = str(grant.display_name)
-                  if grant.permission == 'READ':
-                    OwnerREAD   = 'tick.png'
-                  if grant.permission == 'WRITE':
-                    OwnerWRITE  = 'tick.png'
-                  if grant.permission == 'FULL_CONTROL':
-                    OwnerREAD   = 'tick.png'
-                    OwnerWRITE  = 'tick.png'
-                    OwnerFull   = 'tick.png'
+          for grant in acl.acl.grants:
+            if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'READ':
+              AllUsersREAD  = 'tick.png'
+            if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'WRITE':
+              AllUsersWRITE = 'tick.png'
+            if str(grant.uri).find('AllUsers') != -1 and grant.permission == 'FULL_CONTROL':
+              AllUsersREAD  = 'tick.png'
+              AllUsersWRITE = 'tick.png'
+              AllUsersFULL  = 'tick.png'
+            if str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'READ':
+              AuthentUsersREAD  = 'tick.png'
+            elif str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'WRITE':
+              AuthentUsersWRITE = 'tick.png'
+            elif str(grant.uri).find('AuthenticatedUsers') != -1 and grant.permission == 'FULL_CONTROL':
+              AuthentUsersFULL  = 'tick.png'
+            # Wenn der Besitzer des Keys dieser Eintrag hier ist...
+            if str(key_instance.owner.id) == str(grant.id):
+              OwnerName = str(grant.display_name)
+              if grant.permission == 'READ':
+                OwnerREAD   = 'tick.png'
+              if grant.permission == 'WRITE':
+                OwnerWRITE  = 'tick.png'
+              if grant.permission == 'FULL_CONTROL':
+                OwnerREAD   = 'tick.png'
+                OwnerWRITE  = 'tick.png'
+                OwnerFull   = 'tick.png'
 
-              if AllUsersREAD  == '': AllUsersREAD  = 'delete.png'
-              if AllUsersWRITE == '': AllUsersWRITE = 'delete.png'
-              if AllUsersFULL  == '': AllUsersFULL  = 'delete.png'
-              if AuthentUsersREAD  == '': AuthentUsersREAD  = 'delete.png'
-              if AuthentUsersWRITE == '': AuthentUsersWRITE = 'delete.png'
-              if AuthentUsersFULL  == '': AuthentUsersFULL  = 'delete.png'
-              if OwnerREAD  == '': OwnerREAD  = 'delete.png'
-              if OwnerWRITE == '': OwnerWRITE = 'delete.png'
-              if OwnerFull  == '': OwnerFull  = 'delete.png'
+          if AllUsersREAD  == '': AllUsersREAD  = 'delete.png'
+          if AllUsersWRITE == '': AllUsersWRITE = 'delete.png'
+          if AllUsersFULL  == '': AllUsersFULL  = 'delete.png'
+          if AuthentUsersREAD  == '': AuthentUsersREAD  = 'delete.png'
+          if AuthentUsersWRITE == '': AuthentUsersWRITE = 'delete.png'
+          if AuthentUsersFULL  == '': AuthentUsersFULL  = 'delete.png'
+          if OwnerREAD  == '': OwnerREAD  = 'delete.png'
+          if OwnerWRITE == '': OwnerWRITE = 'delete.png'
+          if OwnerFull  == '': OwnerFull  = 'delete.png'
 
-              acl_tabelle = '\n'
-              acl_tabelle = acl_tabelle + '<table border="1" cellspacing="0" cellpadding="5"> \n'
-              acl_tabelle = acl_tabelle + '<tr> \n'
-              if sprache == "de": 
-                acl_tabelle = acl_tabelle + '<th>Benutzer</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Lesen</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Schreiben</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Voller Zugriff</th> \n'
-              else:
-                acl_tabelle = acl_tabelle + '<th>User</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Read</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Write</th> \n'
-                acl_tabelle = acl_tabelle + '<th>Full Control</th> \n'
-              acl_tabelle = acl_tabelle + '</tr> \n'
-              acl_tabelle = acl_tabelle + '<tr> \n'
-              if sprache == "de": acl_tabelle = acl_tabelle + '<td>Alle</td> \n'
-              else:               acl_tabelle = acl_tabelle + '<td>Everyone</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersREAD+'" width="24" height="24" border="0" alt="'+AllUsersREAD+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersWRITE+'" width="24" height="24" border="0" alt="'+AllUsersWRITE+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersFULL+'" width="24" height="24" border="0" alt="'+AllUsersFULL+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '</tr> \n'
-              acl_tabelle = acl_tabelle + '<tr> \n'
-              if sprache == "de": acl_tabelle = acl_tabelle + '<td>Authentifizierte Benutzer</td> \n'
-              else:               acl_tabelle = acl_tabelle + '<td>Authenticated Users</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersREAD+'" width="24" height="24" border="0" alt="'+AuthentUsersREAD+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersWRITE+'" width="24" height="24" border="0" alt="'+AuthentUsersWRITE+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersFULL+'" width="24" height="24" border="0" alt="'+AuthentUsersFULL+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '</tr> \n'
-              acl_tabelle = acl_tabelle + '<tr> \n'
-              if sprache == "de": acl_tabelle = acl_tabelle + '<td>'+OwnerName+' (Besitzer)</td> \n'
-              else:               acl_tabelle = acl_tabelle + '<td>'+OwnerName+' Owner</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerREAD+'" width="24" height="24" border="0" alt="'+OwnerREAD+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerWRITE+'" width="24" height="24" border="0" alt="'+OwnerWRITE+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '<td align="center"> \n'
-              acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerFull+'" width="24" height="24" border="0" alt="'+OwnerFull+'"> \n'
-              acl_tabelle = acl_tabelle + '</td> \n'
-              acl_tabelle = acl_tabelle + '</tr> \n'
-              acl_tabelle = acl_tabelle + '</table> \n'
+          acl_tabelle = '\n'
+          acl_tabelle = acl_tabelle + '<table border="1" cellspacing="0" cellpadding="5"> \n'
+          acl_tabelle = acl_tabelle + '<tr> \n'
+          if sprache == "de": 
+            acl_tabelle = acl_tabelle + '<th>Benutzer</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Lesen</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Schreiben</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Voller Zugriff</th> \n'
+          else:
+            acl_tabelle = acl_tabelle + '<th>User</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Read</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Write</th> \n'
+            acl_tabelle = acl_tabelle + '<th>Full Control</th> \n'
+          acl_tabelle = acl_tabelle + '</tr> \n'
+          acl_tabelle = acl_tabelle + '<tr> \n'
+          if sprache == "de": acl_tabelle = acl_tabelle + '<td>Alle</td> \n'
+          else:               acl_tabelle = acl_tabelle + '<td>Everyone</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersREAD+'" width="24" height="24" border="0" alt="'+AllUsersREAD+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersWRITE+'" width="24" height="24" border="0" alt="'+AllUsersWRITE+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AllUsersFULL+'" width="24" height="24" border="0" alt="'+AllUsersFULL+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '</tr> \n'
+          acl_tabelle = acl_tabelle + '<tr> \n'
+          if sprache == "de": acl_tabelle = acl_tabelle + '<td>Authentifizierte Benutzer</td> \n'
+          else:               acl_tabelle = acl_tabelle + '<td>Authenticated Users</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersREAD+'" width="24" height="24" border="0" alt="'+AuthentUsersREAD+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersWRITE+'" width="24" height="24" border="0" alt="'+AuthentUsersWRITE+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+AuthentUsersFULL+'" width="24" height="24" border="0" alt="'+AuthentUsersFULL+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '</tr> \n'
+          acl_tabelle = acl_tabelle + '<tr> \n'
+          if sprache == "de": acl_tabelle = acl_tabelle + '<td>'+OwnerName+' (Besitzer)</td> \n'
+          else:               acl_tabelle = acl_tabelle + '<td>'+OwnerName+' Owner</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerREAD+'" width="24" height="24" border="0" alt="'+OwnerREAD+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerWRITE+'" width="24" height="24" border="0" alt="'+OwnerWRITE+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '<td align="center"> \n'
+          acl_tabelle = acl_tabelle + '<img src="bilder/'+OwnerFull+'" width="24" height="24" border="0" alt="'+OwnerFull+'"> \n'
+          acl_tabelle = acl_tabelle + '</td> \n'
+          acl_tabelle = acl_tabelle + '</tr> \n'
+          acl_tabelle = acl_tabelle + '</table> \n'
 
-              # Wenn man sich NICHT unter Amazon befindet, funktioniert das Ändern der ACL nicht.
-              if regionname != "Amazon":
-                if sprache == "de":
-                  eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert das &Auml;ndern der Zugriffsberechtigung (Access Control List) nicht.</B>'
-                else:
-                  eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 changing the ACL is broken.</B>'
-              else: 
-                eucalyptus_warnung = ''
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'bucketname': bucketname,
-              'keyname': keyname,
-              'acl_tabelle': acl_tabelle,
-              'typ': typ,
-              'directory': directory,
-              'eucalyptus_warnung': eucalyptus_warnung,
-              }
-
-              #if sprache == "de": naechse_seite = "acl_de.html"
-              #else:               naechse_seite = "acl_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "acl.html")
-              self.response.out.write(template.render(path,template_values))
+          # Wenn man sich NICHT unter Amazon befindet, funktioniert das Ändern der ACL nicht.
+          if regionname != "Amazon":
+            if sprache == "de":
+              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert das &Auml;ndern der Zugriffsberechtigung (Access Control List) nicht.</B>'
             else:
-              self.redirect('/')
-        else:
-            self.redirect('/')
+              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 changing the ACL is broken.</B>'
+          else: 
+            eucalyptus_warnung = ''
 
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'bucketname': bucketname,
+          'keyname': keyname,
+          'acl_tabelle': acl_tabelle,
+          'typ': typ,
+          'directory': directory,
+          'eucalyptus_warnung': eucalyptus_warnung,
+          }
+
+          #if sprache == "de": naechse_seite = "acl_de.html"
+          #else:               naechse_seite = "acl_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "acl.html")
+          self.response.out.write(template.render(path,template_values))
+        else:
+          self.redirect('/')
 
 
 class ACL_Aendern(webapp.RequestHandler):
@@ -7895,43 +7881,44 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
+        if not username:
+            self.redirect('/')
         # Den Namen des Buckets erfahren
         bucketname = self.request.get('bucket_name')
         # Die S3-Ansicht (pur oder Komfort) erfahren
         s3_ansicht = self.request.get('s3_ansicht')
 
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
 
-            if results:
-              sprache = aktuelle_sprache(username)
-              navigations_bar = navigations_bar_funktion(sprache)
-              url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-              url_linktext = 'Logout'
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
 
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
 
-              zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache)
 
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'bucketname': bucketname,
-              's3_ansicht': s3_ansicht,
-              }
+          template_values = {
+          'navigations_bar': navigations_bar,
+          'url': url,
+          'url_linktext': url_linktext,
+          'zone': regionname,
+          'zone_amazon': zone_amazon,
+          'zonen_liste': zonen_liste,
+          'bucketname': bucketname,
+          's3_ansicht': s3_ansicht,
+          }
 
-              #if sprache == "de": naechse_seite = "alle_keys_loeschen_frage_de.html"
-              #else:               naechse_seite = "alle_keys_loeschen_frage_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_keys_loeschen_frage.html")
-              self.response.out.write(template.render(path,template_values))
+          #if sprache == "de": naechse_seite = "alle_keys_loeschen_frage_de.html"
+          #else:               naechse_seite = "alle_keys_loeschen_frage_en.html"
+          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_keys_loeschen_frage.html")
+          self.response.out.write(template.render(path,template_values))
 
 
 class AlleKeysLoeschenDefinitiv(webapp.RequestHandler):
