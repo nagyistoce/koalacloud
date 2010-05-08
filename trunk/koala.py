@@ -69,7 +69,15 @@ error_messages = {
   '9' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten',
            'en' : 'A timeout error occured' },
   '10' : { 'de' : 'Es ist ein Fehler aufgetreten',
-           'en' : 'An error occured' }
+           'en' : 'An error occured' },
+  '11' : { 'de' : 'Der Snapshot wurde erfolgreich gel&ouml;scht',
+           'en' : 'The snapshot was erased successfully' },
+  '12' : { 'de' : 'Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler',
+           'en' : 'While the system tried to erase the snapshot, an error occured' },
+  '13' : { 'de' : 'Der Snapshot wurde erfolgreich erzeugt',
+           'en' : 'The snapshot was created successfully' },
+  '14' : { 'de' : 'Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler',
+           'en' : 'While the system tried to create the snapshot, an error occured' }
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -3752,17 +3760,17 @@ class SnapshotsEntfernen(webapp.RequestHandler):
           conn_region.delete_snapshot(snapshot)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "1"
+          fehlermeldung = "12"
           self.redirect('/snapshots?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "4"
+          fehlermeldung = "8"
           self.redirect('/snapshots?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "0"
+          fehlermeldung = "11"
           self.redirect('/snapshots?message='+fehlermeldung)
 
 
@@ -3786,17 +3794,17 @@ class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
           conn_region.create_snapshot(volume, description=beschreibung)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "3"
+          fehlermeldung = "14"
           self.redirect('/snapshots?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "4"
+          fehlermeldung = "8"
           self.redirect('/snapshots?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "2"
+          fehlermeldung = "13"
           self.redirect('/snapshots?message='+fehlermeldung)
 
 
@@ -3898,33 +3906,22 @@ class Snapshots(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was erased successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the snapshot, an error occured</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Snapshot wurde erfolgreich erzeugt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The snapshot was created successfully</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the snapshot, an error occured</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
-          else:
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
             input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '11' or message == '13':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          else:
+            input_error_message = format_error_message_red(input_error_message)
 
           try:
             # Liste mit den Snapshots
