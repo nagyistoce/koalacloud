@@ -77,7 +77,33 @@ error_messages = {
   '13' : { 'de' : 'Der Snapshot wurde erfolgreich erzeugt',
            'en' : 'The snapshot was created successfully' },
   '14' : { 'de' : 'Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler',
-           'en' : 'While the system tried to create the snapshot, an error occured' }
+           'en' : 'While the system tried to create the snapshot, an error occured' },
+  '15' : { 'de' : 'Das Volume wurde erfolgreich angelegt',
+           'en' : 'The volume was created successfully' },
+  '16' : { 'de' : 'Sie haben keine Gr&ouml;&szlig;e angegeben',
+           'en' : 'No size given' },
+  '17' : { 'de' : 'Sie haben keine Zahl angegeben',
+           'en' : 'The size was not a number' },
+  '18' : { 'de' : 'Beim Versuch das neue Volume zu erzeugen, kam es zu einem Fehler',
+           'en' : 'An error occured while the system tried to create the new volume' },
+  '19' : { 'de' : 'Beim Versuch das Volume zu entfernen, kam es zu einem Fehler',
+           'en' : 'An error occured while the system tried to delete the volume' },
+  '20' : { 'de' : 'Beim Versuch das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler',
+           'en' : 'An error occured while the system tried to detach the volume from the instance' },
+  '21' : { 'de' : 'Beim Versuch das Volume mit der Instanz zu verbinden, kam es zu einem Fehler',
+           'en' : 'An error occured while the system tried to attach the volume with the instance' },
+  '22' : { 'de' : 'Das Volume wurde erfolgreich gel&ouml;scht',
+           'en' : 'The volume was erased successfully' },
+  '23' : { 'de' : 'Das Volume wurde erfolgreich mit der Instanz verbunden',
+           'en' : 'The volume was attached with the instance successfully' },
+  '24' : { 'de' : 'Das Volume wurde erfolgreich von der Instanz gel&ouml;st',
+           'en' : 'The volume was detached from the instance successfully' },
+  '25' : { 'de' : 'EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB',
+           'en' : 'EBS allows to create storage volumes from 1 GB to 1 TB' },
+  '26' : { 'de' : 'Beim Versuch die Volumes zu l&ouml;schen ist ein Fehler aufgetreten',
+           'en' : 'While the system tried to erase the volumes, an error occured' },
+  '27' : { 'de' : 'Die Volumes wurden gel&ouml;scht',
+           'en' : 'The volumes were erased successfully' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -4097,13 +4123,13 @@ class AlleVolumesLoeschenDefinitiv(webapp.RequestHandler):
           liste_volumes = conn_region.get_all_volumes()
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "12"
+          fehlermeldung = "10"
           self.redirect('/volumes?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/volumes?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
@@ -4115,16 +4141,16 @@ class AlleVolumesLoeschenDefinitiv(webapp.RequestHandler):
                   conn_region.delete_volume(liste_volumes[i].id)
                 except EC2ResponseError:
                   # Wenn es nicht klappt...
-                  fehlermeldung = "13"
+                  fehlermeldung = "26"
                   self.redirect('/volumes?message='+fehlermeldung)
                 except DownloadError:
                   # Diese Exception hilft gegen diese beiden Fehler:
                   # DownloadError: ApplicationError: 2 timed out
                   # DownloadError: ApplicationError: 5
-                  fehlermeldung = "10"
+                  fehlermeldung = "8"
                   self.redirect('/volumes?message='+fehlermeldung)
 
-          fehlermeldung = "14"
+          fehlermeldung = "27"
           self.redirect('/volumes?message='+fehlermeldung)
 
 
@@ -4154,83 +4180,22 @@ class Volumes(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich angelegt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was created successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Gr&ouml;&szlig;e angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No size for the new volume given</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Zahl angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The size was not a number</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Volume zu erzeugen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new volume</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume zu entfernen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to delete the volume</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to detach the volume from the instance</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Volume mit der Instanz zu verbinden, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to attach the volume with the instance</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was erased successfully</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich mit der Instanz verbunden</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was attached with the instance successfully</font>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Volume wurde erfolgreich von der Instanz gel&ouml;st</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The volume was detached from the instance successfully</font>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-          elif message == "11":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">EBS allows to create storage volumes from 1 GB to 1 TB </font>'
-          elif message == "12":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-          elif message == "13":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Volumes zu l&ouml;schen ist ein Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the volumes, an error occured</font>'
-          elif message == "14":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Volumes wurden gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The volumes were erased successfully</font>'
-          else:
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
             input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '15' or message == '22' or message == '23' or message == '24' or message == '27':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          else:
+            input_error_message = format_error_message_red(input_error_message)
 
           # Liste mit den Zonen
           liste_zonen = conn_region.get_all_zones()
@@ -4497,18 +4462,18 @@ class VolumesEntfernen(webapp.RequestHandler):
           conn_region.delete_volume(volume)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "4"
+          fehlermeldung = "19"
           self.redirect('/volumes?message='+fehlermeldung) 
         except DownloadError:
           # Wenn es nicht klappt...
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/volumes?message='+fehlermeldung) 
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "7"
+          fehlermeldung = "22"
           self.redirect('/volumes?message='+fehlermeldung) 
 
 
@@ -4530,17 +4495,17 @@ class VolumeDefinitivAnhaengen(webapp.RequestHandler):
           neues_volume = conn_region.attach_volume(volume, instance_id, device)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "6"
+          fehlermeldung = "21"
           self.redirect('/volumes?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/volumes?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "8"
+          fehlermeldung = "23"
           self.redirect('/volumes?message='+fehlermeldung)
 
 
@@ -4732,19 +4697,19 @@ class VolumesErzeugen(webapp.RequestHandler):
           # Testen ob die Größe des neuen Volumes angegeben wurde
           # Wenn keine Größe angegeben wurde, kann kein Volume angelegt werden
           #fehlermeldung = "Sie haben keine Größe angegeben"
-          fehlermeldung = "1"
+          fehlermeldung = "16"
           self.redirect('/volumes?message='+fehlermeldung)
         elif groesse.isdigit() == False: 
           # Testen ob die Größe eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           #fehlermeldung = "Sie haben keine Zahl angegeben"
-          fehlermeldung = "2"
+          fehlermeldung = "17"
           self.redirect('/volumes?message='+fehlermeldung)
         elif GB_oder_TB == "TB" and int(groesse) > 1:
           # Testen ob TB als Maßeinheit angegeben wurde und die Größe > 1 TB ist
           # fehlermeldung = "Amazon EBS ermöglicht die Erstellung von Datenträgern
           # mit einer Speicherkapazität von 1 GB bis 1 TB"
-          fehlermeldung = "11"
+          fehlermeldung = "25"
           self.redirect('/volumes?message='+fehlermeldung)
         else:
           # Die Eingabe in Integer umwandeln
@@ -4759,18 +4724,18 @@ class VolumesErzeugen(webapp.RequestHandler):
             neues_volume = conn_region.create_volume(groesse, zone, snapshot=None)
           except EC2ResponseError:
             # Wenn es nicht klappt...
-            fehlermeldung = "3"
+            fehlermeldung = "18"
             self.redirect('/volumes?message='+fehlermeldung)
           except DownloadError:
             # Wenn es nicht klappt...
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
-            fehlermeldung = "10"
+            fehlermeldung = "8"
             self.redirect('/volumes?message='+fehlermeldung) 
           else:
             # Wenn es geklappt hat...
-            fehlermeldung = "0"
+            fehlermeldung = "15"
             self.redirect('/volumes?message='+fehlermeldung)
 
 
@@ -4788,18 +4753,18 @@ class VolumesLoesen(webapp.RequestHandler):
           conn_region.detach_volume(volume)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "5"
+          fehlermeldung = "20"
           self.redirect('/volumes?message='+fehlermeldung) 
         except DownloadError:
           # Wenn es nicht klappt...
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/volumes?message='+fehlermeldung) 
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "9"
+          fehlermeldung = "24"
           self.redirect('/volumes?message='+fehlermeldung) 
 
 
