@@ -104,6 +104,30 @@ error_messages = {
            'en' : 'While the system tried to erase the volumes, an error occured' },
   '27' : { 'de' : 'Die Volumes wurden gel&ouml;scht',
            'en' : 'The volumes were erased successfully' },
+  '28' : { 'de' : 'Die Regel wurde erfolgreich angelegt',
+           'en' : 'The rule was created successfully' },
+  '29' : { 'de' : 'Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben',
+           'en' : 'The From Port and the To Port for the new rule was missing' },
+  '30' : { 'de' : 'Sie haben keinen From Port f&uuml;r die neue Regel angegeben',
+           'en' : 'The From Port for the new rule was missing' },
+  '31' : { 'de' : 'Sie haben keinen To Port f&uuml;r die neue Regel angegeben',
+           'en' : 'The To Port for the new rule was missing' },
+  '32' : { 'de' : 'Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben',
+           'en' : 'The From Port and the To Port for the new rule have not been numbers' },
+  '33' : { 'de' : 'Sie haben f&uuml;r den From Port keine Zahl angegeben',
+           'en' : 'The From Port for the new rule was not a number' },
+  '34' : { 'de' : 'Sie haben f&uuml;r den To Port keine Zahl angegeben',
+           'en' : 'The To Port for the new rule was not a number' },
+  '35' : { 'de' : 'Die Regel war schon vorhanden',
+           'en' : 'The rule was still existing' },
+  '36' : { 'de' : 'Beim Versuch die Regel zu entfernen kam es zu einem Fehler',
+           'en' : 'While the system tried to remove the rule, an error occured' },
+  '37' : { 'de' : 'Die Regel wurde erfolgreich entfernt',
+           'en' : 'The rule was removed successfully' },
+  '38' : { 'de' : 'Die zu l&ouml;schende Regel konnte nicht gefunden werden',
+           'en' : 'The rule was not found' },
+  '39' : { 'de' : 'Beim Versuch die Regel zu anzulegen kam es zu einem Fehler',
+           'en' : 'While the system tried to create the rule, an error occured' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -709,6 +733,23 @@ class Instanzen(webapp.RequestHandler):
           zone_amazon = amazon_region(username)
 
           zonen_liste = zonen_liste_funktion(username,sprache)
+
+          #if sprache != "de":
+            #sprache = "en"
+
+          #input_error_message = error_messages.get(message, {}).get(sprache)
+
+          ## Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          #if input_error_message == None:
+            #input_error_message = ""
+
+          ## Wenn die Nachricht grün formatiert werden soll...
+          #if message == '28' or message == '37':
+            ## wird sie hier, in der Hilfsfunktion grün formatiert
+            #input_error_message = format_error_message_green(input_error_message)
+          ## Ansonsten wird die Nachricht rot formatiert
+          #else:
+            #input_error_message = format_error_message_red(input_error_message)
 
           if message == "0":
             if sprache == "de":
@@ -1318,71 +1359,22 @@ class GruppeAendern(webapp.RequestHandler):
 
         zonen_liste = zonen_liste_funktion(username,sprache)
 
-        if message == "0":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich angelegt</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="green">The rule was created successfully</font>'
-        elif message == "1":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule was missing</font>'
-        elif message == "2":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen From Port f&uuml;r die neue Regel angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was missing</font>'
-        elif message == "3":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen To Port f&uuml;r die neue Regel angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was missing</font>'
-        elif message == "4":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port and the To Port for the new rule have not been numbers</font>'
-        elif message == "5":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den From Port keine Zahl angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The From Port for the new rule was not a number</font>'
-        elif message == "6":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben f&uuml;r den To Port keine Zahl angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The To Port for the new rule was not a number</font>'
-        elif message == "7":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Die Regel war schon vorhanden</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The rule was still existing</font>'
-        elif message == "8":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu entfernen kam es zu einem Fehler</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to remove the rule, an error occured</font>'
-        elif message == "9":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="green">Die Regel wurde erfolgreich entfernt</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="green">The rule was removed successfully</font>'
-        elif message == "10":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Die zu l&ouml;schende Regel konnte nicht gefunden werden</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The rule was not found</font>'
-        elif message == "11":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Regel zu anzulegen kam es zu einem Fehler</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the rule, an error occured</font>'
-        elif message == "12":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+        if sprache != "de":
+          sprache = "en"
+
+        input_error_message = error_messages.get(message, {}).get(sprache)
+
+        # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+        if input_error_message == None:
+          input_error_message = ""
+
+        # Wenn die Nachricht grün formatiert werden soll...
+        if message == '28' or message == '37':
+          # wird sie hier, in der Hilfsfunktion grün formatiert
+          input_error_message = format_error_message_green(input_error_message)
+        # Ansonsten wird die Nachricht rot formatiert
+        elif message == '8' or message == '29' or message == '30' or message == '31' or message == '32' or message == '33' or message == '34' or message == '35' or message == '36' or message == '38' or message == '39':
+          input_error_message = format_error_message_red(input_error_message)
         else:
           input_error_message = ""
 
@@ -1507,31 +1499,31 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
         # Testen ob der Port FROM und der Port TO angegeben wurde
         if port_from == "" and port_to == "" and ausnahme == 0:
           # Wenn die Ports nicht angegeben wurden, kann keine Regel angelegt werden
-          fehlermeldung = "1"
+          fehlermeldung = "29"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         # Testen ob der Port FROM angegeben wurde
         elif port_from == "" and ausnahme == 0:
           # Wenn der Port nicht angegeben wurde, kann keine Regel angelegt werden
-          fehlermeldung = "2"
+          fehlermeldung = "30"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_to == "" and ausnahme == 0:   # Testen ob der Port TO angegeben wurde
           # Wenn der Port nicht angegeben wurde, kann keine Regel angelegt werden
-          fehlermeldung = "3"
+          fehlermeldung = "31"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_from.isdigit() == False and port_to.isdigit() == False and ausnahme == 0:
           # Testen ob der Port FROM und Port TO eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "4"
+          fehlermeldung = "32"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_from.isdigit() == False and ausnahme == 0:
           # Testen ob der Port FROM eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "5"
+          fehlermeldung = "33"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_to.isdigit() == False and ausnahme == 0:
           # Testen ob der Port TO eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "6"
+          fehlermeldung = "34"
           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
         else:
 
@@ -1543,13 +1535,13 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
             liste_security_groups = conn_region.get_all_security_groups()
           except EC2ResponseError:
             # Wenn es nicht klappt...
-            fehlermeldung = "7"
+            fehlermeldung = "35"
             self.redirect('/securitygroups?message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
-            fehlermeldung = "7"
+            fehlermeldung = "35"
             self.redirect('/securitygroups?message='+fehlermeldung)
           else:
             # Wenn es geklappt hat und die Liste geholt wurde...
@@ -1574,16 +1566,16 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                     #Jetzt anlegen
                     liste_security_groups[i].authorize(ip_protocol=protokoll, from_port=port_from, to_port=port_to, cidr_ip=cidr_ip, src_group=None)
                   except EC2ResponseError:
-                    fehlermeldung = "11"
+                    fehlermeldung = "39"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                   except DownloadError:
                     # Diese Exception hilft gegen diese beiden Fehler:
                     # DownloadError: ApplicationError: 2 timed out
                     # DownloadError: ApplicationError: 5
-                    fehlermeldung = "12"
+                    fehlermeldung = "8"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                   else:
-                    fehlermeldung = "0"
+                    fehlermeldung = "28"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                 else:
                   for i in range(laenge_liste_regeln):
@@ -1596,7 +1588,7 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                       # Vergleichen
                       if str(liste_regeln[k]) == regel:
                         schon_vorhanden = 1
-                        fehlermeldung = "7"
+                        fehlermeldung = "35"
                         self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                   if schon_vorhanden == 0:
                     for z in range(laenge_liste_security_groups):
@@ -1606,16 +1598,16 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                           #Jetzt die Regel anlegen
                           liste_security_groups[z].authorize(ip_protocol=protokoll, from_port=port_from, to_port=port_to, cidr_ip=cidr_ip, src_group=None)
                         except EC2ResponseError:
-                          fehlermeldung = "11"
+                          fehlermeldung = "39"
                           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                         except DownloadError:
                           # Diese Exception hilft gegen diese beiden Fehler:
                           # DownloadError: ApplicationError: 2 timed out
                           # DownloadError: ApplicationError: 5
-                          fehlermeldung = "12"
+                          fehlermeldung = "8"
                           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                         else:
-                          fehlermeldung = "0"
+                          fehlermeldung = "28"
                           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
 
 class GruppeRegelEntfernen(webapp.RequestHandler):
@@ -1638,13 +1630,13 @@ class GruppeRegelEntfernen(webapp.RequestHandler):
           liste_security_groups = conn_region.get_all_security_groups()
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "7"
+          fehlermeldung = "35"
           self.redirect('/securitygroups?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "7"
+          fehlermeldung = "35"
           self.redirect('/securitygroups?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat und die Liste geholt wurde...
@@ -1676,21 +1668,21 @@ class GruppeRegelEntfernen(webapp.RequestHandler):
                                                     cidr_ip=cidr_ip,
                                                     src_group=None)
                   except EC2ResponseError:
-                    fehlermeldung = "8"
+                    fehlermeldung = "36"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                   except DownloadError:
                     # Diese Exception hilft gegen diese beiden Fehler:
                     # DownloadError: ApplicationError: 2 timed out
                     # DownloadError: ApplicationError: 5
-                    fehlermeldung = "12"
+                    fehlermeldung = "8"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
                   else:
-                    fehlermeldung = "9"
+                    fehlermeldung = "37"
                     self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
 
           # Wenn die Instanz nicht gefunden werden konnte
           if gefunden == 0:
-            fehlermeldung = "10"
+            fehlermeldung = "38"
             self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
 
 class GruppeEntfernen(webapp.RequestHandler):
@@ -3097,8 +3089,10 @@ class Elastic_IPs(webapp.RequestHandler):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          else:
+          elif message == '1' or message == '2' or message == '4' or message == '6' or message == '8' or message == '9' or message == '10':
             input_error_message = format_error_message_red(input_error_message)
+          else:
+            input_error_message = ""
 
           try:
             # Liste mit den Adressen
@@ -3946,8 +3940,10 @@ class Snapshots(webapp.RequestHandler):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          else:
+          elif message == '8' or message == '12' or message == '14':
             input_error_message = format_error_message_red(input_error_message)
+          else:
+            input_error_message = ""
 
           try:
             # Liste mit den Snapshots
@@ -4194,8 +4190,10 @@ class Volumes(webapp.RequestHandler):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          else:
+          elif message == '8' or message == '10' or message == '16' or message == '17' or message == '18' or message == '19' or message == '20' or message == '21' or message == '25' or message == '26':
             input_error_message = format_error_message_red(input_error_message)
+          else:
+            input_error_message = ""
 
           # Liste mit den Zonen
           liste_zonen = conn_region.get_all_zones()
