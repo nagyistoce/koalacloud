@@ -47,6 +47,44 @@ import hmac, sha
 # für die Verschlüsselung
 import base64
 
+error_messages = {
+  '0' :  { 'de' : 'Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft',
+           'en' : 'The IP was attached to the instance successfully' },
+  '1' :  { 'de' : 'Beim Versuch die IP mit der Instanz zu verkn&uuml;pfen kam es zu einem Fehler',
+           'en' : 'While the system tried to attach the IP to the instance, an error occured' },
+  '2' :  { 'de' : 'Beim Versuch die IP von der Instanz zu l&oumlsen kam es zu einem Fehler',
+           'en' : 'While the system tried to detach the IP from the instance, an error occured' },
+  '3' :  { 'de' : 'Die IP wurde erfolgreich von der Instanz gel&ouml;st',
+           'en' : 'The IP was detached from the instance successfully' },
+  '4' :  { 'de' : 'Beim Versuch die IP freizugeben, kam es zu einem Fehler',
+           'en' : 'While the system tried to release the IP, an error occured' },
+  '5' :  { 'de' : 'Die IP wurde erfolgreich freigegeben',
+           'en' : 'The IP was released successfully' },
+  '6' :  { 'de' : 'Beim Versuch eine IP zu erzeugen, kam es zu einem Fehler',
+           'en' : 'While the system tried to allocate an elastic IP, an error occured' },
+  '7' :  { 'de' : 'Es wurde eine IP erzeugt',
+           'en' : 'An IP was allocated successfully' },
+  '8' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt',
+           'en' : 'A timeout error occured but maybe the operation was successful' },
+  '9' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten',
+           'en' : 'A timeout error occured' },
+  '10' : { 'de' : 'Es ist ein Fehler aufgetreten',
+           'en' : 'An error occured' }
+}
+
+# Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
+def format_error_message_green(input_error_message):
+    if input_error_message:
+        return "<p>&nbsp;</p> <font color='green'>%s</font>" % (input_error_message)
+    else:
+        return ""
+
+# Hilfsfunktion für die Formatierung der roten Fehlermeldungen
+def format_error_message_red(input_error_message):
+    if input_error_message:
+        return "<p>&nbsp;</p> <font color='red'>%s</font>" % (input_error_message)
+    else:
+        return ""
 
 class KoalaCloudDatenbank(db.Model):
     user = db.UserProperty(required=True)
@@ -3011,64 +3049,22 @@ class Elastic_IPs(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was attached to the instance successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP mit der Instanz zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the IP to the instance, an error occured</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP von der Instanz zu l&oumlsen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to detach the IP from the instance, an error occured</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich von der Instanz gel&ouml;st</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was detached from the instance successfully</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die IP freizugeben, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to release, an error occured</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die IP wurde erfolgreich freigegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The IP was released successfully</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch eine IP zu erzeugen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to allocate an elastic IP, an error occured</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Es wurde eine IP erzeugt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">An IP was allocated successfully</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-          else:
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
             input_error_message = ""
 
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '0' or message == '3' or message == '5' or message == '7':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          else:
+            input_error_message = format_error_message_red(input_error_message)
 
           try:
             # Liste mit den Adressen
