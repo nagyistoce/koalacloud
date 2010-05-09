@@ -148,6 +148,52 @@ error_messages = {
            'en' : 'The security group was erased successfully' },
   '49' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler',
            'en' : 'While the system tried to erase the new security group, an error occured' },
+  '50' : { 'de' : 'Sie haben keinen Namen angegeben',
+           'en' : 'No name given' },
+  '51' : { 'de' : 'Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten',
+           'en' : 'The name cannot contain characters that are not letters, or digits or the dash' },
+  '52' : { 'de' : 'Sie haben keinen Load Balancer Port angegeben',
+           'en' : 'No load balancer port given' },
+  '53' : { 'de' : 'Sie haben keinen EC2 Instanz Port angegeben',
+           'en' : 'No EC2 instance port given' },
+  '54' : { 'de' : 'Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben',
+           'en' : 'No load balancer port and no EC2 instance port given' },
+  '55' : { 'de' : 'Der Load Balancer Port enthielt unerlaubt Zeichen',
+           'en' : 'The load balancer port hat characters that are not allowed' },
+  '56' : { 'de' : 'Der EC2 Instanz Port enthielt unerlaubt Zeichen',
+           'en' : 'The EC2 instance port hat characters that are not allowed' },
+  '57' : { 'de' : 'Beim Versuch, den Load Balancer zu erzeugen, kam es zu einem Fehler',
+           'en' : 'While the system tried to create the load balancer, an error occured' },
+  '58' : { 'de' : 'Sie haben keine Verf&uuml;gbarkeitszone angegeben',
+           'en' : 'No availability zone given' },
+  '59' : { 'de' : 'Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen',
+           'en' : 'Load balancer port must be either 80, 443 or 1024-65535 inclusive' },
+  '60' : { 'de' : 'Der EC2 instance port muss kleiner gleich 65535 sein',
+           'en' : 'EC2 instance port must less than or equal to 65535' },
+  '61' : { 'de' : 'Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
+           'en' : 'The instance was attached to the load balancer successfully' },
+  '62' : { 'de' : 'Beim Versuch, die Instanz mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
+           'en' : 'While the system tried to attach the instance to the load balancer, an error occured' },
+  '63' : { 'de' : 'Die Instanz wurde erfolgreich deregistriert',
+           'en' : 'The instance was deregistered successfully' },
+  '64' : { 'de' : 'Beim Versuch, die Instanz zu deregistrieren, kam es zu einem Fehler',
+           'en' : 'While the system tried to deregister the instance, an error occured' },
+  '65' : { 'de' : 'Beim Versuch, die Zone zu deregistrieren, kam es zu einem Fehler',
+           'en' : 'While the system tried to deregister the zone, an error occured' },
+  '66' : { 'de' : 'Die Zone wurde erfolgreich deregistriert',
+           'en' : 'The zone was deregistered successfully' },
+  '67' : { 'de' : 'Es muss mindestens eine Zone registriert sein',
+           'en' : 'It is impossible to deregister all zones' },
+  '68' : { 'de' : 'Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
+           'en' : 'The zone was attached to the load balancer successfully' },
+  '69' : { 'de' : 'Beim Versuch, die Zone mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
+           'en' : 'While the system tried to attach the zone to the load balancer, an error occured' },
+  '70' : { 'de' : 'Der Load Balancer wurde erfolgreich gel&ouml;scht',
+           'en' : 'The load balancer was deleted successfully' },
+  '71' : { 'de' : 'Beim Versuch, den Load Balancer zu l&ouml;schen, kam es zu einem Fehler',
+           'en' : 'While the system tried to delete the load balancer, an error occured' },
+  '72' : { 'de' : 'Der Load Balancer wurde erfolgreich angelegt',
+           'en' : 'The load balancer was created successfully' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -2005,81 +2051,34 @@ class CreateLoadBalancer(webapp.RequestHandler):
 
         zonen_liste = zonen_liste_funktion(username,sprache)
 
-        if message == "1":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-        elif message == "2":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The name cannot contain characters that are not letters, or digits or the dash</font>'
-        elif message == "3":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port given</font>'
-        elif message == "4":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen EC2 Instanz Port angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">No EC2 instance port given</font>'
-        elif message == "5":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">No load balancer port and no EC2 instance port given</font>'
-        elif message == "6":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port enthielt unerlaubt Zeichen</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The load balancer port hat characters that are not allowed</font>'
-        elif message == "7":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 Instanz Port enthielt unerlaubt Zeichen</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">The EC2 instance port hat characters that are not allowed</font>'
-        elif message == "8":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu erzeugen, kam es zu einem Fehler</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the load balancer, an error occured</font>'
-        elif message == "9":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-        elif message == "10":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Verf&uuml;gbarkeitszone angegeben</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">No availability zone given</font>'
-        elif message == "11":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">Load balancer port must be either 80, 443 or 1024-65535 inclusive</font>'
-        elif message == "12":
-          if sprache == "de":
-            input_error_message = '<p>&nbsp;</p> <font color="red">Der EC2 instance port muss kleiner gleich 65535 sein</font>'
-          else:
-            input_error_message = '<p>&nbsp;</p> <font color="red">EC2 instance port must less than or equal to 65535</font>'
+        if sprache != "de":
+          sprache = "en"
+
+        input_error_message = error_messages.get(message, {}).get(sprache)
+
+        # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+        if input_error_message == None:
+          input_error_message = ""
+
+        # Wenn die Nachricht grün formatiert werden soll...
+        if message == '8' or message == '50' or message == '51' or message == '52' or message == '53' or message == '54' or message == '55' or message == '56' or message == '57' or message == '58' or message == '59' or message == '60':
+          # wird sie hier, in der Hilfsfunktion rot formatiert
+          input_error_message = format_error_message_red(input_error_message)
         else:
-          input_error_message = ''
+          input_error_message = ""
 
         try:
           # Liste mit den Zonen
           liste_zonen = conn_region.get_all_zones()
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "3"
+          fehlermeldung = "10"
           self.redirect('/loadbalancer?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalancer?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
@@ -2191,12 +2190,10 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
           aktivezone = db_eintrag.aktivezone
 
 
-
-
         if ELBPort.isdigit() == False:
           # Testen ob der Load Balancer Port eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "6"
+          fehlermeldung = "55"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         else:
           # Der Load Balancer Port muss ein Integer sein
@@ -2205,7 +2202,7 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
         if InstPort.isdigit() == False:
           # Testen ob der EC2 Instanz Port eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "7"
+          fehlermeldung = "56"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         else:
           # Der EC2 Instanz Port muss ein Integer sein
@@ -2213,46 +2210,50 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
 
         if elb_name == "":
           # Testen ob ein Name für den neue ELB angegeben wurde
-          fehlermeldung = "1"
+          fehlermeldung = "50"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif re.search(r'[^\-a-zA-Z0-9]', elb_name) != None:
           # Überprüfen, ob der name nur erlaubte Zeichen enthält
           # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
-          fehlermeldung = "2"
+          fehlermeldung = "51"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif InstPort == "" and ELBPort == "":
           # Testen ob ein Load Balancer Port und ein EC2 Instanz Port für den neue ELB angegeben wurde
-          fehlermeldung = "5"
+          fehlermeldung = "54"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif ELBPort == "":
           # Testen ob ein Load Balancer Port für den neue ELB angegeben wurde
-          fehlermeldung = "3"
+          fehlermeldung = "52"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif InstPort == "":
           # Testen ob ein EC2 Instanz Port für den neue ELB angegeben wurde
-          fehlermeldung = "4"
+          fehlermeldung = "53"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif aktivezone == "us-east-1" and useast1a == "" and useast1b == "" and useast1c == "" and useast1d == "":
           # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "10"
+          fehlermeldung = "58"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif aktivezone == "us-west-1" and uswest1a == "" and uswest1b == "":
           # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "10"
+          fehlermeldung = "58"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif aktivezone == "eu-west-1" and euwest1a == "" and euwest1b == "":
           # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "10"
+          fehlermeldung = "58"
+          self.redirect('/create_load_balancer?message='+fehlermeldung)
+        elif aktivezone == "ap-southeast-1" and apsoutheast1a == "" and apsoutheast1b == "":
+          # Testen ob mindestens eine Zone angegeben wurde
+          fehlermeldung = "58"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif not (ELBPort == 80 or ELBPort == 443 or (1024 <= ELBPort <= 65535)):
           # Testen ob ein korrekter Port für den Load Balancer Port angegeben wurde
           # Load Balancer port must be either 80, 443 or 1024~65535 inclusive
-          fehlermeldung = "11"
+          fehlermeldung = "59"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         elif InstPort >= 65535:
           # Testen ob ein korrekter Port für den EC2 Instanz Port angegeben wurde
           # Member must have value less than or equal to 65535
-          fehlermeldung = "12"
+          fehlermeldung = "60"
           self.redirect('/create_load_balancer?message='+fehlermeldung)
         else:
 
@@ -2291,17 +2292,17 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
             neuer_loadbalancer = conn_elb.create_load_balancer(elb_name, zones_elb, listeners_elb)
           except EC2ResponseError:
             # Wenn es nicht geklappt hat...
-            fehlermeldung = "8"
+            fehlermeldung = "57"
             self.redirect('/create_load_balancer?message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
-            fehlermeldung = "9"
+            fehlermeldung = "8"
             self.redirect('/create_load_balancer?message='+fehlermeldung)
           else:
             # Wenn es geklappt hat...
-            fehlermeldung = "4"
+            fehlermeldung = "72"
             self.redirect('/loadbalancer?message='+fehlermeldung)
 
 
@@ -2321,17 +2322,17 @@ class DeleteLoadBalancer(webapp.RequestHandler):
           conn_elb.delete_load_balancer(name)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "1"
+          fehlermeldung = "71"
           self.redirect('/loadbalancer?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalancer?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "0"
+          fehlermeldung = "70"
           self.redirect('/loadbalancer?message='+fehlermeldung)
 
 
@@ -2383,36 +2384,22 @@ class LoadBalancer(webapp.RequestHandler):
             self.response.out.write(template.render(path,template_values))
           else:
 
-            if message == "0":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich gel&ouml;scht</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was deleted successfully</font>'
-            elif message == "1":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Load Balancer zu l&ouml;schen, kam es zu einem Fehler</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to delete the load balancer, an error occured</font>'
-            elif message == "2":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-            elif message == "3":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-            elif message == "4":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Der Load Balancer wurde erfolgreich angelegt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">The load balancer was created successfully</font>'
-            elif message == "5":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Es ist ein Timeout-Fehler aufgetreten</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">A timeout error occured</font>'
+            if sprache != "de":
+              sprache = "en"
+
+            input_error_message = error_messages.get(message, {}).get(sprache)
+
+            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+            if input_error_message == None:
+              input_error_message = ""
+
+            # Wenn die Nachricht grün formatiert werden soll...
+            if message == '9' or message == '70' or message == '72':
+              # wird sie hier, in der Hilfsfunktion grün formatiert
+              input_error_message = format_error_message_green(input_error_message)
+            # Ansonsten wird die Nachricht rot formatiert
+            elif message == '8' or message == '10' or message == '71':
+              input_error_message = format_error_message_red(input_error_message)
             else:
               input_error_message = ""
 
@@ -2581,66 +2568,22 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The instance was attached to the load balancer successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the instance to the load balancer, an error occured</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Fehler aufgetreten</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Instanz wurde erfolgreich deregistriert</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The instance was deregistered successfully</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Instanz zu deregistrieren kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the instance, an error occured</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone zu deregistrieren kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to deregister the zone, an error occured</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich deregistriert</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The zone was deregistered successfully</font>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es muss mindestens eine Zone registriert sein</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">It is impossible to deregister all zones</font>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The zone was attached to the load balancer successfully</font>'
-          elif message == "11":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zone mit dem Load Balancer zu verkn&uuml;pfen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to attach the zone to the load balancer, an error occured</font>'
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '61' or message == '63' or message == '66' or message == '68':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '8' or message == '62' or message == '64' or message == '65' or message == '67' or message == '69':
+            input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
 
@@ -2652,13 +2595,13 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
             liste_reservations = conn_region.get_all_instances()
           except EC2ResponseError:
             # Wenn es nicht klappt...
-            fehlermeldung = "3"
+            fehlermeldung = "10"
             self.redirect('/loadbalancer?message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
-            fehlermeldung = "5"
+            fehlermeldung = "9"
             self.redirect('/loadbalancer?message='+fehlermeldung)
           else:
             # Wenn es geklappt hat und die Liste geholt wurde...
@@ -2686,13 +2629,13 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
               liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
             except EC2ResponseError:
               # Wenn es nicht klappt...
-              fehlermeldung = "3"
+              fehlermeldung = "10"
               self.redirect('/loadbalancer?message='+fehlermeldung)
             except DownloadError:
               # Diese Exception hilft gegen diese beiden Fehler:
               # DownloadError: ApplicationError: 2 timed out
               # DownloadError: ApplicationError: 5
-              fehlermeldung = "5"
+              fehlermeldung = "9"
               self.redirect('/loadbalancer?message='+fehlermeldung)
             else:
               # Wenn es geklappt hat...
@@ -2809,7 +2752,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                   if len(liste_load_balancers[0].availability_zones) == 1:
                     tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
                     tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=9'
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=67'
                     if sprache == "de":
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
@@ -2904,17 +2847,17 @@ class LoadBalancer_Instanz_Zuordnen(webapp.RequestHandler):
           conn_elb.register_instances(loadbalancer, list_of_instances)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "1"
+          fehlermeldung = "62"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "0"
+          fehlermeldung = "61"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
 
 
@@ -2941,17 +2884,17 @@ class LoadBalancer_Instanz_Entfernen(webapp.RequestHandler):
           conn_elb.deregister_instances(loadbalancer, list_of_instances)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "6"
+          fehlermeldung = "64"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "5"
+          fehlermeldung = "63"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
 
 
@@ -2978,17 +2921,17 @@ class LoadBalancer_Zone_Entfernen(webapp.RequestHandler):
           conn_elb.disable_availability_zones(loadbalancer, list_of_zones)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "7"
+          fehlermeldung = "65"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "8"
+          fehlermeldung = "66"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
 
 class LoadBalancer_Zone_Zuordnen(webapp.RequestHandler):
@@ -3014,17 +2957,17 @@ class LoadBalancer_Zone_Zuordnen(webapp.RequestHandler):
           conn_elb.enable_availability_zones(loadbalancer, list_of_zones)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "11"
+          fehlermeldung = "69"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "2"
+          fehlermeldung = "8"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "10"
+          fehlermeldung = "68"
           self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
 
 class Elastic_IPs(webapp.RequestHandler):
