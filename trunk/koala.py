@@ -50,17 +50,17 @@ import base64
 error_messages = {
   '0' :  { 'de' : 'Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft',
            'en' : 'The IP was attached to the instance successfully' },
-  '1' :  { 'de' : 'Beim Versuch die IP mit der Instanz zu verkn&uuml;pfen kam es zu einem Fehler',
+  '1' :  { 'de' : 'Beim Versuch, die IP mit der Instanz zu verkn&uuml;pfen, kam es zu einem Fehler',
            'en' : 'While the system tried to attach the IP to the instance, an error occured' },
-  '2' :  { 'de' : 'Beim Versuch die IP von der Instanz zu l&oumlsen kam es zu einem Fehler',
+  '2' :  { 'de' : 'Beim Versuch, die IP von der Instanz zu l&oumlsen, kam es zu einem Fehler',
            'en' : 'While the system tried to detach the IP from the instance, an error occured' },
   '3' :  { 'de' : 'Die IP wurde erfolgreich von der Instanz gel&ouml;st',
            'en' : 'The IP was detached from the instance successfully' },
-  '4' :  { 'de' : 'Beim Versuch die IP freizugeben, kam es zu einem Fehler',
+  '4' :  { 'de' : 'Beim Versuch, die IP freizugeben, kam es zu einem Fehler',
            'en' : 'While the system tried to release the IP, an error occured' },
   '5' :  { 'de' : 'Die IP wurde erfolgreich freigegeben',
            'en' : 'The IP was released successfully' },
-  '6' :  { 'de' : 'Beim Versuch eine IP zu erzeugen, kam es zu einem Fehler',
+  '6' :  { 'de' : 'Beim Versuch, eine IP zu erzeugen, kam es zu einem Fehler',
            'en' : 'While the system tried to allocate an elastic IP, an error occured' },
   '7' :  { 'de' : 'Es wurde eine IP erzeugt',
            'en' : 'An IP was allocated successfully' },
@@ -76,7 +76,7 @@ error_messages = {
            'en' : 'While the system tried to erase the snapshot, an error occured' },
   '13' : { 'de' : 'Der Snapshot wurde erfolgreich erzeugt',
            'en' : 'The snapshot was created successfully' },
-  '14' : { 'de' : 'Beim Versuch den Snapshot zu erzeugen, kam es zu einem Fehler',
+  '14' : { 'de' : 'Beim Versuch, den Snapshot zu erzeugen, kam es zu einem Fehler',
            'en' : 'While the system tried to create the snapshot, an error occured' },
   '15' : { 'de' : 'Das Volume wurde erfolgreich angelegt',
            'en' : 'The volume was created successfully' },
@@ -84,13 +84,13 @@ error_messages = {
            'en' : 'No size given' },
   '17' : { 'de' : 'Sie haben keine Zahl angegeben',
            'en' : 'The size was not a number' },
-  '18' : { 'de' : 'Beim Versuch das neue Volume zu erzeugen, kam es zu einem Fehler',
+  '18' : { 'de' : 'Beim Versuch, das neue Volume zu erzeugen, kam es zu einem Fehler',
            'en' : 'An error occured while the system tried to create the new volume' },
   '19' : { 'de' : 'Beim Versuch das Volume zu entfernen, kam es zu einem Fehler',
            'en' : 'An error occured while the system tried to delete the volume' },
-  '20' : { 'de' : 'Beim Versuch das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler',
+  '20' : { 'de' : 'Beim Versuch, das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler',
            'en' : 'An error occured while the system tried to detach the volume from the instance' },
-  '21' : { 'de' : 'Beim Versuch das Volume mit der Instanz zu verbinden, kam es zu einem Fehler',
+  '21' : { 'de' : 'Beim Versuch, das Volume mit der Instanz zu verbinden, kam es zu einem Fehler',
            'en' : 'An error occured while the system tried to attach the volume with the instance' },
   '22' : { 'de' : 'Das Volume wurde erfolgreich gel&ouml;scht',
            'en' : 'The volume was erased successfully' },
@@ -100,7 +100,7 @@ error_messages = {
            'en' : 'The volume was detached from the instance successfully' },
   '25' : { 'de' : 'EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB',
            'en' : 'EBS allows to create storage volumes from 1 GB to 1 TB' },
-  '26' : { 'de' : 'Beim Versuch die Volumes zu l&ouml;schen ist ein Fehler aufgetreten',
+  '26' : { 'de' : 'Beim Versuch, die Volumes zu l&ouml;schen, kam es zu einem Fehler',
            'en' : 'While the system tried to erase the volumes, an error occured' },
   '27' : { 'de' : 'Die Volumes wurden gel&ouml;scht',
            'en' : 'The volumes were erased successfully' },
@@ -120,14 +120,34 @@ error_messages = {
            'en' : 'The To Port for the new rule was not a number' },
   '35' : { 'de' : 'Die Regel war schon vorhanden',
            'en' : 'The rule was still existing' },
-  '36' : { 'de' : 'Beim Versuch die Regel zu entfernen kam es zu einem Fehler',
+  '36' : { 'de' : 'Beim Versuch, die Regel zu entfernen, kam es zu einem Fehler',
            'en' : 'While the system tried to remove the rule, an error occured' },
   '37' : { 'de' : 'Die Regel wurde erfolgreich entfernt',
            'en' : 'The rule was removed successfully' },
   '38' : { 'de' : 'Die zu l&ouml;schende Regel konnte nicht gefunden werden',
            'en' : 'The rule was not found' },
-  '39' : { 'de' : 'Beim Versuch die Regel zu anzulegen kam es zu einem Fehler',
+  '39' : { 'de' : 'Beim Versuch, die Regel zu anzulegen, kam es zu einem Fehler',
            'en' : 'While the system tried to create the rule, an error occured' },
+  '40' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich angelegt',
+           'en' : 'The security group was created successfully' },
+  '41' : { 'de' : 'Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
+           'en' : 'No name and no description for the new security group given' },
+  '42' : { 'de' : 'Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben',
+           'en' : 'No name for the new security group given' },
+  '43' : { 'de' : 'Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
+           'en' : 'No description for the new security group given' },
+  '44' : { 'de' : 'Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen',
+           'en' : 'A security group with this name sill exists' },
+  '45' : { 'de' : 'Der Name für die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
+           'en' : 'The name for the new security group had characters that are not allowed' },
+  '46' : { 'de' : 'Die Beschreibung für die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
+           'en' : 'The description for the new security group had characters that are not allowed' },
+  '47' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler',
+           'en' : 'While the system tried to create the new security group, an error occured' },
+  '48' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht',
+           'en' : 'The security group was erased successfully' },
+  '49' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler',
+           'en' : 'While the system tried to erase the new security group, an error occured' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -1183,61 +1203,22 @@ class SecurityGroups(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich angelegt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The security group was created successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name and no description for the new security group given</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new security group given</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No description for the new security group given</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A security group with this name sill exists</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name für die neue Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new security group had characters that are not allowed</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Die Beschreibung für die neue  Sicherheitsgruppe enthielt unerlaubte Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The description for the new security group had characters that are not allowed</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new security group, an error occured</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The security group was erased successfully</font>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the new security group, an error occured</font>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '40' or message == '48':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '8' or message == '41' or message == '42' or message == '43' or message == '44' or message == '45' or message == '46' or message == '47' or message == '49':
+            input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
 
@@ -1610,6 +1591,7 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                           fehlermeldung = "28"
                           self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
 
+
 class GruppeRegelEntfernen(webapp.RequestHandler):
     def get(self):
         # Den Namen der betreffenden Gruppe holen
@@ -1688,7 +1670,7 @@ class GruppeRegelEntfernen(webapp.RequestHandler):
 class GruppeEntfernen(webapp.RequestHandler):
     def get(self):
       # Den Namen der zu löschenden Gruppe holen
-        gruppe = self.request.get('gruppe') 
+        gruppe = self.request.get('gruppe')
         # Den Usernamen erfahren
         username = users.get_current_user()
 
@@ -1699,17 +1681,17 @@ class GruppeEntfernen(webapp.RequestHandler):
           conn_region.delete_security_group(gruppe)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "9"
+          fehlermeldung = "49"
           self.redirect('/securitygroups?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/securitygroups?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "8"
+          fehlermeldung = "48"
           self.redirect('/securitygroups?message='+fehlermeldung)
 
 class GruppeErzeugen(webapp.RequestHandler):
@@ -1725,26 +1707,26 @@ class GruppeErzeugen(webapp.RequestHandler):
         if neuergruppenname == "" and neuegruppenbeschreibung == "":
           # Wenn kein Name und keine Beschreibung angegeben wurde
           #fehlermeldung = "Sie haben keinen Namen und keine Beschreibung angegeben"
-          fehlermeldung = "1"
+          fehlermeldung = "41"
           self.redirect('/securitygroups?message='+fehlermeldung)
         elif neuergruppenname == "":
           # Testen ob ein Name für die neue Gruppe angegeben wurde
           #fehlermeldung = "Sie haben keinen Namen angegeben"
-          fehlermeldung = "2"
+          fehlermeldung = "42"
           self.redirect('/securitygroups?message='+fehlermeldung)
         elif neuegruppenbeschreibung == "":
           # Testen ob eine Beschreibung für die neue Gruppe angegeben wurde
           #fehlermeldung = "Sie haben keine Beschreibung angegeben"
-          fehlermeldung = "3"
+          fehlermeldung = "43"
           self.redirect('/securitygroups?message='+fehlermeldung)
         elif re.search(r'[^\-_a-zA-Z0-9]', neuergruppenname) != None:
           # Testen ob für den neuen Gruppennamen nur erlaubte Zeichen verwendet wurden
-          fehlermeldung = "5"
+          fehlermeldung = "45"
           self.redirect('/securitygroups?message='+fehlermeldung)
         elif re.search(r'[^\ \-_a-zA-Z0-9]', neuegruppenbeschreibung) != None:
           # Testen ob für die Beschreibung der den neuen Gruppe nur erlaubte Zeichen verwendet wurden
           # Leerzeichen sind in der Gruppenbezeichnung ok
-          fehlermeldung = "6"
+          fehlermeldung = "46"
           self.redirect('/securitygroups?message='+fehlermeldung)
         else:
           try:
@@ -1755,13 +1737,13 @@ class GruppeErzeugen(webapp.RequestHandler):
             liste_security_groups = conn_region.get_all_security_groups()
           except EC2ResponseError:
             # Wenn es nicht klappt...
-            fehlermeldung = "7"
+            fehlermeldung = "47"
             self.redirect('/securitygroups?message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
-            fehlermeldung = "7"
+            fehlermeldung = "47"
             self.redirect('/securitygroups?message='+fehlermeldung)
           else:
             # Wenn es geklappt hat und die Liste geholt wurde...
@@ -1778,7 +1760,7 @@ class GruppeErzeugen(webapp.RequestHandler):
               if liste_security_groups[i].name == neuergruppenname:
                 # Security Gruppe existiert schon!
                 schon_vorhanden = 1
-                fehlermeldung = "4"
+                fehlermeldung = "44"
                 self.redirect('/securitygroups?message='+fehlermeldung)
 
             # Wenn der Schlüssel noch nicht existiert...anlegen!
@@ -1787,16 +1769,16 @@ class GruppeErzeugen(webapp.RequestHandler):
                 # Security Group anlegen
                 conn_region.create_security_group(neuergruppenname, neuegruppenbeschreibung)
               except EC2ResponseError:
-                fehlermeldung = "7"
+                fehlermeldung = "47"
                 self.redirect('/securitygroups?message='+fehlermeldung)
               except DownloadError:
                 # Diese Exception hilft gegen diese beiden Fehler:
                 # DownloadError: ApplicationError: 2 timed out
                 # DownloadError: ApplicationError: 5
-                fehlermeldung = "10"
+                fehlermeldung = "8"
                 self.redirect('/securitygroups?message='+fehlermeldung)
               else:
-                fehlermeldung = "0"
+                fehlermeldung = "40"
                 self.redirect('/securitygroups?message='+fehlermeldung)
 
 
