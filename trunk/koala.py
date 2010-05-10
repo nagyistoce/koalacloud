@@ -194,6 +194,42 @@ error_messages = {
            'en' : 'While the system tried to delete the load balancer, an error occured' },
   '72' : { 'de' : 'Der Load Balancer wurde erfolgreich angelegt',
            'en' : 'The load balancer was created successfully' },
+  '73' : { 'de' : 'Die Instanz wurde erfolgreich beendet',
+           'en' : 'The instance was stopped successfully' },
+  '74' : { 'de' : 'Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten',
+           'en' : 'While the system tried to stop the instance, an error occured' },
+  '75' : { 'de' : 'Die zu beendende Instanz konnte nicht gefunden werden',
+           'en' : 'The instance was not found' },
+  '76' : { 'de' : 'Die Instanz war schon im Status <b>terminated</b>',
+           'en' : 'The instance had still the state <b>terminated</b>' },
+  '77' : { 'de' : 'Die Instanz(en) wurde(n) erfolgreich angelegt',
+           'en' : 'The instance(s) was/were created successfully' },
+  '78' : { 'de' : 'Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten',
+           'en' : 'While the system tried to create the instance(s), an error occured' },
+  '79' : { 'de' : 'Die Instanz wurde erfolgreich neu gestartet',
+           'en' : 'The instance was rebooted successfully' },
+  '80' : { 'de' : 'Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten',
+           'en' : 'While the system tried to reboot the instance, an error occured' },
+  '81' : { 'de' : 'Die Instanzen wurden beendet',
+           'en' : 'The instances were stopped successfully' },
+  '82' : { 'de' : 'Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten',
+           'en' : 'While the system tried to stop the instances, an error occured' },
+  '83' : { 'de' : 'Der Favorit wurde erfolgreich angelegt',
+           'en' : 'The favourite was created successfully' },
+  '84' : { 'de' : 'Sie haben keinen AMI angegeben',
+           'en' : 'AMI was missing' },
+  '85' : { 'de' : 'Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen',
+           'en' : 'The input did not start wirh <B><TT>ami-</TT></B>' },
+  '86' : { 'de' : 'Ihre Eingabe hatte nicht die korrekte L&auml;nge',
+           'en' : 'The input length was not correct' },
+  '87' : { 'de' : 'Ihre Eingabe enthielt nicht erlaubte Zeichen',
+           'en' : 'The input had characters that are not allowed' },
+  '88' : { 'de' : 'Das von Ihnen eingegebene AMI existiert nicht',
+           'en' : 'The AMI does not exist' },
+  '89' : { 'de' : '',
+           'en' : '' },
+  '90' : { 'de' : '',
+           'en' : '' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -800,90 +836,24 @@ class Instanzen(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          #if sprache != "de":
-            #sprache = "en"
+          if sprache != "de":
+            sprache = "en"
 
-          #input_error_message = error_messages.get(message, {}).get(sprache)
+          input_error_message = error_messages.get(message, {}).get(sprache)
 
-          ## Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          #if input_error_message == None:
-            #input_error_message = ""
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
 
-          ## Wenn die Nachricht grün formatiert werden soll...
-          #if message == '28' or message == '37':
-            ## wird sie hier, in der Hilfsfunktion grün formatiert
-            #input_error_message = format_error_message_green(input_error_message)
-          ## Ansonsten wird die Nachricht rot formatiert
-          #else:
-            #input_error_message = format_error_message_red(input_error_message)
-
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<font color="green">Die Instanz wurde erfolgreich beendet</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="green">The instance was stopped successfully</font> <p>&nbsp;</p>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<font color="red">Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">While the system tried to stop the instance, an error occured</font> <p>&nbsp;</p>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<font color="red">Die zu beendende Instanz konnte nicht gefunden werden</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">The instance was not found</font> <p>&nbsp;</p>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<font color="red">Die Instanz war schon im Status <b>terminated</b></font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">The instance had still the state <b>terminated</b></font> <p>&nbsp;</p>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<font color="green">Die Instanz(en) wurde(n) erfolgreich angelegt</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="green">The instance(s) was/were created successfully</font> <p>&nbsp;</p>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<font color="red">Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">While the system tried to create the instance(s), an error occured</font> <p>&nbsp;</p>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<font color="green">Die Instanz wurde erfolgreich neu gestartet</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="green">The instance was rebooted successfully</font> <p>&nbsp;</p>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<font color="red">Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">While the system tried to reboot the instance, an error occured</font> <p>&nbsp;</p>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<font color="green">Die Instanzen wurden beendet</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="green">The instances were stopped successfully</font> <p>&nbsp;</p>'
-          elif message == "9":
-            if sprache == "de":
-              input_error_message = '<font color="red">Es ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">An error occured</font> <p>&nbsp;</p>'
-          elif message == "10":
-            if sprache == "de":
-              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">A timeout error occured but maybe the operation was successful</font> <p>&nbsp;</p>'
-          elif message == "11":
-            if sprache == "de":
-              input_error_message = '<font color="red">Es ist ein Timeout-Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">A timeout error occured</font> <p>&nbsp;</p>'
-          elif message == "12":
-            if sprache == "de":
-              input_error_message = '<font color="red">Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten</font> <p>&nbsp;</p>'
-            else:
-              input_error_message = '<font color="red">While the system tried to stop the instances, an error occured</font> <p>&nbsp;</p>'
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '73' or message == '77' or message == '79' or message == '81':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '8' or message == '9' or message == '10' or message == '74' or message == '75' or message == '76' or message == '78' or message == '80' or message == '82':
+            input_error_message = format_error_message_red(input_error_message)
           else:
-            input_error_message = ''
+            input_error_message = ""
 
           try:
             liste_reservations = conn_region.get_all_instances()
@@ -3472,17 +3442,17 @@ class InstanzReboot(webapp.RequestHandler):
           conn_region.reboot_instances(instance_ids)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "7"
+          fehlermeldung = "80"
           self.redirect('/instanzen?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "6"
+          fehlermeldung = "79"
           self.redirect('/instanzen?message='+fehlermeldung)
 
 
@@ -3500,13 +3470,13 @@ class InstanzBeenden(webapp.RequestHandler):
           instances = conn_region.get_all_instances()
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "9"
+          fehlermeldung = "10"
           self.redirect('/instanzen?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "11"
+          fehlermeldung = "9"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
@@ -3524,7 +3494,7 @@ class InstanzBeenden(webapp.RequestHandler):
                       # Wenn die Instanz schon im Zustand "terminated" ist,
                       # kann man sie nicht mehr beenden
                       if inst.state == u'terminated':
-                        fehlermeldung = "3"
+                        fehlermeldung = "76"
                         self.redirect('/instanzen?message='+fehlermeldung)
                       else:
                         try:
@@ -3532,22 +3502,22 @@ class InstanzBeenden(webapp.RequestHandler):
                           inst.stop()
                         except EC2ResponseError:
                           # Wenn es nicht klappt...
-                          fehlermeldung = "1"
+                          fehlermeldung = "74"
                           self.redirect('/instanzen?message='+fehlermeldung)
                         except DownloadError:
                           # Diese Exception hilft gegen diese beiden Fehler:
                           # DownloadError: ApplicationError: 2 timed out
                           # DownloadError: ApplicationError: 5
-                          fehlermeldung = "10"
+                          fehlermeldung = "8"
                           self.redirect('/instanzen?message='+fehlermeldung)
                         else:
                           # Wenn es geklappt hat...
-                          fehlermeldung = "0"
+                          fehlermeldung = "73"
                           self.redirect('/instanzen?message='+fehlermeldung)
 
           # Wenn die Instanz nicht gefunden werden konnte
           if gefunden == 0:
-            fehlermeldung = "2"
+            fehlermeldung = "75"
             self.redirect('/instanzen?message='+fehlermeldung)
 
 
@@ -3564,13 +3534,13 @@ class AlleInstanzenBeenden(webapp.RequestHandler):
           instances = conn_region.get_all_instances()
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "9"
+          fehlermeldung = "10"
           self.redirect('/instanzen?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "10"
+          fehlermeldung = "8"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
@@ -3584,16 +3554,16 @@ class AlleInstanzenBeenden(webapp.RequestHandler):
                   inst.stop()
                 except EC2ResponseError:
                   # Wenn es nicht klappt...
-                  fehlermeldung = "1"
+                  fehlermeldung = "82"
                   self.redirect('/instanzen?message='+fehlermeldung)
                 except DownloadError:
                   # Diese Exception hilft gegen diese beiden Fehler:
                   # DownloadError: ApplicationError: 2 timed out
                   # DownloadError: ApplicationError: 5
-                  fehlermeldung = "10"
+                  fehlermeldung = "8"
                   self.redirect('/instanzen?message='+fehlermeldung)
 
-          fehlermeldung = "8"
+          fehlermeldung = "81"
           self.redirect('/instanzen?message='+fehlermeldung)
 
 
@@ -4821,21 +4791,21 @@ class FavoritAMIerzeugen(webapp.RequestHandler):
           # Testen ob die AMI-Bezeichnung angegeben wurde
           # Wenn keine AMI-Bezeichnung angegeben wurde, kann kein Favorit angelegt werden
           #fehlermeldung = "Sie haben keine AMI-Bezeichnung angegeben"
-          fehlermeldung = "1"
+          fehlermeldung = "84"
           self.redirect('/images?message='+fehlermeldung)
         else:
           if re.match('ami-*', ami) == None:  
             # Erst überprüfen, ob die Eingabe mit "ami-" angängt
-            fehlermeldung = "2"
+            fehlermeldung = "85"
             self.redirect('/images?message='+fehlermeldung)
           elif len(ami) != 12:
             # Überprüfen, ob die Eingabe 12 Zeichen lang ist
-            fehlermeldung = "3"
+            fehlermeldung = "86"
             self.redirect('/images?message='+fehlermeldung)
           elif re.search(r'[^\-a-zA-Z0-9]', ami) != None:
             # Überprüfen, ob die Eingabe nur erlaubte Zeichen enthält
             # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
-            fehlermeldung = "4"
+            fehlermeldung = "87"
             self.redirect('/images?message='+fehlermeldung)
           else:
             # Erst überprüfen, ob schon ein AMI-Eintrag dieses Benutzers in der Zone vorhanden ist.
@@ -4855,7 +4825,7 @@ class FavoritAMIerzeugen(webapp.RequestHandler):
             try:
               liste_favoriten_ami_images = conn_region.get_all_images(image_ids=ami_liste)
             except EC2ResponseError:
-              fehlermeldung = "5"
+              fehlermeldung = "88"
               self.redirect('/images?message='+fehlermeldung)
             else:
               # Favorit erzeugen
@@ -4866,7 +4836,7 @@ class FavoritAMIerzeugen(webapp.RequestHandler):
               # In den Datastore schreiben
               favorit.put()
 
-              fehlermeldung = "0"
+              fehlermeldung = "83"
               self.redirect('/images?message='+fehlermeldung)
 
 class Info(webapp.RequestHandler):
@@ -4951,38 +4921,24 @@ class Images(webapp.RequestHandler):
 
           if regionname == "Amazon":
 
-            if message == "0":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="green">Der Favorit wurde erfolgreich angelegt</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="green">The favourite was created successfully</font>'
-            elif message == "1":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen AMI angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">AMI was missing</font>'
-            elif message == "2":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The input did not start wirh <B><TT>ami-</TT></B></font>'
-            elif message == "3":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe hatte nicht die korrekte L&auml;nge</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The input length was not correct</font>'
-            elif message == "4":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihre Eingabe enthielt nicht erlaubte Zeichen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The input had characters that are not allowed</font>'
-            elif message == "5":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Das von Ihnen eingegebene AMI existiert nicht</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The AMI is not existing</font>'
+            if sprache != "de":
+              sprache = "en"
+
+            input_error_message = error_messages.get(message, {}).get(sprache)
+
+            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+            if input_error_message == None:
+              input_error_message = ""
+
+            # Wenn die Nachricht grün formatiert werden soll...
+            if message == '83':
+              # wird sie hier, in der Hilfsfunktion grün formatiert
+              input_error_message = format_error_message_green(input_error_message)
+            # Ansonsten wird die Nachricht rot formatiert
+            elif message == '84' or message == '85' or message == '86' or message == '87' or message == '88':
+              input_error_message = format_error_message_red(input_error_message)
             else:
-              input_error_message = ''
+              input_error_message = ""
 
             # Nachsehen, ob schon AMI-Favoriten existieren
             aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND zone = :zone_db", username_db=username, zone_db=zone_in_der_wir_uns_befinden)
@@ -6157,11 +6113,17 @@ class InstanzAnlegenNimbus(webapp.RequestHandler):
           reservation = conn_region.run_instances(image_id)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
-          fehlermeldung = "5"
+          fehlermeldung = "78"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        except DownloadError:
+          # Diese Exception hilft gegen diese beiden Fehler:
+          # DownloadError: ApplicationError: 2 timed out
+          # DownloadError: ApplicationError: 5
+          fehlermeldung = "8"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat
-          fehlermeldung = "4"
+          fehlermeldung = "77"
           self.redirect('/instanzen?message='+fehlermeldung)
 
 class InstanzAnlegen(webapp.RequestHandler):
@@ -6192,11 +6154,17 @@ class InstanzAnlegen(webapp.RequestHandler):
                                                   #security_groups=gruppen_liste
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
-          fehlermeldung = "5"
+          fehlermeldung = "78"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        except DownloadError:
+          # Diese Exception hilft gegen diese beiden Fehler:
+          # DownloadError: ApplicationError: 2 timed out
+          # DownloadError: ApplicationError: 5
+          fehlermeldung = "8"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat
-          fehlermeldung = "4"
+          fehlermeldung = "77"
           self.redirect('/instanzen?message='+fehlermeldung)
 
 
@@ -6249,11 +6217,17 @@ class InstanzAnlegen(webapp.RequestHandler):
                                                   #security_groups=gruppen_liste
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
-          fehlermeldung = "5"
+          fehlermeldung = "78"
+          self.redirect('/instanzen?message='+fehlermeldung)
+        except DownloadError:
+          # Diese Exception hilft gegen diese beiden Fehler:
+          # DownloadError: ApplicationError: 2 timed out
+          # DownloadError: ApplicationError: 5
+          fehlermeldung = "8"
           self.redirect('/instanzen?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat
-          fehlermeldung = "4"
+          fehlermeldung = "77"
           self.redirect('/instanzen?message='+fehlermeldung)
 
 
