@@ -226,10 +226,72 @@ error_messages = {
            'en' : 'The input had characters that are not allowed' },
   '88' : { 'de' : 'Das von Ihnen eingegebene AMI existiert nicht',
            'en' : 'The AMI does not exist' },
-  '89' : { 'de' : '',
-           'en' : '' },
-  '90' : { 'de' : '',
-           'en' : '' },
+  '89' : { 'de' : 'Sie haben keinen Access Key und keinen Secret Access Key angegeben',
+           'en' : 'No Access Key and no Secret Access Key given' },
+  '90' : { 'de' : 'Sie haben keinen Access Key angegeben',
+           'en' : 'No Access Key given' },
+  '91' : { 'de' : 'Sie haben keinen Secret Access Key angegeben',
+           'en' : 'No Secret Access Key given' },
+  '92' : { 'de' : 'Sie haben keinen Namen angegeben',
+           'en' : 'No Name given' },
+  '93' : { 'de' : 'Sie haben keine Endpoint URL angegeben',
+           'en' : 'No Endpoint given' },
+  '94' : { 'de' : 'Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen',
+           'en' : 'The given Access Key had characters that are not allowed' },
+  '95' : { 'de' : 'Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen',
+           'en' : 'The given Secret Access Key had characters that are not allowed' },
+  '96' : { 'de' : 'Ihr eingegebener Name enthielt nicht erlaubte Zeichen',
+           'en' : 'The given Name had characters that are not allowed' },
+  '97' : { 'de' : 'Ihre eingegebene Endpoint URL enthielt nicht erlaubte Zeichen',
+           'en' : 'The given Endpoint URL had characters that are not allowed' },
+  '98' : { 'de' : 'Die eingegebenen Zugangsdaten funktionieren nicht',
+           'en' : 'The given credentials are wrong' },
+  '99' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich angelegt',
+           'en' : 'The keypair was created successfully' },
+  '100' : { 'de' : 'Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen',
+            'en' : 'The name for the new keypair had characters that are not allowed' },
+  '101' : { 'de' : 'Beim Versuch, das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler',
+            'en' : 'While the system tried to create the new keypair, an error occured' },
+  '102' : { 'de' : 'Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen',
+            'en' : 'A keypair with the given name already exists' },
+  '103' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht',
+            'en' : 'The keypair was erased successfully' },
+  '104' : { 'de' : 'Beim Versuch, das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler',
+            'en' : 'While the system tried to erase the keypair, an error occured' },
+  '105' : { 'de' : 'Der Bucket wurde erfolgreich angelegt',
+            'en' : 'The bucket was created successfully' },
+  '106' : { 'de' : 'Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen',
+            'en' : 'The name for the new bucket had characters that are not allowed' },
+  '107' : { 'de' : 'Beim Versuch, den Bucket anzulegen, kam es zu einem Fehler',
+            'en' : 'While trying zu create the bucket, an error occured' },
+  '108' : { 'de' : 'Sie haben schon einen Bucket mit dem eingegebenen Namen',
+            'en' : 'You already have a bucket with this name' },
+  '109' : { 'de' : 'Beim Versuch, den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!',
+            'en' : 'While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!' },
+  '110' : { 'de' : 'Der Bucket wurde erfolgreich entfernt',
+            'en' : 'The bucket was erased successfully' },
+  '111' : { 'de' : 'Der Key wurde erfolgreich gel&ouml;scht',
+            'en' : 'The key was erased successfully' },
+  '112' : { 'de' : 'Beim Versuch, den Key zu l&ouml;schen, kam es zu einem Fehler',
+            'en' : 'An error occured while trying to erase the key' },
+  '113' : { 'de' : 'Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben',
+            'en' : 'No name for the new directory given' },
+  '114' : { 'de' : 'Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen',
+            'en' : 'The given name for the new directory had characters that are not allowed' },
+  '115' : { 'de' : 'Das neue Verzeichnis wurde erfolgreich angelegt',
+            'en' : 'The new directory was successfully created' },
+  '116' : { 'de' : 'Beim Versuch, das neue Verzeichnis anzulegen, kam es zu einem Fehler',
+            'en' : 'An error occured while the system tried to create the new directory' },
+  '117' : { 'de' : 'Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen',
+            'en' : 'A directory with the given name still exists' },
+  '118' : { 'de' : 'Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert',
+            'en' : 'The Access Control List (ACL) was changed successfully' },
+  '119' : { 'de' : 'Beim Versuch, die Zugriffsberechtigung zu &auml;ndern, kam es zu einem Fehler',
+            'en' : 'An error occured while the system tried to change the Access Control List (ACL)' },
+  '120' : { 'de' : 'Die Keys wurden erfolgreich gel&ouml;scht',
+            'en' : 'The keys were erased successfully' },
+  '121' : { 'de' : 'Beim Versuch, die Keys zu l&ouml;schen, kam es zu einem Fehler',
+            'en' : 'An error occured while trying to erase the keys' },
 }
 
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
@@ -354,60 +416,21 @@ class Regionen(webapp.RequestHandler):
 
             zonen_liste = zonen_liste_funktion(username,sprache)
 
-            if message == "0":
-              input_error_message = ''
-            elif message == "1":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Access Key und keinen Secret Access Key angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">No Access Key and no Secret Access Key given</font>'
-            elif message == "2":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Access Key angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">No Access Key given</font>'
-            elif message == "3":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Secret Access Key angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">No Secret Access Key given</font>'
-            elif message == "4":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Name angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">No Name given</font>'
-            elif message == "5":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keine Endpoint URL angegeben</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">No Endpoint given</font>'
-            elif message == "6":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The given Access Key had characters that are not allowed</font>'
-            elif message == "7":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The given Secret Access Key had characters that are not allowed</font>'
-            elif message == "8":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Name enthielt nicht erlaubte Zeichen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The given Name had characters that are not allowed</font>'
-            elif message == "9":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Ihre eingegebene Endpoint URL enthielt nicht erlaubte Zeichen</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The given Endpoint URL had characters that are not allowed</font>'
-            elif message == "10":
-              if sprache == "de":
-                input_error_message = '<p>&nbsp;</p> <font color="red">Die eingegebenen Zugangsdaten funktionieren nicht</font>'
-              else:
-                input_error_message = '<p>&nbsp;</p> <font color="red">The given credentials are wrong</font>'
+            if sprache != "de":
+              sprache = "en"
+
+            input_error_message = error_messages.get(message, {}).get(sprache)
+
+            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+            if input_error_message == None:
+              input_error_message = ""
+
+            # Wenn die Nachricht grün formatiert werden soll...
+            if message == '89' or message == '90' or message == '91' or message == '92' or message == '93' or message == '94' or message == '95' or message == '96' or message == '97' or message == '98' or message == '99':
+              # wird sie hier, in der Hilfsfunktion rot formatiert
+              input_error_message = format_error_message_red(input_error_message)
             else:
-              input_error_message = ''
+              input_error_message = ""
 
 
             # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
@@ -670,12 +693,13 @@ class Regionen(webapp.RequestHandler):
               eingabefelder = ''
 
             if neuerzugang == "eucalyptus":
+              version_warnung = '<p>&nbsp;</p>'
               if sprache == "de":
-                version_warnung = '<p><font color="red">KOALA unterst&uuml;tzt ausschlie&szlig;lich Eucalyptus 1.6.2.<br> '
+                version_warnung = version_warnung + '<p><font color="red">KOALA unterst&uuml;tzt ausschlie&szlig;lich Eucalyptus 1.6.2.<br> '
                 version_warnung = version_warnung + 'Fr&uuml;here Versionen haben einige Bugs, die zu Problemen f&uuml;hren k&ouml;nnen.<br>'
                 version_warnung = version_warnung + 'Ein Update von Eucalyptus auf die aktuelle Version wird daher empfohlen.</font></p>'
               else:
-                version_warnung = '<p><font color="red">KOALA supports only Eucalyptus 1.6.2.<br> '
+                version_warnung = version_warnung + '<p><font color="red">KOALA supports only Eucalyptus 1.6.2.<br> '
                 version_warnung = version_warnung + 'Prior versions have some bugs that can cause some problems.<br>'
                 version_warnung = version_warnung + 'Updating Eucalyptus to the latest version should be considered.</font></p>'
             else:
@@ -1833,47 +1857,22 @@ class Keys(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich angelegt</font>'
-              # <br><a href="Hier">Hier</a> k&ouml;nnen Sie den Geheimen Schl&uuml;ssel herunterladen
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was created successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new keypair had characters that are not allowed</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to create the new keypair, an error occured</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A keypair with the given name already exists</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The keypair was erased successfully</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the keypair, an error occured</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A timeout error occured but maybe the operation was successful</font>'
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '99' or message == '103':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '8' or message == '92' or message == '100' or message == '101' or message == '102' or message == '104':
+            input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
 
@@ -3581,11 +3580,11 @@ class KeyErzeugen(webapp.RequestHandler):
           # Testen ob ein Name für den neuen key angegeben wurde
           # Wenn kein Name angegeben wurde, kann kein Key angelegt werden
           #fehlermeldung = "Sie haben keine Namen angegeben"
-          fehlermeldung = "1"
+          fehlermeldung = "92"
           self.redirect('/schluessel?message='+fehlermeldung)
         elif re.search(r'[^\-_a-zA-Z0-9]', neuerkeyname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
-          fehlermeldung = "2"
+          fehlermeldung = "100"
           self.redirect('/schluessel?message='+fehlermeldung)
         else:
 
@@ -3601,7 +3600,7 @@ class KeyErzeugen(webapp.RequestHandler):
               # Schlüssel existiert schon!
               schon_vorhanden = 1
               neu = "nein"
-              fehlermeldung = "4"
+              fehlermeldung = "102"
               self.redirect('/schluessel?message='+fehlermeldung)
 
           # Wenn der Schlüssel noch nicht existiert...
@@ -3610,13 +3609,13 @@ class KeyErzeugen(webapp.RequestHandler):
               # Schlüsselpaar erzeugen
               neuer_key = conn_region.create_key_pair(neuerkeyname)
             except EC2ResponseError:
-              fehlermeldung = "3"
+              fehlermeldung = "101"
               self.redirect('/schluessel?message='+fehlermeldung)
             except DownloadError:
               # Diese Exception hilft gegen diese beiden Fehler:
               # DownloadError: ApplicationError: 2 timed out
               # DownloadError: ApplicationError: 5
-              fehlermeldung = "7"
+              fehlermeldung = "8"
               self.redirect('/schluessel?message='+fehlermeldung)
             else:
               neu = "ja"
@@ -3629,7 +3628,7 @@ class KeyErzeugen(webapp.RequestHandler):
               keyname = keyname + str(aktuelle_zeit)
               # der Secret Key wird für 10 Minuten im Memcache gespeichert
               memcache.add(key=keyname, value=secretkey, time=600)
-              fehlermeldung = "0"
+              fehlermeldung = "99"
               self.redirect('/schluessel?message='+fehlermeldung+'&neu='+neu+'&neuerkeyname='+neuerkeyname+'&secretkey='+keyname)
 
 
@@ -3647,17 +3646,17 @@ class KeyEntfernen(webapp.RequestHandler):
           conn_region.delete_key_pair(key)
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
-          fehlermeldung = "6"
+          fehlermeldung = "104"
           self.redirect('/schluessel?message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
-          fehlermeldung = "7"
+          fehlermeldung = "8"
           self.redirect('/schluessel?message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "5"
+          fehlermeldung = "103"
           self.redirect('/schluessel?message='+fehlermeldung)
 
 
@@ -5818,26 +5817,26 @@ class ZugangEinrichten(webapp.RequestHandler):
             if accesskey == "" and secretaccesskey == "":
               # Wenn kein Access Key und kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Access Key und keinen Secret Access Key angegeben"
-              fehlermeldung = "1"
+              fehlermeldung = "89"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif accesskey == "": 
               #fehlermeldung = "Sie haben keinen Access Key angegeben"
-              fehlermeldung = "2"
+              fehlermeldung = "90"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif secretaccesskey == "": 
               # Wenn kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Secret Access Key angegeben"
-              fehlermeldung = "3"
+              fehlermeldung = "91"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9]', accesskey) != None:
               # Wenn der Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "6"
+              fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "7"
+              fehlermeldung = "95"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             else: # Access Key und Secret Access Key wurden angegeben
               # Prüfen, ob die Zugangsdaten für EC2 korrekt sind
@@ -5854,7 +5853,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 liste_zonen = connection.get_all_zones()
               except EC2ResponseError:
                 # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
-                fehlermeldung = "10"
+                fehlermeldung = "98"
                 self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
               else:
                 # Wenn die Zugangsdaten für EC2 korrekt sind, dann wird hier weiter gemacht...
@@ -5898,42 +5897,42 @@ class ZugangEinrichten(webapp.RequestHandler):
             if accesskey == "" and secretaccesskey == "":
               # Wenn kein Access Key und kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Access Key und keinen Secret Access Key angegeben"
-              fehlermeldung = "1"
+              fehlermeldung = "89"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif accesskey == "": 
               #fehlermeldung = "Sie haben keinen Access Key angegeben"
-              fehlermeldung = "2"
+              fehlermeldung = "90"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif secretaccesskey == "": 
               # Wenn kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Secret Access Key angegeben"
-              fehlermeldung = "3"
+              fehlermeldung = "91"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif nameregion == "": 
               # Wenn kein Name eingegeben wurde
-              fehlermeldung = "4"
+              fehlermeldung = "92"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif endpointurl == "": 
               # Wenn keine Endpoint URL eingegeben wurde
-              fehlermeldung = "5"
+              fehlermeldung = "93"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9]', accesskey) != None:
               # Wenn der Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "6"
+              fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9+=]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "7"
+              fehlermeldung = "95"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^\ \-._a-zA-Z0-9]', nameregion) != None:
               # Wenn der Name nicht erlaubte Zeichen enthält
-              fehlermeldung = "8"
+              fehlermeldung = "96"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^\ \/\-.:_a-zA-Z0-9]', endpointurl) != None:
               # Wenn die Endpoint URL nicht erlaubte Zeichen enthält
-              fehlermeldung = "9"
+              fehlermeldung = "97"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             else:
               # Access Key und  Secret Access Key wurden angegeben
@@ -5949,7 +5948,7 @@ class ZugangEinrichten(webapp.RequestHandler):
 
               except:
                 # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
-                fehlermeldung = "10"
+                fehlermeldung = "98"
                 self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
               else:
                 # Wenn die Zugangsdaten für Nimbus korrekt sind, dann wird hier weiter gemacht...
@@ -5996,42 +5995,42 @@ class ZugangEinrichten(webapp.RequestHandler):
             if accesskey == "" and secretaccesskey == "":
               # Wenn kein Access Key und kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Access Key und keinen Secret Access Key angegeben"
-              fehlermeldung = "1"
+              fehlermeldung = "89"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif accesskey == "": 
               #fehlermeldung = "Sie haben keinen Access Key angegeben"
-              fehlermeldung = "2"
+              fehlermeldung = "90"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif secretaccesskey == "": 
               # Wenn kein Secret Access Key angegeben wurde
               #fehlermeldung = "Sie haben keinen Secret Access Key angegeben"
-              fehlermeldung = "3"
+              fehlermeldung = "91"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif nameregion == "": 
               # Wenn kein Name eingegeben wurde
-              fehlermeldung = "4"
+              fehlermeldung = "92"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif endpointurl == "": 
               # Wenn keine Endpoint URL eingegeben wurde
-              fehlermeldung = "5"
+              fehlermeldung = "93"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9]', accesskey) != None:
               # Wenn der Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "6"
+              fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^a-zA-Z0-9]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
-              fehlermeldung = "7"
+              fehlermeldung = "95"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^\ \-._a-zA-Z0-9]', nameregion) != None:
               # Wenn der Name nicht erlaubte Zeichen enthält
-              fehlermeldung = "8"
+              fehlermeldung = "96"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             elif re.search(r'[^\ \/\-.:_a-zA-Z0-9]', endpointurl) != None:
               # Wenn die Endpoint URL nicht erlaubte Zeichen enthält
-              fehlermeldung = "9"
+              fehlermeldung = "97"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
             else:
               # Access Key und  Secret Access Key wurden angegeben
@@ -6051,7 +6050,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 liste_zonen = connection.get_all_zones()
               except:
                 # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
-                fehlermeldung = "10"
+                fehlermeldung = "98"
                 self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
               else:
                 # Wenn die Zugangsdaten für Eucalyptus korrekt sind, dann wird hier weiter gemacht...
@@ -6258,41 +6257,22 @@ class S3(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich angelegt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was created successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen angegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name given</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The name for the new bucket had characters that are not allowed</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket anzulegen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While trying zu create the bucket, an error occured</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben schon einen Bucket mit dem eingegebenen Namen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">You already have a bucket with this name</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Bucket wurde erfolgreich entfernt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The bucket was erased successfully</font>'
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '105' or message == '110':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '92' or message == '106' or message == '107' or message == '108' or message == '109':
+            input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
 
@@ -6401,11 +6381,11 @@ class BucketErzeugen(webapp.RequestHandler):
           # Testen ob ein Name für den neuen key angegeben wurde
           # Wenn kein Name angegeben wurde, kann kein Key angelegt werden
           #fehlermeldung = "Sie haben keine Namen angegeben"
-          fehlermeldung = "1"
+          fehlermeldung = "92"
           self.redirect('/s3?message='+fehlermeldung)
         elif re.search(r'[^\-.a-zA-Z0-9]', neuerbucketname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
-          fehlermeldung = "2"
+          fehlermeldung = "106"
           self.redirect('/s3?message='+fehlermeldung)
         else:
           # Mit S3 verbinden
@@ -6415,7 +6395,7 @@ class BucketErzeugen(webapp.RequestHandler):
             liste_buckets = conn_s3.get_all_buckets()
           except:
             # Wenn es nicht klappt...
-            fehlermeldung = "3"
+            fehlermeldung = "107"
             self.redirect('/s3?message='+fehlermeldung)
           else:
             # Wenn es geklappt hat...
@@ -6438,16 +6418,16 @@ class BucketErzeugen(webapp.RequestHandler):
                 # Versuch den Bucket anzulegen
                 conn_s3.create_bucket(neuerbucketname)
               except:
-                fehlermeldung = "3"
+                fehlermeldung = "107"
                 # Wenn es nicht klappt...
                 self.redirect('/s3?message='+fehlermeldung)
               else:
-                fehlermeldung = "0"
+                fehlermeldung = "105"
                 # Wenn es geklappt hat...
                 self.redirect('/s3?message='+fehlermeldung)
             else:
               # Wenn man schon einen Bucket mit dem eingegeben Namen hat...
-              fehlermeldung = "4"
+              fehlermeldung = "108"
               self.redirect('/s3?message='+fehlermeldung)
 
 
@@ -6466,11 +6446,11 @@ class BucketEntfernen(webapp.RequestHandler):
           # Versuch den Bucket zu löschen
           conn_s3.delete_bucket(bucketname)
         except:
-          fehlermeldung = "5"
+          fehlermeldung = "109"
           # Wenn es nicht klappt...
           self.redirect('/s3?message='+fehlermeldung)
         else:
-          fehlermeldung = "6"
+          fehlermeldung = "110"
           # Wenn es geklappt hat...
           self.redirect('/s3?message='+fehlermeldung)
 
@@ -6512,51 +6492,22 @@ class BucketInhalt(webapp.RequestHandler):
 
           input_error_message = ""
 
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">No name for the new directory given</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">The given name for the new directory had characters that are not allowed</font>'
-          elif message == "4":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Das neue Verzeichnis wurde erfolgreich angelegt</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The new directory was successfully created</font>'
-          elif message == "5":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch das neue Verzeichnis anzulegen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to create the new directory</font>'
-          elif message == "6":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">A directory with the given name still exists</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '111' or message == '115' or message == '118' or message == '120':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '112' or message == '113' or message == '114' or message == '116' or message == '117' or message == '119' or message == '121':
+            input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
 
@@ -6907,7 +6858,6 @@ class BucketInhalt(webapp.RequestHandler):
             verzeichnis_warnung = 'There are no folders within a S3 bucket. S3 is a completely flat name space. However, you can simulate hierarchical folders with clever use of key names. <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> for instance uses keys that end with <b>_&#36;folder&#36;</b> as directory placeholders and. A key that is meant staying inside are folder has a name following this schema <b>folder/subfolder/filename</b>'
 
 
-
           # Hier wird das Policy-Dokument erzeugt
           policy_document = ''
           policy_document = policy_document + '{'
@@ -7058,43 +7008,29 @@ class BucketInhaltPur(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message == '111' or message == '118' or message == '120':
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message == '112' or message == '119' or message == '121':
+            input_error_message = format_error_message_red(input_error_message)
+          else:
+            input_error_message = ""
+
+
           AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
           AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)
 
-          input_error_message = ""
-
-          if message == "0":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Der Key wurde erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The key was erased successfully</font>'
-          elif message == "1":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch den Key zu l&ouml;schen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the key</font>'
-          elif message == "2":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Keys wurden erfolgreich gel&ouml;scht</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The keys were erased successfully</font>'
-          elif message == "3":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Keys zu l&ouml;schen kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while trying to erase the keys</font>'
-          elif message == "7":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="green">Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="green">The Access Control List (ACL) was changed successfully</font>'
-          elif message == "8":
-            if sprache == "de":
-              input_error_message = '<p>&nbsp;</p> <font color="red">Beim Versuch die Zugriffsberechtigung zu &auml;ndern kam es zu einem Fehler</font>'
-            else:
-              input_error_message = '<p>&nbsp;</p> <font color="red">An error occured while the system tried to change the Access Control List (ACL)</font>'
-          else:
-            input_error_message = ""
 
           # Mit S3 verbinden
           conn_s3 = logins3(username)
@@ -7387,7 +7323,7 @@ class BucketKeyEntfernen(webapp.RequestHandler):
               # Versuch den Key zu löschen
               liste_keys[i].delete()
             except:
-              fehlermeldung = "1"
+              fehlermeldung = "112"
               # Wenn es nicht klappt...
               if typ == "pur":
                 if directory == "/":
@@ -7400,7 +7336,7 @@ class BucketKeyEntfernen(webapp.RequestHandler):
                 else:
                   self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
             else:
-              fehlermeldung = "0"
+              fehlermeldung = "111"
               # Wenn es geklappt hat...
               if typ == "pur":
                 if directory == "/":
@@ -7431,7 +7367,7 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
           # Testen ob ein Name für den neuen key angegeben wurde
           # Wenn kein Name angegeben wurde, kann kein Key angelegt werden
           #fehlermeldung = "Sie haben keine Namen angegeben"
-          fehlermeldung = "2"
+          fehlermeldung = "113"
           if directory == "/":
             self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
           else:
@@ -7440,7 +7376,7 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
             self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
         elif re.search(r'[^\-_a-zA-Z0-9]', verzeichnisname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
-          fehlermeldung = "3"
+          fehlermeldung = "114"
           if directory == "/":
             self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
           else:
@@ -7468,7 +7404,7 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
             if vergleich == verzeichnisname:
               # Verzeichnis-Name existiert schon!
               schon_vorhanden = 1
-              fehlermeldung = "6"
+              fehlermeldung = "117"
               if directory == "/":
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
               else:
@@ -7476,7 +7412,8 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
                 directory = str(directory[:-1])
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
 
-          if schon_vorhanden == 0:  # Wenn man noch kein Verzeichnis mit dem eingegebenen Namen besitzt...
+          # Wenn man noch kein Verzeichnis mit dem eingegebenen Namen besitzt... 
+          if schon_vorhanden == 0:
             try:
               # Versuch das Verzeichnis anzulegen
               # Mit dem Bucket sind wir schon verbunden über die Zeile
@@ -7490,7 +7427,7 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
                 key.set_contents_from_string('')
             except:
               # Wenn es nicht klappt...
-              fehlermeldung = "5"
+              fehlermeldung = "116"
               if directory == "/":
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
               else:
@@ -7499,15 +7436,13 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
             else:
               # Wenn es geklappt hat...
-              fehlermeldung = "4"
+              fehlermeldung = "115"
               if directory == "/":
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
               else:
                 # Den Slash am Ende des Verzeichnisses entfernen
                 directory = str(directory[:-1])
                 self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
-
-
 
 
 class ACL_einsehen(webapp.RequestHandler):
@@ -7712,7 +7647,7 @@ class ACL_Aendern(webapp.RequestHandler):
           bucket_instance.set_acl(canned_acl, key_name=keyname)
         except EC2ResponseError:
           # Wenn es nicht klappt...
-          fehlermeldung = "8"
+          fehlermeldung = "119"
           if typ == "pur":
             self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
           else:
@@ -7723,7 +7658,7 @@ class ACL_Aendern(webapp.RequestHandler):
               self.redirect('/bucket_inhalt?bucket='+bucketname+'&dir='+directory+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "7"
+          fehlermeldung = "118"
           if typ == "pur":
             self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
           else:
@@ -7815,11 +7750,11 @@ class AlleKeysLoeschenDefinitiv(webapp.RequestHandler):
             liste_keys[i].delete()
         except:
           # Wenn es nicht klappt...
-          fehlermeldung = "3"
+          fehlermeldung = "121"
           self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
-          fehlermeldung = "2"
+          fehlermeldung = "120"
           self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
 
 
