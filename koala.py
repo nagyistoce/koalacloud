@@ -426,7 +426,7 @@ class Regionen(webapp.RequestHandler):
               input_error_message = ""
 
             # Wenn die Nachricht grün formatiert werden soll...
-            if message == '89' or message == '90' or message == '91' or message == '92' or message == '93' or message == '94' or message == '95' or message == '96' or message == '97' or message == '98' or message == '99':
+            if message in ("89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"):
               # wird sie hier, in der Hilfsfunktion rot formatiert
               input_error_message = format_error_message_red(input_error_message)
             else:
@@ -870,11 +870,11 @@ class Instanzen(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '73' or message == '77' or message == '79' or message == '81':
+          if message in ("73", "77", "79", "81"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '9' or message == '10' or message == '74' or message == '75' or message == '76' or message == '78' or message == '80' or message == '82':
+          elif message in ("8", "9", "10", "74", "75", "76", "78", "80", "82"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -1253,11 +1253,11 @@ class SecurityGroups(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '40' or message == '48':
+          if message in ("40", "48"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '41' or message == '42' or message == '43' or message == '44' or message == '45' or message == '46' or message == '47' or message == '49':
+          elif message in ("8", "41", "42", "43", "44", "45", "46", "47", "49"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -1390,11 +1390,11 @@ class GruppeAendern(webapp.RequestHandler):
           input_error_message = ""
 
         # Wenn die Nachricht grün formatiert werden soll...
-        if message == '28' or message == '37':
+        if message in ("28", "37"):
           # wird sie hier, in der Hilfsfunktion grün formatiert
           input_error_message = format_error_message_green(input_error_message)
         # Ansonsten wird die Nachricht rot formatiert
-        elif message == '8' or message == '29' or message == '30' or message == '31' or message == '32' or message == '33' or message == '34' or message == '35' or message == '36' or message == '38' or message == '39':
+        elif message in ("8", "29", "30", "31", "32", "33", "34", "35", "36", "38", "39"):
           input_error_message = format_error_message_red(input_error_message)
         else:
           input_error_message = ""
@@ -1867,11 +1867,11 @@ class Keys(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '99' or message == '103':
+          if message in ("99", "103"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '92' or message == '100' or message == '101' or message == '102' or message == '104':
+          elif message in ("8", "92", "100", "101", "102", "104"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -2030,7 +2030,7 @@ class CreateLoadBalancer(webapp.RequestHandler):
           input_error_message = ""
 
         # Wenn die Nachricht grün formatiert werden soll...
-        if message == '8' or message == '50' or message == '51' or message == '52' or message == '53' or message == '54' or message == '55' or message == '56' or message == '57' or message == '58' or message == '59' or message == '60':
+        if message in ("8", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60"):
           # wird sie hier, in der Hilfsfunktion rot formatiert
           input_error_message = format_error_message_red(input_error_message)
         else:
@@ -2363,11 +2363,11 @@ class LoadBalancer(webapp.RequestHandler):
               input_error_message = ""
 
             # Wenn die Nachricht grün formatiert werden soll...
-            if message == '9' or message == '70' or message == '72':
+            if message in ("9", "70", "72"):
               # wird sie hier, in der Hilfsfunktion grün formatiert
               input_error_message = format_error_message_green(input_error_message)
             # Ansonsten wird die Nachricht rot formatiert
-            elif message == '8' or message == '10' or message == '71':
+            elif message in ("8", "10", "71"):
               input_error_message = format_error_message_red(input_error_message)
             else:
               input_error_message = ""
@@ -2547,11 +2547,11 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '61' or message == '63' or message == '66' or message == '68':
+          if message in ("61", "63", "66", "68"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '62' or message == '64' or message == '65' or message == '67' or message == '69':
+          elif message in ("8", "62", "64", "65", "67", "69"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -2979,11 +2979,11 @@ class Elastic_IPs(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '0' or message == '3' or message == '5' or message == '7':
+          if message in ("0", "3", "5", "7"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '1' or message == '2' or message == '4' or message == '6' or message == '8' or message == '9' or message == '10':
+          elif message in ("1", "2", "4", "6", "8", "9", "10"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -3830,11 +3830,11 @@ class Snapshots(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '11' or message == '13':
+          if message in ("11", "13"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '12' or message == '14':
+          elif message in ("8", "12", "14"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -4080,11 +4080,11 @@ class Volumes(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '15' or message == '22' or message == '23' or message == '24' or message == '27':
+          if message in ("15", "22", "23", "24", "27"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '8' or message == '10' or message == '16' or message == '17' or message == '18' or message == '19' or message == '20' or message == '21' or message == '25' or message == '26':
+          elif message in ("8", "10", "16", "17", "18", "19", "20", "21", "25", "26"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -4930,11 +4930,11 @@ class Images(webapp.RequestHandler):
               input_error_message = ""
 
             # Wenn die Nachricht grün formatiert werden soll...
-            if message == '83':
+            if message in ("83"):
               # wird sie hier, in der Hilfsfunktion grün formatiert
               input_error_message = format_error_message_green(input_error_message)
             # Ansonsten wird die Nachricht rot formatiert
-            elif message == '84' or message == '85' or message == '86' or message == '87' or message == '88':
+            elif message in ("84", "85", "86", "87", "88"):
               input_error_message = format_error_message_red(input_error_message)
             else:
               input_error_message = ""
@@ -6267,11 +6267,11 @@ class S3(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '105' or message == '110':
+          if message in ("105", "110"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '92' or message == '106' or message == '107' or message == '108' or message == '109':
+          elif message in ("92", "106", "107", "108", "109"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -6502,11 +6502,11 @@ class BucketInhalt(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '111' or message == '115' or message == '118' or message == '120':
+          if message in ("111", "115", "118", "120"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '112' or message == '113' or message == '114' or message == '116' or message == '117' or message == '119' or message == '121':
+          elif message in ("112", "113", "114", "116", "117", "119", "121"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -7018,11 +7018,11 @@ class BucketInhaltPur(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message == '111' or message == '118' or message == '120':
+          if message in ("111", "118", "120"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message == '112' or message == '119' or message == '121':
+          elif message in ("112", "119", "121"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
