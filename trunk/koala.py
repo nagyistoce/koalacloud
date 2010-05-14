@@ -7154,9 +7154,9 @@ class BucketInhaltPur(webapp.RequestHandler):
           # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
           if regionname != "Amazon":
             if sprache == "de":
-              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung:<BR><B>Failure: 500 Internal Server Error</B>'
+              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6, 1.6.1 und 1.6.2 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung:<BR><B>Failure: 500 Internal Server Error</B>'
             else:
-              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message:<BR><B>Failure: 500 Internal Server Error</B>'
+              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6, 1.6.1 and 1.6.2 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message:<BR><B>Failure: 500 Internal Server Error</B>'
           else: 
             eucalyptus_warnung = ''
 
