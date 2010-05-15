@@ -6135,6 +6135,9 @@ class InstanzAnlegen(webapp.RequestHandler):
         ari_id = self.request.get('ari')
         zonen_auswahl = self.request.get('zone')
 
+        gruppen_liste_liste = []
+        gruppen_liste_liste.append(gruppen_liste)
+
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -6146,11 +6149,11 @@ class InstanzAnlegen(webapp.RequestHandler):
           # Instanz(en) anlegen
           reservation = conn_region.run_instances(image_id,
                                                   key_name=keys_liste,
+                                                  security_groups=gruppen_liste_liste,
                                                   instance_type=instance_type,
                                                   placement=zonen_auswahl,
                                                   kernel_id=aki_id,
                                                   ramdisk_id=ari_id)
-                                                  #security_groups=gruppen_liste
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
           fehlermeldung = "78"
@@ -6181,6 +6184,9 @@ class InstanzAnlegen(webapp.RequestHandler):
         ari_id = self.request.get('ari_id')
         zonen_auswahl = self.request.get('zonen_auswahl')
 
+        gruppen_liste_liste = []
+        gruppen_liste_liste.append(gruppen_liste)
+
         if not aki_id:
           aki_id = None
 
@@ -6209,11 +6215,11 @@ class InstanzAnlegen(webapp.RequestHandler):
                                                   min_count=number_instances_min,
                                                   max_count=number_instances_max,
                                                   key_name=keys_liste,
+                                                  security_groups=gruppen_liste_liste,
                                                   instance_type=instance_type,
                                                   placement=zonen_auswahl,
                                                   kernel_id=aki_id,
                                                   ramdisk_id=ari_id)
-                                                  #security_groups=gruppen_liste
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
           fehlermeldung = "78"
