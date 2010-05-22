@@ -5833,7 +5833,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
-            elif re.search(r'[^a-zA-Z0-9]', secretaccesskey) != None:
+            elif re.search(r'[^\/a-zA-Z0-9+=]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "95"
@@ -5921,7 +5921,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
-            elif re.search(r'[^a-zA-Z0-9+=]', secretaccesskey) != None:
+            elif re.search(r'[^\/a-zA-Z0-9+=]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "95"
@@ -6019,7 +6019,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "94"
               self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
-            elif re.search(r'[^a-zA-Z0-9]', secretaccesskey) != None:
+            elif re.search(r'[^\/a-zA-Z0-9+=]', secretaccesskey) != None:
               # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
               #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
               fehlermeldung = "95"
