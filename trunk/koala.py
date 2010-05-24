@@ -988,10 +988,16 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + str(x.placement)
                     instanzentabelle = instanzentabelle + "&amp;key="
                     instanzentabelle = instanzentabelle + str(x.key_name)
-                    instanzentabelle = instanzentabelle + "&amp;aki="
-                    instanzentabelle = instanzentabelle + str(x.kernel)
-                    instanzentabelle = instanzentabelle + "&amp;ari="
-                    instanzentabelle = instanzentabelle + str(x.ramdisk)
+                    # Es ist denkbar, dass der Wert des Kernels "None" ist.
+                    # Dann darf man hier nichts angeben!
+                    if x.kernel != None:
+                      instanzentabelle = instanzentabelle + "&amp;aki="
+                      instanzentabelle = instanzentabelle + str(x.kernel)
+                    # Manchmal ist die Angabe der Ramdisk "None".
+                    # Dann darf man hier nichts angeben!
+                    if x.ramdisk != None:
+                      instanzentabelle = instanzentabelle + "&amp;ari="
+                      instanzentabelle = instanzentabelle + str(x.ramdisk)
                     instanzentabelle = instanzentabelle + "&amp;type="
                     instanzentabelle = instanzentabelle + str(x.instance_type)
                     instanzentabelle = instanzentabelle + "&amp;gruppe="
@@ -1004,10 +1010,16 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + str(x.placement)
                     instanzentabelle = instanzentabelle + "&amp;key="
                     instanzentabelle = instanzentabelle + str(x.key_name)
-                    instanzentabelle = instanzentabelle + "&amp;aki="
-                    instanzentabelle = instanzentabelle + str(x.kernel)
-                    instanzentabelle = instanzentabelle + "&amp;ari="
-                    instanzentabelle = instanzentabelle + str(x.ramdisk)
+                    # Es ist denkbar, dass der Wert des Kernels "None" ist.
+                    # Dann darf man hier nichts angeben!
+                    if x.kernel != None:
+                      instanzentabelle = instanzentabelle + "&amp;aki="
+                      instanzentabelle = instanzentabelle + str(x.kernel)
+                    # Manchmal ist die Angabe der Ramdisk "None".
+                    # Dann darf man hier nichts angeben!
+                    if x.ramdisk != None:
+                      instanzentabelle = instanzentabelle + "&amp;ari="
+                      instanzentabelle = instanzentabelle + str(x.ramdisk)
                     instanzentabelle = instanzentabelle + "&amp;type="
                     instanzentabelle = instanzentabelle + str(x.instance_type)
                     instanzentabelle = instanzentabelle + "&amp;gruppe="
@@ -1069,30 +1081,30 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + 'terminated'
                   instanzentabelle = instanzentabelle + '</td><td>'
                   instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + x.instance_type
+                  instanzentabelle = instanzentabelle + str(x.instance_type)
                   instanzentabelle = instanzentabelle + '</tt>'
                   instanzentabelle = instanzentabelle + '</td><td align="center">'
                   instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + i.id
+                  instanzentabelle = instanzentabelle + str(i.id)
                   #y = str(i)
                   #z = y.replace('Reservation:', '')
                   #instanzentabelle = instanzentabelle + z
                   instanzentabelle = instanzentabelle + '</tt>'
                   instanzentabelle = instanzentabelle + '</td><td align="center">'
                   instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + i.owner_id
+                  instanzentabelle = instanzentabelle + str(i.owner_id)
                   #y = str(i)
                   #z = y.replace('Reservation:', '')
                   #instanzentabelle = instanzentabelle + z
                   instanzentabelle = instanzentabelle + '</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + '<tt>'+x.image_id+'</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.image_id)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + '<tt>'+x.kernel+'</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.kernel)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + '<tt>'+x.ramdisk+'</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.ramdisk)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + x.placement
+                  instanzentabelle = instanzentabelle + str(x.placement)
                   instanzentabelle = instanzentabelle + '</td><td>'
                   laenge_liste_guppen_reservations = len(i.groups)
                   if laenge_liste_guppen_reservations == 1:
@@ -1105,14 +1117,14 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle = instanzentabelle + i.groups[z].id+' '
                   #instanzentabelle = instanzentabelle + '</td><td align="center">'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + x.public_dns_name
+                  instanzentabelle = instanzentabelle + str(x.public_dns_name)
                   #if x.public_dns_name != None:
                     #instanzentabelle = instanzentabelle + '<a href="http://'+x.public_dns_name+'" style="color:blue">Link</a>'
                   #else:
                     #instanzentabelle = instanzentabelle + x.private_dns_name
                   #instanzentabelle = instanzentabelle + '</td><td align="center">'
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + x.private_dns_name
+                  instanzentabelle = instanzentabelle + str(x.private_dns_name)
                   #if x.private_dns_name != None:
                     #instanzentabelle = instanzentabelle + '<a href="http://'+x.private_dns_name+'" style="color:blue">Link</a>'
                   #else:
