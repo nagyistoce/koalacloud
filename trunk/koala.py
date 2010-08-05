@@ -41,8 +41,6 @@ from dateutil.tz import *
 from datetime import *
 # für die Verschlüsselung
 from itertools import izip, cycle
-import time
-import base64
 import hmac, sha
 # für die Verschlüsselung
 import base64
@@ -1721,7 +1719,7 @@ class GruppeRegelEntfernen(webapp.RequestHandler):
 
 class GruppeEntfernen(webapp.RequestHandler):
     def get(self):
-      # Den Namen der zu löschenden Gruppe holen
+        # Den Namen der zu löschenden Gruppe holen
         gruppe = self.request.get('gruppe')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -1729,22 +1727,22 @@ class GruppeEntfernen(webapp.RequestHandler):
         conn_region, regionname = login(username)
 
         try:
-          # Security Gruppe löschen
-          conn_region.delete_security_group(gruppe)
+            # Security Gruppe löschen
+            conn_region.delete_security_group(gruppe)
         except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "49"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Wenn es nicht geklappt hat...
+            fehlermeldung = "49"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "48"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Wenn es geklappt hat...
+            fehlermeldung = "48"
+            self.redirect('/securitygroups?message='+fehlermeldung)
 
 class GruppeErzeugen(webapp.RequestHandler):
     def post(self):
@@ -1757,81 +1755,81 @@ class GruppeErzeugen(webapp.RequestHandler):
         conn_region, regionname = login(username)
 
         if neuergruppenname == "" and neuegruppenbeschreibung == "":
-          # Wenn kein Name und keine Beschreibung angegeben wurde
-          #fehlermeldung = "Sie haben keinen Namen und keine Beschreibung angegeben"
-          fehlermeldung = "41"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Wenn kein Name und keine Beschreibung angegeben wurde
+            #fehlermeldung = "Sie haben keinen Namen und keine Beschreibung angegeben"
+            fehlermeldung = "41"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         elif neuergruppenname == "":
-          # Testen ob ein Name für die neue Gruppe angegeben wurde
-          #fehlermeldung = "Sie haben keinen Namen angegeben"
-          fehlermeldung = "42"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Testen ob ein Name für die neue Gruppe angegeben wurde
+            #fehlermeldung = "Sie haben keinen Namen angegeben"
+            fehlermeldung = "42"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         elif neuegruppenbeschreibung == "":
-          # Testen ob eine Beschreibung für die neue Gruppe angegeben wurde
-          #fehlermeldung = "Sie haben keine Beschreibung angegeben"
-          fehlermeldung = "43"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Testen ob eine Beschreibung für die neue Gruppe angegeben wurde
+            #fehlermeldung = "Sie haben keine Beschreibung angegeben"
+            fehlermeldung = "43"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         elif re.search(r'[^\-_a-zA-Z0-9]', neuergruppenname) != None:
-          # Testen ob für den neuen Gruppennamen nur erlaubte Zeichen verwendet wurden
-          fehlermeldung = "45"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Testen ob für den neuen Gruppennamen nur erlaubte Zeichen verwendet wurden
+            fehlermeldung = "45"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         elif re.search(r'[^\ \-_a-zA-Z0-9]', neuegruppenbeschreibung) != None:
-          # Testen ob für die Beschreibung der den neuen Gruppe nur erlaubte Zeichen verwendet wurden
-          # Leerzeichen sind in der Gruppenbezeichnung ok
-          fehlermeldung = "46"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+            # Testen ob für die Beschreibung der den neuen Gruppe nur erlaubte Zeichen verwendet wurden
+            # Leerzeichen sind in der Gruppenbezeichnung ok
+            fehlermeldung = "46"
+            self.redirect('/securitygroups?message='+fehlermeldung)
         else:
-          try:
-            # Liste mit den Security Groups
-            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-            # gibt es eine Fehlermeldung
-            liste_security_groups = conn_region.get_all_security_groups()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "47"
-            self.redirect('/securitygroups?message='+fehlermeldung)
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "47"
-            self.redirect('/securitygroups?message='+fehlermeldung)
-          else:
-            # Wenn es geklappt hat und die Liste geholt wurde...
-
-            # Anzahl der Elemente in der Liste
-            laenge_liste_security_groups = len(liste_security_groups)
-
-            # Variable erzeugen zum Erfassen, ob die neu Gruppe schon existiert
-            schon_vorhanden = 0
-            for i in range(laenge_liste_security_groups):
-              # Vergleichen
-              # Für jede existierende Gruppe den Namen der Gruppe
-              # mit dem neuen Gruppennamen vergleichen
-              if liste_security_groups[i].name == neuergruppenname:
-                # Security Gruppe existiert schon!
-                schon_vorhanden = 1
-                fehlermeldung = "44"
-                self.redirect('/securitygroups?message='+fehlermeldung)
-
-            # Wenn der Schlüssel noch nicht existiert...anlegen!
-            if schon_vorhanden == 0:
-              try:
-                # Security Group anlegen
-                conn_region.create_security_group(neuergruppenname, neuegruppenbeschreibung)
-              except EC2ResponseError:
+            try:
+                # Liste mit den Security Groups
+                # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+                # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+                # gibt es eine Fehlermeldung
+                liste_security_groups = conn_region.get_all_security_groups()
+            except EC2ResponseError:
+                # Wenn es nicht klappt...
                 fehlermeldung = "47"
                 self.redirect('/securitygroups?message='+fehlermeldung)
-              except DownloadError:
+            except DownloadError:
                 # Diese Exception hilft gegen diese beiden Fehler:
                 # DownloadError: ApplicationError: 2 timed out
                 # DownloadError: ApplicationError: 5
-                fehlermeldung = "8"
+                fehlermeldung = "47"
                 self.redirect('/securitygroups?message='+fehlermeldung)
-              else:
-                fehlermeldung = "40"
-                self.redirect('/securitygroups?message='+fehlermeldung)
+            else:
+                # Wenn es geklappt hat und die Liste geholt wurde...
+
+                # Anzahl der Elemente in der Liste
+                laenge_liste_security_groups = len(liste_security_groups)
+
+                # Variable erzeugen zum Erfassen, ob die neu Gruppe schon existiert
+                schon_vorhanden = 0
+                for i in range(laenge_liste_security_groups):
+                    # Vergleichen
+                    # Für jede existierende Gruppe den Namen der Gruppe
+                    # mit dem neuen Gruppennamen vergleichen
+                    if liste_security_groups[i].name == neuergruppenname:
+                        # Security Gruppe existiert schon!
+                        schon_vorhanden = 1
+                        fehlermeldung = "44"
+                        self.redirect('/securitygroups?message='+fehlermeldung)
+
+                # Wenn der Schlüssel noch nicht existiert...anlegen!
+                if schon_vorhanden == 0:
+                    try:
+                        # Security Group anlegen
+                        conn_region.create_security_group(neuergruppenname, neuegruppenbeschreibung)
+                    except EC2ResponseError:
+                        fehlermeldung = "47"
+                        self.redirect('/securitygroups?message='+fehlermeldung)
+                    except DownloadError:
+                        # Diese Exception hilft gegen diese beiden Fehler:
+                        # DownloadError: ApplicationError: 2 timed out
+                        # DownloadError: ApplicationError: 5
+                        fehlermeldung = "8"
+                        self.redirect('/securitygroups?message='+fehlermeldung)
+                    else:
+                        fehlermeldung = "40"
+                        self.redirect('/securitygroups?message='+fehlermeldung)
 
 
 
@@ -1979,8 +1977,8 @@ class Keys(webapp.RequestHandler):
   }
   </SCRIPT>'''
             else:
-              bodycommand = " "
-              javascript_funktion = " "
+                bodycommand = " "
+                javascript_funktion = " "
 
             template_values = {
             'navigations_bar': navigations_bar,
@@ -2001,7 +1999,7 @@ class Keys(webapp.RequestHandler):
             path = os.path.join(os.path.dirname(__file__), "templates", sprache, "keys.html")
             self.response.out.write(template.render(path,template_values))
         else:
-          self.redirect('/')
+            self.redirect('/')
 
 
 class CreateLoadBalancer(webapp.RequestHandler):
@@ -2021,11 +2019,11 @@ class CreateLoadBalancer(webapp.RequestHandler):
         results = aktivezone.fetch(100)
 
         if not results:
-          regionname = 'keine'
-          zone_amazon = ""
+            regionname = 'keine'
+            zone_amazon = ""
         else:
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
+            conn_region, regionname = login(username)
+            zone_amazon = amazon_region(username)
 
         url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
         url_linktext = 'Logout'
@@ -2033,38 +2031,38 @@ class CreateLoadBalancer(webapp.RequestHandler):
         zonen_liste = zonen_liste_funktion(username,sprache)
 
         if sprache != "de":
-          sprache = "en"
+            sprache = "en"
 
         input_error_message = error_messages.get(message, {}).get(sprache)
 
         # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
         if input_error_message == None:
-          input_error_message = ""
+            input_error_message = ""
 
         # Wenn die Nachricht grün formatiert werden soll...
         if message in ("8", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60"):
-          # wird sie hier, in der Hilfsfunktion rot formatiert
-          input_error_message = format_error_message_red(input_error_message)
+            # wird sie hier, in der Hilfsfunktion rot formatiert
+            input_error_message = format_error_message_red(input_error_message)
         else:
-          input_error_message = ""
+            input_error_message = ""
 
         try:
-          # Liste mit den Zonen
-          liste_zonen = conn_region.get_all_zones()
+            # Liste mit den Zonen
+            liste_zonen = conn_region.get_all_zones()
         except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "10"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
+            # Wenn es nicht geklappt hat...
+            fehlermeldung = "10"
+            self.redirect('/loadbalancer?message='+fehlermeldung)
         except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/loadbalancer?message='+fehlermeldung)
         else:
-          # Wenn es geklappt hat...
-          # Anzahl der Elemente in der Liste
-          laenge_liste_zonen = len(liste_zonen)
+            # Wenn es geklappt hat...
+            # Anzahl der Elemente in der Liste
+            laenge_liste_zonen = len(liste_zonen)
 
         elb_erzeugen_tabelle = ''
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
@@ -2075,19 +2073,19 @@ class CreateLoadBalancer(webapp.RequestHandler):
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
         if sprache == "de":
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
         else:
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
         for i in range(laenge_liste_zonen):
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
         if sprache == "de":
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
         else:
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<select name="elb_protokoll" size="1">\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option selected="selected">TCP</option>\n'
@@ -2101,9 +2099,9 @@ class CreateLoadBalancer(webapp.RequestHandler):
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
         if sprache == "de":
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
         else:
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
 
@@ -2111,9 +2109,9 @@ class CreateLoadBalancer(webapp.RequestHandler):
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + ''
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
         if sprache == "de":
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
         else:
-          elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
+            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</table>'
         elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</form>'
 
@@ -3654,22 +3652,22 @@ class KeyEntfernen(webapp.RequestHandler):
         conn_region, regionname = login(username)
 
         try:
-          # Schlüsselpaar löschen
-          conn_region.delete_key_pair(key)
+            # Schlüsselpaar löschen
+            conn_region.delete_key_pair(key)
         except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "104"
-          self.redirect('/schluessel?message='+fehlermeldung)
+            # Wenn es nicht geklappt hat...
+            fehlermeldung = "104"
+            self.redirect('/schluessel?message='+fehlermeldung)
         except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/schluessel?message='+fehlermeldung)
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/schluessel?message='+fehlermeldung)
         else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "103"
-          self.redirect('/schluessel?message='+fehlermeldung)
+            # Wenn es geklappt hat...
+            fehlermeldung = "103"
+            self.redirect('/schluessel?message='+fehlermeldung)
 
 
 class SnapshotsEntfernen(webapp.RequestHandler):
@@ -3682,22 +3680,22 @@ class SnapshotsEntfernen(webapp.RequestHandler):
         conn_region, regionname = login(username)
 
         try:
-          # Snapshot löschen
-          conn_region.delete_snapshot(snapshot)
+            # Snapshot löschen
+            conn_region.delete_snapshot(snapshot)
         except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "12"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Wenn es nicht klappt...
+            fehlermeldung = "12"
+            self.redirect('/snapshots?message='+fehlermeldung)
         except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/snapshots?message='+fehlermeldung)
         else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "11"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Wenn es geklappt hat...
+            fehlermeldung = "11"
+            self.redirect('/snapshots?message='+fehlermeldung)
 
 
 class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
@@ -3716,22 +3714,22 @@ class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
         if not beschreibung: beschreibung = ''
 
         try:
-          # Snapshot erzeugen
-          conn_region.create_snapshot(volume, description=beschreibung)
+            # Snapshot erzeugen
+            conn_region.create_snapshot(volume, description=beschreibung)
         except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "14"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Wenn es nicht klappt...
+            fehlermeldung = "14"
+            self.redirect('/snapshots?message='+fehlermeldung)
         except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/snapshots?message='+fehlermeldung)
         else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "13"
-          self.redirect('/snapshots?message='+fehlermeldung)
+            # Wenn es geklappt hat...
+            fehlermeldung = "13"
+            self.redirect('/snapshots?message='+fehlermeldung)
 
 
 class SnapshotsErzeugen(webapp.RequestHandler):
@@ -7986,113 +7984,115 @@ def amazon_region(username):
     results = aktivezone.fetch(10)
 
     for result in results:
-      if result.aktivezone == "us-east-1":
-        zone_amazon = "(us-east-1)"
-      elif result.aktivezone == "eu-west-1":
-        zone_amazon = "(eu-west-1)"
-      elif result.aktivezone == "us-west-1":
-        zone_amazon = "(us-west-1)"
-      elif result.aktivezone == "ap-southeast-1":
-        zone_amazon = "(ap-southeast-1)"
-      else:
-        zone_amazon = ""
+        if result.aktivezone == "us-east-1":
+            zone_amazon = "(us-east-1)"
+        elif result.aktivezone == "eu-west-1":
+            zone_amazon = "(eu-west-1)"
+        elif result.aktivezone == "us-west-1":
+            zone_amazon = "(us-west-1)"
+        elif result.aktivezone == "ap-southeast-1":
+            zone_amazon = "(ap-southeast-1)"
+        else:
+            zone_amazon = ""
 
     return zone_amazon
 
 def aktuelle_sprache(username):
-  # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-  spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-  ergebnisse = spracheanfrage.fetch(10)
+    # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+    spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
+    ergebnisse = spracheanfrage.fetch(10)
 
-  if not ergebnisse:
-      logindaten = KoalaCloudDatenbankSprache(sprache="en",
+    if not ergebnisse:
+        logindaten = KoalaCloudDatenbankSprache(sprache="en",
                                               user=username)
-      logindaten.put()   # In den Datastore schreiben
-      spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-      ergebnisse = spracheanfrage.fetch(10)
+        logindaten.put()   # In den Datastore schreiben
+        spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
+        ergebnisse = spracheanfrage.fetch(10)
 
-  for ergebnis in ergebnisse:
-    if ergebnis.sprache == "en":
-      sprache = "en"
-    elif ergebnis.sprache == "de":
-      sprache = "de"
-    else:
-      sprache = "en"
+    for ergebnis in ergebnisse:
+        if ergebnis.sprache == "en":
+            sprache = "en"
+        elif ergebnis.sprache == "de":
+            sprache = "de"
+        else:
+            sprache = "en"
 
-  return sprache
+    return sprache
+
 
 def navigations_bar_funktion(sprache):
-  if sprache == "de":
-    navigations_bar = '&nbsp; \n'
-    navigations_bar = navigations_bar + '<a href="/regionen" title="Regionen">Regionen</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/instanzen" title="Instanzen">Instanzen</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/schluessel" title="Schl&uuml;ssel">Schl&uuml;ssel</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/zonen" title="Verf&uuml;gbarkeitszonen">Zonen</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/securitygroups" title="Sicherheitsgruppen">Gruppen</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
-  else:
-    navigations_bar = '&nbsp; \n'
-    navigations_bar = navigations_bar + '<a href="/regionen" title="Regions">Regions</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/instanzen" title="Instances">Instances</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/schluessel" title="Keys">Keys</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/zonen" title="Availability Zones">Zones</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/securitygroups" title="Security Groups">Groups</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
-    navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
-  return navigations_bar
+    if sprache == "de":
+        navigations_bar = '&nbsp; \n'
+        navigations_bar = navigations_bar + '<a href="/regionen" title="Regionen">Regionen</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instanzen">Instanzen</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/schluessel" title="Schl&uuml;ssel">Schl&uuml;ssel</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/zonen" title="Verf&uuml;gbarkeitszonen">Zonen</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Sicherheitsgruppen">Gruppen</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
+    else:
+        navigations_bar = '&nbsp; \n'
+        navigations_bar = navigations_bar + '<a href="/regionen" title="Regions">Regions</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instances">Instances</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/schluessel" title="Keys">Keys</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/zonen" title="Availability Zones">Zones</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Security Groups">Groups</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
+        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
+    return navigations_bar
 
 def zonen_liste_funktion(username,sprache):
-  testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
-  # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-  anzahl = testen.count()     # Wie viele Einträge des Benutzers sind schon vorhanden?
+    testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
+    # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+    # Wie viele Einträge des Benutzers sind schon vorhanden?
+    anzahl = testen.count()
+    # Alle Einträge des Benutzers holen?
+    results = testen.fetch(100)
 
-  results = testen.fetch(100) # Alle Einträge des Benutzers holen?
-
-  zonen_liste = ''
-  if anzahl:
-    zonen_liste = zonen_liste + '<form action="/regionwechseln" method="post" accept-charset="utf-8">'
-    zonen_liste = zonen_liste + '<select name="regionen" size="1">'
-    for test in results:
-      zonen_liste = zonen_liste + '<option>'
-      if test.eucalyptusname == "Amazon":
-        zonen_liste = zonen_liste + 'Amazon EC2 (US East)'
-        zonen_liste = zonen_liste + '</option>'
-        zonen_liste = zonen_liste + '<option>'
-        zonen_liste = zonen_liste + 'Amazon EC2 (US West)'
-        zonen_liste = zonen_liste + '</option>'
-        zonen_liste = zonen_liste + '<option>'
-        zonen_liste = zonen_liste + 'Amazon EC2 (EU West)'
-        zonen_liste = zonen_liste + '</option>'
-        zonen_liste = zonen_liste + '<option>'
-        zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific)'
-      else:
-        #zonen_liste = zonen_liste + 'Eucalyptus'
-        #zonen_liste = zonen_liste + ' ('
-        zonen_liste = zonen_liste + str(test.eucalyptusname)
-        #zonen_liste = zonen_liste + ')'
-      zonen_liste = zonen_liste + '</option>'
-    zonen_liste = zonen_liste + '</select>'
-    zonen_liste = zonen_liste + '&nbsp;'
-    if sprache == "de":
-      zonen_liste = zonen_liste + '<input type="submit" value="Region wechseln">'
-    else:
-      zonen_liste = zonen_liste + '<input type="submit" value="switch to region">'
-    zonen_liste = zonen_liste + '</form>'
-  else:
     zonen_liste = ''
+    if anzahl:
+        zonen_liste = zonen_liste + '<form action="/regionwechseln" method="post" accept-charset="utf-8">'
+        zonen_liste = zonen_liste + '<select name="regionen" size="1">'
+        for test in results:
+            zonen_liste = zonen_liste + '<option>'
+            if test.eucalyptusname == "Amazon":
+                zonen_liste = zonen_liste + 'Amazon EC2 (US East)'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'Amazon EC2 (US West)'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'Amazon EC2 (EU West)'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific)'
+            else:
+                #zonen_liste = zonen_liste + 'Eucalyptus'
+                #zonen_liste = zonen_liste + ' ('
+                zonen_liste = zonen_liste + str(test.eucalyptusname)
+                #zonen_liste = zonen_liste + ')'
+            zonen_liste = zonen_liste + '</option>'
+        zonen_liste = zonen_liste + '</select>'
+        zonen_liste = zonen_liste + '&nbsp;'
+        if sprache == "de":
+            zonen_liste = zonen_liste + '<input type="submit" value="Region wechseln">'
+        else:
+            zonen_liste = zonen_liste + '<input type="submit" value="switch to region">'
+        zonen_liste = zonen_liste + '</form>'
+    else:
+        zonen_liste = ''
 
-  return zonen_liste
+    return zonen_liste
 
 
 def main():
