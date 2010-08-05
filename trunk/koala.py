@@ -5049,7 +5049,7 @@ class Images(webapp.RequestHandler):
                   elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
                     liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                   elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                    imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                    liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                   elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
                     liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                   elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
