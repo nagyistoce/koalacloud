@@ -25,6 +25,8 @@ import hmac, sha
 # this is needed for the encyption
 import base64
 
+from internal.Datastore import *
+
 def login(username):
   # Die Zugangsdaten des Benutzers holen
   aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)

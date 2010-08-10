@@ -1,4 +1,4 @@
-#Tue Aug 10 17:43:23 CEST 2010
+#Tue Aug 10 19:08:52 CEST 2010
 eclipse.preferences.version=1
 encoding//ebs/AlleVolumesLoeschenDefinitiv.py=iso-8859-15
 encoding//ebs/AlleVolumesLoeschenFrage.py=iso-8859-15
@@ -44,6 +44,14 @@ encoding//elb/LoadBalancer_Instanz_Entfernen.py=iso-8859-15
 encoding//elb/LoadBalancer_Instanz_Zuordnen.py=iso-8859-15
 encoding//elb/LoadBalancer_Zone_Entfernen.py=iso-8859-15
 encoding//elb/LoadBalancer_Zone_Zuordnen.py=iso-8859-15
+encoding//internal/Datastore.py=iso-8859-15
+encoding//internal/FavoritAMIerzeugen.py=iso-8859-15
+encoding//internal/FavoritEntfernen.py=iso-8859-15
+encoding//internal/Info.py=iso-8859-15
+encoding//internal/PersoenlicheDatanLoeschen.py=iso-8859-15
+encoding//internal/PersoenlicheFavoritenLoeschen.py=iso-8859-15
+encoding//internal/Sprache.py=iso-8859-15
+encoding//internal/ZugangEntfernen.py=iso-8859-15
 encoding//s3/ACL_Aendern.py=iso-8859-15
 encoding//s3/ACL_einsehen.py=iso-8859-15
 encoding//s3/AlleKeysLoeschenDefinitiv.py=iso-8859-15
