@@ -82,6 +82,15 @@ from s3.BucketInhalt import *
 from s3.BucketInhaltPur import *
 from s3.S3 import *
 
+from internal.ZugangEntfernen import *
+from internal.Sprache import *
+from internal.Datastore import *
+from internal.PersoenlicheDatanLoeschen import *
+from internal.Info import *
+from internal.PersoenlicheFavoritenLoeschen import *
+from internal.FavoritAMIerzeugen import *
+from internal.FavoritEntfernen import *
+
 from library import login
 from library import xor_crypt_string
 from library import aktuelle_sprache
@@ -123,31 +132,7 @@ import hmac, sha
 import base64
 
 
-class KoalaCloudDatenbank(db.Model):
-    user = db.UserProperty(required=True)
-    #input = db.IntegerProperty()
-    regionname = db.StringProperty(required=True)
-    endpointurl = db.StringProperty()
-    port = db.StringProperty()
-    eucalyptusname = db.StringProperty()
-    zugangstyp = db.StringProperty()  # Amazon, Eucalyptus, Nimbus...
-    accesskey = db.StringProperty(required=True)
-    secretaccesskey = db.StringProperty(required=True)
-    date = db.DateTimeProperty(auto_now_add=True)
 
-class KoalaCloudDatenbankAktiveZone(db.Model):
-    user = db.UserProperty(required=True)
-    aktivezone = db.StringProperty()
-    zugangstyp = db.StringProperty()  # Amazon, Eucalyptus, Nimbus...
-
-class KoalaCloudDatenbankSprache(db.Model):
-    user = db.UserProperty(required=True)
-    sprache = db.StringProperty()
-
-class KoalaCloudDatenbankFavouritenAMIs(db.Model):
-    user = db.UserProperty(required=True)
-    zone = db.StringProperty(required=True)
-    ami = db.StringProperty(required=True)
 
 
 
@@ -578,30 +563,6 @@ class Regionen(webapp.RequestHandler):
             self.redirect('/')
 
 
-class ZugangEntfernen(webapp.RequestHandler):
-    def get(self):
-        region = self.request.get('region')
-        endpointurl = self.request.get('endpointurl')
-        accesskey = self.request.get('accesskey')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        #anfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND regionname = :regionname_db AND endpointurl = :endpointurl_db AND accesskey = accesskey_db", username_db=username, regionname_db=region, endpointurl_db=endpointurl, accesskey_db=accesskey)
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND regionname = :regionname_db AND endpointurl = :endpointurl_db AND accesskey = :accesskey_db", username_db=username, regionname_db=region, endpointurl_db=endpointurl, accesskey_db=accesskey)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = testen.fetch(100)
-        for result in results:
-          result.delete()
-
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = testen.fetch(100)
-        for result in results:
-          result.delete()
-
-        self.redirect('/regionen')
-
-
 
 class Login(webapp.RequestHandler):
     def post(self):
@@ -888,8 +849,6 @@ class KeyErzeugen(webapp.RequestHandler):
               fehlermeldung = "99"
               self.redirect('/schluessel?message='+fehlermeldung+'&neu='+neu+'&neuerkeyname='+neuerkeyname+'&secretkey='+keyname)
 
-
-
 class RegionWechseln(webapp.RequestHandler):
     def post(self):
         # Zum Testen, ob das "post" geklappt hat
@@ -945,229 +904,6 @@ class RegionWechseln(webapp.RequestHandler):
         else:
           # Wenn es geklappt hat...
           self.redirect('/')
-
-class Sprache(webapp.RequestHandler):
-    def get(self):
-        # Die ausgewählte Sprache holen
-        lang = self.request.get('lang')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        if username:
-
-          # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-          testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-
-          # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-          results = testen.fetch(100)
-
-          for result in results:
-            result.delete()
-
-          logindaten = KoalaCloudDatenbankSprache(sprache=lang,
-                                                  user=username)
-
-          try:
-            # In den Datastore schreiben
-            logindaten.put()
-          except:
-            # Wenn es nicht klappt...
-            self.redirect('/')
-          else:
-            # Wenn es geklappt hat...
-            self.redirect('/')
-        else:
-          self.redirect('/')
-
-
-class FavoritEntfernen(webapp.RequestHandler):
-    def get(self):
-        # AMI des zu löschenden Favoriten holen
-        ami = self.request.get('ami')
-        # Zone des zu löschenden Favoriten holen
-        zone = self.request.get('zone')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        ami = str(ami)
-
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND ami = :ami_db AND zone = :zone_db", username_db=username, ami_db=ami, zone_db=zone)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt
-        results = testen.fetch(100)
-        for result in results:
-          try:
-            result.delete()
-            # Versuchen den Favorit zu löschen
-          except:
-            # Wenn es nicht klappt...
-            self.redirect('/images')
-          else:
-            # Wenn es geklappt hat...
-            self.redirect('/images')
-
-        # Wenn es keine Einträge im Datastore gab...
-        self.redirect('/images')
-
-class FavoritAMIerzeugen(webapp.RequestHandler):
-    def post(self):
-        #self.response.out.write('posted!')
-        ami = self.request.get('ami')
-        zone = self.request.get('zone')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        if ami == "":
-          # Testen ob die AMI-Bezeichnung angegeben wurde
-          # Wenn keine AMI-Bezeichnung angegeben wurde, kann kein Favorit angelegt werden
-          #fehlermeldung = "Sie haben keine AMI-Bezeichnung angegeben"
-          fehlermeldung = "84"
-          self.redirect('/images?message='+fehlermeldung)
-        else:
-          if re.match('ami-*', ami) == None:  
-            # Erst überprüfen, ob die Eingabe mit "ami-" angängt
-            fehlermeldung = "85"
-            self.redirect('/images?message='+fehlermeldung)
-          elif len(ami) != 12:
-            # Überprüfen, ob die Eingabe 12 Zeichen lang ist
-            fehlermeldung = "86"
-            self.redirect('/images?message='+fehlermeldung)
-          elif re.search(r'[^\-a-zA-Z0-9]', ami) != None:
-            # Überprüfen, ob die Eingabe nur erlaubte Zeichen enthält
-            # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
-            fehlermeldung = "87"
-            self.redirect('/images?message='+fehlermeldung)
-          else:
-            # Erst überprüfen, ob schon ein AMI-Eintrag dieses Benutzers in der Zone vorhanden ist.
-            testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND ami = :ami_db AND zone = :zone_db", username_db=username, ami_db=ami, zone_db=zone)
-            # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-            results = testen.fetch(100)
-            for result in results:
-              result.delete()
-
-            # Erst testen, ob es dieses AMI überhaupt gibt.
-            # Eine leere Liste für das AMI erzeugen
-            ami_liste = []
-            # Das AMIs in die Liste einfügen
-            ami_liste.append(ami)
-
-            conn_region, regionname = login(username)
-            try:
-              liste_favoriten_ami_images = conn_region.get_all_images(image_ids=ami_liste)
-            except EC2ResponseError:
-              fehlermeldung = "88"
-              self.redirect('/images?message='+fehlermeldung)
-            else:
-              # Favorit erzeugen
-              # Festlegen, was in den Datastore geschrieben werden soll
-              favorit = KoalaCloudDatenbankFavouritenAMIs(ami=ami,
-                                                          zone=zone,
-                                                          user=username)
-              # In den Datastore schreiben
-              favorit.put()
-
-              fehlermeldung = "83"
-              self.redirect('/images?message='+fehlermeldung)
-
-class Info(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        if users.get_current_user():
-            # Nachsehen, ob eine Region/Zone ausgewählte wurde
-            aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-            results = aktivezone.fetch(100)
-
-            if not results:
-              regionname = 'keine'
-              zone_amazon = ""
-            else:
-              conn_region, regionname = login(username)
-              zone_amazon = amazon_region(username)
-
-            # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-            sprache = aktuelle_sprache(username)
-            navigations_bar = navigations_bar_funktion(sprache)
-
-            url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-            url_linktext = 'Logout'
-
-        else:
-            sprache = "en"
-            navigations_bar = navigations_bar_funktion(sprache)
-            url = users.create_login_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-            url_linktext = 'Login'
-            regionname = 'keine'
-            zone_amazon = ""
-
-        zonen_liste = zonen_liste_funktion(username,sprache)
-
-        template_values = {
-        'navigations_bar': navigations_bar,
-        'zone': regionname,
-        'zone_amazon': zone_amazon,
-        'url': url,
-        'url_linktext': url_linktext,
-        'zonen_liste': zonen_liste,
-        }
-
-        #if sprache == "de": naechse_seite = "info_de.html"
-        #else:               naechse_seite = "info_en.html"
-        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "info.html")
-        self.response.out.write(template.render(path,template_values))
-
-
-class PersoenlicheDatanLoeschen(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = aktivezone.fetch(100)
-        for result in results:
-          result.delete()
-
-        # Überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-        sprache = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = sprache.fetch(100)
-        for result in results:
-          result.delete()
-
-        # Überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = testen.fetch(100)
-        for result in results:
-          result.delete()
-
-        # Überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = testen.fetch(100)
-        for result in results:
-          result.delete()
-
-        self.redirect('/')
-
-
-class PersoenlicheFavoritenLoeschen(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-        testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db", username_db=username)
-        # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-        results = testen.fetch(100)
-        for result in results:
-          result.delete()
-
-        self.redirect('/')
-
 
 class ZugangEinrichten(webapp.RequestHandler):
     def post(self):
@@ -1360,7 +1096,6 @@ class ZugangEinrichten(webapp.RequestHandler):
                 logindaten.put()
 
                 self.redirect('/regionen')
-
 
           # Wenn ein Eucalyptus-Zugang angelegt werden soll
           else:
@@ -1582,7 +1317,6 @@ class ConsoleOutput(webapp.RequestHandler):
         else:
           self.redirect('/')
 
-
 def main():
     application = webapp.WSGIApplication([('/', MainPage),
                                           ('/regionen', Regionen),
@@ -1656,7 +1390,6 @@ def main():
                                           ('/alle_volumes_loeschen_definitiv', AlleVolumesLoeschenDefinitiv)],
                                           debug=True)
     wsgiref.handlers.CGIHandler().run(application)
-
 
 if __name__ == "__main__":
     main()
