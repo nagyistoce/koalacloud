@@ -61,6 +61,7 @@ from ec2.GruppeAendern import *
 from ec2.GruppeRegelErzeugen import *
 from ec2.GruppeRegelEntfernen import *
 from ec2.Keys import *
+#from ec2.ConsoleOutput import *
 
 from elb.LoadBalancer import *
 from elb.LoadBalancer_Instanz_Zuordnen import *
@@ -253,6 +254,7 @@ class ConsoleOutput(webapp.RequestHandler):
             self.response.out.write(template.render(path,template_values))
         else:
           self.redirect('/')
+
 
 def main():
     application = webapp.WSGIApplication([('/', MainPage),
