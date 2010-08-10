@@ -1,0 +1,194 @@
+#!/usr/bin/env python
+# -*- coding: iso-8859-15 -*-
+
+import os
+
+from google.appengine.api import users
+from google.appengine.api import urlfetch
+from google.appengine.api.urlfetch import DownloadError
+from google.appengine.ext import webapp
+from google.appengine.ext import db
+from google.appengine.api import memcache
+from google.appengine.ext.webapp import template
+
+from library import login
+from library import aktuelle_sprache
+from library import navigations_bar_funktion
+from library import amazon_region
+from library import zonen_liste_funktion
+from library import format_error_message_green
+from library import format_error_message_red
+
+from dateutil.parser import *
+
+from error_messages import error_messages
+
+from boto.ec2.connection import *
+
+class Keys(webapp.RequestHandler):
+    def get(self):
+        # Den Usernamen erfahren
+        username = users.get_current_user()
+        if not username:
+            self.redirect('/')
+        # Wurde ein neuer Schlüssel angelegt?
+        neu = self.request.get('neu')
+        # Name des neuen Schlüssels
+        neuerkeyname = self.request.get('neuerkeyname')
+        # Name des Datastore-Schlüssels, unter dem der Secret-Key angehegt ist
+        secretkey = self.request.get('secretkey')
+        # Eventuell vorhande Fehlermeldung holen
+        message = self.request.get('message')
+
+        #So könnte man vielleicht den File-Download-Dialog bekommen
+        #Content-disposition: attachment; filename="fname.ext"
+
+
+        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+        results = aktivezone.fetch(100)
+
+        if results:
+          sprache = aktuelle_sprache(username)
+          navigations_bar = navigations_bar_funktion(sprache)
+          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+          url_linktext = 'Logout'
+
+          conn_region, regionname = login(username)
+          zone_amazon = amazon_region(username)
+
+          zonen_liste = zonen_liste_funktion(username,sprache)
+
+          if sprache != "de":
+            sprache = "en"
+
+          input_error_message = error_messages.get(message, {}).get(sprache)
+
+          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+          if input_error_message == None:
+            input_error_message = ""
+
+          # Wenn die Nachricht grün formatiert werden soll...
+          if message in ("99", "103"):
+            # wird sie hier, in der Hilfsfunktion grün formatiert
+            input_error_message = format_error_message_green(input_error_message)
+          # Ansonsten wird die Nachricht rot formatiert
+          elif message in ("8", "92", "100", "101", "102", "104"):
+            input_error_message = format_error_message_red(input_error_message)
+          else:
+            input_error_message = ""
+
+          try:
+            # Liste mit den Keys
+            liste_key_pairs = conn_region.get_all_key_pairs()
+          except EC2ResponseError:
+            # Wenn es nicht klappt...
+            if sprache == "de":
+              keytabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            else:
+              keytabelle = '<font color="red">An error occured</font>'
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            if sprache == "de":
+              keytabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+            else:
+              keytabelle = '<font color="red">A timeout error occured</font>'
+          else:
+            # Wenn es geklappt hat...
+            laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
+
+            if laenge_liste_keys == 0:
+              keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
+            else:
+              keytabelle = ''
+              keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              keytabelle = keytabelle + '<tr>'
+              keytabelle = keytabelle + '<th>&nbsp;</th>'
+              keytabelle = keytabelle + '<th align="center">Name</th>'
+              if sprache == "de":
+                keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
+              else:
+                keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
+              keytabelle = keytabelle + '</tr>'
+              for i in range(laenge_liste_keys):
+                  keytabelle = keytabelle + '<tr>'
+                  keytabelle = keytabelle + '<td>'
+                  keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
+                  keytabelle = keytabelle + liste_key_pairs[i].name
+                  keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
+                  keytabelle = keytabelle + '</td>'
+                  keytabelle = keytabelle + '<td>'
+                  keytabelle = keytabelle + '<tt>'
+                  keytabelle = keytabelle + liste_key_pairs[i].name
+                  keytabelle = keytabelle + '</tt>'
+                  keytabelle = keytabelle + '</td><td>'
+                  keytabelle = keytabelle + '<tt>'
+                  keytabelle = keytabelle + liste_key_pairs[i].fingerprint
+                  keytabelle = keytabelle + '</tt>'
+                  keytabelle = keytabelle + '</td>'
+                  keytabelle = keytabelle + '</tr>'
+              keytabelle = keytabelle + '</table>'
+
+            if neu == "ja":
+              secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
+              secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
+              bodycommand = ' onLoad="newkey()" '
+              secretkey = "test"
+              javascript_funktion = '''<SCRIPT LANGUAGE="JavaScript">
+  function newkey()
+  {
+  OpenWindow=window.open("", "newwin", "height=600, width=600,toolbar=no,scrollbars="+scroll+",menubar=no");
+  OpenWindow.document.write("<TITLE>Secret Key</TITLE>")
+  OpenWindow.document.write("<BODY BGCOLOR=white>")
+  OpenWindow.document.write("<h1>Secret Key</h1>")
+  OpenWindow.document.write("<P></P>")
+  OpenWindow.document.write("<tt>'''
+              javascript_funktion = javascript_funktion + secretkey_memcache
+              if sprache == "de":
+                javascript_funktion = javascript_funktion + '''</tt>")
+                OpenWindow.document.write("<P></P>")
+                OpenWindow.document.write("<B>Achtung!</B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
+                OpenWindow.document.write("Am besten in einer Datei <tt>'''
+              else:
+                javascript_funktion = javascript_funktion + '''</tt>")
+                OpenWindow.document.write("<P></P>")
+                OpenWindow.document.write("<B>Attention!</B> The secret key need to be saved.<BR>")
+                OpenWindow.document.write("As an advise use the filename <tt>'''
+              javascript_funktion = javascript_funktion + neuerkeyname
+              javascript_funktion = javascript_funktion + '''.secret</tt>.")
+              OpenWindow.document.write("<P></P>")
+              OpenWindow.document.write("<tt>chmod 600 '''
+              javascript_funktion = javascript_funktion + neuerkeyname
+              javascript_funktion = javascript_funktion + '''.secret</tt>")
+  OpenWindow.document.write("</BODY>")
+  OpenWindow.document.write("</HTML>")
+  OpenWindow.document.close()
+  self.name="main"
+  }
+  </SCRIPT>'''
+            else:
+                bodycommand = " "
+                javascript_funktion = " "
+
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'keytabelle': keytabelle,
+            'bodycommand': bodycommand,
+            'javascript_funktion': javascript_funktion,
+            'zonen_liste': zonen_liste,
+            'input_error_message': input_error_message,
+            }
+
+            #if sprache == "de": naechse_seite = "keys_de.html"
+            #else:               naechse_seite = "keys_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
+            self.response.out.write(template.render(path,template_values))
+        else:
+            self.redirect('/')
