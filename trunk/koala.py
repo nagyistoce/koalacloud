@@ -23,6 +23,50 @@ import cgi
 import time
 import re
 
+from ebs.VolumesLoesen import *
+from ebs.VolumesEntfernen import *
+from ebs.AlleVolumesLoeschenDefinitiv import *
+from ebs.VolumeDefinitivAnhaengen import *
+from ebs.VolumesErzeugen import *
+from ebs.VolumesAnhaengen import *
+from ebs.Volumes import *
+from ebs.AlleVolumesLoeschenFrage import *
+from ebs.Snapshots import *
+from ebs.SnapshotsErzeugen import *
+from ebs.SnapshotsEntfernen import *
+from ebs.SnapshotsErzeugenDefinitiv import *
+
+from ec2.AlleInstanzenBeenden import *
+from ec2.Zonen import *
+from ec2.Release_IP import *
+from ec2.Allocate_IP import *
+from ec2.Disassociate_IP import *
+from ec2.IP_Definitiv_Anhaengen import *
+from ec2.Associate_IP import *
+from ec2.Elastic_IPs import *
+
+from elb.LoadBalancer import *
+from elb.LoadBalancer_Instanz_Zuordnen import *
+from elb.LoadBalancer_Instanz_Entfernen import *
+from elb.LoadBalancer_Zone_Entfernen import *
+from elb.LoadBalancer_Zone_Zuordnen import *
+from elb.LoadBalancer_Aendern import *
+from elb.DeleteLoadBalancer import *
+from elb.CreateLoadBalancer import *
+from elb.CreateLoadBalancerWirklich import *
+
+from library import login
+from library import xor_crypt_string
+from library import aktuelle_sprache
+from library import navigations_bar_funktion
+from library import amazon_region
+from library import zonen_liste_funktion
+from library import format_error_message_green
+from library import format_error_message_red
+from library import loginelb
+
+from error_messages import error_messages
+
 from google.appengine.api import users
 from google.appengine.api import urlfetch
 from google.appengine.api.urlfetch import DownloadError
@@ -40,271 +84,273 @@ from dateutil.parser import *
 from dateutil.tz import *
 from datetime import *
 # für die Verschlüsselung
+# this is needed for the encyption
 from itertools import izip, cycle
 import hmac, sha
 # für die Verschlüsselung
+# this is needed for the encyption
 import base64
 
-error_messages = {
-  '0' :  { 'de' : 'Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft',
-           'en' : 'The IP was attached to the instance successfully' },
-  '1' :  { 'de' : 'Beim Versuch, die IP mit der Instanz zu verkn&uuml;pfen, kam es zu einem Fehler',
-           'en' : 'While the system tried to attach the IP to the instance, an error occured' },
-  '2' :  { 'de' : 'Beim Versuch, die IP von der Instanz zu l&oumlsen, kam es zu einem Fehler',
-           'en' : 'While the system tried to detach the IP from the instance, an error occured' },
-  '3' :  { 'de' : 'Die IP wurde erfolgreich von der Instanz gel&ouml;st',
-           'en' : 'The IP was detached from the instance successfully' },
-  '4' :  { 'de' : 'Beim Versuch, die IP freizugeben, kam es zu einem Fehler',
-           'en' : 'While the system tried to release the IP, an error occured' },
-  '5' :  { 'de' : 'Die IP wurde erfolgreich freigegeben',
-           'en' : 'The IP was released successfully' },
-  '6' :  { 'de' : 'Beim Versuch, eine IP zu erzeugen, kam es zu einem Fehler',
-           'en' : 'While the system tried to allocate an elastic IP, an error occured' },
-  '7' :  { 'de' : 'Es wurde eine IP erzeugt',
-           'en' : 'An IP was allocated successfully' },
-  '8' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt',
-           'en' : 'A timeout error occured but maybe the operation was successful' },
-  '9' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten',
-           'en' : 'A timeout error occured' },
-  '10' : { 'de' : 'Es ist ein Fehler aufgetreten',
-           'en' : 'An error occured' },
-  '11' : { 'de' : 'Der Snapshot wurde erfolgreich gel&ouml;scht',
-           'en' : 'The snapshot was erased successfully' },
-  '12' : { 'de' : 'Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler',
-           'en' : 'While the system tried to erase the snapshot, an error occured' },
-  '13' : { 'de' : 'Der Snapshot wurde erfolgreich erzeugt',
-           'en' : 'The snapshot was created successfully' },
-  '14' : { 'de' : 'Beim Versuch, den Snapshot zu erzeugen, kam es zu einem Fehler',
-           'en' : 'While the system tried to create the snapshot, an error occured' },
-  '15' : { 'de' : 'Das Volume wurde erfolgreich angelegt',
-           'en' : 'The volume was created successfully' },
-  '16' : { 'de' : 'Sie haben keine Gr&ouml;&szlig;e angegeben',
-           'en' : 'No size given' },
-  '17' : { 'de' : 'Sie haben keine Zahl angegeben',
-           'en' : 'The size was not a number' },
-  '18' : { 'de' : 'Beim Versuch, das neue Volume zu erzeugen, kam es zu einem Fehler',
-           'en' : 'An error occured while the system tried to create the new volume' },
-  '19' : { 'de' : 'Beim Versuch das Volume zu entfernen, kam es zu einem Fehler',
-           'en' : 'An error occured while the system tried to delete the volume' },
-  '20' : { 'de' : 'Beim Versuch, das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler',
-           'en' : 'An error occured while the system tried to detach the volume from the instance' },
-  '21' : { 'de' : 'Beim Versuch, das Volume mit der Instanz zu verbinden, kam es zu einem Fehler',
-           'en' : 'An error occured while the system tried to attach the volume with the instance' },
-  '22' : { 'de' : 'Das Volume wurde erfolgreich gel&ouml;scht',
-           'en' : 'The volume was erased successfully' },
-  '23' : { 'de' : 'Das Volume wurde erfolgreich mit der Instanz verbunden',
-           'en' : 'The volume was attached with the instance successfully' },
-  '24' : { 'de' : 'Das Volume wurde erfolgreich von der Instanz gel&ouml;st',
-           'en' : 'The volume was detached from the instance successfully' },
-  '25' : { 'de' : 'EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB',
-           'en' : 'EBS allows to create storage volumes from 1 GB to 1 TB' },
-  '26' : { 'de' : 'Beim Versuch, die Volumes zu l&ouml;schen, kam es zu einem Fehler',
-           'en' : 'While the system tried to erase the volumes, an error occured' },
-  '27' : { 'de' : 'Die Volumes wurden gel&ouml;scht',
-           'en' : 'The volumes were erased successfully' },
-  '28' : { 'de' : 'Die Regel wurde erfolgreich angelegt',
-           'en' : 'The rule was created successfully' },
-  '29' : { 'de' : 'Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben',
-           'en' : 'The From Port and the To Port for the new rule was missing' },
-  '30' : { 'de' : 'Sie haben keinen From Port f&uuml;r die neue Regel angegeben',
-           'en' : 'The From Port for the new rule was missing' },
-  '31' : { 'de' : 'Sie haben keinen To Port f&uuml;r die neue Regel angegeben',
-           'en' : 'The To Port for the new rule was missing' },
-  '32' : { 'de' : 'Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben',
-           'en' : 'The From Port and the To Port for the new rule have not been numbers' },
-  '33' : { 'de' : 'Sie haben f&uuml;r den From Port keine Zahl angegeben',
-           'en' : 'The From Port for the new rule was not a number' },
-  '34' : { 'de' : 'Sie haben f&uuml;r den To Port keine Zahl angegeben',
-           'en' : 'The To Port for the new rule was not a number' },
-  '35' : { 'de' : 'Die Regel war schon vorhanden',
-           'en' : 'The rule was still existing' },
-  '36' : { 'de' : 'Beim Versuch, die Regel zu entfernen, kam es zu einem Fehler',
-           'en' : 'While the system tried to remove the rule, an error occured' },
-  '37' : { 'de' : 'Die Regel wurde erfolgreich entfernt',
-           'en' : 'The rule was removed successfully' },
-  '38' : { 'de' : 'Die zu l&ouml;schende Regel konnte nicht gefunden werden',
-           'en' : 'The rule was not found' },
-  '39' : { 'de' : 'Beim Versuch, die Regel zu anzulegen, kam es zu einem Fehler',
-           'en' : 'While the system tried to create the rule, an error occured' },
-  '40' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich angelegt',
-           'en' : 'The security group was created successfully' },
-  '41' : { 'de' : 'Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
-           'en' : 'No name and no description for the new security group given' },
-  '42' : { 'de' : 'Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben',
-           'en' : 'No name for the new security group given' },
-  '43' : { 'de' : 'Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
-           'en' : 'No description for the new security group given' },
-  '44' : { 'de' : 'Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen',
-           'en' : 'A security group with this name sill exists' },
-  '45' : { 'de' : 'Der Name f&uuml;r die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
-           'en' : 'The name for the new security group had characters that are not allowed' },
-  '46' : { 'de' : 'Die Beschreibung f&uuml;r die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
-           'en' : 'The description for the new security group had characters that are not allowed' },
-  '47' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler',
-           'en' : 'While the system tried to create the new security group, an error occured' },
-  '48' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht',
-           'en' : 'The security group was erased successfully' },
-  '49' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler',
-           'en' : 'While the system tried to erase the new security group, an error occured' },
-  '50' : { 'de' : 'Sie haben keinen Namen angegeben',
-           'en' : 'No name given' },
-  '51' : { 'de' : 'Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten',
-           'en' : 'The name cannot contain characters that are not letters, or digits or the dash' },
-  '52' : { 'de' : 'Sie haben keinen Load Balancer Port angegeben',
-           'en' : 'No load balancer port given' },
-  '53' : { 'de' : 'Sie haben keinen EC2 Instanz Port angegeben',
-           'en' : 'No EC2 instance port given' },
-  '54' : { 'de' : 'Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben',
-           'en' : 'No load balancer port and no EC2 instance port given' },
-  '55' : { 'de' : 'Der Load Balancer Port enthielt unerlaubt Zeichen',
-           'en' : 'The load balancer port hat characters that are not allowed' },
-  '56' : { 'de' : 'Der EC2 Instanz Port enthielt unerlaubt Zeichen',
-           'en' : 'The EC2 instance port hat characters that are not allowed' },
-  '57' : { 'de' : 'Beim Versuch, den Load Balancer zu erzeugen, kam es zu einem Fehler',
-           'en' : 'While the system tried to create the load balancer, an error occured' },
-  '58' : { 'de' : 'Sie haben keine Verf&uuml;gbarkeitszone angegeben',
-           'en' : 'No availability zone given' },
-  '59' : { 'de' : 'Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen',
-           'en' : 'Load balancer port must be either 80, 443 or 1024-65535 inclusive' },
-  '60' : { 'de' : 'Der EC2 instance port muss kleiner gleich 65535 sein',
-           'en' : 'EC2 instance port must less than or equal to 65535' },
-  '61' : { 'de' : 'Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
-           'en' : 'The instance was attached to the load balancer successfully' },
-  '62' : { 'de' : 'Beim Versuch, die Instanz mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
-           'en' : 'While the system tried to attach the instance to the load balancer, an error occured' },
-  '63' : { 'de' : 'Die Instanz wurde erfolgreich deregistriert',
-           'en' : 'The instance was deregistered successfully' },
-  '64' : { 'de' : 'Beim Versuch, die Instanz zu deregistrieren, kam es zu einem Fehler',
-           'en' : 'While the system tried to deregister the instance, an error occured' },
-  '65' : { 'de' : 'Beim Versuch, die Zone zu deregistrieren, kam es zu einem Fehler',
-           'en' : 'While the system tried to deregister the zone, an error occured' },
-  '66' : { 'de' : 'Die Zone wurde erfolgreich deregistriert',
-           'en' : 'The zone was deregistered successfully' },
-  '67' : { 'de' : 'Es muss mindestens eine Zone registriert sein',
-           'en' : 'It is impossible to deregister all zones' },
-  '68' : { 'de' : 'Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
-           'en' : 'The zone was attached to the load balancer successfully' },
-  '69' : { 'de' : 'Beim Versuch, die Zone mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
-           'en' : 'While the system tried to attach the zone to the load balancer, an error occured' },
-  '70' : { 'de' : 'Der Load Balancer wurde erfolgreich gel&ouml;scht',
-           'en' : 'The load balancer was deleted successfully' },
-  '71' : { 'de' : 'Beim Versuch, den Load Balancer zu l&ouml;schen, kam es zu einem Fehler',
-           'en' : 'While the system tried to delete the load balancer, an error occured' },
-  '72' : { 'de' : 'Der Load Balancer wurde erfolgreich angelegt',
-           'en' : 'The load balancer was created successfully' },
-  '73' : { 'de' : 'Die Instanz wurde erfolgreich beendet',
-           'en' : 'The instance was stopped successfully' },
-  '74' : { 'de' : 'Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten',
-           'en' : 'While the system tried to stop the instance, an error occured' },
-  '75' : { 'de' : 'Die zu beendende Instanz konnte nicht gefunden werden',
-           'en' : 'The instance was not found' },
-  '76' : { 'de' : 'Die Instanz war schon im Status <b>terminated</b>',
-           'en' : 'The instance had still the state <b>terminated</b>' },
-  '77' : { 'de' : 'Die Instanz(en) wurde(n) erfolgreich angelegt',
-           'en' : 'The instance(s) was/were created successfully' },
-  '78' : { 'de' : 'Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten',
-           'en' : 'While the system tried to create the instance(s), an error occured' },
-  '79' : { 'de' : 'Die Instanz wurde erfolgreich neu gestartet',
-           'en' : 'The instance was rebooted successfully' },
-  '80' : { 'de' : 'Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten',
-           'en' : 'While the system tried to reboot the instance, an error occured' },
-  '81' : { 'de' : 'Die Instanzen wurden beendet',
-           'en' : 'The instances were stopped successfully' },
-  '82' : { 'de' : 'Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten',
-           'en' : 'While the system tried to stop the instances, an error occured' },
-  '83' : { 'de' : 'Der Favorit wurde erfolgreich angelegt',
-           'en' : 'The favourite was created successfully' },
-  '84' : { 'de' : 'Sie haben keinen AMI angegeben',
-           'en' : 'AMI was missing' },
-  '85' : { 'de' : 'Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen',
-           'en' : 'The input did not start wirh <B><TT>ami-</TT></B>' },
-  '86' : { 'de' : 'Ihre Eingabe hatte nicht die korrekte L&auml;nge',
-           'en' : 'The input length was not correct' },
-  '87' : { 'de' : 'Ihre Eingabe enthielt nicht erlaubte Zeichen',
-           'en' : 'The input had characters that are not allowed' },
-  '88' : { 'de' : 'Das von Ihnen eingegebene AMI existiert nicht',
-           'en' : 'The AMI does not exist' },
-  '89' : { 'de' : 'Sie haben keinen Access Key und keinen Secret Access Key angegeben',
-           'en' : 'No Access Key and no Secret Access Key given' },
-  '90' : { 'de' : 'Sie haben keinen Access Key angegeben',
-           'en' : 'No Access Key given' },
-  '91' : { 'de' : 'Sie haben keinen Secret Access Key angegeben',
-           'en' : 'No Secret Access Key given' },
-  '92' : { 'de' : 'Sie haben keinen Namen angegeben',
-           'en' : 'No Name given' },
-  '93' : { 'de' : 'Sie haben keine Endpoint URL angegeben',
-           'en' : 'No Endpoint given' },
-  '94' : { 'de' : 'Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen',
-           'en' : 'The given Access Key had characters that are not allowed' },
-  '95' : { 'de' : 'Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen',
-           'en' : 'The given Secret Access Key had characters that are not allowed' },
-  '96' : { 'de' : 'Ihr eingegebener Name enthielt nicht erlaubte Zeichen',
-           'en' : 'The given Name had characters that are not allowed' },
-  '97' : { 'de' : 'Ihre eingegebene Endpoint URL enthielt nicht erlaubte Zeichen',
-           'en' : 'The given Endpoint URL had characters that are not allowed' },
-  '98' : { 'de' : 'Die eingegebenen Zugangsdaten funktionieren nicht',
-           'en' : 'The given credentials are wrong' },
-  '99' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich angelegt',
-           'en' : 'The keypair was created successfully' },
-  '100' : { 'de' : 'Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen',
-            'en' : 'The name for the new keypair had characters that are not allowed' },
-  '101' : { 'de' : 'Beim Versuch, das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler',
-            'en' : 'While the system tried to create the new keypair, an error occured' },
-  '102' : { 'de' : 'Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen',
-            'en' : 'A keypair with the given name already exists' },
-  '103' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht',
-            'en' : 'The keypair was erased successfully' },
-  '104' : { 'de' : 'Beim Versuch, das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler',
-            'en' : 'While the system tried to erase the keypair, an error occured' },
-  '105' : { 'de' : 'Der Bucket wurde erfolgreich angelegt',
-            'en' : 'The bucket was created successfully' },
-  '106' : { 'de' : 'Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen',
-            'en' : 'The name for the new bucket had characters that are not allowed' },
-  '107' : { 'de' : 'Beim Versuch, den Bucket anzulegen, kam es zu einem Fehler',
-            'en' : 'While trying zu create the bucket, an error occured' },
-  '108' : { 'de' : 'Sie haben schon einen Bucket mit dem eingegebenen Namen',
-            'en' : 'You already have a bucket with this name' },
-  '109' : { 'de' : 'Beim Versuch, den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!',
-            'en' : 'While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!' },
-  '110' : { 'de' : 'Der Bucket wurde erfolgreich entfernt',
-            'en' : 'The bucket was erased successfully' },
-  '111' : { 'de' : 'Der Key wurde erfolgreich gel&ouml;scht',
-            'en' : 'The key was erased successfully' },
-  '112' : { 'de' : 'Beim Versuch, den Key zu l&ouml;schen, kam es zu einem Fehler',
-            'en' : 'An error occured while trying to erase the key' },
-  '113' : { 'de' : 'Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben',
-            'en' : 'No name for the new directory given' },
-  '114' : { 'de' : 'Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen',
-            'en' : 'The given name for the new directory had characters that are not allowed' },
-  '115' : { 'de' : 'Das neue Verzeichnis wurde erfolgreich angelegt',
-            'en' : 'The new directory was successfully created' },
-  '116' : { 'de' : 'Beim Versuch, das neue Verzeichnis anzulegen, kam es zu einem Fehler',
-            'en' : 'An error occured while the system tried to create the new directory' },
-  '117' : { 'de' : 'Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen',
-            'en' : 'A directory with the given name still exists' },
-  '118' : { 'de' : 'Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert',
-            'en' : 'The Access Control List (ACL) was changed successfully' },
-  '119' : { 'de' : 'Beim Versuch, die Zugriffsberechtigung zu &auml;ndern, kam es zu einem Fehler',
-            'en' : 'An error occured while the system tried to change the Access Control List (ACL)' },
-  '120' : { 'de' : 'Die Keys wurden erfolgreich gel&ouml;scht',
-            'en' : 'The keys were erased successfully' },
-  '121' : { 'de' : 'Beim Versuch, die Keys zu l&ouml;schen, kam es zu einem Fehler',
-            'en' : 'An error occured while trying to erase the keys' },
-}
+#error_messages = {
+#  '0' :  { 'de' : 'Die IP wurde erfolgreich mit der Instanz verkn&uuml;pft',
+#           'en' : 'The IP was attached to the instance successfully' },
+#  '1' :  { 'de' : 'Beim Versuch, die IP mit der Instanz zu verkn&uuml;pfen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to attach the IP to the instance, an error occured' },
+#  '2' :  { 'de' : 'Beim Versuch, die IP von der Instanz zu l&oumlsen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to detach the IP from the instance, an error occured' },
+#  '3' :  { 'de' : 'Die IP wurde erfolgreich von der Instanz gel&ouml;st',
+#           'en' : 'The IP was detached from the instance successfully' },
+#  '4' :  { 'de' : 'Beim Versuch, die IP freizugeben, kam es zu einem Fehler',
+#           'en' : 'While the system tried to release the IP, an error occured' },
+#  '5' :  { 'de' : 'Die IP wurde erfolgreich freigegeben',
+#           'en' : 'The IP was released successfully' },
+#  '6' :  { 'de' : 'Beim Versuch, eine IP zu erzeugen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to allocate an elastic IP, an error occured' },
+#  '7' :  { 'de' : 'Es wurde eine IP erzeugt',
+#           'en' : 'An IP was allocated successfully' },
+#  '8' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten. M&ouml;glicherweise ist das Ergebnis dennoch korrekt',
+#           'en' : 'A timeout error occured but maybe the operation was successful' },
+#  '9' :  { 'de' : 'Es ist ein Timeout-Fehler aufgetreten',
+#           'en' : 'A timeout error occured' },
+#  '10' : { 'de' : 'Es ist ein Fehler aufgetreten',
+#           'en' : 'An error occured' },
+#  '11' : { 'de' : 'Der Snapshot wurde erfolgreich gel&ouml;scht',
+#           'en' : 'The snapshot was erased successfully' },
+#  '12' : { 'de' : 'Beim Versuch den Snapshot zu l&ouml;schen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to erase the snapshot, an error occured' },
+#  '13' : { 'de' : 'Der Snapshot wurde erfolgreich erzeugt',
+#           'en' : 'The snapshot was created successfully' },
+#  '14' : { 'de' : 'Beim Versuch, den Snapshot zu erzeugen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to create the snapshot, an error occured' },
+#  '15' : { 'de' : 'Das Volume wurde erfolgreich angelegt',
+#           'en' : 'The volume was created successfully' },
+#  '16' : { 'de' : 'Sie haben keine Gr&ouml;&szlig;e angegeben',
+#           'en' : 'No size given' },
+#  '17' : { 'de' : 'Sie haben keine Zahl angegeben',
+#           'en' : 'The size was not a number' },
+#  '18' : { 'de' : 'Beim Versuch, das neue Volume zu erzeugen, kam es zu einem Fehler',
+#           'en' : 'An error occured while the system tried to create the new volume' },
+#  '19' : { 'de' : 'Beim Versuch das Volume zu entfernen, kam es zu einem Fehler',
+#           'en' : 'An error occured while the system tried to delete the volume' },
+#  '20' : { 'de' : 'Beim Versuch, das Volume von der Instanz zu l&ouml;sen, kam es zu einem Fehler',
+#           'en' : 'An error occured while the system tried to detach the volume from the instance' },
+#  '21' : { 'de' : 'Beim Versuch, das Volume mit der Instanz zu verbinden, kam es zu einem Fehler',
+#           'en' : 'An error occured while the system tried to attach the volume with the instance' },
+#  '22' : { 'de' : 'Das Volume wurde erfolgreich gel&ouml;scht',
+#           'en' : 'The volume was erased successfully' },
+#  '23' : { 'de' : 'Das Volume wurde erfolgreich mit der Instanz verbunden',
+#           'en' : 'The volume was attached with the instance successfully' },
+#  '24' : { 'de' : 'Das Volume wurde erfolgreich von der Instanz gel&ouml;st',
+#           'en' : 'The volume was detached from the instance successfully' },
+#  '25' : { 'de' : 'EBS erm&ouml;glicht die Erstellung von Datentr&auml;gern mit einer Speicherkapazit&auml;t von 1 GB bis 1 TB',
+#           'en' : 'EBS allows to create storage volumes from 1 GB to 1 TB' },
+#  '26' : { 'de' : 'Beim Versuch, die Volumes zu l&ouml;schen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to erase the volumes, an error occured' },
+#  '27' : { 'de' : 'Die Volumes wurden gel&ouml;scht',
+#           'en' : 'The volumes were erased successfully' },
+#  '28' : { 'de' : 'Die Regel wurde erfolgreich angelegt',
+#           'en' : 'The rule was created successfully' },
+#  '29' : { 'de' : 'Sie haben keinen From Port und keinen To Port f&uuml;r die neue Regel angegeben',
+#           'en' : 'The From Port and the To Port for the new rule was missing' },
+#  '30' : { 'de' : 'Sie haben keinen From Port f&uuml;r die neue Regel angegeben',
+#           'en' : 'The From Port for the new rule was missing' },
+#  '31' : { 'de' : 'Sie haben keinen To Port f&uuml;r die neue Regel angegeben',
+#           'en' : 'The To Port for the new rule was missing' },
+#  '32' : { 'de' : 'Sie haben f&uuml;r den From Port und f&uuml;r den To Port keine Zahl angegeben',
+#           'en' : 'The From Port and the To Port for the new rule have not been numbers' },
+#  '33' : { 'de' : 'Sie haben f&uuml;r den From Port keine Zahl angegeben',
+#           'en' : 'The From Port for the new rule was not a number' },
+#  '34' : { 'de' : 'Sie haben f&uuml;r den To Port keine Zahl angegeben',
+#           'en' : 'The To Port for the new rule was not a number' },
+#  '35' : { 'de' : 'Die Regel war schon vorhanden',
+#           'en' : 'The rule was still existing' },
+#  '36' : { 'de' : 'Beim Versuch, die Regel zu entfernen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to remove the rule, an error occured' },
+#  '37' : { 'de' : 'Die Regel wurde erfolgreich entfernt',
+#           'en' : 'The rule was removed successfully' },
+#  '38' : { 'de' : 'Die zu l&ouml;schende Regel konnte nicht gefunden werden',
+#           'en' : 'The rule was not found' },
+#  '39' : { 'de' : 'Beim Versuch, die Regel zu anzulegen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to create the rule, an error occured' },
+#  '40' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich angelegt',
+#           'en' : 'The security group was created successfully' },
+#  '41' : { 'de' : 'Sie haben keinen Name und keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
+#           'en' : 'No name and no description for the new security group given' },
+#  '42' : { 'de' : 'Sie haben keinen Namen f&uuml;r die neue  Sicherheitsgruppe angegeben',
+#           'en' : 'No name for the new security group given' },
+#  '43' : { 'de' : 'Sie haben keine Beschreibung f&uuml;r die neue  Sicherheitsgruppe angegeben',
+#           'en' : 'No description for the new security group given' },
+#  '44' : { 'de' : 'Es existiert schon eine Sicherheitsgruppe mit dem von Ihnen angegebenen Namen',
+#           'en' : 'A security group with this name sill exists' },
+#  '45' : { 'de' : 'Der Name f&uuml;r die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
+#           'en' : 'The name for the new security group had characters that are not allowed' },
+#  '46' : { 'de' : 'Die Beschreibung f&uuml;r die neue Sicherheitsgruppe enthielt unerlaubte Zeichen',
+#           'en' : 'The description for the new security group had characters that are not allowed' },
+#  '47' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe anzulegen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to create the new security group, an error occured' },
+#  '48' : { 'de' : 'Die Sicherheitsgruppe wurde erfolgreich gel&ouml;scht',
+#           'en' : 'The security group was erased successfully' },
+#  '49' : { 'de' : 'Beim Versuch, die neue Sicherheitsgruppe zu l&ouml;schen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to erase the new security group, an error occured' },
+#  '50' : { 'de' : 'Sie haben keinen Namen angegeben',
+#           'en' : 'No name given' },
+#  '51' : { 'de' : 'Der Name darf nur Buchstaben, Zahlen und Bindestriche enthalten',
+#           'en' : 'The name cannot contain characters that are not letters, or digits or the dash' },
+#  '52' : { 'de' : 'Sie haben keinen Load Balancer Port angegeben',
+#           'en' : 'No load balancer port given' },
+#  '53' : { 'de' : 'Sie haben keinen EC2 Instanz Port angegeben',
+#           'en' : 'No EC2 instance port given' },
+#  '54' : { 'de' : 'Sie haben keinen Load Balancer Port und keinen EC2 Instanz Port angegeben',
+#           'en' : 'No load balancer port and no EC2 instance port given' },
+#  '55' : { 'de' : 'Der Load Balancer Port enthielt unerlaubt Zeichen',
+#           'en' : 'The load balancer port hat characters that are not allowed' },
+#  '56' : { 'de' : 'Der EC2 Instanz Port enthielt unerlaubt Zeichen',
+#           'en' : 'The EC2 instance port hat characters that are not allowed' },
+#  '57' : { 'de' : 'Beim Versuch, den Load Balancer zu erzeugen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to create the load balancer, an error occured' },
+#  '58' : { 'de' : 'Sie haben keine Verf&uuml;gbarkeitszone angegeben',
+#           'en' : 'No availability zone given' },
+#  '59' : { 'de' : 'Der Load Balancer Port muss 80 oder 443 sein oder im Bereich von 1024 bis 65535 liegen',
+#           'en' : 'Load balancer port must be either 80, 443 or 1024-65535 inclusive' },
+#  '60' : { 'de' : 'Der EC2 instance port muss kleiner gleich 65535 sein',
+#           'en' : 'EC2 instance port must less than or equal to 65535' },
+#  '61' : { 'de' : 'Die Instanz wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
+#           'en' : 'The instance was attached to the load balancer successfully' },
+#  '62' : { 'de' : 'Beim Versuch, die Instanz mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to attach the instance to the load balancer, an error occured' },
+#  '63' : { 'de' : 'Die Instanz wurde erfolgreich deregistriert',
+#           'en' : 'The instance was deregistered successfully' },
+#  '64' : { 'de' : 'Beim Versuch, die Instanz zu deregistrieren, kam es zu einem Fehler',
+#           'en' : 'While the system tried to deregister the instance, an error occured' },
+#  '65' : { 'de' : 'Beim Versuch, die Zone zu deregistrieren, kam es zu einem Fehler',
+#           'en' : 'While the system tried to deregister the zone, an error occured' },
+#  '66' : { 'de' : 'Die Zone wurde erfolgreich deregistriert',
+#           'en' : 'The zone was deregistered successfully' },
+#  '67' : { 'de' : 'Es muss mindestens eine Zone registriert sein',
+#           'en' : 'It is impossible to deregister all zones' },
+#  '68' : { 'de' : 'Die Zone wurde erfolgreich mit dem Load Balancer verkn&uuml;pft',
+#           'en' : 'The zone was attached to the load balancer successfully' },
+#  '69' : { 'de' : 'Beim Versuch, die Zone mit dem Load Balancer zu verkn&uuml;pfen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to attach the zone to the load balancer, an error occured' },
+#  '70' : { 'de' : 'Der Load Balancer wurde erfolgreich gel&ouml;scht',
+#           'en' : 'The load balancer was deleted successfully' },
+#  '71' : { 'de' : 'Beim Versuch, den Load Balancer zu l&ouml;schen, kam es zu einem Fehler',
+#           'en' : 'While the system tried to delete the load balancer, an error occured' },
+#  '72' : { 'de' : 'Der Load Balancer wurde erfolgreich angelegt',
+#           'en' : 'The load balancer was created successfully' },
+#  '73' : { 'de' : 'Die Instanz wurde erfolgreich beendet',
+#           'en' : 'The instance was stopped successfully' },
+#  '74' : { 'de' : 'Beim Versuch die Instanz zu beenden ist ein Fehler aufgetreten',
+#           'en' : 'While the system tried to stop the instance, an error occured' },
+#  '75' : { 'de' : 'Die zu beendende Instanz konnte nicht gefunden werden',
+#           'en' : 'The instance was not found' },
+#  '76' : { 'de' : 'Die Instanz war schon im Status <b>terminated</b>',
+#           'en' : 'The instance had still the state <b>terminated</b>' },
+#  '77' : { 'de' : 'Die Instanz(en) wurde(n) erfolgreich angelegt',
+#           'en' : 'The instance(s) was/were created successfully' },
+#  '78' : { 'de' : 'Beim Versuch die Instanz(en) anzulegen, ist ein Fehler aufgetreten',
+#           'en' : 'While the system tried to create the instance(s), an error occured' },
+#  '79' : { 'de' : 'Die Instanz wurde erfolgreich neu gestartet',
+#           'en' : 'The instance was rebooted successfully' },
+#  '80' : { 'de' : 'Beim Versuch die Instanz neuzustarten, ist ein Fehler aufgetreten',
+#           'en' : 'While the system tried to reboot the instance, an error occured' },
+#  '81' : { 'de' : 'Die Instanzen wurden beendet',
+#           'en' : 'The instances were stopped successfully' },
+#  '82' : { 'de' : 'Beim Versuch die Instanzen zu beenden ist ein Fehler aufgetreten',
+#           'en' : 'While the system tried to stop the instances, an error occured' },
+#  '83' : { 'de' : 'Der Favorit wurde erfolgreich angelegt',
+#           'en' : 'The favourite was created successfully' },
+#  '84' : { 'de' : 'Sie haben keinen AMI angegeben',
+#           'en' : 'AMI was missing' },
+#  '85' : { 'de' : 'Die Eingabe hat nicht mit <B><TT>ami-</TT></B> angefangen',
+#           'en' : 'The input did not start wirh <B><TT>ami-</TT></B>' },
+#  '86' : { 'de' : 'Ihre Eingabe hatte nicht die korrekte L&auml;nge',
+#           'en' : 'The input length was not correct' },
+#  '87' : { 'de' : 'Ihre Eingabe enthielt nicht erlaubte Zeichen',
+#           'en' : 'The input had characters that are not allowed' },
+#  '88' : { 'de' : 'Das von Ihnen eingegebene AMI existiert nicht',
+#           'en' : 'The AMI does not exist' },
+#  '89' : { 'de' : 'Sie haben keinen Access Key und keinen Secret Access Key angegeben',
+#           'en' : 'No Access Key and no Secret Access Key given' },
+#  '90' : { 'de' : 'Sie haben keinen Access Key angegeben',
+#           'en' : 'No Access Key given' },
+#  '91' : { 'de' : 'Sie haben keinen Secret Access Key angegeben',
+#           'en' : 'No Secret Access Key given' },
+#  '92' : { 'de' : 'Sie haben keinen Namen angegeben',
+#           'en' : 'No Name given' },
+#  '93' : { 'de' : 'Sie haben keine Endpoint URL angegeben',
+#           'en' : 'No Endpoint given' },
+#  '94' : { 'de' : 'Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen',
+#           'en' : 'The given Access Key had characters that are not allowed' },
+#  '95' : { 'de' : 'Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen',
+#           'en' : 'The given Secret Access Key had characters that are not allowed' },
+#  '96' : { 'de' : 'Ihr eingegebener Name enthielt nicht erlaubte Zeichen',
+#           'en' : 'The given Name had characters that are not allowed' },
+#  '97' : { 'de' : 'Ihre eingegebene Endpoint URL enthielt nicht erlaubte Zeichen',
+#           'en' : 'The given Endpoint URL had characters that are not allowed' },
+#  '98' : { 'de' : 'Die eingegebenen Zugangsdaten funktionieren nicht',
+#           'en' : 'The given credentials are wrong' },
+#  '99' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich angelegt',
+#           'en' : 'The keypair was created successfully' },
+#  '100' : { 'de' : 'Der Name f&uuml;r das neue Schl&uuml;sselpaar enthielt nicht erlaubt Zeichen',
+#            'en' : 'The name for the new keypair had characters that are not allowed' },
+#  '101' : { 'de' : 'Beim Versuch, das neue Schl&uuml;sselpaar anzulegen, kam es zu einem Fehler',
+#            'en' : 'While the system tried to create the new keypair, an error occured' },
+#  '102' : { 'de' : 'Es existiert bereits ein Schl&uuml;sselpaar mit dem angegebenen Namen',
+#            'en' : 'A keypair with the given name already exists' },
+#  '103' : { 'de' : 'Das Schl&uuml;sselpaar wurde erfolgreich gel&ouml;scht',
+#            'en' : 'The keypair was erased successfully' },
+#  '104' : { 'de' : 'Beim Versuch, das Schl&uuml;sselpaar zu l&ouml;schen, kam es zu einem Fehler',
+#            'en' : 'While the system tried to erase the keypair, an error occured' },
+#  '105' : { 'de' : 'Der Bucket wurde erfolgreich angelegt',
+#            'en' : 'The bucket was created successfully' },
+#  '106' : { 'de' : 'Der Name f&uuml;r den neuen Bucket enthielt nicht erlaubt Zeichen',
+#            'en' : 'The name for the new bucket had characters that are not allowed' },
+#  '107' : { 'de' : 'Beim Versuch, den Bucket anzulegen, kam es zu einem Fehler',
+#            'en' : 'While trying zu create the bucket, an error occured' },
+#  '108' : { 'de' : 'Sie haben schon einen Bucket mit dem eingegebenen Namen',
+#            'en' : 'You already have a bucket with this name' },
+#  '109' : { 'de' : 'Beim Versuch, den Bucket zu entfernen, kam es zu einem Fehler<br>Achtung! Es k&ouml;nnen nur leere Buckets gel&ouml;scht werden!',
+#            'en' : 'While the system tried to erase the bucket, an error occured<br>Attention! Buckets need to be empty before they can be deleted!' },
+#  '110' : { 'de' : 'Der Bucket wurde erfolgreich entfernt',
+#            'en' : 'The bucket was erased successfully' },
+#  '111' : { 'de' : 'Der Key wurde erfolgreich gel&ouml;scht',
+#            'en' : 'The key was erased successfully' },
+#  '112' : { 'de' : 'Beim Versuch, den Key zu l&ouml;schen, kam es zu einem Fehler',
+#            'en' : 'An error occured while trying to erase the key' },
+#  '113' : { 'de' : 'Sie haben keinen Namen f&uuml;r das neue Verzeichnis eingegeben',
+#            'en' : 'No name for the new directory given' },
+#  '114' : { 'de' : 'Ihr eingegebener Verzeichnisname enthielt nicht erlaubte Zeichen',
+#            'en' : 'The given name for the new directory had characters that are not allowed' },
+#  '115' : { 'de' : 'Das neue Verzeichnis wurde erfolgreich angelegt',
+#            'en' : 'The new directory was successfully created' },
+#  '116' : { 'de' : 'Beim Versuch, das neue Verzeichnis anzulegen, kam es zu einem Fehler',
+#            'en' : 'An error occured while the system tried to create the new directory' },
+#  '117' : { 'de' : 'Es existiert bereits ein Verzeichnis mit dem eingegebenen Namen',
+#            'en' : 'A directory with the given name still exists' },
+#  '118' : { 'de' : 'Die Zugriffsberechtigung wurde erfolgreich ge&auml;ndert',
+#            'en' : 'The Access Control List (ACL) was changed successfully' },
+#  '119' : { 'de' : 'Beim Versuch, die Zugriffsberechtigung zu &auml;ndern, kam es zu einem Fehler',
+#            'en' : 'An error occured while the system tried to change the Access Control List (ACL)' },
+#  '120' : { 'de' : 'Die Keys wurden erfolgreich gel&ouml;scht',
+#            'en' : 'The keys were erased successfully' },
+#  '121' : { 'de' : 'Beim Versuch, die Keys zu l&ouml;schen, kam es zu einem Fehler',
+#            'en' : 'An error occured while trying to erase the keys' },
+#}
 
-# Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
-def format_error_message_green(input_error_message):
-    if input_error_message:
-        return "<p>&nbsp;</p> <font color='green'>%s</font>" % (input_error_message)
-    else:
-        return ""
+## Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
+#def format_error_message_green(input_error_message):
+#    if input_error_message:
+#        return "<p>&nbsp;</p> <font color='green'>%s</font>" % (input_error_message)
+#    else:
+#        return ""
 
-# Hilfsfunktion für die Formatierung der roten Fehlermeldungen
-def format_error_message_red(input_error_message):
-    if input_error_message:
-        return "<p>&nbsp;</p> <font color='red'>%s</font>" % (input_error_message)
-    else:
-        return ""
+## Hilfsfunktion für die Formatierung der roten Fehlermeldungen
+#def format_error_message_red(input_error_message):
+#    if input_error_message:
+#        return "<p>&nbsp;</p> <font color='red'>%s</font>" % (input_error_message)
+#    else:
+#        return ""
 
 class KoalaCloudDatenbank(db.Model):
     user = db.UserProperty(required=True)
@@ -341,6 +387,7 @@ class MainPage(webapp.RequestHandler):
 
         if users.get_current_user():
             # Nachsehen, ob eine Region/Zone ausgewählte wurde
+            # See if a region/zone has already been chosen
             aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
             results = aktivezone.fetch(100)
 
@@ -352,6 +399,7 @@ class MainPage(webapp.RequestHandler):
               zone_amazon = amazon_region(username)
 
             # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+            # See if a language has already been chosen 
             sprache = aktuelle_sprache(username)
             navigations_bar = navigations_bar_funktion(sprache)
 
@@ -390,6 +438,7 @@ class Regionen(webapp.RequestHandler):
         message = self.request.get('message')
         neuerzugang = self.request.get('neuerzugang')
         # Den Usernamen erfahren
+        # Get the username
         username = users.get_current_user()
         # self.response.out.write('posted!')
 
@@ -2002,1436 +2051,1436 @@ class Keys(webapp.RequestHandler):
             self.redirect('/')
 
 
-class CreateLoadBalancer(webapp.RequestHandler):
-    def get(self):
-        #self.response.out.write('posted!')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-
-        sprache = aktuelle_sprache(username)
-        navigations_bar = navigations_bar_funktion(sprache)
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if not results:
-            regionname = 'keine'
-            zone_amazon = ""
-        else:
-            conn_region, regionname = login(username)
-            zone_amazon = amazon_region(username)
-
-        url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-        url_linktext = 'Logout'
-
-        zonen_liste = zonen_liste_funktion(username,sprache)
-
-        if sprache != "de":
-            sprache = "en"
-
-        input_error_message = error_messages.get(message, {}).get(sprache)
-
-        # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-        if input_error_message == None:
-            input_error_message = ""
-
-        # Wenn die Nachricht grün formatiert werden soll...
-        if message in ("8", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60"):
-            # wird sie hier, in der Hilfsfunktion rot formatiert
-            input_error_message = format_error_message_red(input_error_message)
-        else:
-            input_error_message = ""
-
-        try:
-            # Liste mit den Zonen
-            liste_zonen = conn_region.get_all_zones()
-        except EC2ResponseError:
-            # Wenn es nicht geklappt hat...
-            fehlermeldung = "10"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-        except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "8"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-        else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_zonen = len(liste_zonen)
-
-        elb_erzeugen_tabelle = ''
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Name</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="elb_name" type="text" size="40" maxlength="40"></td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
-        else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
-        for i in range(laenge_liste_zonen):
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
-        else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<select name="elb_protokoll" size="1">\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option selected="selected">TCP</option>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option>HTTP</option>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</select>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Load Balancer Port</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="ELBPort" type="text" size="10" maxlength="10"></td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
-        else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
-
-
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + ''
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
-        if sprache == "de":
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
-        else:
-            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</table>'
-        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</form>'
-
-
-        template_values = {
-        'navigations_bar': navigations_bar,
-        'url': url,
-        'url_linktext': url_linktext,
-        'zone': regionname,
-        'zone_amazon': zone_amazon,
-        'elb_erzeugen_tabelle': elb_erzeugen_tabelle,
-        'input_error_message': input_error_message,
-        'zonen_liste': zonen_liste,
-        }
-
-        #if sprache == "de": naechse_seite = "elb_create_de.html"
-        #else:               naechse_seite = "elb_create_en.html"
-        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "elb_create.html")
-        self.response.out.write(template.render(path,template_values))
-
-
-class CreateLoadBalancerWirklich(webapp.RequestHandler):
-    def post(self):
-        elb_name = self.request.get('elb_name')
-        elb_protokoll = self.request.get('elb_protokoll')
-        ELBPort = self.request.get('ELBPort')
-        InstPort = self.request.get('InstPort')
-        useast1a = self.request.get('us-east-1a')
-        useast1b = self.request.get('us-east-1b')
-        useast1c = self.request.get('us-east-1c')
-        useast1d = self.request.get('us-east-1d')
-        uswest1a = self.request.get('us-west-1a')
-        uswest1b = self.request.get('us-west-1b')
-        euwest1a = self.request.get('eu-west-1a')
-        euwest1b = self.request.get('eu-west-1b')
-        apsoutheast1a = self.request.get('ap-southeast-1a')
-        apsoutheast1b = self.request.get('ap-southeast-1b')
-
-        # Der Name muss ein String sein
-        elb_name = str(elb_name)
-        # Das Protokoll muss ein String sein
-        elb_protokoll = str(elb_protokoll)
-
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        # Nachsehen, wo wir sind
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        for db_eintrag in aktivezone:
-          aktivezone = db_eintrag.aktivezone
-
-
-        if ELBPort.isdigit() == False:
-          # Testen ob der Load Balancer Port eine Zahl ist
-          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "55"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        else:
-          # Der Load Balancer Port muss ein Integer sein
-          ELBPort = int(ELBPort)
-
-        if InstPort.isdigit() == False:
-          # Testen ob der EC2 Instanz Port eine Zahl ist
-          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          fehlermeldung = "56"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        else:
-          # Der EC2 Instanz Port muss ein Integer sein
-          InstPort = int(InstPort)
-
-        if elb_name == "":
-          # Testen ob ein Name für den neue ELB angegeben wurde
-          fehlermeldung = "50"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif re.search(r'[^\-a-zA-Z0-9]', elb_name) != None:
-          # Überprüfen, ob der name nur erlaubte Zeichen enthält
-          # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
-          fehlermeldung = "51"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif InstPort == "" and ELBPort == "":
-          # Testen ob ein Load Balancer Port und ein EC2 Instanz Port für den neue ELB angegeben wurde
-          fehlermeldung = "54"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif ELBPort == "":
-          # Testen ob ein Load Balancer Port für den neue ELB angegeben wurde
-          fehlermeldung = "52"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif InstPort == "":
-          # Testen ob ein EC2 Instanz Port für den neue ELB angegeben wurde
-          fehlermeldung = "53"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif aktivezone == "us-east-1" and useast1a == "" and useast1b == "" and useast1c == "" and useast1d == "":
-          # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif aktivezone == "us-west-1" and uswest1a == "" and uswest1b == "":
-          # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif aktivezone == "eu-west-1" and euwest1a == "" and euwest1b == "":
-          # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif aktivezone == "ap-southeast-1" and apsoutheast1a == "" and apsoutheast1b == "":
-          # Testen ob mindestens eine Zone angegeben wurde
-          fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif not (ELBPort == 80 or ELBPort == 443 or (1024 <= ELBPort <= 65535)):
-          # Testen ob ein korrekter Port für den Load Balancer Port angegeben wurde
-          # Load Balancer port must be either 80, 443 or 1024~65535 inclusive
-          fehlermeldung = "59"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        elif InstPort >= 65535:
-          # Testen ob ein korrekter Port für den EC2 Instanz Port angegeben wurde
-          # Member must have value less than or equal to 65535
-          fehlermeldung = "60"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
-        else:
-
-          conn_elb = loginselb(username) # Mit ELB verbinden
-
-          zones_elb = []
-          if aktivezone == "us-east-1":
-            if useast1a != "":
-              zones_elb.append('us-east-1a')
-            if useast1b != "":
-              zones_elb.append('us-east-1b')
-            if useast1c != "":
-              zones_elb.append('us-east-1c')
-            if useast1d != "":
-              zones_elb.append('us-east-1d')
-          if aktivezone == "us-west-1":
-            if uswest1a != "":
-              zones_elb.append('us-west-1a')
-            if uswest1b != "":
-              zones_elb.append('us-west-1b')
-          if aktivezone == "eu-west-1":
-            if euwest1a != "":
-              zones_elb.append('eu-west-1a')
-            if euwest1b != "":
-              zones_elb.append('eu-west-1b')
-          if aktivezone == "ap-southeast-1":
-            if apsoutheast1a != "":
-              zones_elb.append('ap-southeast-1a')
-            if apsoutheast1b != "":
-              zones_elb.append('ap-southeast-1b')
-          listeners_elb = []
-          listeners_elb.append((ELBPort,InstPort,elb_protokoll))
-
-          try:
-            # Versuchen, den Load Balancer zu erzeugen
-            neuer_loadbalancer = conn_elb.create_load_balancer(elb_name, zones_elb, listeners_elb)
-          except EC2ResponseError:
-            # Wenn es nicht geklappt hat...
-            fehlermeldung = "57"
-            self.redirect('/create_load_balancer?message='+fehlermeldung)
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "8"
-            self.redirect('/create_load_balancer?message='+fehlermeldung)
-          else:
-            # Wenn es geklappt hat...
-            fehlermeldung = "72"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-
-
-class DeleteLoadBalancer(webapp.RequestHandler):
-    def get(self):
-        # Name des zu löschenden Load Balancers holen
-        name = self.request.get('name')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-        # Mit ELB verbinden
-        conn_elb = loginselb(username)
-
-        try:
-          # Volume löschen
-          conn_elb.delete_load_balancer(name)
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "71"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "70"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
-
-
-class LoadBalancer(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        for db_eintrag in aktivezone:
-          zugangstyp = db_eintrag.zugangstyp
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')  
-          #url = users.create_logout_url(self.request.uri)
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if zugangstyp != 'Amazon':
-
-            template_values = {
-            'navigations_bar': navigations_bar,
-            'url': url,
-            'url_linktext': url_linktext,
-            'zone': regionname,
-            'zone_amazon': zone_amazon,
-            'zonen_liste': zonen_liste,
-            }
-
-            #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
-            #else:               naechse_seite = "loadbalancer_non_aws_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_non_aws.html")
-            self.response.out.write(template.render(path,template_values))
-          else:
-
-            if sprache != "de":
-              sprache = "en"
-
-            input_error_message = error_messages.get(message, {}).get(sprache)
-
-            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-            if input_error_message == None:
-              input_error_message = ""
-
-            # Wenn die Nachricht grün formatiert werden soll...
-            if message in ("9", "70", "72"):
-              # wird sie hier, in der Hilfsfunktion grün formatiert
-              input_error_message = format_error_message_green(input_error_message)
-            # Ansonsten wird die Nachricht rot formatiert
-            elif message in ("8", "10", "71"):
-              input_error_message = format_error_message_red(input_error_message)
-            else:
-              input_error_message = ""
-
-            # Mit ELB verbinden
-            conn_elb = loginselb(username)
-
-            try:
-              # Liste mit den LoadBalancern
-              liste_load_balancers = conn_elb.get_all_load_balancers()
-            except EC2ResponseError:
-              # Wenn es nicht klappt...
-              if sprache == "de":
-                loadbalancertabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-              else:
-                loadbalancertabelle = '<font color="red">An error occured</font>'
-            except DownloadError:
-              # Diese Exception hilft gegen diese beiden Fehler:
-              # DownloadError: ApplicationError: 2 timed out
-              # DownloadError: ApplicationError: 5
-              if sprache == "de":
-                loadbalancertabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-              else:
-                loadbalancertabelle = '<font color="red">A timeout error occured</font>'
-            else:
-              # Wenn es geklappt hat...
-
-              # Anzahl der Elemente in der Liste
-              laenge_liste_load_balancers = len(liste_load_balancers)
-
-              if laenge_liste_load_balancers == 0:
-                if sprache == "de":
-                  loadbalancertabelle = 'Es sind keine Load Balancer in der Region vorhanden.'
-                else:
-                  loadbalancertabelle = 'No load balancer exist inside this region.'
-              else:
-                loadbalancertabelle = ''
-                loadbalancertabelle = loadbalancertabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                loadbalancertabelle = loadbalancertabelle + '<tr>'
-                loadbalancertabelle = loadbalancertabelle + '<th align="center">&nbsp;</th>'
-                loadbalancertabelle = loadbalancertabelle + '<th align="center">Name</th>'
-                loadbalancertabelle = loadbalancertabelle + '<th>&nbsp;</th>'
-                if sprache == "de":
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instanzen</th>'
-                else:
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instances</th>'
-                loadbalancertabelle = loadbalancertabelle + '<th align="center">DNS Name</th>'
-                loadbalancertabelle = loadbalancertabelle + '<th align="center">Ports</th>'
-                if sprache == "de":
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zonen</th>'
-                else:
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zones</th>'
-                loadbalancertabelle = loadbalancertabelle + '<th align="center">Health Check</th>'
-                if sprache == "de":
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Datum der Erzeugung</th>'
-                else:
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Creation Date</th>'
-                loadbalancertabelle = loadbalancertabelle + '</tr>'
-                for i in range(laenge_liste_load_balancers):
-                    loadbalancertabelle = loadbalancertabelle + '<tr>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<a href="/delete_load_balancer?name='
-                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                    if sprache == "de":
-                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer l&ouml;schen">'
-                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
-                    else:
-                      loadbalancertabelle = loadbalancertabelle + '" title="delete load balancer">'
-                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<a href="/loadbalanceraendern?name='
-                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                    if sprache == "de":
-                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
-                    else:
-                      loadbalancertabelle = loadbalancertabelle + '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td align="center">'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    loadbalancertabelle = loadbalancertabelle + str(len(liste_load_balancers[i].instances))
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].dns_name
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    for x in range(len(liste_load_balancers[i].listeners)):
-                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].listeners[x])
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    for x in range(len(liste_load_balancers[i].availability_zones)):
-                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].availability_zones[x])
-                      loadbalancertabelle = loadbalancertabelle + '&nbsp;'
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
-                    loadbalancertabelle = loadbalancertabelle + health_check_final
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '<td>'
-                    loadbalancertabelle = loadbalancertabelle + '<tt>'
-                    datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
-                    loadbalancertabelle = loadbalancertabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                    loadbalancertabelle = loadbalancertabelle + '</tt>'
-                    loadbalancertabelle = loadbalancertabelle + '</td>'
-                    loadbalancertabelle = loadbalancertabelle + '</tr>'
-                loadbalancertabelle = loadbalancertabelle + '</table>'
-
-            template_values = {
-            'navigations_bar': navigations_bar,
-            'url': url,
-            'url_linktext': url_linktext,
-            'zone': regionname,
-            'zone_amazon': zone_amazon,
-            'loadbalancertabelle': loadbalancertabelle,
-            'zonen_liste': zonen_liste,
-            'input_error_message': input_error_message,
-            }
-
-            #if sprache == "de": naechse_seite = "loadbalancer_de.html"
-            #else:               naechse_seite = "loadbalancer_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer.html")
-            self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-class LoadBalancer_Aendern(webapp.RequestHandler):
-    def get(self):
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-        # Name des zu löschenden Load Balancers holen
-        loadbalancer_name = self.request.get('name')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          #url = users.create_logout_url(self.request.uri)
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if sprache != "de":
-            sprache = "en"
-
-          input_error_message = error_messages.get(message, {}).get(sprache)
-
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("61", "63", "66", "68"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "62", "64", "65", "67", "69"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          try:
-            # Liste mit den Instanzen
-            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-            # gibt es eine Fehlermeldung
-            liste_reservations = conn_region.get_all_instances()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "10"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "9"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
-          else:
-            # Wenn es geklappt hat und die Liste geholt wurde...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_reservations = len(liste_reservations)
-
-            if laenge_liste_reservations == "0":
-              # Wenn es keine laufenden Instanzen gibt
-              instanzen_in_region = 0
-            else:
-              # Wenn es laufenden Instanzen gibt
-              instanzen_in_region = 0
-              for i in liste_reservations:
-                for x in i.instances:
-                  # Für jede Instanz wird geschaut...
-                  # ...ob die Instanz in der Region des Volumes liegt und läuft
-                  if x.state == u'running':
-                    instanzen_in_region = instanzen_in_region + 1
-
-            # Mit ELB verbinden
-            conn_elb = loginselb(username)
-
-            try:
-              # Liste mit den LoadBalancern
-              liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
-            except EC2ResponseError:
-              # Wenn es nicht klappt...
-              fehlermeldung = "10"
-              self.redirect('/loadbalancer?message='+fehlermeldung)
-            except DownloadError:
-              # Diese Exception hilft gegen diese beiden Fehler:
-              # DownloadError: ApplicationError: 2 timed out
-              # DownloadError: ApplicationError: 5
-              fehlermeldung = "9"
-              self.redirect('/loadbalancer?message='+fehlermeldung)
-            else:
-              # Wenn es geklappt hat...
-
-              tabelle_instanz_anhaengen = ''
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/loadbalancer_instanz_zuordnen?loadbalancer='
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">\n'
-
-              # Wenn dem Load Balancer noch keine Instanzen zugewiesen wurden...
-              if len(liste_load_balancers[0].instances) == 0:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Dem Load Balancer wurden noch keine Instanzen zugewiesen'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'This load balancer is not asigned with any instances'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-              # Wenn dem Load Balancer schon Instanzen zugewiesen wurden...
-              else:
-                for z in range(len(liste_load_balancers[0].instances)):
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<a href="/loadbalancer_deregister_instance?loadbalancer='
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '&amp;instanz='
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
-                  if sprache == "de":
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="Instanz deregistrieren">'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz deregistrieren"></a>'
-                  else:
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="deregister instance">'
-                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister instance"></a>'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tt>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tt>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
-              # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
-              # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
-              if len(liste_load_balancers[0].instances) != 0:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>&nbsp;</td>\n'
-
-              if instanzen_in_region == 0:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center" colspan="2">\n'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanzen'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have no instances'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-              else:
-                if instanzen_in_region > 0:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">\n'
-                  for i in liste_reservations:
-                    for x in i.instances:
-                      if x.state == u'running':
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
-                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
-                if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
-                else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
-
-
-              try:
-                # Liste mit den Zonen
-                liste_zonen = conn_region.get_all_zones()
-              except EC2ResponseError:
-                # Wenn es nicht geklappt hat...
-                if sprache == "de":
-                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-                else:
-                  tabelle_zonen_aendern = '<font color="red">An error occured</font>'
-              except DownloadError:
-                # Diese Exception hilft gegen diese beiden Fehler:
-                # DownloadError: ApplicationError: 2 timed out
-                # DownloadError: ApplicationError: 5
-                if sprache == "de":
-                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-                else:
-                  tabelle_zonen_aendern = '<font color="red">A timeout error occured</font>'
-              else:
-                # Wenn es geklappt hat...
-                # Anzahl der Elemente in der Liste
-                laenge_liste_zonen = len(liste_zonen)
-
-                tabelle_zonen_aendern = ''
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<form action="/loadbalancer_zone_zuordnen?loadbalancer='
-                tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '" method="post" accept-charset="utf-8">'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="3" cellspacing="0" cellpadding="5">\n'
-
-                for z in range(len(liste_load_balancers[0].availability_zones)):
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>\n'
-                  # Wenn dem Load Balancer nur eine Zone zugewiesen ist...
-                  if len(liste_load_balancers[0].availability_zones) == 1:
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=67'
-                    if sprache == "de":
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
-                    else:
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
-                  # Wenn dem Load Balancer mehr als nur eine Zone zugewiesen ist...
-                  else:
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalancer_deregister_zone?loadbalancer='
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;zone='
-                    tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
-                    if sprache == "de":
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
-                    else:
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
-                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td colspan="2">\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tt>\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tt>\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
-                # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
-                # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
-                if len(liste_load_balancers[0].availability_zones) != 0:
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>&nbsp;</td>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<select name="zonen" size="1">\n'
-                for i in range(laenge_liste_zonen):
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<option>'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_zonen[i].name
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</option>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</select>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
-                if sprache == "de":
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="verkn&uuml;pfen">'
-                else:
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="associate">'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</table>\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
-
-
-              template_values = {
-              'navigations_bar': navigations_bar,
-              'url': url,
-              'url_linktext': url_linktext,
-              'zone': regionname,
-              'zone_amazon': zone_amazon,
-              'zonen_liste': zonen_liste,
-              'load_balancer_name': loadbalancer_name,
-              'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
-              'tabelle_zonen_aendern': tabelle_zonen_aendern,
-              'input_error_message': input_error_message,
-              }
-
-              #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
-              #else:               naechse_seite = "loadbalancer_change_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_change.html")
-              self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-class LoadBalancer_Instanz_Zuordnen(webapp.RequestHandler):
-    def post(self):
-        # self.response.out.write('posted!')
-        # Zu verknüpfenden Load Balancer holen
-        loadbalancer = self.request.get('loadbalancer')
-        # Zu verknüpfende Instanz holen
-        instanz = self.request.get('instanzen')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Mit ELB verbinden
-        conn_elb = loginselb(username)
-
-        # Eine leere Liste für das IDs der Instanzen erzeugen
-        list_of_instances = []
-        # Die Instanz in Liste einfügen
-        list_of_instances.append(instanz)
-
-        try:
-          # Die Instanz verknüpfen
-          conn_elb.register_instances(loadbalancer, list_of_instances)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "62"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "61"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-
-
-class LoadBalancer_Instanz_Entfernen(webapp.RequestHandler):
-    def get(self):
-        # self.response.out.write('posted!')
-        # Betreffenden Load Balancer holen
-        loadbalancer = self.request.get('loadbalancer')
-        # Zu entfernende Instanz holen
-        instanz = self.request.get('instanz')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Mit ELB verbinden
-        conn_elb = loginselb(username)
-
-        # Eine leere Liste für das IDs der Instanzen erzeugen
-        list_of_instances = []
-        # Die Instanz in Liste einfügen
-        list_of_instances.append(instanz)
-
-        try:
-          # Die Instanz entfernen
-          conn_elb.deregister_instances(loadbalancer, list_of_instances)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "64"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "63"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-
-
-class LoadBalancer_Zone_Entfernen(webapp.RequestHandler):
-    def get(self):
-        # self.response.out.write('posted!')
-        # Betreffenden Load Balancer holen
-        loadbalancer = self.request.get('loadbalancer')
-        # Zu entfernende Zone holen
-        zone = self.request.get('zone')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Mit ELB verbinden
-        conn_elb = loginselb(username)
-
-        # Eine leere Liste für die Zonen erzeugen
-        list_of_zones = []
-        # Die Zone in Liste einfügen
-        list_of_zones.append(zone)
-
-        try:
-          # Die Instanz entfernen
-          conn_elb.disable_availability_zones(loadbalancer, list_of_zones)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "65"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "66"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-
-class LoadBalancer_Zone_Zuordnen(webapp.RequestHandler):
-    def post(self):
-        # self.response.out.write('posted!')
-        # Zu verknüpfenden Load Balancer holen
-        loadbalancer = self.request.get('loadbalancer')
-        # Zu verknüpfende Zone holen
-        zone = self.request.get('zonen')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        # Mit ELB verbinden
-        conn_elb = loginselb(username)
-
-        # Eine leere Liste für die Zonen erzeugen
-        list_of_zones = []
-        # Die Zone in Liste einfügen
-        list_of_zones.append(zone)
-
-        try:
-          # Die Instanz verknüpfen
-          conn_elb.enable_availability_zones(loadbalancer, list_of_zones)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "69"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "68"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
-
-class Elastic_IPs(webapp.RequestHandler):
-    def get(self):
-        # self.response.out.write('posted!')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          # So ist der HTML-Code korrekt
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          # So ist der HTML-Code nicht korrekt
-          #url = users.create_logout_url(self.request.uri)
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if sprache != "de":
-            sprache = "en"
-
-          input_error_message = error_messages.get(message, {}).get(sprache)
-
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("0", "3", "5", "7"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("1", "2", "4", "6", "8", "9", "10"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          try:
-            # Liste mit den Adressen
-            liste_adressen = conn_region.get_all_addresses()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              adressentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-            else:
-              adressentabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              adressentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              adressentabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_adressen = len(liste_adressen)
-
-            if laenge_liste_adressen == 0:
-              if sprache == "de":
-                adressentabelle = 'Es sind keine elastischen IPs in der Region vorhanden.'
-              else:
-                adressentabelle = 'No elastic IPs exist inside this region.'
-            else:
-              adressentabelle = ''
-              adressentabelle = adressentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              adressentabelle = adressentabelle + '<tr>'
-              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-              if sprache == "de":
-                adressentabelle = adressentabelle + '<th align="center">Adresse</th>'
-              else:
-                adressentabelle = adressentabelle + '<th align="center">Address</th>'
-              if sprache == "de":
-                adressentabelle = adressentabelle + '<th align="center">Instanz ID</th>'
-              else:
-                adressentabelle = adressentabelle + '<th align="center">Instance ID</th>'
-              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-              adressentabelle = adressentabelle + '</tr>'
-              for i in range(laenge_liste_adressen):
-                  adressentabelle = adressentabelle + '<tr>'
-                  adressentabelle = adressentabelle + '<td>'
-                  adressentabelle = adressentabelle + '<a href="/release_address?address='
-                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                  if sprache == "de":
-                    adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
-                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
-                  else:
-                    adressentabelle = adressentabelle + '" title="release elastic IP">'
-                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
-                  adressentabelle = adressentabelle + '</td>'
-                  adressentabelle = adressentabelle + '<td>'
-                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                  adressentabelle = adressentabelle + '</td>'
-                  adressentabelle = adressentabelle + '<td>'
-                  adressentabelle = adressentabelle + '<tt>'
-                  if liste_adressen[i].instance_id:
-                    adressentabelle = adressentabelle + liste_adressen[i].instance_id
-                  else:
-                    adressentabelle = adressentabelle + '&nbsp;'
-                  adressentabelle = adressentabelle + '</tt>'
-                  adressentabelle = adressentabelle + '</td>'
-                  adressentabelle = adressentabelle + '<td>'
-                  if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
-                    adressentabelle = adressentabelle + '<a href="/associate_address?address='
-                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                    if sprache == "de":
-                      adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
-                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
-                    else:
-                      adressentabelle = adressentabelle + '" title="associate elastic IP with instance">'
-                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
-                  else:
-                    adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
-                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                    if sprache == "de":
-                      adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
-                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
-                    else:
-                      adressentabelle = adressentabelle + '" title="disassociate elastic IP from instance">'
-                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
-                  adressentabelle = adressentabelle + '</td>'
-                  adressentabelle = adressentabelle + '</tr>'
-              adressentabelle = adressentabelle + '</table>'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'adressentabelle': adressentabelle,
-          'zonen_liste': zonen_liste,
-          'input_error_message': input_error_message,
-          }
-
-          #if sprache == "de": naechse_seite = "adressen_de.html"
-          #else:               naechse_seite = "adressen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "adressen.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-class Associate_IP(webapp.RequestHandler):
-    def get(self):
-        #self.response.out.write('posted!')
-        # Anzuhängende Elastic IP-Adresse holen
-        address = self.request.get('address')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          #url = users.create_logout_url(self.request.uri)
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          try:
-            # Liste mit den Instanzen
-            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
-            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
-            # gibt es eine Fehlermeldung
-            liste_reservations = conn_region.get_all_instances()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "10"
-            self.redirect('/elastic_ips?message='+fehlermeldung)
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "9"
-            self.redirect('/elastic_ips?message='+fehlermeldung)
-          else:
-            # Wenn es geklappt hat und die Liste geholt wurde...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_reservations = len(liste_reservations)
-
-            if laenge_liste_reservations == "0":
-              # Wenn es keine laufenden Instanzen gibt
-              instanzen_in_region = 0
-            else:
-              # Wenn es laufenden Instanzen gibt
-              instanzen_in_region = 0
-              for i in liste_reservations:
-                for x in i.instances:
-                  # Für jede Instanz wird geschaut...
-                  # ...ob die Instanz in der Region des Volumes liegt und läuft
-                  if x.state == u'running':
-                    instanzen_in_region = instanzen_in_region + 1
-
-            tabelle_instanz_anhaengen = ''
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/ip_definitiv_anhaengen?address='
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
-            if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP-Adresse:</B></td>'
-            else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP Address:</B></td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
-            if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
-            else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instances:</B></td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
-            if instanzen_in_region == 0:
-              if sprache == "de":
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanz'
-              else:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have still no instance'
-            else:
-              if instanzen_in_region > 0:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">'
-                for i in liste_reservations:
-                  for x in i.instances:
-                    if x.state == u'running':
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<p>&nbsp;</p>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-            if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
-            else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
-
-            template_values = {
-            'navigations_bar': navigations_bar,
-            'url': url,
-            'url_linktext': url_linktext,
-            'zone': regionname,
-            'zone_amazon': zone_amazon,
-            'zonen_liste': zonen_liste,
-            'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
-            }
-
-            #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
-            #else:               naechse_seite = "ip_anhaengen_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "ip_anhaengen.html")
-            self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-
-class IP_Definitiv_Anhaengen(webapp.RequestHandler):
-    def post(self):
-        # self.response.out.write('posted!')
-        # Zu verknüpfende Elastic IP-Adresse holen
-        address = self.request.get('address')
-        # Zu verknüpfende Instanz holen
-        instanzen = self.request.get('instanzen')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Die Elastic IP-Adresse verknüpfen
-          conn_region.associate_address(instanzen, address)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "1"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "0"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-
-
-class Release_IP(webapp.RequestHandler):
-    def get(self):
-      # Zu löschende (release) Elastic IP-Adresse holen
-      address = self.request.get('address')
-      # Den Usernamen erfahren
-      username = users.get_current_user()
-
-      conn_region, regionname = login(username)
-
-      try:
-        # Die Elastic IP-Adresse freigeben (löschen)
-        conn_region.release_address(address)
-      except EC2ResponseError:
-        # Wenn es nicht geklappt hat...
-        fehlermeldung = "4"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
-      except DownloadError:
-        # Diese Exception hilft gegen diese beiden Fehler:
-        # DownloadError: ApplicationError: 2 timed out
-        # DownloadError: ApplicationError: 5
-        fehlermeldung = "8"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
-      else:
-        # Wenn es geklappt hat...
-        fehlermeldung = "5"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
-
-
-class Disassociate_IP(webapp.RequestHandler):
-    def get(self):
-        # Zu enfelchtende (disassociate) Elastic IP-Adresse holen
-        address = self.request.get('address')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Die Elastic IP-Adresse freigeben (löschen)
-          conn_region.disassociate_address(address)
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "2"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "3"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-
-
-class Allocate_IP(webapp.RequestHandler):
-    def post(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Eine Elastic IP-Adresse bekommen
-          conn_region.allocate_address()
-        except EC2ResponseError:
-          # Wenn es nicht geklappt hat...
-          fehlermeldung = "6"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "7"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
-
-
-class Zonen(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          try:
-            # Liste mit den Zonen
-            liste_zonen = conn_region.get_all_zones()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-            else:
-              zonentabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              zonentabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_zonen = len(liste_zonen)
-
-            zonentabelle = ''
-            zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-            zonentabelle = zonentabelle + '<tr>'
-            zonentabelle = zonentabelle + '<th align="center">Name</th>'
-            zonentabelle = zonentabelle + '<th align="center">Status</th>'
-            zonentabelle = zonentabelle + '</tr>'
-            for i in range(laenge_liste_zonen):
-                zonentabelle = zonentabelle + '<tr>'
-                zonentabelle = zonentabelle + '<td>'+liste_zonen[i].name+'</td>'
-                if liste_zonen[i].state == u'available':
-                  zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
-                  if sprache == "de":
-                    zonentabelle = zonentabelle + 'verf&uuml;gbar'
-                  else:
-                    zonentabelle = zonentabelle + liste_zonen[i].state
-                else:
-                  zonentabelle = zonentabelle + '<td align="center">'
-                  zonentabelle = zonentabelle + liste_zonen[i].state
-                zonentabelle = zonentabelle + '</td>'
-                zonentabelle = zonentabelle + '</tr>'
-            zonentabelle = zonentabelle + '</table>'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'zonenliste': zonentabelle,
-          'zonen_liste': zonen_liste,
-          }
-
-          #if sprache == "de": naechse_seite = "zonen_de.html"
-          #else:               naechse_seite = "zonen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "zonen.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
+#class CreateLoadBalancer(webapp.RequestHandler):
+#    def get(self):
+#        #self.response.out.write('posted!')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#
+#        sprache = aktuelle_sprache(username)
+#        navigations_bar = navigations_bar_funktion(sprache)
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if not results:
+#            regionname = 'keine'
+#            zone_amazon = ""
+#        else:
+#            conn_region, regionname = login(username)
+#            zone_amazon = amazon_region(username)
+#
+#        url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#        url_linktext = 'Logout'
+#
+#        zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#        if sprache != "de":
+#            sprache = "en"
+#
+#        input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#        # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#        if input_error_message == None:
+#            input_error_message = ""
+#
+#        # Wenn die Nachricht grün formatiert werden soll...
+#        if message in ("8", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60"):
+#            # wird sie hier, in der Hilfsfunktion rot formatiert
+#            input_error_message = format_error_message_red(input_error_message)
+#        else:
+#            input_error_message = ""
+#
+#        try:
+#            # Liste mit den Zonen
+#            liste_zonen = conn_region.get_all_zones()
+#        except EC2ResponseError:
+#            # Wenn es nicht geklappt hat...
+#            fehlermeldung = "10"
+#            self.redirect('/loadbalancer?message='+fehlermeldung)
+#        except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "8"
+#            self.redirect('/loadbalancer?message='+fehlermeldung)
+#        else:
+#            # Wenn es geklappt hat...
+#            # Anzahl der Elemente in der Liste
+#            laenge_liste_zonen = len(liste_zonen)
+#
+#        elb_erzeugen_tabelle = ''
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Name</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="elb_name" type="text" size="40" maxlength="40"></td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        if sprache == "de":
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Verf&uuml;gbarkeitszonen</td>\n'
+#        else:
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Availability Zones</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
+#        for i in range(laenge_liste_zonen):
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        if sprache == "de":
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protokoll</td>\n'
+#        else:
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Protocol</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<select name="elb_protokoll" size="1">\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option selected="selected">TCP</option>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '  <option>HTTP</option>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</select>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>Load Balancer Port</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="ELBPort" type="text" size="10" maxlength="10"></td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        if sprache == "de":
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instanz Port</td>\n'
+#        else:
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td>EC2 Instance Port</td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</tr>\n'
+#
+#
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + ''
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<tr>\n'
+#        if sprache == "de":
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="Load Balancer anlegen"></td>\n'
+#        else:
+#            elb_erzeugen_tabelle = elb_erzeugen_tabelle + '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</table>'
+#        elb_erzeugen_tabelle = elb_erzeugen_tabelle + '</form>'
+#
+#
+#        template_values = {
+#        'navigations_bar': navigations_bar,
+#        'url': url,
+#        'url_linktext': url_linktext,
+#        'zone': regionname,
+#        'zone_amazon': zone_amazon,
+#        'elb_erzeugen_tabelle': elb_erzeugen_tabelle,
+#        'input_error_message': input_error_message,
+#        'zonen_liste': zonen_liste,
+#        }
+#
+#        #if sprache == "de": naechse_seite = "elb_create_de.html"
+#        #else:               naechse_seite = "elb_create_en.html"
+#        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#        path = os.path.join(os.path.dirname(__file__), "templates", sprache, "elb_create.html")
+#        self.response.out.write(template.render(path,template_values))
+
+
+#class CreateLoadBalancerWirklich(webapp.RequestHandler):
+#    def post(self):
+#        elb_name = self.request.get('elb_name')
+#        elb_protokoll = self.request.get('elb_protokoll')
+#        ELBPort = self.request.get('ELBPort')
+#        InstPort = self.request.get('InstPort')
+#        useast1a = self.request.get('us-east-1a')
+#        useast1b = self.request.get('us-east-1b')
+#        useast1c = self.request.get('us-east-1c')
+#        useast1d = self.request.get('us-east-1d')
+#        uswest1a = self.request.get('us-west-1a')
+#        uswest1b = self.request.get('us-west-1b')
+#        euwest1a = self.request.get('eu-west-1a')
+#        euwest1b = self.request.get('eu-west-1b')
+#        apsoutheast1a = self.request.get('ap-southeast-1a')
+#        apsoutheast1b = self.request.get('ap-southeast-1b')
+#
+#        # Der Name muss ein String sein
+#        elb_name = str(elb_name)
+#        # Das Protokoll muss ein String sein
+#        elb_protokoll = str(elb_protokoll)
+#
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        # Nachsehen, wo wir sind
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        for db_eintrag in aktivezone:
+#          aktivezone = db_eintrag.aktivezone
+#
+#
+#        if ELBPort.isdigit() == False:
+#          # Testen ob der Load Balancer Port eine Zahl ist
+#          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
+#          fehlermeldung = "55"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        else:
+#          # Der Load Balancer Port muss ein Integer sein
+#          ELBPort = int(ELBPort)
+#
+#        if InstPort.isdigit() == False:
+#          # Testen ob der EC2 Instanz Port eine Zahl ist
+#          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
+#          fehlermeldung = "56"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        else:
+#          # Der EC2 Instanz Port muss ein Integer sein
+#          InstPort = int(InstPort)
+#
+#        if elb_name == "":
+#          # Testen ob ein Name für den neue ELB angegeben wurde
+#          fehlermeldung = "50"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif re.search(r'[^\-a-zA-Z0-9]', elb_name) != None:
+#          # Überprüfen, ob der name nur erlaubte Zeichen enthält
+#          # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
+#          fehlermeldung = "51"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif InstPort == "" and ELBPort == "":
+#          # Testen ob ein Load Balancer Port und ein EC2 Instanz Port für den neue ELB angegeben wurde
+#          fehlermeldung = "54"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif ELBPort == "":
+#          # Testen ob ein Load Balancer Port für den neue ELB angegeben wurde
+#          fehlermeldung = "52"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif InstPort == "":
+#          # Testen ob ein EC2 Instanz Port für den neue ELB angegeben wurde
+#          fehlermeldung = "53"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif aktivezone == "us-east-1" and useast1a == "" and useast1b == "" and useast1c == "" and useast1d == "":
+#          # Testen ob mindestens eine Zone angegeben wurde
+#          fehlermeldung = "58"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif aktivezone == "us-west-1" and uswest1a == "" and uswest1b == "":
+#          # Testen ob mindestens eine Zone angegeben wurde
+#          fehlermeldung = "58"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif aktivezone == "eu-west-1" and euwest1a == "" and euwest1b == "":
+#          # Testen ob mindestens eine Zone angegeben wurde
+#          fehlermeldung = "58"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif aktivezone == "ap-southeast-1" and apsoutheast1a == "" and apsoutheast1b == "":
+#          # Testen ob mindestens eine Zone angegeben wurde
+#          fehlermeldung = "58"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif not (ELBPort == 80 or ELBPort == 443 or (1024 <= ELBPort <= 65535)):
+#          # Testen ob ein korrekter Port für den Load Balancer Port angegeben wurde
+#          # Load Balancer port must be either 80, 443 or 1024~65535 inclusive
+#          fehlermeldung = "59"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        elif InstPort >= 65535:
+#          # Testen ob ein korrekter Port für den EC2 Instanz Port angegeben wurde
+#          # Member must have value less than or equal to 65535
+#          fehlermeldung = "60"
+#          self.redirect('/create_load_balancer?message='+fehlermeldung)
+#        else:
+#
+#          conn_elb = loginelb(username) # Mit ELB verbinden
+#
+#          zones_elb = []
+#          if aktivezone == "us-east-1":
+#            if useast1a != "":
+#              zones_elb.append('us-east-1a')
+#            if useast1b != "":
+#              zones_elb.append('us-east-1b')
+#            if useast1c != "":
+#              zones_elb.append('us-east-1c')
+#            if useast1d != "":
+#              zones_elb.append('us-east-1d')
+#          if aktivezone == "us-west-1":
+#            if uswest1a != "":
+#              zones_elb.append('us-west-1a')
+#            if uswest1b != "":
+#              zones_elb.append('us-west-1b')
+#          if aktivezone == "eu-west-1":
+#            if euwest1a != "":
+#              zones_elb.append('eu-west-1a')
+#            if euwest1b != "":
+#              zones_elb.append('eu-west-1b')
+#          if aktivezone == "ap-southeast-1":
+#            if apsoutheast1a != "":
+#              zones_elb.append('ap-southeast-1a')
+#            if apsoutheast1b != "":
+#              zones_elb.append('ap-southeast-1b')
+#          listeners_elb = []
+#          listeners_elb.append((ELBPort,InstPort,elb_protokoll))
+#
+#          try:
+#            # Versuchen, den Load Balancer zu erzeugen
+#            neuer_loadbalancer = conn_elb.create_load_balancer(elb_name, zones_elb, listeners_elb)
+#          except EC2ResponseError:
+#            # Wenn es nicht geklappt hat...
+#            fehlermeldung = "57"
+#            self.redirect('/create_load_balancer?message='+fehlermeldung)
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "8"
+#            self.redirect('/create_load_balancer?message='+fehlermeldung)
+#          else:
+#            # Wenn es geklappt hat...
+#            fehlermeldung = "72"
+#            self.redirect('/loadbalancer?message='+fehlermeldung)
+
+
+#class DeleteLoadBalancer(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu löschenden Load Balancers holen
+#        name = self.request.get('name')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#        # Mit ELB verbinden
+#        conn_elb = loginelb(username)
+#
+#        try:
+#          # Volume löschen
+#          conn_elb.delete_load_balancer(name)
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "71"
+#          self.redirect('/loadbalancer?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/loadbalancer?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "70"
+#          self.redirect('/loadbalancer?message='+fehlermeldung)
+
+
+#class LoadBalancer(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        for db_eintrag in aktivezone:
+#          zugangstyp = db_eintrag.zugangstyp
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')  
+#          #url = users.create_logout_url(self.request.uri)
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          if zugangstyp != 'Amazon':
+#
+#            template_values = {
+#            'navigations_bar': navigations_bar,
+#            'url': url,
+#            'url_linktext': url_linktext,
+#            'zone': regionname,
+#            'zone_amazon': zone_amazon,
+#            'zonen_liste': zonen_liste,
+#            }
+#
+#            #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
+#            #else:               naechse_seite = "loadbalancer_non_aws_en.html"
+#            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_non_aws.html")
+#            self.response.out.write(template.render(path,template_values))
+#          else:
+#
+#            if sprache != "de":
+#              sprache = "en"
+#
+#            input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#            if input_error_message == None:
+#              input_error_message = ""
+#
+#            # Wenn die Nachricht grün formatiert werden soll...
+#            if message in ("9", "70", "72"):
+#              # wird sie hier, in der Hilfsfunktion grün formatiert
+#              input_error_message = format_error_message_green(input_error_message)
+#            # Ansonsten wird die Nachricht rot formatiert
+#            elif message in ("8", "10", "71"):
+#              input_error_message = format_error_message_red(input_error_message)
+#            else:
+#              input_error_message = ""
+#
+#            # Mit ELB verbinden
+#            conn_elb = loginelb(username)
+#
+#            try:
+#              # Liste mit den LoadBalancern
+#              liste_load_balancers = conn_elb.get_all_load_balancers()
+#            except EC2ResponseError:
+#              # Wenn es nicht klappt...
+#              if sprache == "de":
+#                loadbalancertabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#              else:
+#                loadbalancertabelle = '<font color="red">An error occured</font>'
+#            except DownloadError:
+#              # Diese Exception hilft gegen diese beiden Fehler:
+#              # DownloadError: ApplicationError: 2 timed out
+#              # DownloadError: ApplicationError: 5
+#              if sprache == "de":
+#                loadbalancertabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#              else:
+#                loadbalancertabelle = '<font color="red">A timeout error occured</font>'
+#            else:
+#              # Wenn es geklappt hat...
+#
+#              # Anzahl der Elemente in der Liste
+#              laenge_liste_load_balancers = len(liste_load_balancers)
+#
+#              if laenge_liste_load_balancers == 0:
+#                if sprache == "de":
+#                  loadbalancertabelle = 'Es sind keine Load Balancer in der Region vorhanden.'
+#                else:
+#                  loadbalancertabelle = 'No load balancer exist inside this region.'
+#              else:
+#                loadbalancertabelle = ''
+#                loadbalancertabelle = loadbalancertabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#                loadbalancertabelle = loadbalancertabelle + '<tr>'
+#                loadbalancertabelle = loadbalancertabelle + '<th align="center">&nbsp;</th>'
+#                loadbalancertabelle = loadbalancertabelle + '<th align="center">Name</th>'
+#                loadbalancertabelle = loadbalancertabelle + '<th>&nbsp;</th>'
+#                if sprache == "de":
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instanzen</th>'
+#                else:
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Instances</th>'
+#                loadbalancertabelle = loadbalancertabelle + '<th align="center">DNS Name</th>'
+#                loadbalancertabelle = loadbalancertabelle + '<th align="center">Ports</th>'
+#                if sprache == "de":
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zonen</th>'
+#                else:
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Zones</th>'
+#                loadbalancertabelle = loadbalancertabelle + '<th align="center">Health Check</th>'
+#                if sprache == "de":
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Datum der Erzeugung</th>'
+#                else:
+#                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Creation Date</th>'
+#                loadbalancertabelle = loadbalancertabelle + '</tr>'
+#                for i in range(laenge_liste_load_balancers):
+#                    loadbalancertabelle = loadbalancertabelle + '<tr>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<a href="/delete_load_balancer?name='
+#                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+#                    if sprache == "de":
+#                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer l&ouml;schen">'
+#                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
+#                    else:
+#                      loadbalancertabelle = loadbalancertabelle + '" title="delete load balancer">'
+#                      loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<a href="/loadbalanceraendern?name='
+#                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
+#                    if sprache == "de":
+#                      loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
+#                    else:
+#                      loadbalancertabelle = loadbalancertabelle + '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td align="center">'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    loadbalancertabelle = loadbalancertabelle + str(len(liste_load_balancers[i].instances))
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].dns_name
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    for x in range(len(liste_load_balancers[i].listeners)):
+#                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].listeners[x])
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    for x in range(len(liste_load_balancers[i].availability_zones)):
+#                      loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].availability_zones[x])
+#                      loadbalancertabelle = loadbalancertabelle + '&nbsp;'
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
+#                    loadbalancertabelle = loadbalancertabelle + health_check_final
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<td>'
+#                    loadbalancertabelle = loadbalancertabelle + '<tt>'
+#                    datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
+#                    loadbalancertabelle = loadbalancertabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+#                    loadbalancertabelle = loadbalancertabelle + '</tt>'
+#                    loadbalancertabelle = loadbalancertabelle + '</td>'
+#                    loadbalancertabelle = loadbalancertabelle + '</tr>'
+#                loadbalancertabelle = loadbalancertabelle + '</table>'
+#
+#            template_values = {
+#            'navigations_bar': navigations_bar,
+#            'url': url,
+#            'url_linktext': url_linktext,
+#            'zone': regionname,
+#            'zone_amazon': zone_amazon,
+#            'loadbalancertabelle': loadbalancertabelle,
+#            'zonen_liste': zonen_liste,
+#            'input_error_message': input_error_message,
+#            }
+#
+#            #if sprache == "de": naechse_seite = "loadbalancer_de.html"
+#            #else:               naechse_seite = "loadbalancer_en.html"
+#            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer.html")
+#            self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+#class LoadBalancer_Aendern(webapp.RequestHandler):
+#    def get(self):
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#        # Name des zu löschenden Load Balancers holen
+#        loadbalancer_name = self.request.get('name')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          #url = users.create_logout_url(self.request.uri)
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          if sprache != "de":
+#            sprache = "en"
+#
+#          input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#          if input_error_message == None:
+#            input_error_message = ""
+#
+#          # Wenn die Nachricht grün formatiert werden soll...
+#          if message in ("61", "63", "66", "68"):
+#            # wird sie hier, in der Hilfsfunktion grün formatiert
+#            input_error_message = format_error_message_green(input_error_message)
+#          # Ansonsten wird die Nachricht rot formatiert
+#          elif message in ("8", "62", "64", "65", "67", "69"):
+#            input_error_message = format_error_message_red(input_error_message)
+#          else:
+#            input_error_message = ""
+#
+#          try:
+#            # Liste mit den Instanzen
+#            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+#            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+#            # gibt es eine Fehlermeldung
+#            liste_reservations = conn_region.get_all_instances()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            fehlermeldung = "10"
+#            self.redirect('/loadbalancer?message='+fehlermeldung)
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "9"
+#            self.redirect('/loadbalancer?message='+fehlermeldung)
+#          else:
+#            # Wenn es geklappt hat und die Liste geholt wurde...
+#            # Anzahl der Elemente in der Liste
+#            laenge_liste_reservations = len(liste_reservations)
+#
+#            if laenge_liste_reservations == "0":
+#              # Wenn es keine laufenden Instanzen gibt
+#              instanzen_in_region = 0
+#            else:
+#              # Wenn es laufenden Instanzen gibt
+#              instanzen_in_region = 0
+#              for i in liste_reservations:
+#                for x in i.instances:
+#                  # Für jede Instanz wird geschaut...
+#                  # ...ob die Instanz in der Region des Volumes liegt und läuft
+#                  if x.state == u'running':
+#                    instanzen_in_region = instanzen_in_region + 1
+#
+#            # Mit ELB verbinden
+#            conn_elb = loginelb(username)
+#
+#            try:
+#              # Liste mit den LoadBalancern
+#              liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
+#            except EC2ResponseError:
+#              # Wenn es nicht klappt...
+#              fehlermeldung = "10"
+#              self.redirect('/loadbalancer?message='+fehlermeldung)
+#            except DownloadError:
+#              # Diese Exception hilft gegen diese beiden Fehler:
+#              # DownloadError: ApplicationError: 2 timed out
+#              # DownloadError: ApplicationError: 5
+#              fehlermeldung = "9"
+#              self.redirect('/loadbalancer?message='+fehlermeldung)
+#            else:
+#              # Wenn es geklappt hat...
+#
+#              tabelle_instanz_anhaengen = ''
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/loadbalancer_instanz_zuordnen?loadbalancer='
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">\n'
+#
+#              # Wenn dem Load Balancer noch keine Instanzen zugewiesen wurden...
+#              if len(liste_load_balancers[0].instances) == 0:
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
+#                if sprache == "de":
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Dem Load Balancer wurden noch keine Instanzen zugewiesen'
+#                else:
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'This load balancer is not asigned with any instances'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+#              # Wenn dem Load Balancer schon Instanzen zugewiesen wurden...
+#              else:
+#                for z in range(len(liste_load_balancers[0].instances)):
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<a href="/loadbalancer_deregister_instance?loadbalancer='
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '&amp;instanz='
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
+#                  if sprache == "de":
+#                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="Instanz deregistrieren">'
+#                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz deregistrieren"></a>'
+#                  else:
+#                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="deregister instance">'
+#                    tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister instance"></a>'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tt>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tt>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
+#              # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
+#              # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
+#              if len(liste_load_balancers[0].instances) != 0:
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>&nbsp;</td>\n'
+#
+#              if instanzen_in_region == 0:
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center" colspan="2">\n'
+#                if sprache == "de":
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanzen'
+#                else:
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have no instances'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#              else:
+#                if instanzen_in_region > 0:
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">\n'
+#                  for i in liste_reservations:
+#                    for x in i.instances:
+#                      if x.state == u'running':
+#                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
+#                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
+#                        tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>\n'
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>\n'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="center">\n'
+#                if sprache == "de":
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
+#                else:
+#                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>\n'
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
+#
+#
+#              try:
+#                # Liste mit den Zonen
+#                liste_zonen = conn_region.get_all_zones()
+#              except EC2ResponseError:
+#                # Wenn es nicht geklappt hat...
+#                if sprache == "de":
+#                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#                else:
+#                  tabelle_zonen_aendern = '<font color="red">An error occured</font>'
+#              except DownloadError:
+#                # Diese Exception hilft gegen diese beiden Fehler:
+#                # DownloadError: ApplicationError: 2 timed out
+#                # DownloadError: ApplicationError: 5
+#                if sprache == "de":
+#                  tabelle_zonen_aendern = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#                else:
+#                  tabelle_zonen_aendern = '<font color="red">A timeout error occured</font>'
+#              else:
+#                # Wenn es geklappt hat...
+#                # Anzahl der Elemente in der Liste
+#                laenge_liste_zonen = len(liste_zonen)
+#
+#                tabelle_zonen_aendern = ''
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<form action="/loadbalancer_zone_zuordnen?loadbalancer='
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '" method="post" accept-charset="utf-8">'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="3" cellspacing="0" cellpadding="5">\n'
+#
+#                for z in range(len(liste_load_balancers[0].availability_zones)):
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>\n'
+#                  # Wenn dem Load Balancer nur eine Zone zugewiesen ist...
+#                  if len(liste_load_balancers[0].availability_zones) == 1:
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=67'
+#                    if sprache == "de":
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
+#                    else:
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
+#                  # Wenn dem Load Balancer mehr als nur eine Zone zugewiesen ist...
+#                  else:
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalancer_deregister_zone?loadbalancer='
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;zone='
+#                    tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
+#                    if sprache == "de":
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
+#                    else:
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="deregister zone">'
+#                      tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td colspan="2">\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tt>\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tt>\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
+#                # Wenn mehr als eine Instanz dem Load Balancer zugewiesen ist, dann muss hier ein 
+#                # leeres Feld hin. Sonst sieht die Tabelle nicht gut aus!
+#                if len(liste_load_balancers[0].availability_zones) != 0:
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<td>&nbsp;</td>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<select name="zonen" size="1">\n'
+#                for i in range(laenge_liste_zonen):
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<option>'
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + liste_zonen[i].name
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</option>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</select>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '<td align="center">\n'
+#                if sprache == "de":
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="verkn&uuml;pfen">'
+#                else:
+#                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<input type="submit" value="associate">'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</table>\n'
+#                tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
+#
+#
+#              template_values = {
+#              'navigations_bar': navigations_bar,
+#              'url': url,
+#              'url_linktext': url_linktext,
+#              'zone': regionname,
+#              'zone_amazon': zone_amazon,
+#              'zonen_liste': zonen_liste,
+#              'load_balancer_name': loadbalancer_name,
+#              'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
+#              'tabelle_zonen_aendern': tabelle_zonen_aendern,
+#              'input_error_message': input_error_message,
+#              }
+#
+#              #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
+#              #else:               naechse_seite = "loadbalancer_change_en.html"
+#              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#              path = os.path.join(os.path.dirname(__file__), "templates", sprache, "loadbalancer_change.html")
+#              self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+#class LoadBalancer_Instanz_Zuordnen(webapp.RequestHandler):
+#    def post(self):
+#        # self.response.out.write('posted!')
+#        # Zu verknüpfenden Load Balancer holen
+#        loadbalancer = self.request.get('loadbalancer')
+#        # Zu verknüpfende Instanz holen
+#        instanz = self.request.get('instanzen')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        # Mit ELB verbinden
+#        conn_elb = loginelb(username)
+#
+#        # Eine leere Liste für das IDs der Instanzen erzeugen
+#        list_of_instances = []
+#        # Die Instanz in Liste einfügen
+#        list_of_instances.append(instanz)
+#
+#        try:
+#          # Die Instanz verknüpfen
+#          conn_elb.register_instances(loadbalancer, list_of_instances)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "62"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "61"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+
+
+#class LoadBalancer_Instanz_Entfernen(webapp.RequestHandler):
+#    def get(self):
+#        # self.response.out.write('posted!')
+#        # Betreffenden Load Balancer holen
+#        loadbalancer = self.request.get('loadbalancer')
+#        # Zu entfernende Instanz holen
+#        instanz = self.request.get('instanz')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        # Mit ELB verbinden
+#        conn_elb = loginelb(username)
+#
+#        # Eine leere Liste für das IDs der Instanzen erzeugen
+#        list_of_instances = []
+#        # Die Instanz in Liste einfügen
+#        list_of_instances.append(instanz)
+#
+#        try:
+#          # Die Instanz entfernen
+#          conn_elb.deregister_instances(loadbalancer, list_of_instances)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "64"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "63"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+
+
+#class LoadBalancer_Zone_Entfernen(webapp.RequestHandler):
+#    def get(self):
+#        # self.response.out.write('posted!')
+#        # Betreffenden Load Balancer holen
+#        loadbalancer = self.request.get('loadbalancer')
+#        # Zu entfernende Zone holen
+#        zone = self.request.get('zone')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        # Mit ELB verbinden
+#        conn_elb = loginelb(username)
+#
+#        # Eine leere Liste für die Zonen erzeugen
+#        list_of_zones = []
+#        # Die Zone in Liste einfügen
+#        list_of_zones.append(zone)
+#
+#        try:
+#          # Die Instanz entfernen
+#          conn_elb.disable_availability_zones(loadbalancer, list_of_zones)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "65"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "66"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+
+#class LoadBalancer_Zone_Zuordnen(webapp.RequestHandler):
+#    def post(self):
+#        # self.response.out.write('posted!')
+#        # Zu verknüpfenden Load Balancer holen
+#        loadbalancer = self.request.get('loadbalancer')
+#        # Zu verknüpfende Zone holen
+#        zone = self.request.get('zonen')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        # Mit ELB verbinden
+#        conn_elb = loginelb(username)
+#
+#        # Eine leere Liste für die Zonen erzeugen
+#        list_of_zones = []
+#        # Die Zone in Liste einfügen
+#        list_of_zones.append(zone)
+#
+#        try:
+#          # Die Instanz verknüpfen
+#          conn_elb.enable_availability_zones(loadbalancer, list_of_zones)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "69"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "68"
+#          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+
+#class Elastic_IPs(webapp.RequestHandler):
+#    def get(self):
+#        # self.response.out.write('posted!')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          # So ist der HTML-Code korrekt
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          # So ist der HTML-Code nicht korrekt
+#          #url = users.create_logout_url(self.request.uri)
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          if sprache != "de":
+#            sprache = "en"
+#
+#          input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#          if input_error_message == None:
+#            input_error_message = ""
+#
+#          # Wenn die Nachricht grün formatiert werden soll...
+#          if message in ("0", "3", "5", "7"):
+#            # wird sie hier, in der Hilfsfunktion grün formatiert
+#            input_error_message = format_error_message_green(input_error_message)
+#          # Ansonsten wird die Nachricht rot formatiert
+#          elif message in ("1", "2", "4", "6", "8", "9", "10"):
+#            input_error_message = format_error_message_red(input_error_message)
+#          else:
+#            input_error_message = ""
+#
+#          try:
+#            # Liste mit den Adressen
+#            liste_adressen = conn_region.get_all_addresses()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            if sprache == "de":
+#              adressentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#            else:
+#              adressentabelle = '<font color="red">An error occured</font>'
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            if sprache == "de":
+#              adressentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#            else:
+#              adressentabelle = '<font color="red">A timeout error occured</font>'
+#          else:
+#            # Wenn es geklappt hat...
+#            # Anzahl der Elemente in der Liste
+#            laenge_liste_adressen = len(liste_adressen)
+#
+#            if laenge_liste_adressen == 0:
+#              if sprache == "de":
+#                adressentabelle = 'Es sind keine elastischen IPs in der Region vorhanden.'
+#              else:
+#                adressentabelle = 'No elastic IPs exist inside this region.'
+#            else:
+#              adressentabelle = ''
+#              adressentabelle = adressentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#              adressentabelle = adressentabelle + '<tr>'
+#              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
+#              if sprache == "de":
+#                adressentabelle = adressentabelle + '<th align="center">Adresse</th>'
+#              else:
+#                adressentabelle = adressentabelle + '<th align="center">Address</th>'
+#              if sprache == "de":
+#                adressentabelle = adressentabelle + '<th align="center">Instanz ID</th>'
+#              else:
+#                adressentabelle = adressentabelle + '<th align="center">Instance ID</th>'
+#              adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
+#              adressentabelle = adressentabelle + '</tr>'
+#              for i in range(laenge_liste_adressen):
+#                  adressentabelle = adressentabelle + '<tr>'
+#                  adressentabelle = adressentabelle + '<td>'
+#                  adressentabelle = adressentabelle + '<a href="/release_address?address='
+#                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
+#                  if sprache == "de":
+#                    adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
+#                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
+#                  else:
+#                    adressentabelle = adressentabelle + '" title="release elastic IP">'
+#                    adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
+#                  adressentabelle = adressentabelle + '</td>'
+#                  adressentabelle = adressentabelle + '<td>'
+#                  adressentabelle = adressentabelle + liste_adressen[i].public_ip
+#                  adressentabelle = adressentabelle + '</td>'
+#                  adressentabelle = adressentabelle + '<td>'
+#                  adressentabelle = adressentabelle + '<tt>'
+#                  if liste_adressen[i].instance_id:
+#                    adressentabelle = adressentabelle + liste_adressen[i].instance_id
+#                  else:
+#                    adressentabelle = adressentabelle + '&nbsp;'
+#                  adressentabelle = adressentabelle + '</tt>'
+#                  adressentabelle = adressentabelle + '</td>'
+#                  adressentabelle = adressentabelle + '<td>'
+#                  if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
+#                    adressentabelle = adressentabelle + '<a href="/associate_address?address='
+#                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
+#                    if sprache == "de":
+#                      adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
+#                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+#                    else:
+#                      adressentabelle = adressentabelle + '" title="associate elastic IP with instance">'
+#                      adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+#                  else:
+#                    adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
+#                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
+#                    if sprache == "de":
+#                      adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
+#                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+#                    else:
+#                      adressentabelle = adressentabelle + '" title="disassociate elastic IP from instance">'
+#                      adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+#                  adressentabelle = adressentabelle + '</td>'
+#                  adressentabelle = adressentabelle + '</tr>'
+#              adressentabelle = adressentabelle + '</table>'
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'adressentabelle': adressentabelle,
+#          'zonen_liste': zonen_liste,
+#          'input_error_message': input_error_message,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "adressen_de.html"
+#          #else:               naechse_seite = "adressen_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "adressen.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+#class Associate_IP(webapp.RequestHandler):
+#    def get(self):
+#        #self.response.out.write('posted!')
+#        # Anzuhängende Elastic IP-Adresse holen
+#        address = self.request.get('address')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          #url = users.create_logout_url(self.request.uri)
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          try:
+#            # Liste mit den Instanzen
+#            # Man kann nicht direkt versuchen mit get_all_security_groups(gruppen_liste)
+#            # die anzulegende Gruppe zu erzeugen. Wenn die Gruppe noch nicht existiert,
+#            # gibt es eine Fehlermeldung
+#            liste_reservations = conn_region.get_all_instances()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            fehlermeldung = "10"
+#            self.redirect('/elastic_ips?message='+fehlermeldung)
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "9"
+#            self.redirect('/elastic_ips?message='+fehlermeldung)
+#          else:
+#            # Wenn es geklappt hat und die Liste geholt wurde...
+#            # Anzahl der Elemente in der Liste
+#            laenge_liste_reservations = len(liste_reservations)
+#
+#            if laenge_liste_reservations == "0":
+#              # Wenn es keine laufenden Instanzen gibt
+#              instanzen_in_region = 0
+#            else:
+#              # Wenn es laufenden Instanzen gibt
+#              instanzen_in_region = 0
+#              for i in liste_reservations:
+#                for x in i.instances:
+#                  # Für jede Instanz wird geschaut...
+#                  # ...ob die Instanz in der Region des Volumes liegt und läuft
+#                  if x.state == u'running':
+#                    instanzen_in_region = instanzen_in_region + 1
+#
+#            tabelle_instanz_anhaengen = ''
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/ip_definitiv_anhaengen?address='
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+#            if sprache == "de":
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP-Adresse:</B></td>'
+#            else:
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP Address:</B></td>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+#            if sprache == "de":
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
+#            else:
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instances:</B></td>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
+#            if instanzen_in_region == 0:
+#              if sprache == "de":
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanz'
+#              else:
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have still no instance'
+#            else:
+#              if instanzen_in_region > 0:
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">'
+#                for i in liste_reservations:
+#                  for x in i.instances:
+#                    if x.state == u'running':
+#                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
+#                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
+#                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>'
+#                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<p>&nbsp;</p>'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+#            if sprache == "de":
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
+#            else:
+#              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+#            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
+#
+#            template_values = {
+#            'navigations_bar': navigations_bar,
+#            'url': url,
+#            'url_linktext': url_linktext,
+#            'zone': regionname,
+#            'zone_amazon': zone_amazon,
+#            'zonen_liste': zonen_liste,
+#            'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
+#            }
+#
+#            #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
+#            #else:               naechse_seite = "ip_anhaengen_en.html"
+#            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "ip_anhaengen.html")
+#            self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+
+#class IP_Definitiv_Anhaengen(webapp.RequestHandler):
+#    def post(self):
+#        # self.response.out.write('posted!')
+#        # Zu verknüpfende Elastic IP-Adresse holen
+#        address = self.request.get('address')
+#        # Zu verknüpfende Instanz holen
+#        instanzen = self.request.get('instanzen')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Die Elastic IP-Adresse verknüpfen
+#          conn_region.associate_address(instanzen, address)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "1"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "0"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+
+
+#class Release_IP(webapp.RequestHandler):
+#    def get(self):
+#      # Zu löschende (release) Elastic IP-Adresse holen
+#      address = self.request.get('address')
+#      # Den Usernamen erfahren
+#      username = users.get_current_user()
+#
+#      conn_region, regionname = login(username)
+#
+#      try:
+#        # Die Elastic IP-Adresse freigeben (löschen)
+#        conn_region.release_address(address)
+#      except EC2ResponseError:
+#        # Wenn es nicht geklappt hat...
+#        fehlermeldung = "4"
+#        self.redirect('/elastic_ips?message='+fehlermeldung)
+#      except DownloadError:
+#        # Diese Exception hilft gegen diese beiden Fehler:
+#        # DownloadError: ApplicationError: 2 timed out
+#        # DownloadError: ApplicationError: 5
+#        fehlermeldung = "8"
+#        self.redirect('/elastic_ips?message='+fehlermeldung)
+#      else:
+#        # Wenn es geklappt hat...
+#        fehlermeldung = "5"
+#        self.redirect('/elastic_ips?message='+fehlermeldung)
+
+
+#class Disassociate_IP(webapp.RequestHandler):
+#    def get(self):
+#        # Zu enfelchtende (disassociate) Elastic IP-Adresse holen
+#        address = self.request.get('address')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Die Elastic IP-Adresse freigeben (löschen)
+#          conn_region.disassociate_address(address)
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "2"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "3"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+
+
+#class Allocate_IP(webapp.RequestHandler):
+#    def post(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Eine Elastic IP-Adresse bekommen
+#          conn_region.allocate_address()
+#        except EC2ResponseError:
+#          # Wenn es nicht geklappt hat...
+#          fehlermeldung = "6"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "7"
+#          self.redirect('/elastic_ips?message='+fehlermeldung)
+
+
+#class Zonen(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          try:
+#            # Liste mit den Zonen
+#            liste_zonen = conn_region.get_all_zones()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            if sprache == "de":
+#              zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#            else:
+#              zonentabelle = '<font color="red">An error occured</font>'
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            if sprache == "de":
+#              zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#            else:
+#              zonentabelle = '<font color="red">A timeout error occured</font>'
+#          else:
+#            # Wenn es geklappt hat...
+#            # Anzahl der Elemente in der Liste
+#            laenge_liste_zonen = len(liste_zonen)
+#
+#            zonentabelle = ''
+#            zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#            zonentabelle = zonentabelle + '<tr>'
+#            zonentabelle = zonentabelle + '<th align="center">Name</th>'
+#            zonentabelle = zonentabelle + '<th align="center">Status</th>'
+#            zonentabelle = zonentabelle + '</tr>'
+#            for i in range(laenge_liste_zonen):
+#                zonentabelle = zonentabelle + '<tr>'
+#                zonentabelle = zonentabelle + '<td>'+liste_zonen[i].name+'</td>'
+#                if liste_zonen[i].state == u'available':
+#                  zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
+#                  if sprache == "de":
+#                    zonentabelle = zonentabelle + 'verf&uuml;gbar'
+#                  else:
+#                    zonentabelle = zonentabelle + liste_zonen[i].state
+#                else:
+#                  zonentabelle = zonentabelle + '<td align="center">'
+#                  zonentabelle = zonentabelle + liste_zonen[i].state
+#                zonentabelle = zonentabelle + '</td>'
+#                zonentabelle = zonentabelle + '</tr>'
+#            zonentabelle = zonentabelle + '</table>'
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'zonenliste': zonentabelle,
+#          'zonen_liste': zonen_liste,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "zonen_de.html"
+#          #else:               naechse_seite = "zonen_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "zonen.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
 
 
 class InstanzReboot(webapp.RequestHandler):
@@ -3531,49 +3580,49 @@ class InstanzBeenden(webapp.RequestHandler):
 
 
 
-class AlleInstanzenBeenden(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Liste der Instanzen holen
-          instances = conn_region.get_all_instances()
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "10"
-          self.redirect('/instanzen?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/instanzen?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          for reserv in instances:
-            for inst in reserv.instances:
-              # Wenn die Instanz schon im Zustand "terminated" ist, dann kann man sie nicht mehr beenden
-              if inst.state != u'terminated':
-
-                try:
-                  # Instanz beenden
-                  inst.stop()
-                except EC2ResponseError:
-                  # Wenn es nicht klappt...
-                  fehlermeldung = "82"
-                  self.redirect('/instanzen?message='+fehlermeldung)
-                except DownloadError:
-                  # Diese Exception hilft gegen diese beiden Fehler:
-                  # DownloadError: ApplicationError: 2 timed out
-                  # DownloadError: ApplicationError: 5
-                  fehlermeldung = "8"
-                  self.redirect('/instanzen?message='+fehlermeldung)
-
-          fehlermeldung = "81"
-          self.redirect('/instanzen?message='+fehlermeldung)
+#class AlleInstanzenBeenden(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Liste der Instanzen holen
+#          instances = conn_region.get_all_instances()
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "10"
+#          self.redirect('/instanzen?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/instanzen?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          for reserv in instances:
+#            for inst in reserv.instances:
+#              # Wenn die Instanz schon im Zustand "terminated" ist, dann kann man sie nicht mehr beenden
+#              if inst.state != u'terminated':
+#
+#                try:
+#                  # Instanz beenden
+#                  inst.stop()
+#                except EC2ResponseError:
+#                  # Wenn es nicht klappt...
+#                  fehlermeldung = "82"
+#                  self.redirect('/instanzen?message='+fehlermeldung)
+#                except DownloadError:
+#                  # Diese Exception hilft gegen diese beiden Fehler:
+#                  # DownloadError: ApplicationError: 2 timed out
+#                  # DownloadError: ApplicationError: 5
+#                  fehlermeldung = "8"
+#                  self.redirect('/instanzen?message='+fehlermeldung)
+#
+#          fehlermeldung = "81"
+#          self.redirect('/instanzen?message='+fehlermeldung)
 
 
 class KeyErzeugen(webapp.RequestHandler):
@@ -3670,1004 +3719,1004 @@ class KeyEntfernen(webapp.RequestHandler):
             self.redirect('/schluessel?message='+fehlermeldung)
 
 
-class SnapshotsEntfernen(webapp.RequestHandler):
-    def get(self):
-        # Name des zu löschenden Snapshots holen
-        snapshot = self.request.get('snapshot')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-            # Snapshot löschen
-            conn_region.delete_snapshot(snapshot)
-        except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "12"
-            self.redirect('/snapshots?message='+fehlermeldung)
-        except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "8"
-            self.redirect('/snapshots?message='+fehlermeldung)
-        else:
-            # Wenn es geklappt hat...
-            fehlermeldung = "11"
-            self.redirect('/snapshots?message='+fehlermeldung)
-
-
-class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
-    def post(self):
-        # Name Volume holen, von dem ein Snapshot erzeugt werden soll
-        volume = self.request.get('volume')
-        # Die Beschreibung des Snapshots holen
-        beschreibung = self.request.get('beschreibung')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        # Wenn die Variable "beschreibung" nicht gesetzt wurde,
-        # dann wird sie als leere Variable erzeugt
-        if not beschreibung: beschreibung = ''
-
-        try:
-            # Snapshot erzeugen
-            conn_region.create_snapshot(volume, description=beschreibung)
-        except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "14"
-            self.redirect('/snapshots?message='+fehlermeldung)
-        except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "8"
-            self.redirect('/snapshots?message='+fehlermeldung)
-        else:
-            # Wenn es geklappt hat...
-            fehlermeldung = "13"
-            self.redirect('/snapshots?message='+fehlermeldung)
-
-
-class SnapshotsErzeugen(webapp.RequestHandler):
-    def get(self):
-        # Name des zu anzuhängenden Volumes holen
-        volume = self.request.get('volume')
-        # Name der Zone holen
-        volume_zone  = self.request.get('zone')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          tabelle_snapshot = ''
-          tabelle_snapshot = tabelle_snapshot + '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
-          tabelle_snapshot = tabelle_snapshot + '<input type="hidden" name="volume" value="'+volume+'"> \n'
-          tabelle_snapshot = tabelle_snapshot + '<table border="3" cellspacing="0" cellpadding="5">'
-          tabelle_snapshot = tabelle_snapshot + '<tr>'
-          tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Volume:</B></td>'
-          tabelle_snapshot = tabelle_snapshot + '<td>'+volume+'</td>'
-          tabelle_snapshot = tabelle_snapshot + '</tr>'
-          tabelle_snapshot = tabelle_snapshot + '<tr>'
-          if sprache == "de":
-            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Beschreibung:</B></td>'
-          else:
-            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Description:</B></td>'
-          tabelle_snapshot = tabelle_snapshot + '<td>'
-          tabelle_snapshot = tabelle_snapshot + '<input name="beschreibung" type="text" size="80" maxlength="80"> \n'
-          tabelle_snapshot = tabelle_snapshot + '</td>'
-          tabelle_snapshot = tabelle_snapshot + '</tr>'
-          tabelle_snapshot = tabelle_snapshot + '</table>'
-          tabelle_snapshot = tabelle_snapshot + '<p>&nbsp;</p> \n'
-          if sprache == "de":
-            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="Snapshot erzeugen"> \n'
-          else:
-            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="create snapshot"> \n'
-          tabelle_snapshot = tabelle_snapshot + '</form>'
-
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'zonen_liste': zonen_liste,
-          'tabelle_snapshot': tabelle_snapshot,
-          }
-
-          #if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
-          #else:               naechse_seite = "snapshot_erzeugen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshot_erzeugen.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-
-class Snapshots(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if sprache != "de":
-            sprache = "en"
-
-          input_error_message = error_messages.get(message, {}).get(sprache)
-
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("11", "13"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "12", "14"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          try:
-            # Liste mit den Snapshots
-            #liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
-            #liste_snapshots = conn_region.get_all_snapshots(owner="self")
-            liste_snapshots = conn_region.get_all_snapshots()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              snapshotstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-            else:
-              snapshotstabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              snapshotstabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              snapshotstabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Snapshots in der Liste
-            laenge_liste_snapshots = len(liste_snapshots)
-
-            if laenge_liste_snapshots == 0:
-              if sprache == "de":
-                snapshotstabelle = 'Es sind keine Snapshots in der Region vorhanden.'
-              else:
-                snapshotstabelle = 'No snapshots exist inside this region.'
-            else: 
-              snapshotstabelle = ''
-              snapshotstabelle = snapshotstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              snapshotstabelle = snapshotstabelle + '<tr>'
-              snapshotstabelle = snapshotstabelle + '<th>&nbsp;&nbsp;</th>'
-              snapshotstabelle = snapshotstabelle + '<th align="center">Snapshot ID</th>'
-              snapshotstabelle = snapshotstabelle + '<th align="center">Volume ID</th>'
-              if sprache == "de":
-                snapshotstabelle = snapshotstabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Besitzer</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Beschreibung</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Startzeitpunkt</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Fortschritt</th>'
-              else: # Wenn die Sprache Englisch ist...
-                snapshotstabelle = snapshotstabelle + '<th align="center">Size [GB]</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Owner</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Description</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Start Time</th>'
-                snapshotstabelle = snapshotstabelle + '<th align="center">Progress</th>'
-              snapshotstabelle = snapshotstabelle + '</tr>'
-              for i in range(laenge_liste_snapshots):
-                  snapshotstabelle = snapshotstabelle + '<tr>'
-                  snapshotstabelle = snapshotstabelle + '<td>'
-                  snapshotstabelle = snapshotstabelle + '<a href="/snapshotsentfernen?snapshot='
-                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
-                  if sprache == "de":
-                    snapshotstabelle = snapshotstabelle + '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
-                  else:
-                    snapshotstabelle = snapshotstabelle + '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td>'
-                  snapshotstabelle = snapshotstabelle + '<tt>'
-                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
-                  snapshotstabelle = snapshotstabelle + '</tt>'
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td>'
-                  snapshotstabelle = snapshotstabelle + '<tt>'
-                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].volume_id
-                  snapshotstabelle = snapshotstabelle + '</tt>'
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td align="right">'
-                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].volume_size)
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  if liste_snapshots[i].status == u'completed':
-                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#c3ddc3" align="center">'
-                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                  elif liste_snapshots[i].status == u'pending':
-                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffffcc" align="center">'
-                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                  elif liste_snapshots[i].status == u'deleting':
-                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffcc99" align="center">'
-                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                  else:
-                    snapshotstabelle = snapshotstabelle + '<td align="center">'
-                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td align="left">'
-                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].owner_id)
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td align="left">'
-                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].description)
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td>'
-                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                  datum_der_erzeugung = parse(liste_snapshots[i].start_time)
-                  snapshotstabelle = snapshotstabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '<td align="right">'
-                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].progress)
-                  snapshotstabelle = snapshotstabelle + '</td>'
-                  snapshotstabelle = snapshotstabelle + '</tr>'
-              snapshotstabelle = snapshotstabelle + '</table>'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'snapshotstabelle': snapshotstabelle,
-          'zonen_liste': zonen_liste,
-          'input_error_message': input_error_message,
-          }
-
-          #if sprache == "de": naechse_seite = "snapshots_de.html"
-          #else:               naechse_seite = "snapshots_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshots.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-
-class AlleVolumesLoeschenFrage(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'zonen_liste': zonen_liste,
-          }
-
-          #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
-          #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_volumes_loeschen_frage.html")
-          self.response.out.write(template.render(path,template_values))
-
-
-class AlleVolumesLoeschenDefinitiv(webapp.RequestHandler):
-    def get(self):
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Liste mit den Volumes
-          liste_volumes = conn_region.get_all_volumes()
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "10"
-          self.redirect('/volumes?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          # Anzahl der Volumes in der Liste
-          laenge_liste_volumes = len(liste_volumes)
-          for i in range(laenge_liste_volumes):
-                try:
-                  # Volume entfernen
-                  conn_region.delete_volume(liste_volumes[i].id)
-                except EC2ResponseError:
-                  # Wenn es nicht klappt...
-                  fehlermeldung = "26"
-                  self.redirect('/volumes?message='+fehlermeldung)
-                except DownloadError:
-                  # Diese Exception hilft gegen diese beiden Fehler:
-                  # DownloadError: ApplicationError: 2 timed out
-                  # DownloadError: ApplicationError: 5
-                  fehlermeldung = "8"
-                  self.redirect('/volumes?message='+fehlermeldung)
-
-          fehlermeldung = "27"
-          self.redirect('/volumes?message='+fehlermeldung)
-
-
-class Volumes(webapp.RequestHandler):
-    def get(self):
-        # Eventuell vorhande Fehlermeldung holen
-        message = self.request.get('message')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          #url = users.create_logout_url(self.request.uri)
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          if sprache != "de":
-            sprache = "en"
-
-          input_error_message = error_messages.get(message, {}).get(sprache)
-
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("15", "22", "23", "24", "27"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "10", "16", "17", "18", "19", "20", "21", "25", "26"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          # Liste mit den Zonen
-          liste_zonen = conn_region.get_all_zones()
-          # Anzahl der Elemente in der Liste
-          laenge_liste_zonen = len(liste_zonen)
-
-          # Hier wird die Auswahlliste der Zonen erzeugt
-          # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
-          zonen_in_der_region = ''
-          for i in range(laenge_liste_zonen):
-              zonen_in_der_region = zonen_in_der_region + "<option>"
-              zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
-              zonen_in_der_region = zonen_in_der_region + "</option>"
-
-          try:
-            # Liste mit den Volumes
-            liste_volumes = conn_region.get_all_volumes()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              volumestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
-            else:
-              volumestabelle = '<font color="red">An error occured</font>'
-            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-            laenge_liste_volumes = 0
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              volumestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              volumestabelle = '<font color="red">A timeout error occured</font>'
-            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
-            laenge_liste_volumes = 0
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Volumes in der Liste
-            laenge_liste_volumes = len(liste_volumes)
-
-            if laenge_liste_volumes == 0:
-              if sprache == "de":
-                volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
-              else:
-                volumestabelle = 'No volumes exist inside this region.'
-            else: 
-              volumestabelle = ''
-              volumestabelle = volumestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              volumestabelle = volumestabelle + '<tr>'
-              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
-              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
-              volumestabelle = volumestabelle + '<th>&nbsp;</th>'
-              volumestabelle = volumestabelle + '<th align="center">Volume ID</th>'
-              volumestabelle = volumestabelle + '<th align="center">Snapshot ID</th>'
-              if sprache == "de":
-                volumestabelle = volumestabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
-                volumestabelle = volumestabelle + '<th align="center">Status</th>'
-                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
-                volumestabelle = volumestabelle + '<th align="center">Datum der Erzeugung</th>'
-                volumestabelle = volumestabelle + '<th align="center">Device</th>'
-                volumestabelle = volumestabelle + '<th align="center">Datum des Verkn&uuml;pfung</th>'
-                volumestabelle = volumestabelle + '<th align="center">Instanz ID</th>'
-                volumestabelle = volumestabelle + '<th align="center">Status der Verkn&uuml;pfung</th>'
-              else: # Wenn die Sprache Englisch ist...
-                volumestabelle = volumestabelle + '<th align="center">Size [GB]</th>'
-                volumestabelle = volumestabelle + '<th align="center">Status</th>'
-                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
-                volumestabelle = volumestabelle + '<th align="center">Creation Date</th>'
-                volumestabelle = volumestabelle + '<th align="center">Device</th>'
-                volumestabelle = volumestabelle + '<th align="center">Attach Date</th>'
-                volumestabelle = volumestabelle + '<th align="center">Instance ID</th>'
-                volumestabelle = volumestabelle + '<th align="center">Attach Status</th>'
-              volumestabelle = volumestabelle + '</tr>'
-              for i in range(laenge_liste_volumes):
-                  volumestabelle = volumestabelle + '<tr>'
-                  volumestabelle = volumestabelle + '<td>'
-                  # Nur wenn der Zustand des Volumes "available" ist, darf  man es löschen.
-                  # Darum wird hier überprüft, ob der Wert von "attach_data.status" gesetzt ist.
-                  # Wenn er nicht gesetzt ist, kann/darf das Volume gelöscht werden.
-                  if liste_volumes[i].attach_data.status == None:
-                    volumestabelle = volumestabelle + '<a href="/volumeentfernen?volume='
-                    volumestabelle = volumestabelle + liste_volumes[i].id
-                    if sprache == "de":
-                      volumestabelle = volumestabelle + '" title="Volume l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Volume l&ouml;schen"></a>'
-                    else:
-                      volumestabelle = volumestabelle + '" title="erase volume"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase volume"></a>'
-                  # Das Volume kann/darf nicht gelöscht werden.
-                  else:
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  volumestabelle = volumestabelle + '</td>'
-
-                  volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
-                  volumestabelle = volumestabelle + liste_volumes[i].id
-                  if sprache == "de":
-                    volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
-                  else:
-                    volumestabelle = volumestabelle + '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
-                  volumestabelle = volumestabelle + '</td>'
-
-                  if liste_volumes[i].attach_data.status == None:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
-                    volumestabelle = volumestabelle + liste_volumes[i].id
-                    volumestabelle = volumestabelle + "&amp;zone="
-                    volumestabelle = volumestabelle + str(liste_volumes[i].zone)
-                    if sprache == "de":
-                      volumestabelle = volumestabelle + '" title="Volume anh&auml;ngen">'
-                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Volume anh&auml;ngen"></a>'
-                    else:
-                      volumestabelle = volumestabelle + '" title="attach volume">'
-                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="attach volume"></a>'
-                  elif liste_volumes[i].attach_data.status == u'attaching':
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + 'attaching'
-                  elif liste_volumes[i].attach_data.status == u'deleting':
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + 'deleting'
-                  elif liste_volumes[i].attach_data.status == u'busy':
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + 'busy'
-                  elif liste_volumes[i].attach_data.status == u'attached':
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + '<a href="/volumeloesen?volume='
-                    volumestabelle = volumestabelle + liste_volumes[i].id
-                    if sprache == "de":
-                      volumestabelle = volumestabelle + '" title="Volume l&ouml;sen">'
-                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Detach Volume"></a>'
-                    else:
-                      volumestabelle = volumestabelle + '" title="detach volume">'
-                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="detach volume"></a>'
-                  else:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<tt>'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].id)
-                  volumestabelle = volumestabelle + '</tt>'
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<tt>'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].snapshot_id)
-                  volumestabelle = volumestabelle + '</tt>'
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '<td align="right">'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].size)
-                  volumestabelle = volumestabelle + '</td>'
-                  if liste_volumes[i].status == u'available':
-                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                    volumestabelle = volumestabelle + liste_volumes[i].status
-                  elif liste_volumes[i].status == u'in-use':
-                    volumestabelle = volumestabelle + '<td bgcolor="#ffffcc" align="center">'
-                    volumestabelle = volumestabelle + liste_volumes[i].status
-                  elif liste_volumes[i].status == u'deleting':
-                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
-                    volumestabelle = volumestabelle + liste_volumes[i].status
-                  else:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + liste_volumes[i].status
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '<td align="center">'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].zone)
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '<td>'
-                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                  datum_der_erzeugung = parse(liste_volumes[i].create_time)
-                  volumestabelle = volumestabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                  #volumestabelle = volumestabelle + str(datum_der_erzeugung)
-                  #volumestabelle = volumestabelle + str(liste_volumes[i].create_time)
-                  volumestabelle = volumestabelle + '</td>'
-                  if liste_volumes[i].attach_data.device == None:
-                    volumestabelle = volumestabelle + '<td>'
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  else:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + '<tt>'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.device)
-                    volumestabelle = volumestabelle + '</tt>'
-                  volumestabelle = volumestabelle + '</td>'
-                  if liste_volumes[i].attach_data.attach_time == None:
-                    volumestabelle = volumestabelle + '<td>'
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  else:
-                    volumestabelle = volumestabelle + '<td>'
-                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                    datum_des_anhaengens = parse(liste_volumes[i].attach_data.attach_time)
-                    volumestabelle = volumestabelle + str(datum_des_anhaengens.strftime("%Y-%m-%d  %H:%M:%S"))
-                    #volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.attach_time)
-                  volumestabelle = volumestabelle + '</td>'
-                  if liste_volumes[i].attach_data.instance_id == None:
-                    volumestabelle = volumestabelle + '<td>'
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  else:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.instance_id)
-                  volumestabelle = volumestabelle + '</td>'
-                  if liste_volumes[i].attach_data.status == None:
-                    volumestabelle = volumestabelle + '<td>'
-                    volumestabelle = volumestabelle + '&nbsp;'
-                  elif liste_volumes[i].attach_data.status == u'attached':
-                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                  elif liste_volumes[i].attach_data.status == u'busy':
-                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                  else:
-                    volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
-                  volumestabelle = volumestabelle + '</td>'
-                  volumestabelle = volumestabelle + '</tr>'
-              volumestabelle = volumestabelle + '</table>'
-
-          if laenge_liste_volumes >= 1:
-            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<tr>\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<td align="center">\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<form action="/alle_volumes_loeschen" method="get">\n'
-            if sprache == "de":
-              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumes l&ouml;schen">\n'
-            else:
-              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="erase all volumes">\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</form>\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</td>\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</tr>\n'
-            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</table>\n'
-          else:
-            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'volumestabelle': volumestabelle,
-          'zonen_in_der_region': zonen_in_der_region,
-          'input_error_message': input_error_message,
-          'zonen_liste': zonen_liste,
-          'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
-          }
-
-          #if sprache == "de": naechse_seite = "volumes_de.html"
-          #else:               naechse_seite = "volumes_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volumes.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-
-class VolumesEntfernen(webapp.RequestHandler):
-    def get(self):
-        # Name des zu löschenden Volumes holen
-        volume = self.request.get('volume')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Volume löschen
-          conn_region.delete_volume(volume)
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "19"
-          self.redirect('/volumes?message='+fehlermeldung) 
-        except DownloadError:
-          # Wenn es nicht klappt...
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung) 
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "22"
-          self.redirect('/volumes?message='+fehlermeldung) 
-
-
-class VolumeDefinitivAnhaengen(webapp.RequestHandler):
-    def post(self):
-        # Name des anzuhängenden Volumes holen
-        volume = self.request.get('volume')
-        # Instanz-ID holen
-        instance_id = self.request.get('instanzen')
-        # Device holen
-        device = self.request.get('device')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Volume anhaengen
-          neues_volume = conn_region.attach_volume(volume, instance_id, device)
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "21"
-          self.redirect('/volumes?message='+fehlermeldung)
-        except DownloadError:
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung)
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "23"
-          self.redirect('/volumes?message='+fehlermeldung)
-
-
-class VolumesAnhaengen(webapp.RequestHandler):
-    def get(self):
-        # Name des zu anzuhängenden Volumes holen
-        volume = self.request.get('volume')
-        # Name der Zone holen
-        volume_zone  = self.request.get('zone')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-        if not username:
-            self.redirect('/')
-
-        # Nachsehen, ob eine Region/Zone ausgewählte wurde
-        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-        results = aktivezone.fetch(100)
-
-        if results:
-          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-          sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
-
-          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-          url_linktext = 'Logout'
-
-          conn_region, regionname = login(username)
-          zone_amazon = amazon_region(username)
-
-          zonen_liste = zonen_liste_funktion(username,sprache)
-
-          liste_reservations = conn_region.get_all_instances()
-          # Anzahl der Elemente in der Liste
-          laenge_liste_reservations = len(liste_reservations)
-
-          if laenge_liste_reservations == "0":
-            # Wenn es keine laufenden Instanzen gibt
-            instanzen_in_region = 0
-          else:
-            # Wenn es laufenden Instanzen gibt
-            instanzen_in_region = 0
-            for i in liste_reservations:
-              for x in i.instances:
-                # Für jede Instanz wird geschaut...
-                # ...ob die Instanz in der Region des Volumes liegt und läuft
-                if x.placement == volume_zone and x.state == u'running':
-                  instanzen_in_region = instanzen_in_region + 1
-
-          tabelle_anhaengen = ''
-          tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
-          tabelle_anhaengen = tabelle_anhaengen + volume
-          tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">'
-          tabelle_anhaengen = tabelle_anhaengen + '\n'
-          tabelle_anhaengen = tabelle_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Volume:</B></td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          tabelle_anhaengen = tabelle_anhaengen + volume
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          if sprache == "de":
-            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
-          else:
-            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-          tabelle_anhaengen = tabelle_anhaengen + volume_zone
-          tabelle_anhaengen = tabelle_anhaengen + '</B>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-          if sprache == "de":
-            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
-          else:
-            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instances:</B></td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          if instanzen_in_region == 0:
-            if sprache == "de":
-              tabelle_anhaengen = tabelle_anhaengen + 'Sie haben keine Instanz'
-            else:
-              tabelle_anhaengen = tabelle_anhaengen + 'You have still no instance'
-          else:
-            if instanzen_in_region > 0:
-              tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'
-              for i in liste_reservations:
-                for x in i.instances:
-                  if x.placement == volume_zone and x.state == u'running':
-                    tabelle_anhaengen = tabelle_anhaengen + '<option>'
-                    tabelle_anhaengen = tabelle_anhaengen + x.id
-                    tabelle_anhaengen = tabelle_anhaengen + '</option>'
-              tabelle_anhaengen = tabelle_anhaengen + '</select>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          if sprache == "de":
-            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
-          else:
-            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-          tabelle_anhaengen = tabelle_anhaengen + volume_zone
-          tabelle_anhaengen = tabelle_anhaengen + '</B>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<select name="device" size="1">'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sda</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdb</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option selected="selected">/dev/sdc</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdd</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sde</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdf</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdg</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdh</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdj</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdk</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdl</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdm</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdn</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdo</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdp</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdq</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdr</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sds</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdt</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdv</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdw</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdx</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdy</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdz</option>'
-          tabelle_anhaengen = tabelle_anhaengen + '</select>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '</table>'
-          tabelle_anhaengen = tabelle_anhaengen + '<p>&nbsp;</p>'
-          tabelle_anhaengen = tabelle_anhaengen + '\n'
-          if instanzen_in_region == 0:
-            tabelle_anhaengen = tabelle_anhaengen + ' '
-          else:
-            if sprache == "de":
-              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volume anh&auml;ngen">'
-            else:
-              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
-          tabelle_anhaengen = tabelle_anhaengen + '\n'
-          tabelle_anhaengen = tabelle_anhaengen + '</form>'
-
-          if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
-            if sprache == "de":        # ... und die Sprache deutsch ist ...
-              ebs_volumes_eucalyptus_warnung = '<font color="red">Achtung! Das Verbinden von Volumes mit Instanzen dauert unter Eucalyptus teilweise mehrere Minuten.</font>'
-            else:                      # ... und die Sprache englisch ist ...
-              ebs_volumes_eucalyptus_warnung = '<font color="red">Attention! Attaching volumes with Instances at Eucalyptus needs some time (several minutes).</font>'
-          else:                        # Wenn die Region Amazon EC2 ist...
-            ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'zonen_liste': zonen_liste,
-          'tabelle_anhaengen': tabelle_anhaengen,
-          'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
-          }
-
-          #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
-          #else:               naechse_seite = "volume_anhaengen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
-          self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-
-class VolumesErzeugen(webapp.RequestHandler):
-    def post(self):
-        #self.response.out.write('posted!')
-        groesse = self.request.get('groesse')
-        GB_oder_TB = self.request.get('GB_oder_TB')
-        zone = self.request.get('zone')
-
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        if groesse == "":
-          # Testen ob die Größe des neuen Volumes angegeben wurde
-          # Wenn keine Größe angegeben wurde, kann kein Volume angelegt werden
-          #fehlermeldung = "Sie haben keine Größe angegeben"
-          fehlermeldung = "16"
-          self.redirect('/volumes?message='+fehlermeldung)
-        elif groesse.isdigit() == False: 
-          # Testen ob die Größe eine Zahl ist
-          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
-          #fehlermeldung = "Sie haben keine Zahl angegeben"
-          fehlermeldung = "17"
-          self.redirect('/volumes?message='+fehlermeldung)
-        elif GB_oder_TB == "TB" and int(groesse) > 1:
-          # Testen ob TB als Maßeinheit angegeben wurde und die Größe > 1 TB ist
-          # fehlermeldung = "Amazon EBS ermöglicht die Erstellung von Datenträgern
-          # mit einer Speicherkapazität von 1 GB bis 1 TB"
-          fehlermeldung = "25"
-          self.redirect('/volumes?message='+fehlermeldung)
-        else:
-          # Die Eingabe in Integer umwandeln
-          groesse = int(groesse)
-          if GB_oder_TB == "TB":
-            # Testen ob GB oder TB als Maßeinheit angegeben wurde
-            # Bei TB wird die Zahl mit 1000 multipliziert
-            groesse *= 1000
-          # Volume erzeugen
-          try:
-            # Volume erzeugen
-            neues_volume = conn_region.create_volume(groesse, zone, snapshot=None)
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            fehlermeldung = "18"
-            self.redirect('/volumes?message='+fehlermeldung)
-          except DownloadError:
-            # Wenn es nicht klappt...
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            fehlermeldung = "8"
-            self.redirect('/volumes?message='+fehlermeldung) 
-          else:
-            # Wenn es geklappt hat...
-            fehlermeldung = "15"
-            self.redirect('/volumes?message='+fehlermeldung)
-
-
-class VolumesLoesen(webapp.RequestHandler):
-    def get(self):
-        # Name des zu lösenden Volumes holen
-        volume = self.request.get('volume')
-        # Den Usernamen erfahren
-        username = users.get_current_user()
-
-        conn_region, regionname = login(username)
-
-        try:
-          # Volume entkoppeln
-          conn_region.detach_volume(volume)
-        except EC2ResponseError:
-          # Wenn es nicht klappt...
-          fehlermeldung = "20"
-          self.redirect('/volumes?message='+fehlermeldung) 
-        except DownloadError:
-          # Wenn es nicht klappt...
-          # Diese Exception hilft gegen diese beiden Fehler:
-          # DownloadError: ApplicationError: 2 timed out
-          # DownloadError: ApplicationError: 5
-          fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung) 
-        else:
-          # Wenn es geklappt hat...
-          fehlermeldung = "24"
-          self.redirect('/volumes?message='+fehlermeldung) 
+#class SnapshotsEntfernen(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu löschenden Snapshots holen
+#        snapshot = self.request.get('snapshot')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#            # Snapshot löschen
+#            conn_region.delete_snapshot(snapshot)
+#        except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            fehlermeldung = "12"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+#        except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "8"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+#        else:
+#            # Wenn es geklappt hat...
+#            fehlermeldung = "11"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+
+
+#class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
+#    def post(self):
+#        # Name Volume holen, von dem ein Snapshot erzeugt werden soll
+#        volume = self.request.get('volume')
+#        # Die Beschreibung des Snapshots holen
+#        beschreibung = self.request.get('beschreibung')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        # Wenn die Variable "beschreibung" nicht gesetzt wurde,
+#        # dann wird sie als leere Variable erzeugt
+#        if not beschreibung: beschreibung = ''
+#
+#        try:
+#            # Snapshot erzeugen
+#            conn_region.create_snapshot(volume, description=beschreibung)
+#        except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            fehlermeldung = "14"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+#        except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "8"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+#        else:
+#            # Wenn es geklappt hat...
+#            fehlermeldung = "13"
+#            self.redirect('/snapshots?message='+fehlermeldung)
+
+
+#class SnapshotsErzeugen(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu anzuhängenden Volumes holen
+#        volume = self.request.get('volume')
+#        # Name der Zone holen
+#        volume_zone  = self.request.get('zone')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          tabelle_snapshot = ''
+#          tabelle_snapshot = tabelle_snapshot + '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
+#          tabelle_snapshot = tabelle_snapshot + '<input type="hidden" name="volume" value="'+volume+'"> \n'
+#          tabelle_snapshot = tabelle_snapshot + '<table border="3" cellspacing="0" cellpadding="5">'
+#          tabelle_snapshot = tabelle_snapshot + '<tr>'
+#          tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Volume:</B></td>'
+#          tabelle_snapshot = tabelle_snapshot + '<td>'+volume+'</td>'
+#          tabelle_snapshot = tabelle_snapshot + '</tr>'
+#          tabelle_snapshot = tabelle_snapshot + '<tr>'
+#          if sprache == "de":
+#            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Beschreibung:</B></td>'
+#          else:
+#            tabelle_snapshot = tabelle_snapshot + '<td align="right"><B>Description:</B></td>'
+#          tabelle_snapshot = tabelle_snapshot + '<td>'
+#          tabelle_snapshot = tabelle_snapshot + '<input name="beschreibung" type="text" size="80" maxlength="80"> \n'
+#          tabelle_snapshot = tabelle_snapshot + '</td>'
+#          tabelle_snapshot = tabelle_snapshot + '</tr>'
+#          tabelle_snapshot = tabelle_snapshot + '</table>'
+#          tabelle_snapshot = tabelle_snapshot + '<p>&nbsp;</p> \n'
+#          if sprache == "de":
+#            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="Snapshot erzeugen"> \n'
+#          else:
+#            tabelle_snapshot = tabelle_snapshot + '<input type="submit" value="create snapshot"> \n'
+#          tabelle_snapshot = tabelle_snapshot + '</form>'
+#
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'zonen_liste': zonen_liste,
+#          'tabelle_snapshot': tabelle_snapshot,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "snapshot_erzeugen_de.html"
+#          #else:               naechse_seite = "snapshot_erzeugen_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshot_erzeugen.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+
+#class Snapshots(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          if sprache != "de":
+#            sprache = "en"
+#
+#          input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#          if input_error_message == None:
+#            input_error_message = ""
+#
+#          # Wenn die Nachricht grün formatiert werden soll...
+#          if message in ("11", "13"):
+#            # wird sie hier, in der Hilfsfunktion grün formatiert
+#            input_error_message = format_error_message_green(input_error_message)
+#          # Ansonsten wird die Nachricht rot formatiert
+#          elif message in ("8", "12", "14"):
+#            input_error_message = format_error_message_red(input_error_message)
+#          else:
+#            input_error_message = ""
+#
+#          try:
+#            # Liste mit den Snapshots
+#            #liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
+#            #liste_snapshots = conn_region.get_all_snapshots(owner="self")
+#            liste_snapshots = conn_region.get_all_snapshots()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            if sprache == "de":
+#              snapshotstabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#            else:
+#              snapshotstabelle = '<font color="red">An error occured</font>'
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            if sprache == "de":
+#              snapshotstabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#            else:
+#              snapshotstabelle = '<font color="red">A timeout error occured</font>'
+#          else:
+#            # Wenn es geklappt hat...
+#            # Anzahl der Snapshots in der Liste
+#            laenge_liste_snapshots = len(liste_snapshots)
+#
+#            if laenge_liste_snapshots == 0:
+#              if sprache == "de":
+#                snapshotstabelle = 'Es sind keine Snapshots in der Region vorhanden.'
+#              else:
+#                snapshotstabelle = 'No snapshots exist inside this region.'
+#            else: 
+#              snapshotstabelle = ''
+#              snapshotstabelle = snapshotstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#              snapshotstabelle = snapshotstabelle + '<tr>'
+#              snapshotstabelle = snapshotstabelle + '<th>&nbsp;&nbsp;</th>'
+#              snapshotstabelle = snapshotstabelle + '<th align="center">Snapshot ID</th>'
+#              snapshotstabelle = snapshotstabelle + '<th align="center">Volume ID</th>'
+#              if sprache == "de":
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Besitzer</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Beschreibung</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Startzeitpunkt</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Fortschritt</th>'
+#              else: # Wenn die Sprache Englisch ist...
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Size [GB]</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Status</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Owner</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Description</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Start Time</th>'
+#                snapshotstabelle = snapshotstabelle + '<th align="center">Progress</th>'
+#              snapshotstabelle = snapshotstabelle + '</tr>'
+#              for i in range(laenge_liste_snapshots):
+#                  snapshotstabelle = snapshotstabelle + '<tr>'
+#                  snapshotstabelle = snapshotstabelle + '<td>'
+#                  snapshotstabelle = snapshotstabelle + '<a href="/snapshotsentfernen?snapshot='
+#                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
+#                  if sprache == "de":
+#                    snapshotstabelle = snapshotstabelle + '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
+#                  else:
+#                    snapshotstabelle = snapshotstabelle + '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td>'
+#                  snapshotstabelle = snapshotstabelle + '<tt>'
+#                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].id
+#                  snapshotstabelle = snapshotstabelle + '</tt>'
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td>'
+#                  snapshotstabelle = snapshotstabelle + '<tt>'
+#                  snapshotstabelle = snapshotstabelle + liste_snapshots[i].volume_id
+#                  snapshotstabelle = snapshotstabelle + '</tt>'
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td align="right">'
+#                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].volume_size)
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  if liste_snapshots[i].status == u'completed':
+#                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#c3ddc3" align="center">'
+#                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+#                  elif liste_snapshots[i].status == u'pending':
+#                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffffcc" align="center">'
+#                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+#                  elif liste_snapshots[i].status == u'deleting':
+#                    snapshotstabelle = snapshotstabelle + '<td bgcolor="#ffcc99" align="center">'
+#                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+#                  else:
+#                    snapshotstabelle = snapshotstabelle + '<td align="center">'
+#                    snapshotstabelle = snapshotstabelle + liste_snapshots[i].status
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td align="left">'
+#                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].owner_id)
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td align="left">'
+#                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].description)
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td>'
+#                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+#                  datum_der_erzeugung = parse(liste_snapshots[i].start_time)
+#                  snapshotstabelle = snapshotstabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '<td align="right">'
+#                  snapshotstabelle = snapshotstabelle + str(liste_snapshots[i].progress)
+#                  snapshotstabelle = snapshotstabelle + '</td>'
+#                  snapshotstabelle = snapshotstabelle + '</tr>'
+#              snapshotstabelle = snapshotstabelle + '</table>'
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'snapshotstabelle': snapshotstabelle,
+#          'zonen_liste': zonen_liste,
+#          'input_error_message': input_error_message,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "snapshots_de.html"
+#          #else:               naechse_seite = "snapshots_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "snapshots.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+
+#class AlleVolumesLoeschenFrage(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'zonen_liste': zonen_liste,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
+#          #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "alle_volumes_loeschen_frage.html")
+#          self.response.out.write(template.render(path,template_values))
+
+
+#class AlleVolumesLoeschenDefinitiv(webapp.RequestHandler):
+#    def get(self):
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Liste mit den Volumes
+#          liste_volumes = conn_region.get_all_volumes()
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "10"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          # Anzahl der Volumes in der Liste
+#          laenge_liste_volumes = len(liste_volumes)
+#          for i in range(laenge_liste_volumes):
+#                try:
+#                  # Volume entfernen
+#                  conn_region.delete_volume(liste_volumes[i].id)
+#                except EC2ResponseError:
+#                  # Wenn es nicht klappt...
+#                  fehlermeldung = "26"
+#                  self.redirect('/volumes?message='+fehlermeldung)
+#                except DownloadError:
+#                  # Diese Exception hilft gegen diese beiden Fehler:
+#                  # DownloadError: ApplicationError: 2 timed out
+#                  # DownloadError: ApplicationError: 5
+#                  fehlermeldung = "8"
+#                  self.redirect('/volumes?message='+fehlermeldung)
+#
+#          fehlermeldung = "27"
+#          self.redirect('/volumes?message='+fehlermeldung)
+
+
+#class Volumes(webapp.RequestHandler):
+#    def get(self):
+#        # Eventuell vorhande Fehlermeldung holen
+#        message = self.request.get('message')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          #url = users.create_logout_url(self.request.uri)
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          if sprache != "de":
+#            sprache = "en"
+#
+#          input_error_message = error_messages.get(message, {}).get(sprache)
+#
+#          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+#          if input_error_message == None:
+#            input_error_message = ""
+#
+#          # Wenn die Nachricht grün formatiert werden soll...
+#          if message in ("15", "22", "23", "24", "27"):
+#            # wird sie hier, in der Hilfsfunktion grün formatiert
+#            input_error_message = format_error_message_green(input_error_message)
+#          # Ansonsten wird die Nachricht rot formatiert
+#          elif message in ("8", "10", "16", "17", "18", "19", "20", "21", "25", "26"):
+#            input_error_message = format_error_message_red(input_error_message)
+#          else:
+#            input_error_message = ""
+#
+#          # Liste mit den Zonen
+#          liste_zonen = conn_region.get_all_zones()
+#          # Anzahl der Elemente in der Liste
+#          laenge_liste_zonen = len(liste_zonen)
+#
+#          # Hier wird die Auswahlliste der Zonen erzeugt
+#          # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
+#          zonen_in_der_region = ''
+#          for i in range(laenge_liste_zonen):
+#              zonen_in_der_region = zonen_in_der_region + "<option>"
+#              zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
+#              zonen_in_der_region = zonen_in_der_region + "</option>"
+#
+#          try:
+#            # Liste mit den Volumes
+#            liste_volumes = conn_region.get_all_volumes()
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            if sprache == "de":
+#              volumestabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+#            else:
+#              volumestabelle = '<font color="red">An error occured</font>'
+#            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+#            laenge_liste_volumes = 0
+#          except DownloadError:
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            if sprache == "de":
+#              volumestabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+#            else:
+#              volumestabelle = '<font color="red">A timeout error occured</font>'
+#            # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
+#            laenge_liste_volumes = 0
+#          else:
+#            # Wenn es geklappt hat...
+#            # Anzahl der Volumes in der Liste
+#            laenge_liste_volumes = len(liste_volumes)
+#
+#            if laenge_liste_volumes == 0:
+#              if sprache == "de":
+#                volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
+#              else:
+#                volumestabelle = 'No volumes exist inside this region.'
+#            else: 
+#              volumestabelle = ''
+#              volumestabelle = volumestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+#              volumestabelle = volumestabelle + '<tr>'
+#              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
+#              volumestabelle = volumestabelle + '<th>&nbsp;&nbsp;</th>'
+#              volumestabelle = volumestabelle + '<th>&nbsp;</th>'
+#              volumestabelle = volumestabelle + '<th align="center">Volume ID</th>'
+#              volumestabelle = volumestabelle + '<th align="center">Snapshot ID</th>'
+#              if sprache == "de":
+#                volumestabelle = volumestabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Status</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Datum der Erzeugung</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Device</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Datum des Verkn&uuml;pfung</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Instanz ID</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Status der Verkn&uuml;pfung</th>'
+#              else: # Wenn die Sprache Englisch ist...
+#                volumestabelle = volumestabelle + '<th align="center">Size [GB]</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Status</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Zone</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Creation Date</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Device</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Attach Date</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Instance ID</th>'
+#                volumestabelle = volumestabelle + '<th align="center">Attach Status</th>'
+#              volumestabelle = volumestabelle + '</tr>'
+#              for i in range(laenge_liste_volumes):
+#                  volumestabelle = volumestabelle + '<tr>'
+#                  volumestabelle = volumestabelle + '<td>'
+#                  # Nur wenn der Zustand des Volumes "available" ist, darf  man es löschen.
+#                  # Darum wird hier überprüft, ob der Wert von "attach_data.status" gesetzt ist.
+#                  # Wenn er nicht gesetzt ist, kann/darf das Volume gelöscht werden.
+#                  if liste_volumes[i].attach_data.status == None:
+#                    volumestabelle = volumestabelle + '<a href="/volumeentfernen?volume='
+#                    volumestabelle = volumestabelle + liste_volumes[i].id
+#                    if sprache == "de":
+#                      volumestabelle = volumestabelle + '" title="Volume l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Volume l&ouml;schen"></a>'
+#                    else:
+#                      volumestabelle = volumestabelle + '" title="erase volume"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase volume"></a>'
+#                  # Das Volume kann/darf nicht gelöscht werden.
+#                  else:
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  volumestabelle = volumestabelle + '</td>'
+#
+#                  volumestabelle = volumestabelle + '<td>'
+#                  volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
+#                  volumestabelle = volumestabelle + liste_volumes[i].id
+#                  if sprache == "de":
+#                    volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
+#                  else:
+#                    volumestabelle = volumestabelle + '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
+#                  volumestabelle = volumestabelle + '</td>'
+#
+#                  if liste_volumes[i].attach_data.status == None:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
+#                    volumestabelle = volumestabelle + liste_volumes[i].id
+#                    volumestabelle = volumestabelle + "&amp;zone="
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].zone)
+#                    if sprache == "de":
+#                      volumestabelle = volumestabelle + '" title="Volume anh&auml;ngen">'
+#                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Volume anh&auml;ngen"></a>'
+#                    else:
+#                      volumestabelle = volumestabelle + '" title="attach volume">'
+#                      volumestabelle = volumestabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="attach volume"></a>'
+#                  elif liste_volumes[i].attach_data.status == u'attaching':
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + 'attaching'
+#                  elif liste_volumes[i].attach_data.status == u'deleting':
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + 'deleting'
+#                  elif liste_volumes[i].attach_data.status == u'busy':
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + 'busy'
+#                  elif liste_volumes[i].attach_data.status == u'attached':
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + '<a href="/volumeloesen?volume='
+#                    volumestabelle = volumestabelle + liste_volumes[i].id
+#                    if sprache == "de":
+#                      volumestabelle = volumestabelle + '" title="Volume l&ouml;sen">'
+#                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Detach Volume"></a>'
+#                    else:
+#                      volumestabelle = volumestabelle + '" title="detach volume">'
+#                      volumestabelle = volumestabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="detach volume"></a>'
+#                  else:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '<td>'
+#                  volumestabelle = volumestabelle + '<tt>'
+#                  volumestabelle = volumestabelle + str(liste_volumes[i].id)
+#                  volumestabelle = volumestabelle + '</tt>'
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '<td>'
+#                  volumestabelle = volumestabelle + '<tt>'
+#                  volumestabelle = volumestabelle + str(liste_volumes[i].snapshot_id)
+#                  volumestabelle = volumestabelle + '</tt>'
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '<td align="right">'
+#                  volumestabelle = volumestabelle + str(liste_volumes[i].size)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  if liste_volumes[i].status == u'available':
+#                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
+#                    volumestabelle = volumestabelle + liste_volumes[i].status
+#                  elif liste_volumes[i].status == u'in-use':
+#                    volumestabelle = volumestabelle + '<td bgcolor="#ffffcc" align="center">'
+#                    volumestabelle = volumestabelle + liste_volumes[i].status
+#                  elif liste_volumes[i].status == u'deleting':
+#                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
+#                    volumestabelle = volumestabelle + liste_volumes[i].status
+#                  else:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + liste_volumes[i].status
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '<td align="center">'
+#                  volumestabelle = volumestabelle + str(liste_volumes[i].zone)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '<td>'
+#                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+#                  datum_der_erzeugung = parse(liste_volumes[i].create_time)
+#                  volumestabelle = volumestabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+#                  #volumestabelle = volumestabelle + str(datum_der_erzeugung)
+#                  #volumestabelle = volumestabelle + str(liste_volumes[i].create_time)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  if liste_volumes[i].attach_data.device == None:
+#                    volumestabelle = volumestabelle + '<td>'
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  else:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + '<tt>'
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.device)
+#                    volumestabelle = volumestabelle + '</tt>'
+#                  volumestabelle = volumestabelle + '</td>'
+#                  if liste_volumes[i].attach_data.attach_time == None:
+#                    volumestabelle = volumestabelle + '<td>'
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  else:
+#                    volumestabelle = volumestabelle + '<td>'
+#                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+#                    datum_des_anhaengens = parse(liste_volumes[i].attach_data.attach_time)
+#                    volumestabelle = volumestabelle + str(datum_des_anhaengens.strftime("%Y-%m-%d  %H:%M:%S"))
+#                    #volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.attach_time)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  if liste_volumes[i].attach_data.instance_id == None:
+#                    volumestabelle = volumestabelle + '<td>'
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  else:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.instance_id)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  if liste_volumes[i].attach_data.status == None:
+#                    volumestabelle = volumestabelle + '<td>'
+#                    volumestabelle = volumestabelle + '&nbsp;'
+#                  elif liste_volumes[i].attach_data.status == u'attached':
+#                    volumestabelle = volumestabelle + '<td bgcolor="#c3ddc3" align="center">'
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+#                  elif liste_volumes[i].attach_data.status == u'busy':
+#                    volumestabelle = volumestabelle + '<td bgcolor="#ffcc99" align="center">'
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+#                  else:
+#                    volumestabelle = volumestabelle + '<td align="center">'
+#                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.status)
+#                  volumestabelle = volumestabelle + '</td>'
+#                  volumestabelle = volumestabelle + '</tr>'
+#              volumestabelle = volumestabelle + '</table>'
+#
+#          if laenge_liste_volumes >= 1:
+#            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<tr>\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<td align="center">\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<form action="/alle_volumes_loeschen" method="get">\n'
+#            if sprache == "de":
+#              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumes l&ouml;schen">\n'
+#            else:
+#              alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="erase all volumes">\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</form>\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</td>\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</tr>\n'
+#            alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</table>\n'
+#          else:
+#            alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'volumestabelle': volumestabelle,
+#          'zonen_in_der_region': zonen_in_der_region,
+#          'input_error_message': input_error_message,
+#          'zonen_liste': zonen_liste,
+#          'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "volumes_de.html"
+#          #else:               naechse_seite = "volumes_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volumes.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+
+#class VolumesEntfernen(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu löschenden Volumes holen
+#        volume = self.request.get('volume')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Volume löschen
+#          conn_region.delete_volume(volume)
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "19"
+#          self.redirect('/volumes?message='+fehlermeldung) 
+#        except DownloadError:
+#          # Wenn es nicht klappt...
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/volumes?message='+fehlermeldung) 
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "22"
+#          self.redirect('/volumes?message='+fehlermeldung) 
+
+
+#class VolumeDefinitivAnhaengen(webapp.RequestHandler):
+#    def post(self):
+#        # Name des anzuhängenden Volumes holen
+#        volume = self.request.get('volume')
+#        # Instanz-ID holen
+#        instance_id = self.request.get('instanzen')
+#        # Device holen
+#        device = self.request.get('device')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Volume anhaengen
+#          neues_volume = conn_region.attach_volume(volume, instance_id, device)
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "21"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        except DownloadError:
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "23"
+#          self.redirect('/volumes?message='+fehlermeldung)
+
+
+#class VolumesAnhaengen(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu anzuhängenden Volumes holen
+#        volume = self.request.get('volume')
+#        # Name der Zone holen
+#        volume_zone  = self.request.get('zone')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#        if not username:
+#            self.redirect('/')
+#
+#        # Nachsehen, ob eine Region/Zone ausgewählte wurde
+#        aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#        results = aktivezone.fetch(100)
+#
+#        if results:
+#          # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#          sprache = aktuelle_sprache(username)
+#          navigations_bar = navigations_bar_funktion(sprache)
+#
+#          url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+#          url_linktext = 'Logout'
+#
+#          conn_region, regionname = login(username)
+#          zone_amazon = amazon_region(username)
+#
+#          zonen_liste = zonen_liste_funktion(username,sprache)
+#
+#          liste_reservations = conn_region.get_all_instances()
+#          # Anzahl der Elemente in der Liste
+#          laenge_liste_reservations = len(liste_reservations)
+#
+#          if laenge_liste_reservations == "0":
+#            # Wenn es keine laufenden Instanzen gibt
+#            instanzen_in_region = 0
+#          else:
+#            # Wenn es laufenden Instanzen gibt
+#            instanzen_in_region = 0
+#            for i in liste_reservations:
+#              for x in i.instances:
+#                # Für jede Instanz wird geschaut...
+#                # ...ob die Instanz in der Region des Volumes liegt und läuft
+#                if x.placement == volume_zone and x.state == u'running':
+#                  instanzen_in_region = instanzen_in_region + 1
+#
+#          tabelle_anhaengen = ''
+#          tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
+#          tabelle_anhaengen = tabelle_anhaengen + volume
+#          tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">'
+#          tabelle_anhaengen = tabelle_anhaengen + '\n'
+#          tabelle_anhaengen = tabelle_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
+#          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Volume:</B></td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          tabelle_anhaengen = tabelle_anhaengen + volume
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          if sprache == "de":
+#            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
+#          else:
+#            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
+#          tabelle_anhaengen = tabelle_anhaengen + volume_zone
+#          tabelle_anhaengen = tabelle_anhaengen + '</B>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+#          if sprache == "de":
+#            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
+#          else:
+#            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instances:</B></td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          if instanzen_in_region == 0:
+#            if sprache == "de":
+#              tabelle_anhaengen = tabelle_anhaengen + 'Sie haben keine Instanz'
+#            else:
+#              tabelle_anhaengen = tabelle_anhaengen + 'You have still no instance'
+#          else:
+#            if instanzen_in_region > 0:
+#              tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'
+#              for i in liste_reservations:
+#                for x in i.instances:
+#                  if x.placement == volume_zone and x.state == u'running':
+#                    tabelle_anhaengen = tabelle_anhaengen + '<option>'
+#                    tabelle_anhaengen = tabelle_anhaengen + x.id
+#                    tabelle_anhaengen = tabelle_anhaengen + '</option>'
+#              tabelle_anhaengen = tabelle_anhaengen + '</select>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          if sprache == "de":
+#            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
+#          else:
+#            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
+#          tabelle_anhaengen = tabelle_anhaengen + volume_zone
+#          tabelle_anhaengen = tabelle_anhaengen + '</B>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<select name="device" size="1">'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sda</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdb</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option selected="selected">/dev/sdc</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdd</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sde</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdf</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdg</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdh</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdj</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdk</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdl</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdm</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdn</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdo</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdp</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdq</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdr</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sds</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdt</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdu</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdv</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdw</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdx</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdy</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdz</option>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</select>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
+#          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+#          tabelle_anhaengen = tabelle_anhaengen + '</table>'
+#          tabelle_anhaengen = tabelle_anhaengen + '<p>&nbsp;</p>'
+#          tabelle_anhaengen = tabelle_anhaengen + '\n'
+#          if instanzen_in_region == 0:
+#            tabelle_anhaengen = tabelle_anhaengen + ' '
+#          else:
+#            if sprache == "de":
+#              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volume anh&auml;ngen">'
+#            else:
+#              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
+#          tabelle_anhaengen = tabelle_anhaengen + '\n'
+#          tabelle_anhaengen = tabelle_anhaengen + '</form>'
+#
+#          if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
+#            if sprache == "de":        # ... und die Sprache deutsch ist ...
+#              ebs_volumes_eucalyptus_warnung = '<font color="red">Achtung! Das Verbinden von Volumes mit Instanzen dauert unter Eucalyptus teilweise mehrere Minuten.</font>'
+#            else:                      # ... und die Sprache englisch ist ...
+#              ebs_volumes_eucalyptus_warnung = '<font color="red">Attention! Attaching volumes with Instances at Eucalyptus needs some time (several minutes).</font>'
+#          else:                        # Wenn die Region Amazon EC2 ist...
+#            ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
+#
+#          template_values = {
+#          'navigations_bar': navigations_bar,
+#          'url': url,
+#          'url_linktext': url_linktext,
+#          'zone': regionname,
+#          'zone_amazon': zone_amazon,
+#          'zonen_liste': zonen_liste,
+#          'tabelle_anhaengen': tabelle_anhaengen,
+#          'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
+#          }
+#
+#          #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
+#          #else:               naechse_seite = "volume_anhaengen_en.html"
+#          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+#          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
+#          self.response.out.write(template.render(path,template_values))
+#        else:
+#          self.redirect('/')
+
+#class VolumesErzeugen(webapp.RequestHandler):
+#    def post(self):
+#        #self.response.out.write('posted!')
+#        groesse = self.request.get('groesse')
+#        GB_oder_TB = self.request.get('GB_oder_TB')
+#        zone = self.request.get('zone')
+#
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        if groesse == "":
+#          # Testen ob die Größe des neuen Volumes angegeben wurde
+#          # Wenn keine Größe angegeben wurde, kann kein Volume angelegt werden
+#          #fehlermeldung = "Sie haben keine Größe angegeben"
+#          fehlermeldung = "16"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        elif groesse.isdigit() == False: 
+#          # Testen ob die Größe eine Zahl ist
+#          # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
+#          #fehlermeldung = "Sie haben keine Zahl angegeben"
+#          fehlermeldung = "17"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        elif GB_oder_TB == "TB" and int(groesse) > 1:
+#          # Testen ob TB als Maßeinheit angegeben wurde und die Größe > 1 TB ist
+#          # fehlermeldung = "Amazon EBS ermöglicht die Erstellung von Datenträgern
+#          # mit einer Speicherkapazität von 1 GB bis 1 TB"
+#          fehlermeldung = "25"
+#          self.redirect('/volumes?message='+fehlermeldung)
+#        else:
+#          # Die Eingabe in Integer umwandeln
+#          groesse = int(groesse)
+#          if GB_oder_TB == "TB":
+#            # Testen ob GB oder TB als Maßeinheit angegeben wurde
+#            # Bei TB wird die Zahl mit 1000 multipliziert
+#            groesse *= 1000
+#          # Volume erzeugen
+#          try:
+#            # Volume erzeugen
+#            neues_volume = conn_region.create_volume(groesse, zone, snapshot=None)
+#          except EC2ResponseError:
+#            # Wenn es nicht klappt...
+#            fehlermeldung = "18"
+#            self.redirect('/volumes?message='+fehlermeldung)
+#          except DownloadError:
+#            # Wenn es nicht klappt...
+#            # Diese Exception hilft gegen diese beiden Fehler:
+#            # DownloadError: ApplicationError: 2 timed out
+#            # DownloadError: ApplicationError: 5
+#            fehlermeldung = "8"
+#            self.redirect('/volumes?message='+fehlermeldung) 
+#          else:
+#            # Wenn es geklappt hat...
+#            fehlermeldung = "15"
+#            self.redirect('/volumes?message='+fehlermeldung)
+
+
+#class VolumesLoesen(webapp.RequestHandler):
+#    def get(self):
+#        # Name des zu lösenden Volumes holen
+#        volume = self.request.get('volume')
+#        # Den Usernamen erfahren
+#        username = users.get_current_user()
+#
+#        conn_region, regionname = login(username)
+#
+#        try:
+#          # Volume entkoppeln
+#          conn_region.detach_volume(volume)
+#        except EC2ResponseError:
+#          # Wenn es nicht klappt...
+#          fehlermeldung = "20"
+#          self.redirect('/volumes?message='+fehlermeldung) 
+#        except DownloadError:
+#          # Wenn es nicht klappt...
+#          # Diese Exception hilft gegen diese beiden Fehler:
+#          # DownloadError: ApplicationError: 2 timed out
+#          # DownloadError: ApplicationError: 5
+#          fehlermeldung = "8"
+#          self.redirect('/volumes?message='+fehlermeldung) 
+#        else:
+#          # Wenn es geklappt hat...
+#          fehlermeldung = "24"
+#          self.redirect('/volumes?message='+fehlermeldung) 
 
 
 class RegionWechseln(webapp.RequestHandler):
@@ -7846,253 +7895,253 @@ def logins3(username):
 
 
 
-def loginselb(username):
-  # Die Zugangsdaten des Benutzers holen
-  aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-
-  for db_eintrag in aktivezone:
-    zoneinderdb = db_eintrag.aktivezone
-
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
-      aktuellezone = "Amazon"
-    else:
-      aktuellezone = zoneinderdb
-
-
-  if aktivezone:
-    # In der Spalte "eucalyptusname_db" steht entweder "Amazon" oder der Eucalyptus-Name der Private Cloud
-    zugangsdaten = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db=aktuellezone)
-
-    for db_eintrag in zugangsdaten:
-      accesskey = db_eintrag.accesskey
-      secretaccesskey = db_eintrag.secretaccesskey
-      endpointurl = db_eintrag.endpointurl
-      port = db_eintrag.port
-
-    if zoneinderdb == "us-east-1":
-      hostname = "us-east-1.elasticloadbalancing.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "eu-west-1":
-      hostname = "eu-west-1.elasticloadbalancing.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "us-west-1":
-      hostname = "us-west-1.elasticloadbalancing.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "ap-southeast-1":
-      hostname = "ap-southeast-1.elasticloadbalancing.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    else:
-      regionname = "keine"
-      #regionname = aktuellezone
-  else:
-    regionname = "keine"
-  return conn_elb
-
-
-
-def login(username):
-  # Die Zugangsdaten des Benutzers holen
-  aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-
-  for db_eintrag in aktivezone:
-    zoneinderdb = db_eintrag.aktivezone
-
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
-      aktuellezone = "Amazon"
-    else:
-      aktuellezone = zoneinderdb
+#def loginelb(username):
+#  # Die Zugangsdaten des Benutzers holen
+#  aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#
+#  for db_eintrag in aktivezone:
+#    zoneinderdb = db_eintrag.aktivezone
+#
+#    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
+#      aktuellezone = "Amazon"
+#    else:
+#      aktuellezone = zoneinderdb
+#
+#
+#  if aktivezone:
+#    # In der Spalte "eucalyptusname_db" steht entweder "Amazon" oder der Eucalyptus-Name der Private Cloud
+#    zugangsdaten = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db=aktuellezone)
+#
+#    for db_eintrag in zugangsdaten:
+#      accesskey = db_eintrag.accesskey
+#      secretaccesskey = db_eintrag.secretaccesskey
+#      endpointurl = db_eintrag.endpointurl
+#      port = db_eintrag.port
+#
+#    if zoneinderdb == "us-east-1":
+#      hostname = "us-east-1.elasticloadbalancing.amazonaws.com"
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+#                              aws_secret_access_key=secretaccesskey,
+#                              is_secure=False,
+#                              host=hostname,
+#                              #port=8773,
+#                              path="/")
+#      regionname = aktuellezone
+#    elif zoneinderdb == "eu-west-1":
+#      hostname = "eu-west-1.elasticloadbalancing.amazonaws.com"
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+#                              aws_secret_access_key=secretaccesskey,
+#                              is_secure=False,
+#                              host=hostname,
+#                              #port=8773,
+#                              path="/")
+#      regionname = aktuellezone
+#    elif zoneinderdb == "us-west-1":
+#      hostname = "us-west-1.elasticloadbalancing.amazonaws.com"
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+#                              aws_secret_access_key=secretaccesskey,
+#                              is_secure=False,
+#                              host=hostname,
+#                              #port=8773,
+#                              path="/")
+#      regionname = aktuellezone
+#    elif zoneinderdb == "ap-southeast-1":
+#      hostname = "ap-southeast-1.elasticloadbalancing.amazonaws.com"
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+#                              aws_secret_access_key=secretaccesskey,
+#                              is_secure=False,
+#                              host=hostname,
+#                              #port=8773,
+#                              path="/")
+#      regionname = aktuellezone
+#    else:
+#      regionname = "keine"
+#      #regionname = aktuellezone
+#  else:
+#    regionname = "keine"
+#  return conn_elb
 
 
-  if aktivezone:
-    # In der Spalte "eucalyptusname" steht entweder "Amazon" oder der Eucalyptus-Name der Private Cloud
-    zugangsdaten = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db=aktuellezone)
 
-    for db_eintrag in zugangsdaten:
-      accesskey = db_eintrag.accesskey
-      secretaccesskey = db_eintrag.secretaccesskey
-      endpointurl = db_eintrag.endpointurl
-      eucalyptusname = db_eintrag.eucalyptusname
-      port = db_eintrag.port
-      regionname = db_eintrag.regionname
+#def login(username):
+#  # Die Zugangsdaten des Benutzers holen
+#  aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#
+#  for db_eintrag in aktivezone:
+#    zoneinderdb = db_eintrag.aktivezone
+#
+#    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
+#      aktuellezone = "Amazon"
+#    else:
+#      aktuellezone = zoneinderdb
+#
+#
+#  if aktivezone:
+#    # In der Spalte "eucalyptusname" steht entweder "Amazon" oder der Eucalyptus-Name der Private Cloud
+#    zugangsdaten = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db=aktuellezone)
+#
+#    for db_eintrag in zugangsdaten:
+#      accesskey = db_eintrag.accesskey
+#      secretaccesskey = db_eintrag.secretaccesskey
+#      endpointurl = db_eintrag.endpointurl
+#      eucalyptusname = db_eintrag.eucalyptusname
+#      port = db_eintrag.port
+#      regionname = db_eintrag.regionname
+#
+#    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1":
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_region = boto.ec2.connect_to_region(zoneinderdb,
+#                                                aws_access_key_id=accesskey,
+#                                                aws_secret_access_key=secretaccesskey,
+#                                                is_secure = False)
+#
+#      regionname = aktuellezone
+#    elif regionname == "nimbus":
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_region = boto.connect_ec2(str(accesskey), str(secretaccesskey), port=int(port))
+#      conn_region.host = str(endpointurl)
+#
+#      regionname = aktuellezone
+#    else:
+#      port = int(port)
+#      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+#      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+#      conn_region = boto.connect_ec2(aws_access_key_id=accesskey,
+#                                    aws_secret_access_key=secretaccesskey,
+#                                    is_secure=False,
+#                                    region=RegionInfo(name="eucalyptus", endpoint=endpointurl),
+#                                    port=port,
+#                                    path="/services/Eucalyptus")
+#
+#      regionname = aktuellezone
+#  else:
+#    regionname = "keine"
+#  return conn_region, regionname
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1":
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_region = boto.ec2.connect_to_region(zoneinderdb,
-                                                aws_access_key_id=accesskey,
-                                                aws_secret_access_key=secretaccesskey,
-                                                is_secure = False)
+#def amazon_region(username):
+#    aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+#    results = aktivezone.fetch(10)
+#
+#    for result in results:
+#        if result.aktivezone == "us-east-1":
+#            zone_amazon = "(us-east-1)"
+#        elif result.aktivezone == "eu-west-1":
+#            zone_amazon = "(eu-west-1)"
+#        elif result.aktivezone == "us-west-1":
+#            zone_amazon = "(us-west-1)"
+#        elif result.aktivezone == "ap-southeast-1":
+#            zone_amazon = "(ap-southeast-1)"
+#        else:
+#            zone_amazon = ""
+#
+#    return zone_amazon
 
-      regionname = aktuellezone
-    elif regionname == "nimbus":
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_region = boto.connect_ec2(str(accesskey), str(secretaccesskey), port=int(port))
-      conn_region.host = str(endpointurl)
-
-      regionname = aktuellezone
-    else:
-      port = int(port)
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_region = boto.connect_ec2(aws_access_key_id=accesskey,
-                                    aws_secret_access_key=secretaccesskey,
-                                    is_secure=False,
-                                    region=RegionInfo(name="eucalyptus", endpoint=endpointurl),
-                                    port=port,
-                                    path="/services/Eucalyptus")
-
-      regionname = aktuellezone
-  else:
-    regionname = "keine"
-  return conn_region, regionname
-
-def amazon_region(username):
-    aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
-    results = aktivezone.fetch(10)
-
-    for result in results:
-        if result.aktivezone == "us-east-1":
-            zone_amazon = "(us-east-1)"
-        elif result.aktivezone == "eu-west-1":
-            zone_amazon = "(eu-west-1)"
-        elif result.aktivezone == "us-west-1":
-            zone_amazon = "(us-west-1)"
-        elif result.aktivezone == "ap-southeast-1":
-            zone_amazon = "(ap-southeast-1)"
-        else:
-            zone_amazon = ""
-
-    return zone_amazon
-
-def aktuelle_sprache(username):
-    # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
-    spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-    ergebnisse = spracheanfrage.fetch(10)
-
-    if not ergebnisse:
-        logindaten = KoalaCloudDatenbankSprache(sprache="en",
-                                              user=username)
-        logindaten.put()   # In den Datastore schreiben
-        spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
-        ergebnisse = spracheanfrage.fetch(10)
-
-    for ergebnis in ergebnisse:
-        if ergebnis.sprache == "en":
-            sprache = "en"
-        elif ergebnis.sprache == "de":
-            sprache = "de"
-        else:
-            sprache = "en"
-
-    return sprache
+#def aktuelle_sprache(username):
+#    # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
+#    spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
+#    ergebnisse = spracheanfrage.fetch(10)
+#
+#    if not ergebnisse:
+#        logindaten = KoalaCloudDatenbankSprache(sprache="en",
+#                                              user=username)
+#        logindaten.put()   # In den Datastore schreiben
+#        spracheanfrage = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankSprache WHERE user = :username_db", username_db=username)
+#        ergebnisse = spracheanfrage.fetch(10)
+#
+#    for ergebnis in ergebnisse:
+#        if ergebnis.sprache == "en":
+#            sprache = "en"
+#        elif ergebnis.sprache == "de":
+#            sprache = "de"
+#        else:
+#            sprache = "en"
+#
+#    return sprache
 
 
-def navigations_bar_funktion(sprache):
-    if sprache == "de":
-        navigations_bar = '&nbsp; \n'
-        navigations_bar = navigations_bar + '<a href="/regionen" title="Regionen">Regionen</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instanzen">Instanzen</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/schluessel" title="Schl&uuml;ssel">Schl&uuml;ssel</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/zonen" title="Verf&uuml;gbarkeitszonen">Zonen</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Sicherheitsgruppen">Gruppen</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
-    else:
-        navigations_bar = '&nbsp; \n'
-        navigations_bar = navigations_bar + '<a href="/regionen" title="Regions">Regions</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instances">Instances</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/schluessel" title="Keys">Keys</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/zonen" title="Availability Zones">Zones</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Security Groups">Groups</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
-        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
-    return navigations_bar
+#def navigations_bar_funktion(sprache):
+#    if sprache == "de":
+#        navigations_bar = '&nbsp; \n'
+#        navigations_bar = navigations_bar + '<a href="/regionen" title="Regionen">Regionen</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instanzen">Instanzen</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/schluessel" title="Schl&uuml;ssel">Schl&uuml;ssel</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/zonen" title="Verf&uuml;gbarkeitszonen">Zonen</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Sicherheitsgruppen">Gruppen</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
+#    else:
+#        navigations_bar = '&nbsp; \n'
+#        navigations_bar = navigations_bar + '<a href="/regionen" title="Regions">Regions</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/instanzen" title="Instances">Instances</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/images" title="Images">Images</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/schluessel" title="Keys">Keys</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/volumes" title="Elastic Block Store">EBS</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/snapshots" title="Snapshots">Snapshots</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/elastic_ips" title="Elastic IPs">IPs</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/zonen" title="Availability Zones">Zones</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/securitygroups" title="Security Groups">Groups</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/s3" title="Simple Storage Service">S3</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/loadbalancer" title="Elastic Load Balancer">ELB</a> | \n'
+#        navigations_bar = navigations_bar + '<a href="/info" title="Info">Info</a> \n'
+#    return navigations_bar
 
-def zonen_liste_funktion(username,sprache):
-    testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
-    # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
-    # Wie viele Einträge des Benutzers sind schon vorhanden?
-    anzahl = testen.count()
-    # Alle Einträge des Benutzers holen?
-    results = testen.fetch(100)
-
-    zonen_liste = ''
-    if anzahl:
-        zonen_liste = zonen_liste + '<form action="/regionwechseln" method="post" accept-charset="utf-8">'
-        zonen_liste = zonen_liste + '<select name="regionen" size="1">'
-        for test in results:
-            zonen_liste = zonen_liste + '<option>'
-            if test.eucalyptusname == "Amazon":
-                zonen_liste = zonen_liste + 'Amazon EC2 (US East)'
-                zonen_liste = zonen_liste + '</option>'
-                zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'Amazon EC2 (US West)'
-                zonen_liste = zonen_liste + '</option>'
-                zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'Amazon EC2 (EU West)'
-                zonen_liste = zonen_liste + '</option>'
-                zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific)'
-            else:
-                #zonen_liste = zonen_liste + 'Eucalyptus'
-                #zonen_liste = zonen_liste + ' ('
-                zonen_liste = zonen_liste + str(test.eucalyptusname)
-                #zonen_liste = zonen_liste + ')'
-            zonen_liste = zonen_liste + '</option>'
-        zonen_liste = zonen_liste + '</select>'
-        zonen_liste = zonen_liste + '&nbsp;'
-        if sprache == "de":
-            zonen_liste = zonen_liste + '<input type="submit" value="Region wechseln">'
-        else:
-            zonen_liste = zonen_liste + '<input type="submit" value="switch to region">'
-        zonen_liste = zonen_liste + '</form>'
-    else:
-        zonen_liste = ''
-
-    return zonen_liste
+#def zonen_liste_funktion(username,sprache):
+#    testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
+#    # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+#    # Wie viele Einträge des Benutzers sind schon vorhanden?
+#    anzahl = testen.count()
+#    # Alle Einträge des Benutzers holen?
+#    results = testen.fetch(100)
+#
+#    zonen_liste = ''
+#    if anzahl:
+#        zonen_liste = zonen_liste + '<form action="/regionwechseln" method="post" accept-charset="utf-8">'
+#        zonen_liste = zonen_liste + '<select name="regionen" size="1">'
+#        for test in results:
+#            zonen_liste = zonen_liste + '<option>'
+#            if test.eucalyptusname == "Amazon":
+#                zonen_liste = zonen_liste + 'Amazon EC2 (US East)'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'Amazon EC2 (US West)'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'Amazon EC2 (EU West)'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific)'
+#            else:
+#                #zonen_liste = zonen_liste + 'Eucalyptus'
+#                #zonen_liste = zonen_liste + ' ('
+#                zonen_liste = zonen_liste + str(test.eucalyptusname)
+#                #zonen_liste = zonen_liste + ')'
+#            zonen_liste = zonen_liste + '</option>'
+#        zonen_liste = zonen_liste + '</select>'
+#        zonen_liste = zonen_liste + '&nbsp;'
+#        if sprache == "de":
+#            zonen_liste = zonen_liste + '<input type="submit" value="Region wechseln">'
+#        else:
+#            zonen_liste = zonen_liste + '<input type="submit" value="switch to region">'
+#        zonen_liste = zonen_liste + '</form>'
+#    else:
+#        zonen_liste = ''
+#
+#    return zonen_liste
 
 
 def main():
@@ -8169,8 +8218,8 @@ def main():
                                           debug=True)
     wsgiref.handlers.CGIHandler().run(application)
 
-def xor_crypt_string(data, key):
-    return ''.join(chr(ord(x) ^ ord(y)) for (x,y) in izip(data, cycle(key)))
+#def xor_crypt_string(data, key):
+#    return ''.join(chr(ord(x) ^ ord(y)) for (x,y) in izip(data, cycle(key)))
 
 if __name__ == "__main__":
     main()
