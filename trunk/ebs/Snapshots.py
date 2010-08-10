@@ -23,6 +23,8 @@ from error_messages import error_messages
 
 from dateutil.parser import *
 
+from boto.ec2.connection import *
+
 class Snapshots(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren

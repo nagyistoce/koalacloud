@@ -294,3 +294,73 @@ def loginelb(username):
   else:
     regionname = "keine"
   return conn_elb
+
+def logins3(username):
+  # Die Zugangsdaten des Benutzers holen
+  aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+
+  for db_eintrag in aktivezone:
+    zoneinderdb = db_eintrag.aktivezone
+
+    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1":
+      aktuellezone = "Amazon"
+    else:
+      aktuellezone = zoneinderdb
+
+
+  if aktivezone:
+    # In der Spalte "eucalyptusname_db" steht entweder "Amazon" oder der Eucalyptus-Name der Private Cloud
+    zugangsdaten = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db=aktuellezone)
+
+    for db_eintrag in zugangsdaten:
+      accesskey = db_eintrag.accesskey
+      secretaccesskey = db_eintrag.secretaccesskey
+      endpointurl = db_eintrag.endpointurl
+      port = db_eintrag.port
+
+    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1":
+      calling_format=boto.s3.connection.OrdinaryCallingFormat()
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_s3 = boto.s3.Connection(aws_access_key_id=accesskey,
+                                        aws_secret_access_key=secretaccesskey,
+                                        is_secure=False,
+                                        host="s3.amazonaws.com",
+                                        calling_format=calling_format,
+                                        path="/")
+
+      regionname = aktuellezone
+    else:
+      port = int(port)
+      calling_format=boto.s3.connection.OrdinaryCallingFormat()
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_s3 = boto.s3.Connection(aws_access_key_id=accesskey,
+                                        aws_secret_access_key=secretaccesskey,
+                                        is_secure=False,
+                                        host=endpointurl,
+                                        port=port,
+                                        calling_format=calling_format,
+                                        path="/services/Walrus")
+
+      regionname = aktuellezone
+  else:
+    regionname = "keine"
+  return conn_s3
+
+def aws_access_key_erhalten(username,regionname):
+  Anfrage_nach_AWSAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user =  :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  for db_eintrag in Anfrage_nach_AWSAccessKeyId:
+    AWSAccessKeyId = db_eintrag.accesskey
+
+  return AWSAccessKeyId
+
+def aws_secret_access_key_erhalten(username,regionname):
+  Anfrage_nach_AWSSecretAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user =  :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  for db_eintrag in Anfrage_nach_AWSSecretAccessKeyId:
+    AWSSecretAccessKeyId = db_eintrag.secretaccesskey
+    secretaccesskey_base64decoded = base64.b64decode(str(AWSSecretAccessKeyId))
+    AWSSecretAccessKeyId = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+
+  return AWSSecretAccessKeyId
+

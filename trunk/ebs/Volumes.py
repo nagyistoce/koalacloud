@@ -78,6 +78,7 @@ class Volumes(webapp.RequestHandler):
               zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
             else:
               zonentabelle = '<font color="red">An error occured</font>'
+            laenge_liste_zonen = 0
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
@@ -86,6 +87,7 @@ class Volumes(webapp.RequestHandler):
               zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
             else:
               zonentabelle = '<font color="red">A timeout error occured</font>'
+            laenge_liste_zonen = 0
           else:
             # Wenn es geklappt hat...
             # Anzahl der Elemente in der Liste
@@ -100,10 +102,13 @@ class Volumes(webapp.RequestHandler):
           # Hier wird die Auswahlliste der Zonen erzeugt
           # Diese Auswahlliste ist zum Erzeugen neuer Volumes notwendig
           zonen_in_der_region = ''
-          for i in range(laenge_liste_zonen):
-              zonen_in_der_region = zonen_in_der_region + "<option>"
-              zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
-              zonen_in_der_region = zonen_in_der_region + "</option>"
+          if laenge_liste_zonen == 0:
+              zonen_in_der_region = zonen_in_der_region + "<option>&nbsp;</option>"
+          else:
+              for i in range(laenge_liste_zonen):
+                  zonen_in_der_region = zonen_in_der_region + "<option>"
+                  zonen_in_der_region = zonen_in_der_region + liste_zonen[i].name
+                  zonen_in_der_region = zonen_in_der_region + "</option>"
 
           try:
             # Liste mit den Volumes
