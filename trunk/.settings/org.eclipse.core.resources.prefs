@@ -1,4 +1,4 @@
-#Tue Aug 10 19:54:35 CEST 2010
+#Wed Aug 11 14:32:11 CEST 2010
 eclipse.preferences.version=1
 encoding//ebs/AlleVolumesLoeschenDefinitiv.py=iso-8859-15
 encoding//ebs/AlleVolumesLoeschenFrage.py=iso-8859-15
@@ -16,6 +16,7 @@ encoding//ec2/AlleInstanzenBeenden.py=iso-8859-15
 encoding//ec2/AlleInstanzenBeendenFrage.py=iso-8859-15
 encoding//ec2/Allocate_IP.py=iso-8859-15
 encoding//ec2/Associate_IP.py=iso-8859-15
+encoding//ec2/ConsoleOutput.py=iso-8859-15
 encoding//ec2/Disassociate_IP.py=iso-8859-15
 encoding//ec2/Elastic_IPs.py=iso-8859-15
 encoding//ec2/GruppeAendern.py=iso-8859-15

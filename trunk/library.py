@@ -25,6 +25,8 @@ import hmac, sha
 # this is needed for the encyption
 import base64
 
+
+
 from internal.Datastore import *
 
 def login(username):
@@ -304,7 +306,7 @@ def logins3(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1":
+    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -320,11 +322,11 @@ def logins3(username):
       endpointurl = db_eintrag.endpointurl
       port = db_eintrag.port
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1":
+    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1":
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_s3 = boto.s3.Connection(aws_access_key_id=accesskey,
+      conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                         aws_secret_access_key=secretaccesskey,
                                         is_secure=False,
                                         host="s3.amazonaws.com",
@@ -337,7 +339,7 @@ def logins3(username):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_s3 = boto.s3.Connection(aws_access_key_id=accesskey,
+      conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                         aws_secret_access_key=secretaccesskey,
                                         is_secure=False,
                                         host=endpointurl,
