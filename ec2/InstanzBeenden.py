@@ -52,7 +52,8 @@ class InstanzBeenden(webapp.RequestHandler):
                       else:
                         try:
                           # Instanz beenden
-                          inst.stop()
+                          #inst.stop()
+                          inst.terminate()
                         except EC2ResponseError:
                           # Wenn es nicht klappt...
                           fehlermeldung = "74"
