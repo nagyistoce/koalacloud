@@ -9,9 +9,9 @@ from library import login
 
 from boto.ec2.connection import *
 
-class InstanzBeenden(webapp.RequestHandler):
+class InstanzStarten(webapp.RequestHandler):
     def get(self):
-        # Die ID der zu stoppenden Instanz holen
+        # Die ID der zu startenden Instanz holen
         id = self.request.get('id')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -35,7 +35,7 @@ class InstanzBeenden(webapp.RequestHandler):
           # Wenn es geklappt hat...
 
           # Mit dieser Variable wird überprüft, ob die Instanz gleich gefunden wird
-          # Wenn die Instanz nicht gefunden wird, braucht auch nichts gestoppt zu werden
+          # Wenn die Instanz nicht gefunden wird, braucht auch nichts gestarted zu werden
           gefunden = 0
           for reserv in instances:
               for inst in reserv.instances:
@@ -45,17 +45,17 @@ class InstanzBeenden(webapp.RequestHandler):
                       gefunden = 1
 
                       # Wenn die Instanz schon im Zustand "terminated" ist,
-                      # kann man sie nicht mehr stoppen
+                      # kann man sie nicht mehr starten
                       if inst.state == u'terminated':
                         fehlermeldung = "76"
                         self.redirect('/instanzen?message='+fehlermeldung)
                       else:
                         try:
-                          # Instanz stoppen
-                          inst.stop()
+                          # Instanz terminieren
+                          inst.start()
                         except EC2ResponseError:
                           # Wenn es nicht klappt...
-                          fehlermeldung = "124"
+                          fehlermeldung = "126"
                           self.redirect('/instanzen?message='+fehlermeldung)
                         except DownloadError:
                           # Diese Exception hilft gegen diese beiden Fehler:
@@ -65,11 +65,10 @@ class InstanzBeenden(webapp.RequestHandler):
                           self.redirect('/instanzen?message='+fehlermeldung)
                         else:
                           # Wenn es geklappt hat...
-                          fehlermeldung = "123"
+                          fehlermeldung = "125"
                           self.redirect('/instanzen?message='+fehlermeldung)
 
           # Wenn die Instanz nicht gefunden werden konnte
           if gefunden == 0:
             fehlermeldung = "75"
             self.redirect('/instanzen?message='+fehlermeldung)
-

@@ -106,6 +106,10 @@ class Images(webapp.RequestHandler):
                 liste_favouriten = liste_favouriten + '<th align="center">Architecture</th>'
               liste_favouriten = liste_favouriten + '<th align="center">Status</th>'
               if sprache == "de":
+                liste_favouriten = liste_favouriten + '<th align="center">Root Device Typ</th>'
+              else:
+                liste_favouriten = liste_favouriten + '<th align="center">Root Device Type</th>'  
+              if sprache == "de":
                 liste_favouriten = liste_favouriten + '<th align="center">Besitzer</th>'
               else:
                 liste_favouriten = liste_favouriten + '<th align="center">Owner</th>'
@@ -148,9 +152,7 @@ class Images(webapp.RequestHandler):
 
                   # Hier kommt die Spalte mit der Image-ID
                   liste_favouriten = liste_favouriten + '<td>'
-                  liste_favouriten = liste_favouriten + '<tt>'
-                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '<tt>'+liste_favoriten_ami_images[i].id+'</tt>'
                   liste_favouriten = liste_favouriten + '</td>'
 
                   liste_favouriten = liste_favouriten + '<td align="center">'
@@ -190,14 +192,10 @@ class Images(webapp.RequestHandler):
 
                   # Hier kommt die Spalte mit der Manifest-Datei
                   liste_favouriten = liste_favouriten + '<td>'
-                  liste_favouriten = liste_favouriten + '<tt>'
-                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].location
-                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '<tt>'+liste_favoriten_ami_images[i].location+'</tt>'
                   liste_favouriten = liste_favouriten + '</td>'
                   liste_favouriten = liste_favouriten + '<td align="center">'
-                  liste_favouriten = liste_favouriten + '<tt>'
-                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                  liste_favouriten = liste_favouriten + '</tt>'
+                  liste_favouriten = liste_favouriten + '<tt>'+liste_favoriten_ami_images[i].architecture+'</tt>'
                   liste_favouriten = liste_favouriten + '</td>'
                   if liste_favoriten_ami_images[i].state == u'available':
                     liste_favouriten = liste_favouriten + '<td bgcolor="#c3ddc3" align="center">'
@@ -206,9 +204,8 @@ class Images(webapp.RequestHandler):
                     liste_favouriten = liste_favouriten + '<td align="center">'
                     liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].state
                   liste_favouriten = liste_favouriten + '</td>'
-                  liste_favouriten = liste_favouriten + '<td>'
-                  liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].ownerId
-                  liste_favouriten = liste_favouriten + '</td>'
+                  liste_favouriten = liste_favouriten + '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
+                  liste_favouriten = liste_favouriten + '<td>'+liste_favoriten_ami_images[i].ownerId+'</td>'
                   liste_favouriten = liste_favouriten + '</tr>'
               liste_favouriten = liste_favouriten + '</table>'
 

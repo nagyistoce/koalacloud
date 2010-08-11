@@ -61,6 +61,8 @@ from ec2.GruppeAendern import *
 from ec2.GruppeRegelErzeugen import *
 from ec2.GruppeRegelEntfernen import *
 from ec2.Keys import *
+from ec2.InstanzTerminate import *
+from ec2.InstanzStarten import *
 #from ec2.ConsoleOutput import *
 
 from elb.LoadBalancer import *
@@ -263,8 +265,10 @@ def main():
                                           ('/alle_instanzen_beenden', AlleInstanzenBeendenFrage),
                                           ('/alle_instanzen_beenden_definitiv', AlleInstanzenBeenden),
                                           ('/instanzbeenden', InstanzBeenden),
+                                          ('/instanzterminate', InstanzTerminate),
                                           ('/instanzreboot', InstanzReboot),
                                           ('/instanzanlegen', InstanzAnlegen),
+                                          ('/instanzstarten', InstanzStarten),
                                           ('/instanzanlegen_nimbus', InstanzAnlegenNimbus),
                                           ('/images', Images),
                                           ('/imagestarten', ImageStarten),
