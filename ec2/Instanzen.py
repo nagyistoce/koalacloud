@@ -57,11 +57,11 @@ class Instanzen(webapp.RequestHandler):
             input_error_message = ""
 
           # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("73", "77", "79", "81"):
+          if message in ("73", "77", "79", "81", "123", "125"):
             # wird sie hier, in der Hilfsfunktion grün formatiert
             input_error_message = format_error_message_green(input_error_message)
           # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "9", "10", "74", "75", "76", "78", "80", "82"):
+          elif message in ("8", "9", "10", "74", "75", "76", "78", "80", "82", "122", "124", "126"):
             input_error_message = format_error_message_red(input_error_message)
           else:
             input_error_message = ""
@@ -98,6 +98,7 @@ class Instanzen(webapp.RequestHandler):
               instanzentabelle = instanzentabelle + '<tr>'
               instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
               instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
+              instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
               instanzentabelle = instanzentabelle + '<th align="center">Instance ID</th>'
               instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
               instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
@@ -108,6 +109,10 @@ class Instanzen(webapp.RequestHandler):
               else:
                 instanzentabelle = instanzentabelle + '<th align="center">Type</th>'
               instanzentabelle = instanzentabelle + '<th align="center">Reservation ID</th>'
+              if sprache == "de":
+                instanzentabelle = instanzentabelle + '<th align="center">Root Device Typ</th>'
+              else:
+                instanzentabelle = instanzentabelle + '<th align="center">Root Device Type</th>'  
               if sprache == "de":
                 instanzentabelle = instanzentabelle + '<th align="center">Besitzer</th>'
               else:
@@ -134,13 +139,46 @@ class Instanzen(webapp.RequestHandler):
                   instanzentabelle = instanzentabelle + '<tr>'
                   instanzentabelle = instanzentabelle + '<td>'
                   if sprache == "de":
-                    instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                    instanzentabelle = instanzentabelle + '<a href="/instanzterminate?id='
                     instanzentabelle = instanzentabelle + x.id
-                    instanzentabelle = instanzentabelle + '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                    instanzentabelle = instanzentabelle + '"title="Instanz entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Instanz entfernen"></a>'
                   else:
-                    instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                    instanzentabelle = instanzentabelle + '<a href="/instanzterminate?id='
                     instanzentabelle = instanzentabelle + x.id
-                    instanzentabelle = instanzentabelle + '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                    instanzentabelle = instanzentabelle + '"title="terminate instance"><img src="bilder/delete.png" width="16" height="16" border="0" alt="terminate instance"></a>'
+                  instanzentabelle = instanzentabelle + '</td>'
+                  instanzentabelle = instanzentabelle + '<td>'
+                  if x.root_device_type == 'instance-store': 
+                    fehlermeldung = "122"
+                    if sprache == "de":
+                      instanzentabelle = instanzentabelle + '<a href="/instanzen?message='
+                      instanzentabelle = instanzentabelle + fehlermeldung
+                      instanzentabelle = instanzentabelle + '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                    else:
+                      instanzentabelle = instanzentabelle + '<a href="/instanzen?message='
+                      instanzentabelle = instanzentabelle + fehlermeldung
+                      instanzentabelle = instanzentabelle + '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                  else:
+                    if x.state == u'running': 
+                      if sprache == "de":
+                        instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                        instanzentabelle = instanzentabelle + x.id
+                        instanzentabelle = instanzentabelle + '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                      else:
+                        instanzentabelle = instanzentabelle + '<a href="/instanzbeenden?id='
+                        instanzentabelle = instanzentabelle + x.id
+                        instanzentabelle = instanzentabelle + '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                    elif x.state == u'stopped':
+                      if sprache == "de":
+                        instanzentabelle = instanzentabelle + '<a href="/instanzstarten?id='
+                        instanzentabelle = instanzentabelle + x.id
+                        instanzentabelle = instanzentabelle + '"title="Instanz starten"><img src="bilder/up.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                      else:
+                        instanzentabelle = instanzentabelle + '<a href="/instanzstarten?id='
+                        instanzentabelle = instanzentabelle + x.id
+                        instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'                       
+                    else:
+                      instanzentabelle = instanzentabelle + '&nbsp;'
                   instanzentabelle = instanzentabelle + '</td>'
                   instanzentabelle = instanzentabelle + '<td>'
                   if sprache == "de":
@@ -217,73 +255,83 @@ class Instanzen(webapp.RequestHandler):
                   # Die Icons der Betriebssysteme nur unter Amazon
                   #if regionname == "Amazon":
                   # Hier kommt die Spalte mit den Icons der Betriebssysteme
-                  instanzentabelle = instanzentabelle + '<td align="center">'
-                  image = conn_region.get_image(str(x.image_id))
-                  if image == None:
-                    # Das hier kommt, wenn das Image der laufenden Instanz nicht mehr existiert!
-                    instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
+                  instanzentabelle = instanzentabelle + '<td align="center">'                  
+                  
+                  
+                  try:
+                    image = conn_region.get_image(str(x.image_id))
+                  except EC2ResponseError:
+                    instanzentabelle = instanzentabelle + '&nbsp;'
+                  except DownloadError:
+                    # Diese Exception hilft gegen diese beiden Fehler:
+                    # DownloadError: ApplicationError: 2 timed out
+                    # DownloadError: ApplicationError: 5
+                    instanzentabelle = instanzentabelle + '&nbsp;'
                   else:
-                    beschreibung_in_kleinbuchstaben = image.location.lower()
-                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                      instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    else:
+
+                    if image == None:
+                      # Das hier kommt, wenn das Image der laufenden Instanz nicht mehr existiert!
                       instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
-                    instanzentabelle = instanzentabelle + '</td>'
-                  #else:
-                    ## Das hier wird bei Eucalyptus gemacht
-                    #instanzentabelle = instanzentabelle + '<td><img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux"></td>'
+                    else:
+                      beschreibung_in_kleinbuchstaben = image.location.lower()
+                      if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                      elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                      elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                      elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                      elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                      elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                      elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                      elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                      elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      else:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux">'
+                      instanzentabelle = instanzentabelle + '</td>'
+                    #else:
+                      ## Das hier wird bei Eucalyptus gemacht
+                      #instanzentabelle = instanzentabelle + '<td><img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux"></td>'
 
                   # Hier kommt die Spalte "Status"
                   if x.state == u'running':
                     instanzentabelle = instanzentabelle + '<td bgcolor="#c3ddc3">'
                     instanzentabelle = instanzentabelle + 'running'
-                  if x.state == u'pending':
+                  elif x.state == u'pending':
                     instanzentabelle = instanzentabelle + '<td bgcolor="#ffffcc">'
                     instanzentabelle = instanzentabelle + 'pending'
-                  if x.state == u'shutting-down':
+                  elif x.state == u'shutting-down':
                     instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
                     instanzentabelle = instanzentabelle + 'shutting-down'
-                  if x.state == u'terminated':
+                  elif x.state == u'terminated':
                     instanzentabelle = instanzentabelle + '<td bgcolor="#ffcccc">'
                     instanzentabelle = instanzentabelle + 'terminated'
+                  elif x.state == u'stopping':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
+                    instanzentabelle = instanzentabelle + 'stopping'
+                  elif x.state == u'stopped':
+                    instanzentabelle = instanzentabelle + '<td bgcolor="#ffce81">'
+                    instanzentabelle = instanzentabelle + 'stopped'
+                  else:
+                    instanzentabelle = instanzentabelle + '<td>'+str(x.state)
                   instanzentabelle = instanzentabelle + '</td><td>'
-                  instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + str(x.instance_type)
-                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.instance_type)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td align="center">'
-                  instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + str(i.id)
-                  #y = str(i)
-                  #z = y.replace('Reservation:', '')
-                  #instanzentabelle = instanzentabelle + z
-                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(i.id)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td align="center">'
-                  instanzentabelle = instanzentabelle + '<tt>'
-                  instanzentabelle = instanzentabelle + str(i.owner_id)
-                  #y = str(i)
-                  #z = y.replace('Reservation:', '')
-                  #instanzentabelle = instanzentabelle + z
-                  instanzentabelle = instanzentabelle + '</tt>'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(x.root_device_type)+'</tt>'
+                  instanzentabelle = instanzentabelle + '</td><td align="center">'
+                  instanzentabelle = instanzentabelle + '<tt>'+str(i.owner_id)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
                   instanzentabelle = instanzentabelle + '<tt>'+str(x.image_id)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td><td>'
@@ -349,7 +397,7 @@ class Instanzen(webapp.RequestHandler):
             if sprache == "de":
               alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="Alle Instanzen beenden">\n'
             else:
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="stop all instances">\n'
+              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="terminate all instances">\n'
             alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</form>\n'
             alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</td>\n'
             alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</tr>\n'

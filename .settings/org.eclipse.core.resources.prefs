@@ -1,4 +1,4 @@
-#Wed Aug 11 18:14:14 CEST 2010
+#Wed Aug 11 22:01:50 CEST 2010
 eclipse.preferences.version=1
 encoding//ebs/AlleVolumesLoeschenDefinitiv.py=iso-8859-15
 encoding//ebs/AlleVolumesLoeschenFrage.py=iso-8859-15
@@ -31,6 +31,8 @@ encoding//ec2/InstanzAnlegen.py=iso-8859-15
 encoding//ec2/InstanzAnlegenNimbus.py=iso-8859-15
 encoding//ec2/InstanzBeenden.py=iso-8859-15
 encoding//ec2/InstanzReboot.py=iso-8859-15
+encoding//ec2/InstanzStarten.py=iso-8859-15
+encoding//ec2/InstanzTerminate.py=iso-8859-15
 encoding//ec2/Instanzen.py=iso-8859-15
 encoding//ec2/KeyEntfernen.py=iso-8859-15
 encoding//ec2/KeyErzeugen.py=iso-8859-15
@@ -71,5 +73,6 @@ encoding//s3/BucketInhaltPur.py=iso-8859-15
 encoding//s3/BucketKeyEntfernen.py=iso-8859-15
 encoding//s3/BucketVerzeichnisErzeugen.py=iso-8859-15
 encoding//s3/S3.py=iso-8859-15
+encoding/error_messages.py=iso-8859-15
 encoding/koala.py=iso-8859-15
 encoding/library.py=iso-8859-15
