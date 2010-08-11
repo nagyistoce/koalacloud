@@ -36,7 +36,7 @@ def login(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -232,7 +232,7 @@ def loginelb(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -306,7 +306,7 @@ def logins3(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "us-west-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "ap-southeast-1":
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -322,7 +322,7 @@ def logins3(username):
       endpointurl = db_eintrag.endpointurl
       port = db_eintrag.port
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1":
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
