@@ -77,16 +77,16 @@ class Zonen(webapp.RequestHandler):
             zonentabelle = zonentabelle + '</tr>'
             for i in range(laenge_liste_zonen):
                 zonentabelle = zonentabelle + '<tr>'
-                zonentabelle = zonentabelle + '<td>'+liste_zonen[i].name+'</td>'
+                zonentabelle = zonentabelle + '<td>'+str(liste_zonen[i].name)+'</td>'
                 if liste_zonen[i].state == u'available':
                   zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
                   if sprache == "de":
                     zonentabelle = zonentabelle + 'verf&uuml;gbar'
                   else:
-                    zonentabelle = zonentabelle + liste_zonen[i].state
+                    zonentabelle = zonentabelle + str(liste_zonen[i].state)
                 else:
                   zonentabelle = zonentabelle + '<td align="center">'
-                  zonentabelle = zonentabelle + liste_zonen[i].state
+                  zonentabelle = zonentabelle + str(liste_zonen[i].state)
                 zonentabelle = zonentabelle + '</td>'
                 zonentabelle = zonentabelle + '</tr>'
             zonentabelle = zonentabelle + '</table>'
