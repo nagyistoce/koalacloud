@@ -233,14 +233,10 @@ class Volumes(webapp.RequestHandler):
                     volumestabelle = volumestabelle + '&nbsp;'
                   volumestabelle = volumestabelle + '</td>'
                   volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<tt>'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].id)
-                  volumestabelle = volumestabelle + '</tt>'
+                  volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].id)+'</tt>'
                   volumestabelle = volumestabelle + '</td>'
                   volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<tt>'
-                  volumestabelle = volumestabelle + str(liste_volumes[i].snapshot_id)
-                  volumestabelle = volumestabelle + '</tt>'
+                  volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].snapshot_id)+'</tt>'
                   volumestabelle = volumestabelle + '</td>'
                   volumestabelle = volumestabelle + '<td align="right">'
                   volumestabelle = volumestabelle + str(liste_volumes[i].size)
@@ -273,9 +269,7 @@ class Volumes(webapp.RequestHandler):
                     volumestabelle = volumestabelle + '&nbsp;'
                   else:
                     volumestabelle = volumestabelle + '<td align="center">'
-                    volumestabelle = volumestabelle + '<tt>'
-                    volumestabelle = volumestabelle + str(liste_volumes[i].attach_data.device)
-                    volumestabelle = volumestabelle + '</tt>'
+                    volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].attach_data.device)+'</tt>'
                   volumestabelle = volumestabelle + '</td>'
                   if liste_volumes[i].attach_data.attach_time == None:
                     volumestabelle = volumestabelle + '<td>'

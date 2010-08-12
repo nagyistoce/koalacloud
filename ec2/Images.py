@@ -310,9 +310,7 @@ class Images(webapp.RequestHandler):
                       imagestabelle = imagestabelle + '&nbsp;'
                     imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '<td>'
-                    imagestabelle = imagestabelle + '<tt>'
-                    imagestabelle = imagestabelle + liste_images[i].id
-                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '<tt>'+liste_images[i].id+'</tt>'
                     imagestabelle = imagestabelle + '</td>'
 
 
@@ -354,27 +352,23 @@ class Images(webapp.RequestHandler):
                     imagestabelle = imagestabelle + '</td>'
 
                     imagestabelle = imagestabelle + '<td align="center">'
-                    imagestabelle = imagestabelle + liste_images[i].type
+                    imagestabelle = imagestabelle + str(liste_images[i].type)
                     imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '<td>'
-                    imagestabelle = imagestabelle + '<tt>'
-                    imagestabelle = imagestabelle + liste_images[i].location
-                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '<tt>'+str(liste_images[i].location)+'</tt>'
                     imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '<td align="center">'
-                    imagestabelle = imagestabelle + '<tt>'
-                    imagestabelle = imagestabelle + liste_images[i].architecture
-                    imagestabelle = imagestabelle + '</tt>'
+                    imagestabelle = imagestabelle + '<tt>'+str(liste_images[i].architecture)+'</tt>'
                     imagestabelle = imagestabelle + '</td>'
                     if liste_images[i].state == u'available':
                       imagestabelle = imagestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                      imagestabelle = imagestabelle + liste_images[i].state
+                      imagestabelle = imagestabelle + str(liste_images[i].state)
                     else:
                       imagestabelle = imagestabelle + '<td align="center">'
-                      imagestabelle = imagestabelle + liste_images[i].state
+                      imagestabelle = imagestabelle + str(liste_images[i].state)
                     imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '<td>'
-                    imagestabelle = imagestabelle + liste_images[i].ownerId
+                    imagestabelle = imagestabelle + str(liste_images[i].ownerId)
                     imagestabelle = imagestabelle + '</td>'
                     imagestabelle = imagestabelle + '</tr>'
                 imagestabelle = imagestabelle + '</table>'
