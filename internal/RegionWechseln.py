@@ -55,11 +55,14 @@ class RegionWechseln(webapp.RequestHandler):
 
         try:
           # In den Datastore schreiben
+          # Write into the Datastore
           logindaten.put()
         except:
           # Wenn es nicht klappt...
+          # It it didn't work...
           self.redirect('/')
         else:
           # Wenn es geklappt hat...
+          # If it worked...
           self.redirect('/')
 

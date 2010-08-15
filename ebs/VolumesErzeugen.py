@@ -7,6 +7,8 @@ from google.appengine.api.urlfetch import DownloadError
 
 from library import login
 
+from boto.ec2.connection import *
+
 class VolumesErzeugen(webapp.RequestHandler):
     def post(self):
         #self.response.out.write('posted!')

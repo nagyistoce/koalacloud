@@ -70,6 +70,13 @@ def login(username):
       conn_region.host = str(endpointurl)
 
       regionname = aktuellezone
+    elif regionname == "opennebula":
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_region = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, port=int(port))
+      conn_region.host = endpointurl
+
+      regionname = aktuellezone
     else:
       port = int(port)
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
