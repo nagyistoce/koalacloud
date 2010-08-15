@@ -66,6 +66,17 @@ class Instanzen(webapp.RequestHandler):
           else:
             input_error_message = ""
 
+          # Herausfinden, was für eine Infrastruktur wir verwenden.
+          # Ist es Amazon, Nimbus, OpenNebula oder Eucalyptus? 
+          # Die Ergebnisse des SELECT durchlaufen (ist nur eins) 
+          # for result in results:
+          #   aktueller_zugangstyp = result.zugangstyp
+            
+          # Zur Kontrolle, die Art der Infrastruktur ausgeben
+          # self.response.out.write(aktueller_zugangstyp)
+
+
+
           try:
             liste_reservations = conn_region.get_all_instances()
           except EC2ResponseError:
@@ -80,12 +91,13 @@ class Instanzen(webapp.RequestHandler):
             if sprache == "de":
               instanzentabelle = '<font color="red">Es ist zu einem Timeout gekommen</font> <p>&nbsp;</p>'
             else:
-              instanzentabelle = '<font color="red">an timeout error occured</font> <p>&nbsp;</p>'
+              instanzentabelle = '<font color="red">A timeout error occured</font> <p>&nbsp;</p>'
             # Wenn diese Zeile nicht da ist, kommt es später zu einem Fehler!
             laenge_liste_reservations = 0
           else:
             # Wenn es geklappt hat...
-            laenge_liste_reservations = len(liste_reservations)     # Anzahl der Elemente in der Liste
+            # Anzahl der Elemente in der Liste
+            laenge_liste_reservations = len(liste_reservations)
 
             if laenge_liste_reservations == 0:
               if sprache == "de":

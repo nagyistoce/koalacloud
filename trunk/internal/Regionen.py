@@ -113,6 +113,8 @@ class Regionen(webapp.RequestHandler):
                   tabelle_logins = tabelle_logins + 'Nimbus'
                 elif test.regionname == "eucalyptus":
                   tabelle_logins = tabelle_logins + 'Eucalyptus'
+                elif test.regionname == "opennebula":
+                  tabelle_logins = tabelle_logins + 'OpenNebula'
                 else:
                   tabelle_logins = tabelle_logins + '&nbsp;'
                 tabelle_logins = tabelle_logins + '</td>'
@@ -315,11 +317,90 @@ class Regionen(webapp.RequestHandler):
               eingabefelder = eingabefelder + '</table>'
               eingabefelder = eingabefelder + '</form>'
             elif neuerzugang == "opennebula":
+#              eingabefelder = '<p>&nbsp;</p>'
+#              if sprache == "de":
+#                eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r OpenNebula ist noch nicht implementiert</font>'
+#              else:
+#                eingabefelder = eingabefelder + '<font color="green">The support of OpenNebula is not yet finished</font>'
+
               eingabefelder = '<p>&nbsp;</p>'
+              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="opennebula">'
+              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '  <td></td>'
               if sprache == "de":
-                eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r OpenNebula ist noch nicht implementiert</font>'
+                eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
               else:
-                eingabefelder = eingabefelder + '<font color="green">The support of OpenNebula is not yet finished</font>'
+                eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
+              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value=""></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '  <td></td>'
+              if sprache == "de":
+                eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS</font></td>'
+              else:
+                eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS</font></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
+              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value=""></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '  <td></td>'
+              if sprache == "de":
+                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
+              else:
+                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
+              #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+              eingabefelder = eingabefelder + '    <td colspan="2">'
+              eingabefelder = eingabefelder + '      <select name="port" size="1">'
+              eingabefelder = eingabefelder + '        <option>80</option>'
+              eingabefelder = eingabefelder + '        <option>443</option>'
+              eingabefelder = eingabefelder + '        <option>4443</option>'
+              #eingabefelder = eingabefelder + '        <option>4567</option>'  ### Nichte für die Produktion!!!
+              eingabefelder = eingabefelder + '        <option>8080</option>'
+              eingabefelder = eingabefelder + '        <option>8081</option>'
+              eingabefelder = eingabefelder + '        <option>8082</option>'
+              eingabefelder = eingabefelder + '        <option>8083</option>'
+              eingabefelder = eingabefelder + '        <option>8084</option>'
+              eingabefelder = eingabefelder + '        <option>8085</option>'
+              eingabefelder = eingabefelder + '        <option>8086</option>'
+              eingabefelder = eingabefelder + '        <option>8087</option>'
+              eingabefelder = eingabefelder + '        <option>8088</option>'
+              eingabefelder = eingabefelder + '        <option>8089</option>'
+              eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
+              #eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
+              eingabefelder = eingabefelder + '        <option>8444</option>'
+              eingabefelder = eingabefelder + '        <option>8990</option>'
+              eingabefelder = eingabefelder + '      </select>'
+              eingabefelder = eingabefelder + '    </td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '  <tr>'
+              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+              if sprache == "de":
+                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+              else:
+                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+              eingabefelder = eingabefelder + '  </tr>'
+              eingabefelder = eingabefelder + '</table>'
+              eingabefelder = eingabefelder + '</form>'
             elif neuerzugang == "tashi":
               eingabefelder = '<p>&nbsp;</p>'
               if sprache == "de":
@@ -333,7 +414,7 @@ class Regionen(webapp.RequestHandler):
               version_warnung = '<p>&nbsp;</p>'
               if sprache == "de":
                 version_warnung = version_warnung + '<p><font color="red">KOALA unterst&uuml;tzt ausschlie&szlig;lich Eucalyptus 1.6.2.<br> '
-                version_warnung = version_warnung + 'Fr&uuml;here Versionen haben einige Bugs, die zu Problemen f&uuml;hren k&ouml;nnen.<br>'
+                version_warnung = version_warnung + 'Fr&uuml;here Versionen haben Fehler, die zu Problemen f&uuml;hren k&ouml;nnen.<br>'
                 version_warnung = version_warnung + 'Ein Update von Eucalyptus auf die aktuelle Version wird daher empfohlen.</font></p>'
               else:
                 version_warnung = version_warnung + '<p><font color="red">KOALA supports only Eucalyptus 1.6.2.<br> '
@@ -349,30 +430,46 @@ class Regionen(webapp.RequestHandler):
                 port_warnung = port_warnung + 'Leider ist der Standard-Port von Eucalyputs (8773) nicht dabei. '
                 port_warnung = port_warnung + 'Es empfiehlt sich darum, einen anderen Port auf den Eucalyptus-Port umzuleiten. '
                 port_warnung = port_warnung + 'Ein Beispiel:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -A INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8773</tt> '
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8773</tt> '
               else:
                 port_warnung = port_warnung + 'The Google App Engine accepts only few ports '
                 port_warnung = port_warnung + 'and the default port of Eucalyptus (8773) is not included. '
                 port_warnung = port_warnung + 'Because of this fact, you have to route another port to the Eucayptus port. '
                 port_warnung = port_warnung + 'For example:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -A INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8773</tt> '
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8773</tt> '
             elif neuerzugang == "nimbus":
               port_warnung = '<p>&nbsp;</p>\n'
               if sprache == "de":
                 port_warnung = port_warnung + 'Die Google App Engine akzeptiert nur wenige Ports. '
-                port_warnung = port_warnung + 'Wenn die Nimbus-Infrastruktur, die Sie verwenden m&ouml;chten, einen keine unterst&uuml;tzten Port (z.B. 8442) verwendet, '
+                port_warnung = port_warnung + 'Wenn die Nimbus-Infrastruktur, die Sie verwenden m&ouml;chten, keinen unterst&uuml;tzten Port (z.B. 8442) verwendet, '
                 port_warnung = port_warnung + 'empfiehlt es sich, einen unterst&uuml;tzten Port auf den Port der Nimbus-Infrastruktur umzuleiten. '
                 port_warnung = port_warnung + 'Ein Beispiel:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -A INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8442</tt> '
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8442</tt> '
               else:
                 port_warnung = port_warnung + 'The Google App Engine accepts only few ports. '
                 port_warnung = port_warnung + 'If the Nimbus infrastructure you want to access, has a non accepted port (e.g. 8442), you have to route an accepted port to the port of the Nimbus infrastructure. '
                 port_warnung = port_warnung + 'For example:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -A INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8442</tt> '
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8442</tt> '
+            elif neuerzugang == "opennebula":
+              port_warnung = '<p>&nbsp;</p>\n'
+              if sprache == "de":
+                port_warnung = port_warnung + 'Die Google App Engine akzeptiert nur wenige Ports. '
+                port_warnung = port_warnung + 'Leider ist der Standard-Port von OpenNebula (4567) nicht dabei. '
+                port_warnung = port_warnung + 'Es empfiehlt sich darum, einen anderen Port auf den OpenNebula-Port umzuleiten. '
+                port_warnung = port_warnung + 'Ein Beispiel:<br> \n'
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 4567</tt> '
+              else:
+                port_warnung = port_warnung + 'The Google App Engine accepts only few ports '
+                port_warnung = port_warnung + 'and the default port of OpenNebula (4567) is not included. '
+                port_warnung = port_warnung + 'Because of this fact, you have to route another port to the OpenNebula port. '
+                port_warnung = port_warnung + 'For example:<br> \n'
+                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
+                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 4567</tt> '
             else:
               port_warnung = '<p>&nbsp;</p>'
 
