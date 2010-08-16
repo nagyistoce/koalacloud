@@ -254,7 +254,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               # Prüfen, ob die Zugangsdaten für Eucalyptus korrekt sind
               try:
                 # Zugangsdaten testen
-                connection = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, port=int(4567))
+                connection = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, port=int(port))
                 connection.host = endpointurl
 
                 instances = connection.get_all_instances()
