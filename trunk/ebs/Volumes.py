@@ -140,11 +140,13 @@ class Volumes(webapp.RequestHandler):
 
 
             if laenge_liste_volumes == 0:
+              # Wenn es noch keine Volumes in der Region gibt...
               if sprache == "de":
                 volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
               else:
                 volumestabelle = 'No volumes exist inside this region.'
             else: 
+              # Wenn es schon Volumes in der Region gibt...
               volumestabelle = ''
               volumestabelle = volumestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
               volumestabelle = volumestabelle + '<tr>'
@@ -154,6 +156,7 @@ class Volumes(webapp.RequestHandler):
               volumestabelle = volumestabelle + '<th align="center">Volume ID</th>'
               volumestabelle = volumestabelle + '<th align="center">Snapshot ID</th>'
               if sprache == "de":
+                # Wenn die Sprache Deutsch ist...
                 volumestabelle = volumestabelle + '<th align="center">Gr&ouml;&szlig;e [GB]</th>'
                 volumestabelle = volumestabelle + '<th align="center">Status</th>'
                 volumestabelle = volumestabelle + '<th align="center">Zone</th>'
@@ -162,7 +165,8 @@ class Volumes(webapp.RequestHandler):
                 volumestabelle = volumestabelle + '<th align="center">Datum des Verkn&uuml;pfung</th>'
                 volumestabelle = volumestabelle + '<th align="center">Instanz ID</th>'
                 volumestabelle = volumestabelle + '<th align="center">Status der Verkn&uuml;pfung</th>'
-              else: # Wenn die Sprache Englisch ist...
+              else:
+                # Wenn die Sprache Englisch ist...
                 volumestabelle = volumestabelle + '<th align="center">Size [GB]</th>'
                 volumestabelle = volumestabelle + '<th align="center">Status</th>'
                 volumestabelle = volumestabelle + '<th align="center">Zone</th>'
