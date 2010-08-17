@@ -28,7 +28,7 @@ class Instanzen(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()  
         if not username:
-            self.redirect('/')
+          self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message') 
 
@@ -36,7 +36,9 @@ class Instanzen(webapp.RequestHandler):
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')     
+        else:
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
@@ -435,6 +437,5 @@ class Instanzen(webapp.RequestHandler):
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "instanzen.html")
           self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
+
 
