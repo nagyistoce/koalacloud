@@ -238,7 +238,10 @@ class Volumes(webapp.RequestHandler):
                   volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].id)+'</tt>'
                   volumestabelle = volumestabelle + '</td>'
                   volumestabelle = volumestabelle + '<td>'
-                  volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].snapshot_id)+'</tt>'
+                  if liste_volumes[i].snapshot_id == "":
+                    volumestabelle = volumestabelle + '&nbsp;'
+                  else:
+                    volumestabelle = volumestabelle + '<tt>'+str(liste_volumes[i].snapshot_id)+'</tt>'
                   volumestabelle = volumestabelle + '</td>'
                   volumestabelle = volumestabelle + '<td align="right">'
                   volumestabelle = volumestabelle + str(liste_volumes[i].size)
