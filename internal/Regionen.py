@@ -107,16 +107,7 @@ class Regionen(webapp.RequestHandler):
                 tabelle_logins = tabelle_logins + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Zugang l&ouml;schen"></a>'
                 tabelle_logins = tabelle_logins + '</td>'
                 tabelle_logins = tabelle_logins + '<td align="center">'
-                if test.eucalyptusname == "Amazon":
-                  tabelle_logins = tabelle_logins + 'Amazon AWS'
-                elif test.regionname == "nimbus":
-                  tabelle_logins = tabelle_logins + 'Nimbus'
-                elif test.regionname == "eucalyptus":
-                  tabelle_logins = tabelle_logins + 'Eucalyptus'
-                elif test.regionname == "opennebula":
-                  tabelle_logins = tabelle_logins + 'OpenNebula'
-                else:
-                  tabelle_logins = tabelle_logins + '&nbsp;'
+                tabelle_logins = tabelle_logins + str(test.zugangstyp)
                 tabelle_logins = tabelle_logins + '</td>'
                 tabelle_logins = tabelle_logins + '<td align="center">'
                 tabelle_logins = tabelle_logins + str(test.endpointurl)
