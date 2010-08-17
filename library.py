@@ -301,7 +301,6 @@ def loginelb(username):
       regionname = aktuellezone
     else:
       regionname = "keine"
-      #regionname = aktuellezone
   else:
     regionname = "keine"
   return conn_elb
