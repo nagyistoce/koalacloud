@@ -135,37 +135,37 @@ Inside this window you can also start another instance with the same key data wi
 
 == Elastic IPs ==
 
-Instances get an public (internal) and an private (external) DNS name automatically when they are created. When an instance is terminated, the public and private DNS names both are lost.
+Instances get a public (internal) and a private (external) DNS name automatically, when they are created. If an instance is terminated, the public and private DNS names both are lost.
 
-For implementing sustainable services it is mandatory to use elastic IPs that can be associate to instances and disassociated at any time. The *IPs* windows shows a table of the elastic IPs that have already been created by you. It is easy inside this windows to create more elastic IPs and to release them.
+For implementing sustainable services it is mandatory to use elastic IPs that can be associated to instances and disassociated at any time. The *IPs* window shows a table of the elastic IPs that have already been created by you. It is easy inside this windows to create more elastic IPs and to release them.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
 
-In this example an elastic IP is associated to the instance we created before. In this window you can decide which of your instances inside this region shall be associated to the elastic IP.
+In this example an elastic IP is associated to the instance we created before. In this window you can decide what instance of you inside this region shall be associated to the elastic IP.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial18_attach_elastic_ip_small.png]
 
-After the elastic IP is associated to the instance the *IPs* windows makes it easy to disassociate it.
+After the elastic IP is associated to the instance the *IPs* windows makes it easy to disassociate it as well.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial19_attached_elastic_ip_to_instance_small.png]
 
 == EBS Volumes ==
 
-Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. Important data need to be stored inside Elastic Block Store (EBS) volumes. Inside the *Volumes* window you can create new volumes and teminate existing volumes. A volume can be attached to a single instance and remapped at any time. Using a volumes is the same like an unformated block storage device. It can be equiped with any filesystem.
+Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. Therefore, important data in the cloud need to be stored inside Elastic Block Store (EBS) volumes. Inside the *Volumes* window you can create new volumes and erase existing volumes. A volume can be attached to a single instance and remapped at any time. Using a volume is equal to the work with an unformated block storage device. Volumes can be equiped with any filesystem.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial15_EBS_volumes_small.png]
 
-Inside the *Volumes* window it is also possible to attach volumes to instances and decide which device the volume shall be inside the instance. Volumes can only attached to instances that run inside the same availability zone and region.
+It is possible to attach volumes to instances and decide which device the volume shall be inside the instance. Volumes can only be attached to instances that run inside the same availability zone and region.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial16_attach_EBS_volumes_small.png]
 
-In the *Volumes* window you can check which volumes are attached to which instances and detach them. In this example a volume with 5 GB is attached to the instance we created before. Both are inside the availability zone us-east-1d inside the region EC2 US East.
+In the *Volumes* window you can check which volumes are attached to which instances and detach them. In this example, a volume with 5 GB is attached to the instance we created before. Both are inside the availability zone _us-east-1d_ which is inside the region EC2 US East.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial17_attached_EBS_volume_small.png]
 
 == Snapshots ==
 
-Inside the *Volumes* window you can also create Snapshots of your volumes.
+Inside the *Volumes* window you can also create snapshots of your volumes.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial20_create_snapshot_small.png]
 
