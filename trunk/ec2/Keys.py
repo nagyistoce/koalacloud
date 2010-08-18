@@ -136,10 +136,11 @@ class Keys(webapp.RequestHandler):
             if neu == "ja":
               secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
               secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
+              # Das wird in den Body-Tag der Datei base.html eingefügt. 
               bodycommand = ' onLoad="newkey()" '
-              secretkey = "test"
-              javascript_funktion = '''<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-  <!--
+              javascript_funktion = '''
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <!--  to hide script contents from old browsers
   function newkey()
   {
   OpenWindow=window.open("", "newwin", "height=450, width=500,toolbar=no,scrollbars="+scroll+",menubar=no")
@@ -149,38 +150,38 @@ class Keys(webapp.RequestHandler):
   OpenWindow.document.write("<HTML>")
   OpenWindow.document.write("<HEAD>")
   OpenWindow.document.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>")
-  OpenWindow.document.write("<TITLE>Secret Key</TITLE>")
+  OpenWindow.document.write("<TITLE>Secret Key<\/TITLE>")
   OpenWindow.document.write("<link type='text/css' rel='stylesheet' href='/stylesheets/style.css'>")
   OpenWindow.document.write("<link rel='SHORTCUT ICON' href='/favicon.ico'>")
-  OpenWindow.document.write("</HEAD>")
+  OpenWindow.document.write("<\/HEAD>")
   OpenWindow.document.write("<BODY BGCOLOR='white'>")
-  OpenWindow.document.write("<h1>Secret Key</h1>")
-  OpenWindow.document.write("<P>&nbsp;</P>")
+  OpenWindow.document.write("<h1>Secret Key<\/h1>")
+  OpenWindow.document.write("<P>&nbsp;<\/P>")
   OpenWindow.document.write("<tt>'''
               javascript_funktion = javascript_funktion + secretkey_memcache
               if sprache == "de":
-                javascript_funktion = javascript_funktion + '''</tt>")
-                OpenWindow.document.write("<P>&nbsp;</P>")
-                OpenWindow.document.write("<B>Achtung!</B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
+                javascript_funktion = javascript_funktion + '''<\/tt>")
+                OpenWindow.document.write("<P>&nbsp;<\/P>")
+                OpenWindow.document.write("<B>Achtung!<\/B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
                 OpenWindow.document.write("Am besten in einer Datei <tt>'''
               else:
-                javascript_funktion = javascript_funktion + '''</tt>")
-                OpenWindow.document.write("<P>&nbsp;</P>")
-                OpenWindow.document.write("<B>Attention!</B> The secret key need to be saved.<BR>")
+                javascript_funktion = javascript_funktion + '''<\/tt>")
+                OpenWindow.document.write("<P>&nbsp;<\/P>")
+                OpenWindow.document.write("<B>Attention!<\/B> The secret key need to be saved.<BR>")
                 OpenWindow.document.write("As an advise use the filename <tt>'''
               javascript_funktion = javascript_funktion + neuerkeyname
-              javascript_funktion = javascript_funktion + '''.secret</tt>.")
-              OpenWindow.document.write("<P>&nbsp;</P>")
+              javascript_funktion = javascript_funktion + '''.secret<\/tt>.")
+              OpenWindow.document.write("<P>&nbsp;<\/P>")
               OpenWindow.document.write("<tt>chmod 600 '''
               javascript_funktion = javascript_funktion + neuerkeyname
-              javascript_funktion = javascript_funktion + '''.secret</tt>")
-  OpenWindow.document.write("</BODY>")
-  OpenWindow.document.write("</HTML>")
+              javascript_funktion = javascript_funktion + '''.secret<\/tt>")
+  OpenWindow.document.write("<\/BODY>")
+  OpenWindow.document.write("<\/HTML>")
   OpenWindow.document.close()
   self.name="main"
   }
-  // -->
-  </SCRIPT>'''
+  // end hiding contents from old browsers  -->
+</SCRIPT>'''
             else:
                 bodycommand = " "
                 javascript_funktion = " "
