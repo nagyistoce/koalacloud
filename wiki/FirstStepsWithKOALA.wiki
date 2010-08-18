@@ -76,12 +76,24 @@ When the new keypair is created, a small window appears. Inside this window you 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair3_secret_key_small.png]
 
-== images ==
+== Images ==
 
-== instances ==
+When using cloud infrastructures that use Eucalyptus, Nimbus or OpenNebula as IaaS, you can use the Images windows to check the images available inside the active region.
+
+When using Amazon EC2 we are tortured here by a disadvantage of the EC2 API. Amazon provides no ability to filter the returned list of images on the server side. The list of images contains more than 1000 images. Fetching and processing the list of images needs some seconds. So, when trying to ge a list of all images available, this leads to a timeout of the Google App Engine.
+
+When using a Private Cloud with Eucalyptus, Nimbus or OpenNebula it is no problem to fetch a list of all images because inside a Private Cloud will never be as many images as Amazon stores.
+
+As a workaround, when using EC2, a list of favorite AMIs can be created by yourself insite this window and used to ckeck the images and start instances. This issue is annoying but not dramatic because in most use cases you work with a small choice of images most of the time.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial5_create_favorites_small_small.png]
+
+In this example a few images in the region EC2 US East are stored as favorites.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial6_several_favorites.png]
+
+== Instances ==
 
 == EBS volumes ==
 
 == Elastic IPs ==
-
-
