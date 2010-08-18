@@ -26,4 +26,6 @@ See the following table that consists that available cloud infrastructures that 
 
 If you don't have any Private Cloud IaaS running. The easiest is to get access to [http://aws.amazon.com/ec2/ Amazon EC2]. If you don't want this e.g. because you don't have a credit card and you don't have access to a running Private Cloud you need to run a Private Cloud IaaS yourself.
 
-== Get credentials to a cloud infrastructure ==
+== Get credentials into KOALA ==
+
+[http://code.google.com/p/koalacloud/source/browse/trunk/tutorial/images/login1_pfeil.jpg]
