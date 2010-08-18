@@ -32,29 +32,31 @@ class VolumesAnhaengen(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
-            self.redirect('/')
+          self.redirect('/')
 
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')
+        else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
-
+  
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
-
+  
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
-
+  
           zonen_liste = zonen_liste_funktion(username,sprache)
-
+  
           liste_reservations = conn_region.get_all_instances()
           # Anzahl der Elemente in der Liste
           laenge_liste_reservations = len(liste_reservations)
-
+  
           if laenge_liste_reservations == "0":
             # Wenn es keine laufenden Instanzen gibt
             instanzen_in_region = 0
@@ -67,7 +69,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
                 # ...ob die Instanz in der Region des Volumes liegt und läuft
                 if x.placement == volume_zone and x.state == u'running':
                   instanzen_in_region = instanzen_in_region + 1
-
+  
           tabelle_anhaengen = ''
           tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
           tabelle_anhaengen = tabelle_anhaengen + volume
@@ -167,7 +169,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
               tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
           tabelle_anhaengen = tabelle_anhaengen + '\n'
           tabelle_anhaengen = tabelle_anhaengen + '</form>'
-
+  
           if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
             if sprache == "de":        # ... und die Sprache deutsch ist ...
               ebs_volumes_eucalyptus_warnung = '<font color="red">Achtung! Das Verbinden von Volumes mit Instanzen dauert unter Eucalyptus teilweise mehrere Minuten.</font>'
@@ -175,7 +177,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
               ebs_volumes_eucalyptus_warnung = '<font color="red">Attention! Attaching volumes with Instances at Eucalyptus needs some time (several minutes).</font>'
           else:                        # Wenn die Region Amazon EC2 ist...
             ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
-
+  
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -186,12 +188,11 @@ class VolumesAnhaengen(webapp.RequestHandler):
           'tabelle_anhaengen': tabelle_anhaengen,
           'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
           }
-
+  
           #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
           #else:               naechse_seite = "volume_anhaengen_en.html"
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volume_anhaengen.html")
           self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
+
           

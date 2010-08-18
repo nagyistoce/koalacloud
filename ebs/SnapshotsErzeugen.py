@@ -27,13 +27,15 @@ class SnapshotsErzeugen(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
-            self.redirect('/')
+          self.redirect('/')
 
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')
+        else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
@@ -87,5 +89,3 @@ class SnapshotsErzeugen(webapp.RequestHandler):
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "snapshot_erzeugen.html")
           self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
