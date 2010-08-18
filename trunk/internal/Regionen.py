@@ -125,7 +125,7 @@ class Regionen(webapp.RequestHandler):
               if sprache == "de":
                 tabelle_logins = 'Sie haben noch keine Login-Daten eingegeben'
               else:
-                tabelle_logins = 'still no credentials exist'
+                tabelle_logins = 'No credentials available'
               tabelle_logins = tabelle_logins + '<p>&nbsp;</p>'
 
             if neuerzugang == "eucalyptus":
@@ -450,17 +450,13 @@ class Regionen(webapp.RequestHandler):
               if sprache == "de":
                 port_warnung = port_warnung + 'Die Google App Engine akzeptiert nur wenige Ports. '
                 port_warnung = port_warnung + 'Leider ist der Standard-Port von OpenNebula (4567) nicht dabei. '
-                port_warnung = port_warnung + 'Es empfiehlt sich darum, einen anderen Port auf den OpenNebula-Port umzuleiten. '
-                port_warnung = port_warnung + 'Ein Beispiel:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 4567</tt> '
+                port_warnung = port_warnung + 'Es ist darum notwendig, den econe Server auf einen anderen, unterstützten Port umzuleiten. '
+                port_warnung = port_warnung + 'Die Einstellung erfolgt in der Datei <tt>econe.conf</tt>'
               else:
                 port_warnung = port_warnung + 'The Google App Engine accepts only few ports '
                 port_warnung = port_warnung + 'and the default port of OpenNebula (4567) is not included. '
-                port_warnung = port_warnung + 'Because of this fact, you have to route another port to the OpenNebula port. '
-                port_warnung = port_warnung + 'For example:<br> \n'
-                port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
-                port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 4567</tt> '
+                port_warnung = port_warnung + 'Because of this fact, you have to route the econe server to another, supported port. '
+                port_warnung = port_warnung + 'The port configuration is done inside <tt>econe.conf</tt>'
             else:
               port_warnung = '<p>&nbsp;</p>'
 

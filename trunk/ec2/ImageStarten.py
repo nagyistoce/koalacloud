@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class ImageStarten(webapp.RequestHandler):
     def get(self):
+        # self.response.out.write('test')
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -55,25 +56,17 @@ class ImageStarten(webapp.RequestHandler):
         zonen_liste = zonen_liste_funktion(username,sprache)
 
         for result in results:
-          if result.zugangstyp == "Amazon":
-            imageliste = [image]
-            # Liste mit den Images
-            liste_images = conn_region.get_all_images(image_ids=imageliste)  
-            # Anzahl der Images in der Liste
-            laenge_liste_images = len(liste_images)
-            for i in range(laenge_liste_images):
-              if liste_images[i].id == image:
-                manifest = str(liste_images[i].location)
-          else:
-            # Liste mit den Images
-            liste_images = conn_region.get_all_images()
-            # Anzahl der Images in der Liste
-            laenge_liste_images = len(liste_images)
-            for i in range(laenge_liste_images):
-              if liste_images[i].id == image:
-                manifest = str(liste_images[i].location)
 
+          imageliste = [str(image)]
+          # Liste mit den Images
+          liste_images = conn_region.get_all_images(image_ids=imageliste)  
+          # Anzahl der Images in der Liste
+          laenge_liste_images = len(liste_images)
+          for i in range(laenge_liste_images):
+            if liste_images[i].id == image:
+              manifest = str(liste_images[i].location)
 
+        
         if result.zugangstyp == "Nimbus":
 
           imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
