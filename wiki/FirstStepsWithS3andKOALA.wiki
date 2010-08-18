@@ -3,9 +3,9 @@
 
 = First steps with the KOALA Cloud Manager and S3 =
 
-Before you start with KOALA using S3 it is highly appreciated that you consult [http://code.google.com/p/koalacloud/wiki/FirstStepsWithEC2andKOALA this] document that shows what you need to use KOALA and how to get your credentials inserted.
+Before you start with KOALA using S3 it is highly appreciated that you consult [http://code.google.com/p/koalacloud/wiki/FirstStepsWithEC2andKOALA this] document that tells what you need to use KOALA at all and how to get your credentials inserted.
 
-For using KOALA to interact with S3 compatible cloud services you need access to at least a single cloud service (IaaS) that uses the API of Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). 
+For using KOALA to interact with S3 compatible cloud services you need access to at least a single cloud service that uses the API of Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). 
 
 The following table shows the cloud services available that are compatible to the S3 API.
 
@@ -15,6 +15,6 @@ The following table shows the cloud services available that are compatible to th
 || Cumulus from [http://www.nimbusproject.org Nimbus]  || Private Cloud          || Apache License v2.0  || yes ||
 || [http://code.google.com/intl/de/apis/storage/ Google Storage]  || Public Cloud          || proprietary  || yes ||
 
-If you don't have any S3 compatible cloud services running, the most easy way is to get access to [http://aws.amazon.com/s3/ Amazon S3]. If you don't want this because e.g. you don't have a credit card you need a Private Cloud S3 service.
+If you don't have any S3 compatible Private Cloud services running, the most easy way is to get access to [http://aws.amazon.com/s3/ Amazon S3]. If you don't want this because e.g. you don't have a credit card you need a Private Cloud S3 service.
 
-This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the most common use case for KOALA.
+This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the most common use case for KOALA and the Private Cloud S3 solutions have not the same level of stability and functionality.
