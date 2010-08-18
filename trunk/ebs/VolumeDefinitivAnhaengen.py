@@ -7,6 +7,8 @@ from google.appengine.api.urlfetch import DownloadError
 
 from library import login
 
+from boto.ec2.connection import *
+
 class VolumeDefinitivAnhaengen(webapp.RequestHandler):
     def post(self):
         # Name des anzuhängenden Volumes holen

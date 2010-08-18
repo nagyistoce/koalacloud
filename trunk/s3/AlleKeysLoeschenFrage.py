@@ -26,7 +26,7 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
-            self.redirect('/')
+          self.redirect('/')
         # Den Namen des Buckets erfahren
         bucketname = self.request.get('bucket_name')
         # Die S3-Ansicht (pur oder Komfort) erfahren
@@ -36,7 +36,9 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')
+        else:
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')

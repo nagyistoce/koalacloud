@@ -39,7 +39,7 @@ class BucketInhalt(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
-            self.redirect('/')
+          self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Eventuell vorhandes Verzeichnis holen
@@ -52,7 +52,9 @@ class BucketInhalt(webapp.RequestHandler):
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')
+        else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
@@ -550,6 +552,5 @@ class BucketInhalt(webapp.RequestHandler):
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3_keys.html")
           self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
+
 

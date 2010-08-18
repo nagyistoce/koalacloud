@@ -27,7 +27,7 @@ class ACL_einsehen(webapp.RequestHandler):
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
-            self.redirect('/')
+          self.redirect('/')
         # Namen des Buckets holen, in dem der Key ist
         bucketname = self.request.get('bucket')
         # Namen des Keys holen, dessen ACL angezeigt wird
@@ -42,7 +42,9 @@ class ACL_einsehen(webapp.RequestHandler):
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
 
-        if results:
+        if not results:
+          self.redirect('/')
+        else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
           navigations_bar = navigations_bar_funktion(sprache)
@@ -197,7 +199,5 @@ class ACL_einsehen(webapp.RequestHandler):
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "acl.html")
           self.response.out.write(template.render(path,template_values))
-        else:
-          self.redirect('/')
-          
+
 
