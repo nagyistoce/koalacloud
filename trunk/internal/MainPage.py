@@ -35,7 +35,7 @@ class MainPage(webapp.RequestHandler):
             results = aktivezone.fetch(100)
 
             if not results:
-              regionname = 'keine'
+              regionname = '---'
               zone_amazon = ""
             else:
               conn_region, regionname = login(username)
@@ -54,7 +54,7 @@ class MainPage(webapp.RequestHandler):
             navigations_bar = navigations_bar_funktion(sprache)
             url = users.create_login_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Login'
-            regionname = 'keine'
+            regionname = '---'
             zone_amazon = ""
 
         zonen_liste = zonen_liste_funktion(username,sprache)
