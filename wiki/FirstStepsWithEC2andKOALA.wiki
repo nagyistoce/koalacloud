@@ -1,5 +1,5 @@
 #labels Featured
-= First steps with the KOALA Cloud Manager =
+= First steps with the KOALA Cloud Manager and EC2 =
 
 Using KOALA ist quite easy. All you need is
 
