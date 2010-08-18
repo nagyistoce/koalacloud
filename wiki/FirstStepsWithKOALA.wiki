@@ -114,12 +114,32 @@ You have to decide, how many Instances shall be started and if you prefer a spec
 
 == Instances ==
 
+After you started at least one instance you can see inside the Instances window all information about your instances.
+
+  * Reservation ID
+  * Instance ID
+  * Filesystem/Kernel/Ramdisk image
+  * Availability Zone 
+  * Keypair
+  * Public DNS
+  * Private DNS
+  * Launch Time
+  * ...
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial13_running_instance_small.png]
+
+Inside this window you can also start another instanace with the same key data with just a single click. You can also reboot, stop and terminate instances. Also the console output can be checked.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial14_console_output_small.png]
+
 == Elastic IPs ==
 
-Instances get an internal IP address and an external DNS name automatically when they are created. When an instance is terminated, the IP address and the DNS name both are lost.
+Instances get an public (internal) and an private (external) DNS name automatically when they are created. When an instance is terminated, the public and private DNS names both are lost.
 
-For implementing sustainable services it is mandatory to use elastic IPs.
+For implementing sustainable services it is mandatory to use elastic IPs that can be mapped to instances and remapped at any time.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
 
 == EBS volumes ==
+
+Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. 
