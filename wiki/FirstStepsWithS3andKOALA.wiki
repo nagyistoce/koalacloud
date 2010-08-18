@@ -25,10 +25,27 @@ This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the
 
 If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/s3/ Amazon S3] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
 
-== Working with Buckets and Keys ==
+== Buckets and Keys ==
 
 The “Simple” in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. Bucket names and keys are addressable using HTTP URLs automatically:
 
 *http://s3.amazonaws.com/bucket/key*
 
 The namespace of S3 is very flat. Keys are stored in so called buckets and a bucket cannot include another bucket. It is impossible to have two buckets inside S3 with the same name. This means S3 has provides nothing like directories.
+
+Inside the *S3* windows you can see a table with a list of you buckets and here you can create new buckets and erase existing ones.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_1_list_of_buckets_small.png]
+
+For every bucket you have the decision to use the pure S3 mode and a S3 mode with more comfort. The pure S3 mode presents the contend of the buckets exactly the way it is. Just the keys inside the bucket are printed out.
+
+The S3 mode with more comfort simulates folders with clever use of key names. Here, keys that end with *`_`$folder$* are used as directory placeholders. A key that is meant staying inside are folder has a name following this schema *folder/subfolder/filename*. It is the same approach the famous Firefox plugin [http://www.s3fox.net S3Fox] uses.
+
+== Pure S3 mode ==
+
+More to come
+
+== S3 mode with more comfort ==
+
+More to come
+ 
