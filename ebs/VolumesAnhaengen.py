@@ -1,10 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
+import os
+
 from google.appengine.api import users
 from google.appengine.ext import webapp
+from google.appengine.ext import db
+from google.appengine.ext.webapp import template
+from google.appengine.api.urlfetch import DownloadError
 
 from library import login
+from library import aktuelle_sprache
+from library import navigations_bar_funktion
+from library import amazon_region
+from library import zonen_liste_funktion
+from library import format_error_message_green
+from library import format_error_message_red
+
+from dateutil.parser import *
+
+from error_messages import error_messages
+
+from boto.ec2.connection import *
 
 class VolumesAnhaengen(webapp.RequestHandler):
     def get(self):
@@ -173,7 +190,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
           #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
           #else:               naechse_seite = "volume_anhaengen_en.html"
           #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "templates", sprache, "volume_anhaengen.html")
+          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volume_anhaengen.html")
           self.response.out.write(template.render(path,template_values))
         else:
           self.redirect('/')
