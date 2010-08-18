@@ -42,11 +42,18 @@ This tutorial focuses on Amazon EC2 because it is the most common use case.
 
 == Availability Zones ==
 
-The Tab Zones gives you a table with the names and status of the Availability Zones inside the region you are.
+The Zones window gives you a table with the names and status of the Availability Zones inside the region you are.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial8_availabilty_zones_small.png]
 
 == Keypair ==
 
-To log into your instances, you need a keypair. If you don't already have a keypair inside the availability zone, you need to created one. 
+To log into your instances, you need a keypair. If you don't already have a keypair inside the region you want to run instances, you need to created at least one. In this example a now keypair new_key_useast is created.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair1_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair2_new_key_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair3_secret_key_small.png]
+
 
