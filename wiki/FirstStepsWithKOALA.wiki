@@ -32,7 +32,7 @@ This tutorial focuses on Amazon EC2 because it is the most common use case.
 
 == Get your credentials into KOALA ==
 
-Inside the Regions window you can manage your credentials. It is easy create new region data for all supported IaaS solutions.
+Inside the *Regions* window you can manage your credentials. It is easy create new region data for all supported IaaS solutions.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial0_login_small.png]
 
@@ -56,7 +56,7 @@ EC2 has four regions and with your AWS credentials you can use them all automati
 
 == Availability Zones ==
 
-The Zones window gives you a table with the names and status of the availability zones inside the region you are. For this example you can see we are using the EC2 US East region and inside this region are four availability zones.
+The *Zones* window gives you a table with the names and status of the availability zones inside the region you are. For this example you can see we are using the EC2 US East region and inside this region are four availability zones.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial8_availabilty_zones_small.png]
 
@@ -78,7 +78,7 @@ When the new keypair is created, a small window appears. Inside this window you 
 
 == Security Groups ==
 
-Running instances need to be assigned to a security group. You can create new security groups and erase existing security group inside this windows.
+Running instances need to be assigned to a security group. You can create new security groups and erase existing security group inside the *Groups* window.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial11_security_group_small.png]
 
@@ -88,11 +88,11 @@ Inside every security group you can define what ports for which protocols shall 
 
 == Images ==
 
-When using cloud infrastructures that use Eucalyptus, Nimbus or OpenNebula as IaaS, you can use the Images windows to check the images available inside the active region.
+When using cloud infrastructures that use Eucalyptus, Nimbus or OpenNebula as IaaS, you can use the *Images* windows to check the images available inside the active region.
 
 When using Amazon EC2 we are tortured here by a disadvantage of the EC2 API. Amazon provides no ability to filter the returned list of images on the server side. The list of images contains more than 1000 images. Fetching and processing the list of images needs some seconds. So, when trying to ge a list of all images available, this leads to a timeout of the Google App Engine.
 
-When using a Private Cloud with Eucalyptus, Nimbus or OpenNebula it is no problem to fetch a list of all images because inside a Private Cloud will never be as many images as Amazon stores.
+When using a Private Cloud with [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] or [http://www.opennebula.org OpenNebula] it is no problem to fetch a list of all images because inside a Private Cloud will never be as many images as Amazon stores.
 
 As a workaround, when using EC2, a list of favorite AMIs can be created by yourself insite this window and used to ckeck the images and start instances. This issue is annoying but not dramatic because in most use cases you work with a small choice of images most of the time.
 
@@ -104,7 +104,7 @@ In this example a few images in the region EC2 US East are stored as favorites.
 
 With the icons in the first columns of the table, instances can be started and fravorites can be erased from this list.
 
-== Start instances ==
+== Start Instances ==
 
 When one or more instances shall be started from an image, lots of information are important.
 
@@ -114,7 +114,7 @@ You have to decide, how many Instances shall be started and if you prefer a spec
 
 == Instances ==
 
-After you started at least one instance you can see inside the Instances window all information about your instances.
+After you started at least one instance you can see inside the *Instances* window all information about your instances.
 
   * Reservation ID
   * Instance ID
@@ -140,14 +140,14 @@ For implementing sustainable services it is mandatory to use elastic IPs that ca
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
 
-== EBS volumes ==
+== EBS Volumes ==
 
-Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. Important data need to be stored inside Elastic Block Store (EBS) volumes. Inside the Volumes window you can create new volumes and teminate existing volumes. A volume can be attached to a single instance and remapped at any time. Using a volumes is the same like an unformated block storage device. It can be equiped with any filesystem.
+Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. Important data need to be stored inside Elastic Block Store (EBS) volumes. Inside the *Volumes* window you can create new volumes and teminate existing volumes. A volume can be attached to a single instance and remapped at any time. Using a volumes is the same like an unformated block storage device. It can be equiped with any filesystem.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial15_EBS_volumes_small.png]
 
-Inside the Volumes window it is also possible to attach volumes to instances and detach them. Volumes can only attached to instances that run inside the same availability zone and region.
+Inside the *Volumes* window it is also possible to attach volumes to instances. Volumes can only attached to instances that run inside the same availability zone and region.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial16_attach_EBS_volumes_small.png]
 
-In the Volumes window you can check which volumes are attached to which instances.
+In the *Volumes* window you can check which volumes are attached to which instances and detach them.
