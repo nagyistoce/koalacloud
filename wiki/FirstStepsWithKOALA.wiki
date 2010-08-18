@@ -1,0 +1,33 @@
+#labels KOALA,Introduction
+#this page describes how to use the KOALA Cloud Manager
+
+= First steps with the KOALA Cloud Manager =
+
+Using KOALA ist quite easy. All you need is
+
+  * a browser
+  * a Google account
+  * access to one or more cloud infrastructures
+  * some basic knowledge about cloud computing
+
+The browser should be no problem. The Google account is used for the user management and authentication. Without access to one or more cloud infrastructures KOALA is worthless and the basic knowledge about cloud computing can be found inside this document.
+
+== Get credentials to a cloud infrastructure ==
+
+You need access to a cloud infrastructure (IaaS) that uses the API of Amazons Elastic Computing Cloud ([http://aws.amazon.com/ec2/ EC2]). This is essential because KOALA is a tool/service that helps you working with cloud resources you have  access to. Bu you cannot share cloud resources with others because it is not a cloud marketplace.
+
+See the following table that consists that available cloud infrastructures that are compatible to the EC2 API.
+
+|| *Infrastructure (IaaS)*                 || *Private/Public Cloud* || *License*   ||
+|| [http://aws.amazon.com/ec2/ Amazon EC2] || Public Cloud           || proprietary ||
+|| [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || OpenSource  ||
+|| [http://www.nimbusproject.org Nimbus]   || Private Cloud          || OpenSource  ||
+|| [http://www.opennebula.org OpenNebula]  || Private Cloud          || OpenSource  ||
+|| [http://cloud.com Cloud.com]            || Private Cloud          || OpenSource  ||
+|| [http://nimbula.com Nimbula]            || Public Cloud           || proprietary ||
+
+If you don't have any Private Cloud IaaS running. The easiest is to get access to [http://aws.amazon.com/ec2/ Amazon EC2]. If you don't want this e.g. because you don't have a credit card and you don't have access to a running Private Cloud you need to run a Private Cloud IaaS yourself.
+
+== Get credentials to a cloud infrastructure ==
+
+
