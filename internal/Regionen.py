@@ -104,7 +104,15 @@ class Regionen(webapp.RequestHandler):
                 tabelle_logins = tabelle_logins + str(test.endpointurl)
                 tabelle_logins = tabelle_logins + '&amp;accesskey='
                 tabelle_logins = tabelle_logins + str(test.accesskey)
-                tabelle_logins = tabelle_logins + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Zugang l&ouml;schen"></a>'
+                if sprache == "de":
+                  tabelle_logins = tabelle_logins + '" title="Zugang l&ouml;schen'
+                else:
+                  tabelle_logins = tabelle_logins + '" title="erase credentials'
+                tabelle_logins = tabelle_logins + '"><img src="bilder/delete.png" width="16" height="16" border="0"'
+                if sprache == "de":
+                  tabelle_logins = tabelle_logins + ' alt="Zugang l&ouml;schen"></a>'
+                else:
+                  tabelle_logins = tabelle_logins + ' alt="erase credentials"></a>'
                 tabelle_logins = tabelle_logins + '</td>'
                 tabelle_logins = tabelle_logins + '<td align="center">'
                 tabelle_logins = tabelle_logins + str(test.zugangstyp)
