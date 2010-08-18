@@ -10,6 +10,8 @@ Using KOALA ist quite easy. All you need is
 
 The browser should be no problem. The Google account is used for the user management and authentication. Without access to one or more cloud infrastructures KOALA itself is worthless and the basic knowledge about cloud computing can be found inside this document.
 
+<wiki:toc max_depth="2" />
+
 == Get credentials to a cloud infrastructure ==
 
 You need access to a cloud infrastructure (IaaS) that uses the API of Amazons Elastic Computing Cloud ([http://aws.amazon.com/ec2/ EC2]). This is essential because KOALA is a tool/service that helps you working with cloud resources you have  access to. Bu you cannot share cloud resources with others because it is not a cloud marketplace.
@@ -58,7 +60,7 @@ The Zones window gives you a table with the names and status of the availability
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial8_availabilty_zones_small.png]
 
-== Keypair ==
+== Keypairs ==
 
 To log into your instances, you need a keypair. The keypair consists of a pubic and a private key. The public key is stored inside your instances by the IaaS automatically. The private key is stored by yourself at your computer of a portable memory device. With the private key you log into your instances without a passwort. Using passwords to log into instances is quite unsusual in the cloud. Using keypairs to login is the common way.
 
@@ -74,4 +76,12 @@ When the new keypair is created, a small window appears. Inside this window you 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair3_secret_key_small.png]
 
-== Check Images ==
+== images ==
+
+== instances ==
+
+== EBS volumes ==
+
+== Elastic IPs ==
+
+
