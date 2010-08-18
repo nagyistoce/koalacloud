@@ -1,4 +1,4 @@
-#summary This tutorial shows howto use the KOALA Cloud Manager for your work with S3-kompatible cloud services
+#summary This tutorial shows how the KOALA Cloud Manager can help you working with S3 compatible cloud services
 #labels Featured
 
 = First steps with the KOALA Cloud Manager and S3 =
