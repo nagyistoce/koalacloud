@@ -13,7 +13,9 @@ The following table shows the cloud services available that are compatible to th
 || [http://aws.amazon.com/s3/ Amazon S3  ] || Public Cloud           || proprietary || yes ||
 || Walrus from [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || GPL v3      || yes ||
 || Cumulus from [http://www.nimbusproject.org Nimbus]  || Private Cloud          || Apache License v2.0  || yes ||
-|| [http://code.google.com/intl/de/apis/storage/ Google Storage]  || Public Cloud          || proprietary  || yes ||
+|| [http://code.google.com/intl/de/apis/storage/ Google Storage]  || Public Cloud          || proprietary  || no ||
+
+[http://code.google.com/intl/de/apis/storage/ Google Storage] is not yet supported because this service is currently available to a limited number of U.S. developers only.
 
 If you don't have any S3 compatible Private Cloud services running, the most easy way is to get access to [http://aws.amazon.com/s3/ Amazon S3]. If you don't want this because e.g. you don't have a credit card you need a Private Cloud S3 service.
 
