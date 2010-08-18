@@ -76,6 +76,16 @@ When the new keypair is created, a small window appears. Inside this window you 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial7_keypair3_secret_key_small.png]
 
+== Security Groups ==
+
+Running instances need to be assigned to a security group. You can create new security groups and erase existing security group inside this windows.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial11_security_group_small.png]
+
+Inside every security group you can define what ports for which protocols shall be open. This is the configuration of your instances firewall.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial12_security_group_rules_small.png]
+
 == Images ==
 
 When using cloud infrastructures that use Eucalyptus, Nimbus or OpenNebula as IaaS, you can use the Images windows to check the images available inside the active region.
@@ -98,7 +108,7 @@ With the icons in the first columns of the table, instances can be started and f
 
 When one or more instances shall be started from an image, lots of information are important.
 
-You have to decide, how many Instances shall be started and if you prefer a specific availability zone. If you don't choose an availability zone, Amazon will decide for you.  At this point you need to set the keypair too. Also the instance type is important. The instance types are equiped with a different ammount of virtual CPU cores, main memory and storage. The decision of using 64-Bit or 32-Bit architecture is already defined by the image. Don't forget the money when you are using a Public Cloud like Amazon EC2. The instancey types differ in the price per hour too. 
+You have to decide, how many Instances shall be started and if you prefer a specific availability zone. If you don't choose an availability zone, Amazon will decide for you.  At this point you need to set the keypair and the security group too. Also the instance type is important. The instance types are equiped with a different ammount of virtual CPU cores, main memory and storage. The decision of using 64-Bit or 32-Bit architecture is already defined by the image. Don't forget the money when you are using a Public Cloud like Amazon EC2. The instancey types differ in the price per hour too. 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial9_start_image_small.png]
 
