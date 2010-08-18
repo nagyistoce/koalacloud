@@ -106,7 +106,9 @@ You have to decide, how many Instances shall be started and if you prefer a spec
 
 == Elastic IPs ==
 
-Instances have a internal IP and 
+Instances get an internal IP address and an external DNS name automatically when they are created. When an instance is terminated, the IP address and the DNS name both are lost.
+
+For implementing sustainable services it is mandatory to use elastic IPs.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
 
