@@ -41,7 +41,7 @@ class GruppeAendern(webapp.RequestHandler):
         results = aktivezone.fetch(100)
 
         if not results:
-          regionname = 'keine'
+          regionname = '---'
           zone_amazon = ""
         else:
           conn_region, regionname = login(username)

@@ -90,7 +90,7 @@ def login(username):
 
       regionname = aktuellezone
   else:
-    regionname = "keine"
+    regionname = "---"
   return conn_region, regionname
 
 
@@ -300,9 +300,9 @@ def loginelb(username):
                               path="/")
       regionname = aktuellezone
     else:
-      regionname = "keine"
+      regionname = "---"
   else:
-    regionname = "keine"
+    regionname = "---"
   return conn_elb
 
 def logins3(username):
@@ -355,7 +355,7 @@ def logins3(username):
 
       regionname = aktuellezone
   else:
-    regionname = "keine"
+    regionname = "---"
   return conn_s3
 
 def aws_access_key_erhalten(username,regionname):
