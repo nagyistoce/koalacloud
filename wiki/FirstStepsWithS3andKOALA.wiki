@@ -22,3 +22,5 @@ The following table shows the cloud services available that are compatible to th
 If you don't have any S3 compatible Private Cloud services running, the most easy way is to get access to [http://aws.amazon.com/s3/ Amazon S3]. If you don't want this because e.g. you don't have a credit card you need a Private Cloud S3 service.
 
 This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the most common use case for KOALA and the Private Cloud S3 solutions have not the same level of stability and functionality.
+
+If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/s3/ Amazon S3] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
