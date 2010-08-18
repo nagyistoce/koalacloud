@@ -8,7 +8,7 @@ Using KOALA ist quite easy. All you need is
   * access to one or more cloud infrastructures
   * some basic knowledge about cloud computing
 
-The browser should be no problem. The Google account is used for the user management and authentication. Without access to one or more cloud infrastructures KOALA is worthless and the basic knowledge about cloud computing can be found inside this document.
+The browser should be no problem. The Google account is used for the user management and authentication. Without access to one or more cloud infrastructures KOALA itself is worthless and the basic knowledge about cloud computing can be found inside this document.
 
 == Get credentials to a cloud infrastructure ==
 
@@ -30,30 +30,48 @@ This tutorial focuses on Amazon EC2 because it is the most common use case.
 
 == Get your credentials into KOALA ==
 
+Inside the Regions window you can manage your credentials. It is easy create new region data for all supported IaaS solutions.
+
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial0_login_small.png]
+
+If you log in the first time into KOALA, you don't have any credentials.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial1_regions_empty_small.png]
 
+Create an AWS account and insert your Access Key and Secret Access Key. Both are stored inside the Google Datastore. The Secret Access Key will be stored encrypted.
+
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial2_regions_create_AWS_small.png]
 
+If your credentials were correct, you have can see the Amazon entry in the table. Now, you can start working with this IaaS.
+
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial3_regions_AWS_small.png]
+
+After you have inserted your credentials for at least one IaaS, you can see that the pull-down menu in the center of the header is not empty any longer. With this menu, you can choose what IaaS shall be used by KOALA. If you have more cretentials for IaaS regions you can use this menu  to swtich over to another region.
+
+EC2 has four regions and with your AWS credentials you can use them all automatically.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial4_regions_small.png]
 
 == Availability Zones ==
 
-The Zones window gives you a table with the names and status of the Availability Zones inside the region you are.
+The Zones window gives you a table with the names and status of the availability zones inside the region you are. For this example you can see we are using the EC2 US East region and inside this region are four availability zones.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial8_availabilty_zones_small.png]
 
 == Keypair ==
 
-To log into your instances, you need a keypair. If you don't already have a keypair inside the region you want to run instances, you need to created at least one. In this example a now keypair new_key_useast is created.
+To log into your instances, you need a keypair. The keypair consists of a pubic and a private key. The public key is stored inside your instances by the IaaS automatically. The private key is stored by yourself at your computer of a portable memory device. With the private key you log into your instances without a passwort. Using passwords to log into instances is quite unsusual in the cloud. Using keypairs to login is the common way.
+
+If you don't already have a keypair inside the region you want to run instances, you need to created at least one.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair1_small.png]
 
+In this example a new keypair new_key_useast is created.
+
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair2_new_key_small.png]
+
+When the new keypair is created, a small window appears. Inside this window you can see the private key. You need to save this private key by yourself. Copy it into a new file and adjust the permissions for this file.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair3_secret_key_small.png]
 
-
+== Check Images ==
