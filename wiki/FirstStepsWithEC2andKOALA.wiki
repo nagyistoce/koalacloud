@@ -38,7 +38,6 @@ At first you need to log in with your Google account.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial0_login_small.png]
 
-
 Inside the *Regions* window you can manage your credentials. It is easy to create new region data for all supported IaaS solutions. If you log in the first time into KOALA, you don't have any credentials.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial1_regions_empty_small.png]
