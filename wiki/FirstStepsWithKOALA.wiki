@@ -161,3 +161,5 @@ Inside the *Volumes* window it is also possible to attach volumes to instances a
 In the *Volumes* window you can check which volumes are attached to which instances and detach them. In this example a volume with 5 GB is attached to the instance we created before. Both are inside the availability zone us-east-1d inside the region EC2 US East.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial17_attached_EBS_volume_small.png]
+
+Inside this window you can also create Snapshots of your volumes. This snapshosts can be checked and erased inside the *Snapshots* window.
