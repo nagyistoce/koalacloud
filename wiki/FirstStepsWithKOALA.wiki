@@ -28,4 +28,4 @@ If you don't have any Private Cloud IaaS running. The easiest is to get access t
 
 == Get credentials into KOALA ==
 
-[http://code.google.com/p/koalacloud/source/browse/trunk/tutorial/images/login1_pfeil.jpg]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/login1.png]
