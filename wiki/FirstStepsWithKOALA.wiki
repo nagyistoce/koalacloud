@@ -26,6 +26,27 @@ See the following table that consists that available cloud infrastructures that 
 
 If you don't have any Private Cloud IaaS running. The easiest is to get access to [http://aws.amazon.com/ec2/ Amazon EC2]. If you don't want this e.g. because you don't have a credit card and you don't have access to a running Private Cloud you need to run a Private Cloud IaaS yourself.
 
-== Get credentials into KOALA ==
+This tutorial focuses on Amazon EC2 because it is the most common use case.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/login1.png]
+== Get your credentials into KOALA ==
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial0_login_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial1_regions_empty_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial2_regions_create_AWS_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial3_regions_AWS_small.png]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial4_regions_small.png]
+
+== Availability Zones ==
+
+The Tab Zones gives you a table with the names and status of the Availability Zones inside the region you are.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial8_availabilty_zones_small.png]
+
+== Keypair ==
+
+To log into your instances, you need a keypair. If you don't already have a keypair inside the availability zone, you need to created one. 
+
