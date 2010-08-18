@@ -136,9 +136,17 @@ Inside this window you can also start another instanace with the same key data w
 
 Instances get an public (internal) and an private (external) DNS name automatically when they are created. When an instance is terminated, the public and private DNS names both are lost.
 
-For implementing sustainable services it is mandatory to use elastic IPs that can be mapped to instances and remapped at any time.
+For implementing sustainable services it is mandatory to use elastic IPs that can be associate to instances and disassociated at any time. The *IPs* windows shows a table of the elastic IPs that have already been created by you. It is easy inside this windows to create more elastic IPs and to release them.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
+
+In this example an elastic IP is associated to the instance we created before. In this window you can decide which of your instances inside this region shall be associated to the elastic IP.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial18_attach_elastic_ip_small.png]
+
+After the elastic IP is associated to the instance the *IPs* windows makes it easy to disassociate it.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial19_attached_elastic_ip_to_instance_small.png]
 
 == EBS Volumes ==
 
@@ -146,8 +154,10 @@ Data stored inside instances is not sustainable. After the termination of an ins
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial15_EBS_volumes_small.png]
 
-Inside the *Volumes* window it is also possible to attach volumes to instances. Volumes can only attached to instances that run inside the same availability zone and region.
+Inside the *Volumes* window it is also possible to attach volumes to instances and decide which device the volume shall be inside the instance. Volumes can only attached to instances that run inside the same availability zone and region.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial16_attach_EBS_volumes_small.png]
 
-In the *Volumes* window you can check which volumes are attached to which instances and detach them.
+In the *Volumes* window you can check which volumes are attached to which instances and detach them. In this example a volume with 5 GB is attached to the instance we created before. Both are inside the availability zone us-east-1d inside the region EC2 US East.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial17_attached_EBS_volume_small.png]
