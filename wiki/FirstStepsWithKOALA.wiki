@@ -1,4 +1,4 @@
-#labels KOALA,Introduction,IaaS
+#labels KOALA,Introduction
 = First steps with the KOALA Cloud Manager =
 
 Using KOALA ist quite easy. All you need is
@@ -34,31 +34,31 @@ This tutorial focuses on Amazon EC2 because it is the most common use case.
 
 Inside the Regions window you can manage your credentials. It is easy create new region data for all supported IaaS solutions.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial0_login_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial0_login_small.png]
 
 If you log in the first time into KOALA, you don't have any credentials.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial1_regions_empty_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial1_regions_empty_small.png]
 
 Create an AWS account and insert your Access Key and Secret Access Key. Both are stored inside the Google Datastore. The Secret Access Key will be stored encrypted.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial2_regions_create_AWS_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial2_regions_create_AWS_small.png]
 
 If your credentials were correct, you have can see the Amazon entry in the table. Now, you can start working with this IaaS.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial3_regions_AWS_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial3_regions_AWS_small.png]
 
 After you have inserted your credentials for at least one IaaS, you can see that the pull-down menu in the center of the header is not empty any longer. With this menu, you can choose what IaaS shall be used by KOALA. If you have more cretentials for IaaS regions you can use this menu  to swtich over to another region.
 
 EC2 has four regions and with your AWS credentials you can use them all automatically.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial4_regions_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial4_regions_small.png]
 
 == Availability Zones ==
 
 The Zones window gives you a table with the names and status of the availability zones inside the region you are. For this example you can see we are using the EC2 US East region and inside this region are four availability zones.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial8_availabilty_zones_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial8_availabilty_zones_small.png]
 
 == Keypairs ==
 
@@ -66,15 +66,15 @@ To log into your instances, you need a keypair. The keypair consists of a pubic 
 
 If you don't already have a keypair inside the region you want to run instances, you need to created at least one.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair1_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial7_keypair1_small.png]
 
 In this example a new keypair new_key_useast is created.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair2_new_key_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial7_keypair2_new_key_small.png]
 
 When the new keypair is created, a small window appears. Inside this window you can see the private key. You need to save this private key by yourself. Copy it into a new file and adjust the permissions for this file.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial7_keypair3_secret_key_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial7_keypair3_secret_key_small.png]
 
 == Images ==
 
@@ -86,14 +86,28 @@ When using a Private Cloud with Eucalyptus, Nimbus or OpenNebula it is no proble
 
 As a workaround, when using EC2, a list of favorite AMIs can be created by yourself insite this window and used to ckeck the images and start instances. This issue is annoying but not dramatic because in most use cases you work with a small choice of images most of the time.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial5_create_favorites_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial5_create_favorites_small.png]
 
 In this example a few images in the region EC2 US East are stored as favorites.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial6_several_favorites_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial6_several_favorites_small.png]
+
+With the icons in the first columns of the table, instances can be started and fravorites can be erased from this list.
+
+== Start instances ==
+
+When one or more instances shall be started from an image, lots of information are important.
+
+You have to decide, how many Instances shall be started and if you prefer a specific availability zone. If you don't choose an availability zone, Amazon will decide for you.  At this point you need to set the keypair too. Also the instance type is important. The instance types are equiped with a different ammount of virtual CPU cores, main memory and storage. The decision of using 64-Bit or 32-Bit architecture is already defined by the image. Don't forget the money when you are using a Public Cloud like Amazon EC2. The instancey types differ in the price per hour too. 
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial9_start_image_small.png]
 
 == Instances ==
 
-== EBS volumes ==
-
 == Elastic IPs ==
+
+Instances have a internal IP and 
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial10_elastic_ips_small.png]
+
+== EBS volumes ==
