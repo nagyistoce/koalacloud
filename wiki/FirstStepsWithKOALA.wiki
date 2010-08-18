@@ -166,9 +166,8 @@ In the *Volumes* window you can check which volumes are attached to which instan
 
 Inside the *Volumes* window you can also create Snapshots of your volumes.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial20_snapshot_created_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial20_create_snapshot_small.png]
 
 The snapshots can be checked and erased inside the *Snapshots* window.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial20_snapshot_created_small.png]
-
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial21_snapshot_created_small.png]
