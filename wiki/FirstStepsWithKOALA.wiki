@@ -18,10 +18,10 @@ See the following table that consists that available cloud infrastructures that 
 
 || *Infrastructure (IaaS)*                 || *Private/Public Cloud* || *License*   ||
 || [http://aws.amazon.com/ec2/ Amazon EC2] || Public Cloud           || proprietary ||
-|| [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || OpenSource  ||
-|| [http://www.nimbusproject.org Nimbus]   || Private Cloud          || OpenSource  ||
-|| [http://www.opennebula.org OpenNebula]  || Private Cloud          || OpenSource  ||
-|| [http://cloud.com Cloud.com]            || Private Cloud          || OpenSource  ||
+|| [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || GPL v3      ||
+|| [http://www.nimbusproject.org Nimbus]   || Private Cloud          || Apache License v2.0  ||
+|| [http://www.opennebula.org OpenNebula]  || Private Cloud          || Apache License v2.0  ||
+|| [http://cloud.com Cloud.com]            || Private Cloud          || GPL v3      ||
 || [http://nimbula.com Nimbula]            || Public Cloud           || proprietary ||
 
 If you don't have any Private Cloud IaaS running. The easiest is to get access to [http://aws.amazon.com/ec2/ Amazon EC2]. If you don't want this e.g. because you don't have a credit card and you don't have access to a running Private Cloud you need to run a Private Cloud IaaS yourself.
