@@ -1,4 +1,6 @@
+#summary This tutorial shows how the KOALA Cloud Manager can help you working with EC2 compatible cloud services
 #labels Featured
+
 = First steps with the KOALA Cloud Manager and EC2 =
 
 Using KOALA ist quite easy. All you need is
