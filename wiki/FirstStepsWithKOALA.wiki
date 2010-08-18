@@ -142,4 +142,6 @@ For implementing sustainable services it is mandatory to use elastic IPs that ca
 
 == EBS volumes ==
 
-Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. 
+Data stored inside instances is not sustainable. After the termination of an instance, its data is lost. Important data need to be stored inside Elastic Block Store (EBS) volumes. Inside the Volumes window you can create new volumes and teminate existing volumes. A volume can be attached to a single instance and remapped at any time. Using a volumes is the same like an unformated block storage device. It can be equiped with any filesystem.
+
+Inside the Volumes window it is also possible to attach volumes to instances and detach them. Volumes can only attached to instances that run inside the same availability zone and region.
