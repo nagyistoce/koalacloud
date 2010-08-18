@@ -86,11 +86,11 @@ When using a Private Cloud with Eucalyptus, Nimbus or OpenNebula it is no proble
 
 As a workaround, when using EC2, a list of favorite AMIs can be created by yourself insite this window and used to ckeck the images and start instances. This issue is annoying but not dramatic because in most use cases you work with a small choice of images most of the time.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial5_create_favorites_small_small.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial5_create_favorites_small.png]
 
 In this example a few images in the region EC2 US East are stored as favorites.
 
-[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial6_several_favorites.png]
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/tutorial6_several_favorites_small.png]
 
 == Instances ==
 
