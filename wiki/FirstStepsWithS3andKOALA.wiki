@@ -43,7 +43,7 @@ The S3 mode with more comfort simulates folders with clever use of key names. He
 
 == Pure S3 mode ==
 
-When jumped into a bucket for the first time in the pure s3 mode, the bucket is still empty. 
+When jumped into a bucket for the first time in the pure S3 mode, the bucket is still empty. 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_2_pure_s3_mode_inside_bucket_small.png]
 
@@ -61,5 +61,16 @@ The table that contains the keys inside the bucket, allows to open and erase key
 
 == S3 mode with more comfort ==
 
-More to come
- 
+When jumped into a bucket in the S3 mode with more comfort, you can see a new HTML form that allows to create folders. These are emulated via the keyname as described before. In the table it's easy to differentiate between standard keys and keys that emulate folders. Icons before the keyname show the keys designation. Folders can be erased and their ACL can be alterd the same way like standard keys.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_6_s3_mode_with_more_comfort_small.png]
+
+You can jump into folders and upload keys into these folders.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_7_folder_created_small.png]
+
+It's also possible to create subfolders. And with the green arrow it's easy to jump back in the emulated filesystem hierarchy.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_8_subfolder_small.png]
+
+For a deeper look how the S3 mode with more comfort works it's a good idea to creating some folders and subfolders with some keys and check the content of the bucket via the pure S3 mode.
