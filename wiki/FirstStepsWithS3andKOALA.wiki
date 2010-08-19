@@ -43,7 +43,21 @@ The S3 mode with more comfort simulates folders with clever use of key names. He
 
 == Pure S3 mode ==
 
-More to come
+When jumped into a bucket for the first time in the pure s3 mode, the bucket is still empty. 
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_2_pure_s3_mode_inside_bucket_small.png]
+
+With the HTML form it is easy to upload files into the bucket. Beside the file itself you have to chose the access rights, called Access Controll List, of the key and the mime type. 
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_3_upload_key_small.png]
+
+After the successful upload the key is listed inside the bucket.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_4_key_is_uploaded_small.png]
+
+The table that contains the keys inside the bucket, allows to open and erase keys and change the Access Controll List (ACL).
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_5_change_ACL_of_key_small.png]
 
 == S3 mode with more comfort ==
 
