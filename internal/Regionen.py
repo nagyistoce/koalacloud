@@ -432,7 +432,7 @@ class Regionen(webapp.RequestHandler):
                 port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
                 port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8773</tt> '
               else:
-                port_warnung = port_warnung + 'The Google App Engine accepts only few ports '
+                port_warnung = port_warnung + 'The Google App Engine accepts only a few number of ports '
                 port_warnung = port_warnung + 'and the default port of Eucalyptus (8773) is not included. '
                 port_warnung = port_warnung + 'Because of this fact, you have to route another port to the Eucayptus port. '
                 port_warnung = port_warnung + 'For example:<br> \n'
@@ -448,7 +448,7 @@ class Regionen(webapp.RequestHandler):
                 port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
                 port_warnung = port_warnung + '<tt>iptables -I PREROUTING -t nat -i eth0 -p tcp --dport 8188 -j REDIRECT --to-port 8442</tt> '
               else:
-                port_warnung = port_warnung + 'The Google App Engine accepts only few ports. '
+                port_warnung = port_warnung + 'The Google App Engine accepts only a few number of ports. '
                 port_warnung = port_warnung + 'If the Nimbus infrastructure you want to access, has a non accepted port (e.g. 8442), you have to route an accepted port to the port of the Nimbus infrastructure. '
                 port_warnung = port_warnung + 'For example:<br> \n'
                 port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
@@ -461,10 +461,10 @@ class Regionen(webapp.RequestHandler):
                 port_warnung = port_warnung + 'Es ist darum notwendig, den econe Server auf einen anderen, unterstützten Port umzuleiten. '
                 port_warnung = port_warnung + 'Die Einstellung erfolgt in der Datei <tt>econe.conf</tt>'
               else:
-                port_warnung = port_warnung + 'The Google App Engine accepts only few ports '
+                port_warnung = port_warnung + 'The Google App Engine accepts only a few number of ports '
                 port_warnung = port_warnung + 'and the default port of OpenNebula (4567) is not included. '
                 port_warnung = port_warnung + 'Because of this fact, you have to route the econe server to another, supported port. '
-                port_warnung = port_warnung + 'The port configuration is done inside <tt>econe.conf</tt>'
+                port_warnung = port_warnung + 'The port configuration of the econe server is done inside <tt>econe.conf</tt>'
             else:
               port_warnung = '<p>&nbsp;</p>'
 
