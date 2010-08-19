@@ -1,14 +1,14 @@
-#summary One-sentence summary of this page.
+#summary This tutorial shows how KOALA can help you working with the Amazon Elastic Load Balancing (ELB) cloud service
 #labels Featured
 
-= Introduction =
+<wiki:toc max_depth="2" />
 
-Add your content here.
+= First steps with the KOALA Cloud Manager and ELB =
 
+Before you start with KOALA using [http://aws.amazon.com/elb/ ELB] it is highly appreciated that you consult [http://code.google.com/p/koalacloud/wiki/FirstStepsWithEC2andKOALA this] document that tells what you need to use KOALA at all and how to get your credentials inserted.
 
-= Details =
+For using KOALA to interact with [http://aws.amazon.com/elb/ ELB] you need access to the Amazon Web Services ([http://aws.amazon.com AWS]) because up to now, no Private Cloud solution exists, that is API compatible to the ELB. 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/elb/ Amazon ELB] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
+
+== Elastic Load Balancing ==
