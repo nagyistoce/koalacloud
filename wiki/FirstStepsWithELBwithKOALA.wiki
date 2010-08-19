@@ -12,3 +12,18 @@ For using KOALA to interact with [http://aws.amazon.com/elb/ ELB] you need acces
 If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/elb/ Amazon ELB] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
 
 == Elastic Load Balancing ==
+
+With Elastic Load Balancing (ELB), incoming traffic can be distribute across your Amazon EC2 instances that run inside a single Availability Zone or multiple Availability Zones. The instances need to run inside the same region.
+
+You can create, alter and erase elastic load balancers at any time. It is easy to add and remove instances and rules.
+
+== Create an Elastic Load Balancer ==
+
+When you work the fist time with elastic load balancers, the *ELB* window will be empty. Click the button to create a new elastic load balancer inside the aktive region.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_elb_1_no_elb_yet_small.png]
+
+In the next windows you need to type in a name of the new load balancer and what availability zones inside this region shall the load balancer work for.
+
+You also need to type in the values for the one rule. This means the internal and external port, and the ptotocol (TCP or HTTP) as well. You can add more ports later.
+
