@@ -6,6 +6,7 @@ from google.appengine.ext import webapp
 from google.appengine.api.urlfetch import DownloadError
 
 from library import logins3
+from library import login
 
 class AlleKeysLoeschenDefinitiv(webapp.RequestHandler):
     def get(self):
