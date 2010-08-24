@@ -1,3 +1,0 @@
-#This tutorial shows how to install KOALA in an AppScale PaaS that runs inside EC2
-
-More to come...
