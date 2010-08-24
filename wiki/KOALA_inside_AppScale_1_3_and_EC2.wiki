@@ -1,8 +1,36 @@
-#labels Featured
 #This tutorial shows how to install KOALA in an AppScale PaaS that runs inside EC2
 
-[KOALA http://koalacloud.appspot.com] can run inside a Private Cloud PaaS with [AppScale http://appscale.cs.ucsb.edu]. AppScale itself can be run inside EC2, Eucalyptus or just on top of Xen. 
+[http://koalacloud.appspot.com KOALA] can run inside a Private Cloud PaaS with [http://appscale.cs.ucsb.edu AppScale]. AppScale itself can be run inside EC2, Eucalyptus or just on top of Xen. 
 
 This tutorial shows how to start AppScale 1.3 inside EC2 and upload KOALA into the AppScale PaaS.
+
+At first you neet do install the [http://code.google.com/p/appscale/ appscale-tools].
+
+Pack KOALA sourcecode into a tar.gz
+
+{{{
+$ tar -cvzf koalacloud.tar.gz koalacloud
+}}}
+
+{{{
+$ appscale-run-instances --file /usr/local/appscale-tools-1.3/sample_apps/guestbook.tar.gz 
+--table voldemort --max 2 --machine ami-14799b7d -v --keyname appscaletest
+
+Your user account has been created successfully.
+Uploading guestbook...
+We have reserved the name guestbook for your application.
+guestbook was uploaded successfully.
+Please wait for your app to start up.
+
+Your app can be reached at the following URL: http://ec2-174-129-175-237.compute-1.amazonaws.com/apps/guestbook
+The status of your AppScale instance is at the following URL: http://ec2-174-129-175-237.compute-1.amazonaws.com/status
+}}}
+
+Now, the problem is that the web server does not start up. This is a known bug of the AppScale image. The image tries to start the web server too soon before the load balancers configuration (/etc/nginx/sites-enabled/load-balancer.conf) is available. Therefore, you need to log in into the instance and restart the nginx web server manually.
+
+{{{
+$ ssh -i ~/.appscale/appscaletest.private root@ec2-174-129-175-237.compute-1.amazonaws.com
+# invoke-rc.d nginx restart
+}}}
 
 More to come...
