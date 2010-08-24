@@ -9,14 +9,30 @@ At first you neet do install the [http://code.google.com/p/appscale/ appscale-to
 Pack KOALA sourcecode into a tar.gz
 
 {{{
+$ cd koalacloud
 $ tar -cvzf koalacloud.tar.gz koalacloud
+$ mv koalacloud.tar.gz ../
 }}}
 
-Start AppScale PaaS inside EC2
+Start AppScale PaaS inside EC2 (this need some time. 
 
 {{{
-$ appscale-run-instances --file /usr/local/appscale-tools-1.3/sample_apps/guestbook.tar.gz 
---table voldemort --max 2 --machine ami-14799b7d -v --keyname appscaletest
+$ appscale-run-instances --file ~/workspace/koalacloud.tar.gz --table voldemort 
+--max 2 --machine ami-14799b7d --keyname koalatest -v
+
+... lots of output here ...
+
+This AppScale instance is linked to an e-mail address giving it administrator privileges.
+Enter your desired administrator e-mail address: 
+Please repeat your e-mail address to verify: 
+
+The new administrator password must be at least six characters long and can include non-alphanumeric characters.
+Enter your new password: 
+Enter again to verify: 
+Please wait for AppScale to prepare your machines for use.
+Spawning up 1 virtual machines
+
+%%%%%%%
 
 Your user account has been created successfully.
 Uploading guestbook...
@@ -31,8 +47,36 @@ The status of your AppScale instance is at the following URL: http://ec2-174-129
 Now, the problem is that the web server does not start up. This is a known bug of the AppScale image. The image tries to start the web server too soon before the load balancers configuration (/etc/nginx/sites-enabled/load-balancer.conf) is available. Therefore, you need to log in into the instance and restart the nginx web server manually.
 
 {{{
-$ ssh -i ~/.appscale/appscaletest.private root@ec2-174-129-175-237.compute-1.amazonaws.com
+$ ssh -i ~/.appscale/appscaletest.private ec2-174-129-175-237.compute-1.amazonaws.com -l root
 # invoke-rc.d nginx restart
+}}}
+
+Check the AppScale instances.
+
+{{{
+$ appscale-describe-instances --keyname appscaletest
+Status of node at ec2-184-72-166-0.compute-1.amazonaws.com:
+    Currently using 2.0 Percent CPU and 10.72 Percent Memory
+    Database is at ec2-184-72-166-0.compute-1.amazonaws.com
+    Hosting the following apps: guestbook
+    Current State: Done starting up AppScale, now in heartbeat mode
+Status of node at ec2-184-72-155-198.compute-1.amazonaws.com:
+    Currently using 3.3 Percent CPU and 11.61 Percent Memory
+    Database is at ec2-184-72-155-198.compute-1.amazonaws.com
+    Hosting the following apps: guestbook
+    Current State: Preparing to run AppEngine apps if needed
+}}}
+
+
+If you don't want your KOALA Private Cloud PaaS any more, you can kill the instances via
+
+{{{
+$ appscale-terminate-instances --keyname appscaletest
+About to terminate instances spawned via ec2 with keyname 'appscaletest'...
+INSTANCE	i-7bee9a11	running	shutting-down
+INSTANCE	i-81e89ceb	running	shutting-down
+Terminated AppScale across 2 boxes.
+
 }}}
 
 More to come...
