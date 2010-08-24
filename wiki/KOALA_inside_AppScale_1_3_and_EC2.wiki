@@ -104,7 +104,4 @@ About to terminate instances spawned via ec2 with keyname 'appscaletest'...
 INSTANCE	i-1d473077	running	shutting-down
 INSTANCE	i-19423573	running	shutting-down
 Terminated AppScale across 2 boxes.
-
 }}}
-
-More to come...
