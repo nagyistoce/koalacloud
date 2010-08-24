@@ -58,7 +58,29 @@ $ ssh -i ~/.appscale/appscaletest.private ec2-204-236-248-30.compute-1.amazonaws
 Restarting nginx: nginx.
 }}}
 
-Check the AppScale instances.
+
+This is the status page of AppScale. Here you can see the AppScale instances.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_1_started_small.png]
+
+When you switch to KOALA now, you need to log first.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_2_KOALA_small.png]
+
+When you click *Login* you are redirected to the AppScale login page.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_3_login_small.png]
+
+After your successfull login, you can switch back to KOALA.
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_4_login_successful_small.png]
+
+Now, KOALA ist ready for work. Now, you need to import your credentials.
+This is described [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA here].
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_5_start_working_small.png]
+
+You can check the AppScale instances also with the command appscale-describe-instances.
 
 {{{
 $ appscale-describe-instances --keyname appscaletest
@@ -74,18 +96,13 @@ Status of node at ec2-184-72-173-167.compute-1.amazonaws.com:
     Current State: Preparing to run AppEngine apps if needed
 }}}
 
-
-
-Now, KOALA should be available.
-
-
-If you don't want your KOALA Private Cloud PaaS any more, you can kill the instances via
+To terminate the AppScale instances, you can use the command appscale-terminate-instances.
 
 {{{
 $ appscale-terminate-instances --keyname appscaletest
 About to terminate instances spawned via ec2 with keyname 'appscaletest'...
-INSTANCE	i-7bee9a11	running	shutting-down
-INSTANCE	i-81e89ceb	running	shutting-down
+INSTANCE	i-1d473077	running	shutting-down
+INSTANCE	i-19423573	running	shutting-down
 Terminated AppScale across 2 boxes.
 
 }}}
