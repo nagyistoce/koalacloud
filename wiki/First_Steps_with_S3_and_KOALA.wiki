@@ -1,7 +1,9 @@
 #summary This tutorial shows how KOALA can help you working with S3 compatible cloud services
 #labels Featured
 
-This tutorial shows how KOALA can help you working with cloud services that are compatible to Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). S3 provides a web service based storage for applications. The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. The service can be used via a SOAP interface and a REST interface. Objects are organized into buckets. Because S3 has a flat name space, every buckets name has be unique. 
+This tutorial shows how KOALA can help you working with cloud services that are compatible to Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). S3 provides a web service based storage for applications.
+
+The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. The service can be used via a SOAP interface and a REST interface. Objects are organized into buckets. Because S3 has a flat name space, every buckets name has be unique. 
 
 Several OpenSource IaaS projects provide the same functionality and implement the S3 API too.
 
