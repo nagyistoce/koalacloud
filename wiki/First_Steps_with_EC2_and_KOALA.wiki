@@ -1,6 +1,8 @@
 #summary This tutorial shows how KOALA can help you working with EC2 compatible cloud services
 #labels Featured
 
+This tutorial shows how KOALA can help you working with cloud services that are compatible to Amazons Elastic Computing Cloud ([http://aws.amazon.com/ec2/ EC2]). EC2 allows running scalable virtual server instances inside the Amazon server farms using a modified version of the Xen-Hypervisor. Several OpenSource IaaS projects implement the EC2 API too.
+
 = First steps with the KOALA Cloud Manager and EC2 =
 
 Using KOALA ist quite easy. All you need is
@@ -16,7 +18,7 @@ The browser should be no problem. The Google account is used for the user manage
 
 == Get credentials to a cloud infrastructure ==
 
-You need access to a cloud infrastructure (IaaS) that uses the API of Amazons Elastic Computing Cloud ([http://aws.amazon.com/ec2/ EC2]). This is essential because KOALA is a service that helps you working with cloud resources you have access to. KOALA is not a cloud marketplace, so you cannot share cloud resources to others. 
+You need access to a cloud infrastructure (IaaS) that uses the API of EC2. This is essential because KOALA is a service that helps you working with cloud resources you have access to. KOALA is not a cloud marketplace, so you cannot share cloud resources to others. 
 
 The following table shows the cloud infrastructures available that are compatible to the EC2 API.
 
