@@ -113,4 +113,4 @@ INSTANCE	i-19423573	running	shutting-down
 Terminated AppScale across 2 boxes.
 }}}
 
-Or KOALA. :-)
+Or you can use KOALA. :-)
