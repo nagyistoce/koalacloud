@@ -1,13 +1,15 @@
 #summary This tutorial shows how KOALA can help you working with S3 compatible cloud services
 #labels Featured
 
+This tutorial shows how KOALA can help you working with cloud services that are compatible to Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). S3 provides a web service based storage for applications. Several OpenSource IaaS projects provide the same functionality and implement the S3 API too.
+
 <wiki:toc max_depth="2" />
 
 = First steps with the KOALA Cloud Manager and S3 =
 
 Before you start with KOALA using S3 it is highly appreciated that you consult [http://code.google.com/p/koalacloud/wiki/FirstStepsWithEC2andKOALA this] document that tells what you need to use KOALA at all and how to get your credentials inserted.
 
-For using KOALA to interact with S3 compatible cloud services you need access to at least a single cloud service that uses the API of Amazons Simple Storage Service ([http://aws.amazon.com/s3/ S3]). 
+For using KOALA to interact with S3 compatible cloud services you need access to at least a single cloud service that uses the API of S3. 
 
 The following table shows the cloud services available that are compatible to the S3 API.
 
