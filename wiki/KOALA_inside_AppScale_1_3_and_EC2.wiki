@@ -51,7 +51,7 @@ Your app can be reached at the following URL: http://ec2-204-236-248-30.compute-
 The status of your AppScale instance is at the following URL: http://ec2-204-236-248-30.compute-1.amazonaws.com/status
 }}}
 
-There is a known bug inside the AppScale image that causes the web server not starting. The image tries to start the web server too soon before the load balancers configuration (/etc/nginx/sites-enabled/load-balancer.conf) is available. Therefore, you need to log in into the instance and restart the nginx web server manually.
+There is a known bug inside the AppScale image that causes the web server not to start. The image tries to start the web server too soon before the load balancers configuration (/etc/nginx/sites-enabled/load-balancer.conf) is available. Therefore, you need to log in into the instance and restart the nginx web server manually.
 
 {{{
 $ ssh -i ~/.appscale/appscaletest.private ec2-204-236-248-30.compute-1.amazonaws.com -l root
