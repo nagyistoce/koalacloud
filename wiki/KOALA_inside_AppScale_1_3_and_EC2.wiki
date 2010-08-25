@@ -113,4 +113,6 @@ INSTANCE	i-19423573	running	shutting-down
 Terminated AppScale across 2 boxes.
 }}}
 
-Or you can use KOALA. :-)
+Alternatively you can use KOALA. :-)
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_8_terminate_small.png]
