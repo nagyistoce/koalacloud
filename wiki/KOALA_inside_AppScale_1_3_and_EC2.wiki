@@ -75,7 +75,7 @@ After your successfull login, you can switch back to KOALA.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_4_login_successful_small.png]
 
-Now, KOALA ist ready for work. At least you need to import your credentials which is described [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA here].
+KOALA ist ready for work now. At least you need to import your credentials which is described [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA here].
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale_5_start_working_small.png]
 
