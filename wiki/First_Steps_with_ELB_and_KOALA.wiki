@@ -1,7 +1,7 @@
 #summary This tutorial shows how KOALA can help you working with the Amazon Elastic Load Balancing (ELB) cloud service
 #labels Featured
 
-This tutorial shows how KOALA can help you working with the Amazon Elastic Load Balancing (ELB) cloud service Amazon [http://aws.amazon.com/elb/ Elastic Load Balancing (ELB)].
+This tutorial shows how KOALA can help you working with the Amazon [http://aws.amazon.com/elb/ Elastic Load Balancing (ELB)] cloud service.
 
 <wiki:toc max_depth="2" />
 
