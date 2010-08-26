@@ -31,6 +31,8 @@ This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the
 
 If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/s3/ Amazon S3] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
 
+Don't fear you account or data here. No new account at the IaaS is created or data  over-written. You just import your credentials into KOALA this way. 
+
 == Buckets and Keys ==
 
 The “Simple” in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. Bucket names and keys are addressable using HTTP URLs automatically:
