@@ -55,9 +55,12 @@ class LoadBalancer(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
+          #self.response.out.write(regionname)
+
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if zugangstyp != 'Amazon':
+          if regionname != 'Amazon':
+          #if zugangstyp != 'Amazon':
 
             template_values = {
             'navigations_bar': navigations_bar,
