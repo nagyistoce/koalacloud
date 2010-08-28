@@ -151,6 +151,8 @@ class Instanzen(webapp.RequestHandler):
               for i in liste_reservations:
                 for x in i.instances:
                   instanzentabelle = instanzentabelle + '<tr>'
+                  
+                  # Terminate instance
                   instanzentabelle = instanzentabelle + '<td>'
                   if sprache == "de":
                     instanzentabelle = instanzentabelle + '<a href="/instanzterminate?id='
@@ -161,6 +163,8 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + x.id
                     instanzentabelle = instanzentabelle + '"title="terminate instance"><img src="bilder/delete.png" width="16" height="16" border="0" alt="terminate instance"></a>'
                   instanzentabelle = instanzentabelle + '</td>'
+                  
+                  # Stop instance
                   instanzentabelle = instanzentabelle + '<td>'
                   if x.root_device_type == 'instance-store': 
                     fehlermeldung = "122"
@@ -190,10 +194,15 @@ class Instanzen(webapp.RequestHandler):
                       else:
                         instanzentabelle = instanzentabelle + '<a href="/instanzstarten?id='
                         instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'                       
+                        instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'                      
                     else:
-                      instanzentabelle = instanzentabelle + '&nbsp;'
+                      if sprache == "de":
+                        instanzentabelle = instanzentabelle + '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
+                      else:
+                        instanzentabelle = instanzentabelle + '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
                   instanzentabelle = instanzentabelle + '</td>'
+                  
+                  # Reboot instance
                   instanzentabelle = instanzentabelle + '<td>'
                   if sprache == "de":
                     instanzentabelle = instanzentabelle + '<a href="/instanzreboot?id='
@@ -207,6 +216,8 @@ class Instanzen(webapp.RequestHandler):
                   instanzentabelle = instanzentabelle + '<td align="center">'
                   instanzentabelle = instanzentabelle + '<tt>'+str(x.id)+'</tt>'
                   instanzentabelle = instanzentabelle + '</td>'
+                  
+                  # Console output
                   instanzentabelle = instanzentabelle + '<td>'
                   if sprache == "de":
                     instanzentabelle = instanzentabelle + '<a href="/console_output?id='
