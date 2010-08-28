@@ -194,7 +194,8 @@ class Instanzen(webapp.RequestHandler):
                       else:
                         instanzentabelle = instanzentabelle + '<a href="/instanzstarten?id='
                         instanzentabelle = instanzentabelle + x.id
-                        instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'                      
+                        instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'
+                    # If the instance status is "stopping" or "pending"...                                           
                     else:
                       if sprache == "de":
                         instanzentabelle = instanzentabelle + '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
@@ -252,7 +253,7 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + str(x.instance_type)
                     instanzentabelle = instanzentabelle + "&amp;gruppe="
                     instanzentabelle = instanzentabelle + i.groups[0].id
-                    instanzentabelle = instanzentabelle + '"title="Weitere Instanzen starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Weitere Instanzen starten"></a>'
+                    instanzentabelle = instanzentabelle + '"title="Eine weitere Instanz mit den gleichen Parametern starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Eine weitere Instanz mit den gleichen Parametern starten"></a>'
                   else:
                     instanzentabelle = instanzentabelle + '<a href="/instanzanlegen?image='
                     instanzentabelle = instanzentabelle + str(x.image_id)
@@ -274,7 +275,7 @@ class Instanzen(webapp.RequestHandler):
                     instanzentabelle = instanzentabelle + str(x.instance_type)
                     instanzentabelle = instanzentabelle + "&amp;gruppe="
                     instanzentabelle = instanzentabelle + i.groups[0].id
-                    instanzentabelle = instanzentabelle + '"title="launch more of these"><img src="bilder/plus.png" width="16" height="16" border="0" alt="launch more of these"></a>'
+                    instanzentabelle = instanzentabelle + '"title="launch a new instance with the same values"><img src="bilder/plus.png" width="16" height="16" border="0" alt="launch a new instance with the same values"></a>'
                   instanzentabelle = instanzentabelle + '</td>'
 
                   # Die Icons der Betriebssysteme nur unter Amazon
