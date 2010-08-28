@@ -1,6 +1,3 @@
-[http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA Using KOALA with 
-EC2]
-
-[http://code.google.com/p/koalacloud/wiki/First_Steps_with_S3_and_KOALA Using KOALA with S3]
-
-[http://code.google.com/p/koalacloud/wiki/First_Steps_with_ELB_and_KOALA Using KOALA with ELB]
+  * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA Using KOALA with EC2]
+  * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_S3_and_KOALA Using KOALA with S3]
+  * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_ELB_and_KOALA Using KOALA with ELB]
