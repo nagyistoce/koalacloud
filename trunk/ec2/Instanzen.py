@@ -195,7 +195,7 @@ class Instanzen(webapp.RequestHandler):
                         instanzentabelle = instanzentabelle + '<a href="/instanzstarten?id='
                         instanzentabelle = instanzentabelle + x.id
                         instanzentabelle = instanzentabelle + '"title="start instance"><img src="bilder/up.png" width="16" height="16" border="0" alt="start instance"></a>'
-                    # If the instance status is "stopping" or "pending"...                                           
+                    # If the instance status is "stopping", "pending", "shutting-down" oder "terminated"...                                           
                     else:
                       if sprache == "de":
                         instanzentabelle = instanzentabelle + '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
