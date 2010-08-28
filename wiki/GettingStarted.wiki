@@ -1,4 +1,5 @@
 #summary Welcome to the KOALA Cloud Manager
 
 = Getting Started =
+
 Welcome to the KOALA Cloud Manager. These Wiki-Pages can help you with your first steps while using KOALA to work with various cloud services.
