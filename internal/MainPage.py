@@ -29,6 +29,8 @@ class MainPage(webapp.RequestHandler):
         username = users.get_current_user()
 
         if users.get_current_user():
+            # If the user is already logged in with his account...
+          
             # Nachsehen, ob eine Region/Zone ausgewählte wurde
             # See if a region/zone has already been chosen
             aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
@@ -45,19 +47,31 @@ class MainPage(webapp.RequestHandler):
             # See if a language has already been chosen 
             sprache = aktuelle_sprache(username)
             navigations_bar = navigations_bar_funktion(sprache)
+            
+            login_howto = ''
 
             url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Logout'
+            
+            # Get the pull-down menu with the users regions he has already configured 
+            zonen_liste = zonen_liste_funktion(username,sprache)
+            # If the user has still no credentials for cloud services
+            if zonen_liste == '':
+              if sprache == "de":
+                zonen_liste = '<p><font color="red"><b>Sie m&uuml;ssen nun ihre Zugangsdaten (Regionen) einrichten</b></font></p>'            
+              else:
+                zonen_liste = '<p><font color="red"><b>Now, you need to configure your Region data</b></font></p>'            
 
         else:
+            # If the user is not logged in or has no account yet...
             sprache = "en"
             navigations_bar = navigations_bar_funktion(sprache)
             url = users.create_login_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Login'
             regionname = '---'
             zone_amazon = ""
-
-        zonen_liste = zonen_liste_funktion(username,sprache)
+            
+            zonen_liste = '<p><font color="red"><b><=== You need to login first with your Google account!</b></font></p>'
 
         template_values = {
         'navigations_bar': navigations_bar,

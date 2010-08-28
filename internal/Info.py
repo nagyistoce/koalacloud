@@ -47,6 +47,16 @@ class Info(webapp.RequestHandler):
             url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Logout'
 
+            # Get the pull-down menu with the users regions he has already configured             
+            zonen_liste = zonen_liste_funktion(username,sprache)
+            
+            # If the user has still no credentials for cloud services
+            if zonen_liste == '':
+              if sprache == "de":
+                zonen_liste = '<p><font color="red"><b>Sie m&uuml;ssen nun ihre Zugangsdaten (Regionen) einrichten</b></font></p>'            
+              else:
+                zonen_liste = '<p><font color="red"><b>Now, you need to configure your Region data</b></font></p>'            
+
         else:
             sprache = "en"
             navigations_bar = navigations_bar_funktion(sprache)
@@ -55,7 +65,7 @@ class Info(webapp.RequestHandler):
             regionname = '---'
             zone_amazon = ""
 
-        zonen_liste = zonen_liste_funktion(username,sprache)
+            zonen_liste = '<p><font color="red"><b><=== You need to login first with your Google account!</b></font></p>'
 
         template_values = {
         'navigations_bar': navigations_bar,
