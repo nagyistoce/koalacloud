@@ -1,1 +1,1 @@
-Test
+[http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA Howto use KOALA with EC2]
