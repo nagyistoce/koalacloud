@@ -21,6 +21,8 @@ At first you neet do install a few packages
 
 The next steps should be done as user and not root!
 
+The next steps are described in detail at typhoonAE's [http://code.google.com/p/typhoonae/wiki/GettingStarted Getting Started] page.
+
 Get typhoonAE
 
 {{{
