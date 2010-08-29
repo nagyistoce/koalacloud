@@ -4,8 +4,47 @@
 
 Welcome to the KOALA Cloud Manager. These Wiki-Pages can help you with your first steps while using KOALA to work with various cloud services.
 
-KOALA (Karlsruhe Open Application (for) cLoud Administration) is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud infrastructures (IaaS). The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
+KOALA is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud services. The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
 
-KOALA is Open Source and licensed according to the Apache License, Version 2.0.  It uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services. The icons used are from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]. 
+== Some Facts ==
 
-KOALA is a service that runs inside the http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonae]. 
+KOALA...
+
+  * 
+  * is a service that runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonae]. 
+  * is Open Source and licensed according to the Apache License, Version 2.0.
+  * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services.
+  * uses icons from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]. 
+  * is successfully checked with the [http://validator.w3.org W3C Markup Validation Service] as HTML 4.01 Transitional.
+
+== What KOALA stands for ==
+
+KOALA stands for <b>K</b>arlsruhe <b>O</b>pen <b>A</b>pplication (for) c<b>L</b>oud <b>A</b>dministration.
+
+But the main reason for the name KOALA is, that it's easy to memorize. Furthermore [http://en.wikipedia.org/wiki/Koala Koalas] like Eucalyptus.
+
+Implemented features:
+
+  * add and erase credentials for [http://aws.amazon.com Amazon AWS], [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] and [http://opennebula.org OpenNebula] services and infrastructures
+  * switch active region
+  * check availability zones
+  * create and erase security groups
+  * create and erase rules in security groups
+  * create and erase EBS volumes
+  * attach and detach EBS volumes to/from instances
+  * create and erase keypairs
+  * check images
+  * start, reboot, stop and terminate instances
+  * show console output of instances
+  * allocate and release elastic IP addresses
+  * attach and detach elastic IP addresses to/from instances
+  * erase all personal data from the datastore
+  * define image favourites (for AWS)
+  * create and erase S3 buckets
+  * pure S3 mode and S3 mode with more comfort
+  * upload and download S3 keys
+  * change Access Control Lists of S3 keys
+  * create and erase snapshots
+  * alter and delete elastic Load Balancers
+
+== Advantages and drawbacks of KOALA compared to other solutions ==
