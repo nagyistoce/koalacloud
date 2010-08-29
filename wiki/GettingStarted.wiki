@@ -6,4 +6,6 @@ Welcome to the KOALA Cloud Manager. These Wiki-Pages can help you with your firs
 
 KOALA (Karlsruhe Open Application (for) cLoud Administration) is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud infrastructures (IaaS). The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
 
+KOALA is Open Source and licensed according to the Apache License, Version 2.0.  It uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services. The icons used are from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]. 
+
 KOALA is a service that runs inside the http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonae]. 
