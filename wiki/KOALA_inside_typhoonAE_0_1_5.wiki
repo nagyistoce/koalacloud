@@ -97,3 +97,7 @@ If you changed the applications settings in */etc/koalacloud-supervisor.conf*
 {{{
 ./bin/supervisorctl update
 }}}
+
+The supervisor web interface run at [http://localhost:9001 http://localhost:9001]
+
+[http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/KOALA_in_typhoonAE_4_29_8_2010_small.jpg]
