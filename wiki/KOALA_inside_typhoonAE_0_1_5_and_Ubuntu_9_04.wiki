@@ -2,7 +2,7 @@
 
 KOALA can run inside a Private Cloud PaaS with [http://code.google.com/p/typhoonae/ typhoonAE]. typhoonAE executes automatically over [http://aws.amazon.com/ec2/ Amazon EC2] as well as [http://www.xen.org Xen] and VMware.
 
-This tutorial shows how to start typhoonAE inside Ubuntu 9.04 (Jaunty Jackalope) and run KOALA inside typhoonAE
+This tutorial shows how to start typhoonAE inside Ubuntu 9.04 (Jaunty Jackalope) and run KOALA inside typhoonAE.
 
 = What typhoonAE is = 
 
