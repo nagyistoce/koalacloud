@@ -72,7 +72,7 @@ nginx                            RUNNING    pid 32697, uptime 0:59:20
 rabbitmq                         RUNNING    pid 32624, uptime 0:59:20
 }}}
 
-Now, you can reach KOALA at [http://localhost:8080/ http://localhost:8080/]
+Now, you can reach KOALA at [http://localhost:8080 http://localhost:8080]
 
 = It works =
 
