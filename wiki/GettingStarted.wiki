@@ -1,4 +1,5 @@
 #summary Welcome to the KOALA Cloud Manager
+#labels Featured
 
 = Getting Started =
 
