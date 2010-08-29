@@ -1,4 +1,5 @@
 #summary This tutorial shows how to install KOALA in an typhoonAE PaaS that runs inside Ubuntu 9.04
+#labels Featured
 
 KOALA can run inside a Private Cloud PaaS with [http://code.google.com/p/typhoonae/ typhoonAE]. typhoonAE executes automatically over [http://aws.amazon.com/ec2/ Amazon EC2] as well as [http://www.xen.org Xen] and VMware.
 
