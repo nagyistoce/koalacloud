@@ -1,5 +1,6 @@
 #summary This is the sidebar for all Wiki pages
 
+  * [http://code.google.com/p/koalacloud/wiki/GettingStarted Getting Started with KOALA]
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA KOALA and EC2]
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_S3_and_KOALA KOALA and S3]
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_ELB_and_KOALA KOALA and ELB]
