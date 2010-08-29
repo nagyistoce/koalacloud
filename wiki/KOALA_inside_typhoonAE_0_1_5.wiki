@@ -92,7 +92,7 @@ Shutdown typhoonAE with
 
 If you want to run more appservers with KOALA, change the value of *numprocs* inside */etc/koalacloud-supervisor.conf* in the section *fcgi-program:koalacloud*. If you change this variable e.g. to the value 4, the supervisord of typhoonAE starts 4 appservers for KOALA.
 
-If you changed the applications settings in */etc/koalacloud-supervisor.conf*
+If you changed the applications settings in */etc/koalacloud-supervisor.conf* you can tell typhoonAE this
 
 {{{
 ./bin/supervisorctl update
