@@ -5,12 +5,11 @@
 
 Welcome to the KOALA Cloud Manager. These Wiki-Pages can help you with your first steps while using KOALA to work with various cloud services.
 
-KOALA is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud services. The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
-
 == Some Facts ==
 
 KOALA...
 
+  * is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud services. The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
   * is a service that runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonAE]. 
   * is Open Source and licensed according to the Apache License, Version 2.0.
   * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services.
