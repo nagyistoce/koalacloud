@@ -11,6 +11,7 @@ KOALA...
 
   * is a software service that helps you working with your Amazon Web Services (AWS) compatible cloud services. The AWS public cloud and private cloud services based on [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] or [http://www.opennebula.org OpenNebula] are supported.
   * runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonAE]
+  * is not a marketplace for cloud resources but it helps you working with cloud resources you have already access to.
   * is Open Source and licensed according to the Apache License, Version 2.0
   * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services
   * uses icons from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]
