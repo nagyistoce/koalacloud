@@ -57,4 +57,5 @@ Implemented features:
   * KOALA can run inside Public Clouds and Private Clouds itself
 
 == Drawbacks of KOALA compared to other solutions ==
-  * No support from Amazon
+  * Not all features of AWS supported
+  * No support from the provider of the cloud services
