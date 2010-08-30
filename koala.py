@@ -285,7 +285,7 @@ def main():
                                           ('/gruppenaendern', GruppeAendern),
                                           ('/zonen', Zonen),
                                           ('/sprache', Sprache),
-                                          ('/info', Info),
+                                          ('/info', MainPage),
                                           ('/loadbalancer', LoadBalancer),
                                           ('/delete_load_balancer', DeleteLoadBalancer),
                                           ('/create_load_balancer', CreateLoadBalancer),
