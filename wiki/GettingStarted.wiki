@@ -41,7 +41,7 @@ Implemented features:
   * create and erase S3 buckets
   * pure S3 mode and S3 mode with more comfort
   * upload and download S3 keys and change their Access Control List
-  * alter and delete elastic Load Balancers
+  * alter and delete elastic load balancers (ELB)
 
 == Advantages of KOALA compared to other solutions ==
 
