@@ -28,23 +28,19 @@ Implemented features:
   * import credentials for [http://aws.amazon.com Amazon AWS], [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] and [http://opennebula.org OpenNebula] services and infrastructures
   * switch active region
   * check availability zones
-  * create and erase security groups
-  * create and erase rules in security groups
-  * create and erase EBS volumes
-  * attach and detach EBS volumes to/from instances
+  * create and erase security groups and create and erase rules inside security groups
+  * create, attach, detach and erase EBS volumes
+  * create and erase snapshots from EBS volumes
   * create and erase keypairs
   * check images
   * start, reboot, stop and terminate instances
   * show console output of instances
-  * allocate and release elastic IP addresses
-  * attach and detach elastic IP addresses to/from instances
+  * allocate, attach, detach and release elastic IP addresses
   * erase all personal data from the datastore
-  * define image favourites (for AWS)
+  * create image favourites (for AWS)
   * create and erase S3 buckets
   * pure S3 mode and S3 mode with more comfort
-  * upload and download S3 keys
-  * change Access Control Lists of S3 keys
-  * create and erase snapshots
+  * upload and download S3 keys and change their Access Control List
   * alter and delete elastic Load Balancers
 
 == Advantages of KOALA compared to other solutions ==
