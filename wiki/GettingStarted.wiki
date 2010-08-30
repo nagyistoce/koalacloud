@@ -9,12 +9,12 @@ Welcome to the KOALA Cloud Manager. These Wiki-Pages can help you with your firs
 
 KOALA...
 
-  * is a software service, designed to help you managing your Amazon Web Services (AWS) compatible cloud services. The Amazon AWS public cloud and private cloud services based on Eucalyptus, Nimbus or OpenNebula are supported. 
-  * is a service that runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonAE]. 
-  * is Open Source and licensed according to the Apache License, Version 2.0.
-  * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services.
-  * uses icons from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]. 
-  * is successfully checked with the [http://validator.w3.org W3C Markup Validation Service] as HTML 4.01 Transitional.
+  * is a software service, designed to help you working with your Amazon Web Services (AWS) compatible cloud services. The AWS public cloud and private cloud services based on [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] or [http://www.opennebula.org OpenNebula] are supported.
+  * is a service that runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonAE]
+  * is Open Source and licensed according to the Apache License, Version 2.0
+  * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services
+  * uses icons from the Basic Set package from [http://www.pixel-mixer.com PixelMixer]
+  * is successfully checked with the [http://validator.w3.org W3C Markup Validation Service] as HTML 4.01 Transitional
 
 == What KOALA stands for ==
 
