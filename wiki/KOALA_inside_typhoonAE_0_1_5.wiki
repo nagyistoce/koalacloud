@@ -1,13 +1,13 @@
 #summary This tutorial shows how to install KOALA in an typhoonAE PaaS that runs inside Ubuntu 9.04
 #labels Featured
 
-KOALA can run inside a Private Cloud PaaS with [http://code.google.com/p/typhoonae/ typhoonAE]. typhoonAE executes automatically over [http://aws.amazon.com/ec2/ Amazon EC2] as well as [http://www.xen.org Xen] and VMware.
+KOALA can run inside a Private Cloud PaaS with [http://code.google.com/p/typhoonae/ typhoonAE]. 
 
 This tutorial shows how to start typhoonAE inside Ubuntu 9.04 (Jaunty Jackalope) and run KOALA inside typhoonAE.
 
 = What typhoonAE is = 
 
-TyphoonAE is an open source re-implementation of Google's App Engine. TyphoonAE runs inside Xen or VMware instances and inside EC2 too. The software consists of the App Engine SDK, some open source components to provide the App Engine functionalities and some Python scripts. Almost all services of Google’s App Engine are implemented, except incoming mail. The typhoonAE [http://code.google.com/p/typhoonae/wiki/RoadMap Road Map] has more information about this. 
+typhoonAE runs inside [http://www.xen.org Xen] or VMware instances and inside [http://aws.amazon.com/ec2/ Amazon EC2] instances too. The software consists of the App Engine SDK, some open source components to provide the App Engine functionalities and some Python scripts. Almost all services of Google’s App Engine are implemented, except incoming mail. The typhoonAE [http://code.google.com/p/typhoonae/wiki/RoadMap Road Map] has more information about this. 
 
 = Installation of typhoonAE and KOALA = 
 
