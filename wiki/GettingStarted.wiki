@@ -48,4 +48,13 @@ Implemented features:
   * create and erase snapshots
   * alter and delete elastic Load Balancers
 
-== Advantages and drawbacks of KOALA compared to other solutions ==
+== Advantages of KOALA compared to other solutions ==
+
+  * No local installation needed. Lokal Installation is against the cloud paradigma
+  * All browsers (not only Firefox) are supported
+  * Open Source
+  * Support all AWS compatible Public Cloud AND Private Clouds
+  * KOALA can run inside Public Clouds and Private Clouds itself
+
+== Drawbacks of KOALA compared to other solutions ==
+  * No support from Amazon
