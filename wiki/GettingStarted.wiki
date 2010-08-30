@@ -11,7 +11,6 @@ KOALA is a software service, designed to help you managing your Amazon Web Servi
 
 KOALA...
 
-  * 
   * is a service that runs inside the [http://appengine.google.com Google App Engine], [http://appscale.cs.ucsb.edu AppScale] and [http://code.google.com/p/typhoonae/ typhoonAE]. 
   * is Open Source and licensed according to the Apache License, Version 2.0.
   * uses [http://code.google.com/p/boto/ boto], a Python interface to Amazon Web Services.
@@ -26,7 +25,7 @@ But the main reason for the name KOALA is, that it's easy to memorize. Furthermo
 
 Implemented features:
 
-  * add and erase credentials for [http://aws.amazon.com Amazon AWS], [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] and [http://opennebula.org OpenNebula] services and infrastructures
+  * import credentials for [http://aws.amazon.com Amazon AWS], [http://open.eucalyptus.com Eucalyptus], [http://www.nimbusproject.org Nimbus] and [http://opennebula.org OpenNebula] services and infrastructures
   * switch active region
   * check availability zones
   * create and erase security groups
