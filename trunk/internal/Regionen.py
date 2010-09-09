@@ -458,7 +458,7 @@ class Regionen(webapp.RequestHandler):
               if sprache == "de":
                 port_warnung = port_warnung + 'Die Google App Engine akzeptiert nur wenige Ports. '
                 port_warnung = port_warnung + 'Leider ist der Standard-Port von OpenNebula (4567) nicht dabei. '
-                port_warnung = port_warnung + 'Es ist darum notwendig, den econe Server auf einen anderen, unterstützten Port umzuleiten. '
+                port_warnung = port_warnung + 'Es ist darum notwendig, den econe Server auf einen anderen, unterst&uuml;tzten Port umzuleiten. '
                 port_warnung = port_warnung + 'Die Einstellung erfolgt in der Datei <tt>econe.conf</tt>'
               else:
                 port_warnung = port_warnung + 'The Google App Engine accepts only a few number of ports '
