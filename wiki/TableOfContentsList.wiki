@@ -4,5 +4,6 @@
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_EC2_and_KOALA KOALA and EC2]
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_S3_and_KOALA KOALA and S3]
   * [http://code.google.com/p/koalacloud/wiki/First_Steps_with_ELB_and_KOALA KOALA and ELB]
+  * [http://code.google.com/p/koalacloud/wiki/KOALA_inside_AppScale_1_4_and_EC2 KOALA inside AppScale 1.4]
   * [http://code.google.com/p/koalacloud/wiki/KOALA_inside_AppScale_1_3_and_EC2 KOALA inside AppScale 1.3]
   * [http://code.google.com/p/koalacloud/wiki/KOALA_inside_typhoonAE_0_1_5 KOALA inside typhoonAE 0.1.5]
