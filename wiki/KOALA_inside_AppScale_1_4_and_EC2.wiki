@@ -11,3 +11,13 @@ AppScale is a platform that allows users to deploy and host their own Google App
 = Installation of AppScale and KOALA = 
 
 At first you neet do install the [http://code.google.com/p/appscale/wiki/AppScale_Tools_Usage AppScale Tools].
+
+Pack the KOALA sourcecode into a tar.gz
+
+{{{
+$ cd koalacloud
+$ tar -cvzf koalacloud.tar.gz . --exclude=tutorial
+$ mv koalacloud.tar.gz ../
+}}}
+
+Start AppScale PaaS inside EC2 (this needs some time). 
