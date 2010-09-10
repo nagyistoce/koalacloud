@@ -90,6 +90,7 @@ When your AWS credentials are imported, you can manage the instances with KOALA 
 This are the two AppScale instances inside EC2 that contain KOALA itself.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale14_7_redundant_view_small.png]
+
 You can check the AppScale instances also with the command appscale-describe-instances.
 
 {{{
