@@ -90,7 +90,35 @@ When your AWS credentials are imported, you can manage the instances with KOALA 
 This are the two AppScale instances inside EC2 that contain KOALA itself.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale14_7_redundant_view_small.png]
+You can check the AppScale instances also with the command appscale-describe-instances.
 
-To terminate the AppScale instances, you can use KOALA. :-)
+{{{
+$ appscale-describe-instances --keyname appscaletest
+Status of node at ec2-184-72-184-81.compute-1.amazonaws.com:
+    Currently using 6.8 Percent CPU and 10.27 Percent Memory
+    Hard disk is 36 Percent full
+    Is currently: load_balancer, shadow, db_master, zookeeper, login
+    Database is at ec2-184-72-184-81.compute-1.amazonaws.com
+    Current State: Preparing to run AppEngine apps if needed
+Status of node at ec2-75-101-177-34.compute-1.amazonaws.com:
+    Currently using 3.4 Percent CPU and 9.74 Percent Memory
+    Hard disk is 36 Percent full
+    Is currently: load_balancer, db_slave, appengine
+    Database is at ec2-75-101-177-34.compute-1.amazonaws.com
+    Current State: Preparing to run AppEngine apps if needed
+    Hosting the following apps: koalacloud
+}}}
+
+To terminate the AppScale instances, you can use the command appscale-terminate-instances.
+
+{{{
+$ appscale-terminate-instances --infrastructure ec2 --keyname appscaletest
+Not backing up data.
+
+About to terminate instances spawned via ec2 with keyname 'appscaletest'...
+Terminated AppScale in cloud deployment.
+}}}
+
+Alternatively you can use KOALA. :-)
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_koala_appscale14_8_terminate_small.png]
