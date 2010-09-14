@@ -107,10 +107,7 @@ class Images(webapp.RequestHandler):
               else:
                 liste_favouriten = liste_favouriten + '<th align="center">Architecture</th>'
               liste_favouriten = liste_favouriten + '<th align="center">Status</th>'
-              if sprache == "de":
-                liste_favouriten = liste_favouriten + '<th align="center">Root Device Typ</th>'
-              else:
-                liste_favouriten = liste_favouriten + '<th align="center">Root Device Type</th>'  
+              liste_favouriten = liste_favouriten + '<th align="center">Root Device</th>'  
               if sprache == "de":
                 liste_favouriten = liste_favouriten + '<th align="center">Besitzer</th>'
               else:
@@ -126,12 +123,16 @@ class Images(webapp.RequestHandler):
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
                       liste_favouriten = liste_favouriten + '&amp;arch='
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
+                      liste_favouriten = liste_favouriten + '&amp;root='
+                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
                       liste_favouriten = liste_favouriten + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
                     else:
                       liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
                       liste_favouriten = liste_favouriten + '&amp;arch='
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
+                      liste_favouriten = liste_favouriten + '&amp;root='
+                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
                       liste_favouriten = liste_favouriten + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
                   else:
                     # Wenn es kein Machine-Image ist, dann das Feld leer lassen

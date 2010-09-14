@@ -27,13 +27,19 @@ class ImageStarten(webapp.RequestHandler):
     def get(self):
         # self.response.out.write('test')
         # Den Usernamen erfahren
+        # Get the username
         username = users.get_current_user()
         if not username:
             self.redirect('/')
         # Die ID des zu startenden Images holen
+        # Get the ID of the image that shall be started
         image = self.request.get('image')
         # Die Architektur des zu startenden Images holen
+        # Get the architecture of the image that shall be started
         arch = self.request.get('arch')
+        # Das Root Device des zu startenden Images holen
+        # Get the root device of the image that shall be started
+        root = self.request.get('root')
 
         sprache = aktuelle_sprache(username)
         navigations_bar = navigations_bar_funktion(sprache)
@@ -115,10 +121,15 @@ class ImageStarten(webapp.RequestHandler):
           if result.zugangstyp == "Amazon":
             if arch == "i386":
               # Liste mit den Instanz-Typen wenn es ein 32-Bit Image ist
-              liste_instanztypen_eucalyptus = ["m1.small", "c1.medium"]
+              if root == "ebs":
+                liste_instanztypen_eucalyptus = ["t1.micro", "m1.small", "c1.medium"]
+              else:
+                # root == instance-store
+                # t1.micro instances must have an EBS root device
+                liste_instanztypen_eucalyptus = ["m1.small", "c1.medium"]
             else:
               # Liste mit den Instanz-Typen wenn es ein 64-Bit Image ist
-              liste_instanztypen_eucalyptus = ["m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.xlarge"]
+              liste_instanztypen_eucalyptus = ["t1.micro", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.xlarge"]
             # Anzahl der Elemente in der Liste
             laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus)
 
@@ -252,13 +263,17 @@ class ImageStarten(webapp.RequestHandler):
           imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
           imagetextfeld = imagetextfeld + image
           imagetextfeld = imagetextfeld + '" readonly>'
+          
+          rootdevicetextfeld = '<input name="root_device" type="text" size="70" maxlength="70" value="'
+          rootdevicetextfeld = rootdevicetextfeld + root
+          rootdevicetextfeld = rootdevicetextfeld + '" readonly>'
 
           manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
           manifesttextfeld = manifesttextfeld + manifest
           manifesttextfeld = manifesttextfeld + '" readonly>'
 
           # Wenn es Amazon EC2 ist
-          if result.aktivezone == "us-east-1" or result.aktivezone == "eu-west-1" or result.aktivezone == "us-west-1":
+          if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
             if arch == "i386": # 32-Bit Image
               tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
@@ -275,20 +290,45 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Speicher</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Memory</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>t1.micro</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">bis zu 2</td>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">up to 2</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">613 MB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.small</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1.7 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.medium</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">5</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1.7 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
+            
+              if root != "ebs":
+                if sprache == "de":
+                  t1_micro_warnung = '<font color="red">t1.micro Instanzen ben&ouml;tigen als Root Device EBS</font>'
+                else:
+                  t1_micro_warnung = '<font color="red">t1.micro instances must have an EBS root device</font>'
+              else:
+                t1_micro_warnung = ''
+
             elif arch == "x86_64": # 64-Bit Image
               tabelle_ec2_instanztypen = '<table border="3" cellspacing="0" cellpadding="5">'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
@@ -305,50 +345,81 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Speicher</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Memory</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>t1.micro</tt></td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">32-Bit</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">1</td>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">bis zu 2</td>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">up to 2</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">613 MB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.large</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">7.5 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m1.xlarge</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">15 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.xlarge</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">2</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">6.5</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">17.1 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.2xlarge</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">4</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">13</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">34.2 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>m2.4xlarge</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">26</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">68.4 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td><tt>c1.xlarge</tt></td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">64-Bit</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">8</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">20</td>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<td align="center">7 GB</td>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</tr>'
               tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '</table'
+              
+              if root != "ebs":
+                if sprache == "de":
+                  t1_micro_warnung = '<font color="red">t1.micro Instanzen ben&ouml;tigen als Root Device EBS</font>'
+                else:
+                  t1_micro_warnung = '<font color="red">t1.micro instances must have an EBS root device</font>'
+              else:
+                t1_micro_warnung = ''
+
             else:
               # Wenn es etwas ganz anderes ist...?
               tabelle_ec2_instanztypen = ''
+              t1_micro_warnung = ''
           else:
             # wenn es Eucalyptus ist
             tabelle_ec2_instanztypen = ''
+            t1_micro_warnung = ''
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -364,6 +435,7 @@ class ImageStarten(webapp.RequestHandler):
           'keys_liste_anfang': keys_liste_anfang,
           'gruppen_liste': gruppen_liste,
           'zonen_liste': zonen_liste,
+          'root': rootdevicetextfeld,
           'number_instances_max_anfang': number_instances_max_anfang,
           'number_instances_min_anfang': number_instances_min_anfang,
           'typ_anfang': typ_anfang,
@@ -374,6 +446,7 @@ class ImageStarten(webapp.RequestHandler):
           'zonen_in_der_region': zonen_in_der_region,
           'laenge_liste_zonen': laenge_liste_zonen,
           'zonen_anfang': zonen_anfang,
+          't1_micro_warnung': t1_micro_warnung,
           }
 
           path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "image_starten.html")

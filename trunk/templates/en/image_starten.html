@@ -13,6 +13,8 @@
 </tr><tr>
 <td>AMI Manifest: </td><td><tt> {{ manifest }} </tt></td>
 </tr><tr>
+<td>Root Device: </td><td><tt> {{ root }} </tt></td>
+</tr><tr>
 <td>AKI ID: </td><td> <input name="aki_id" type="text" size="45" maxlength="45">
  {{ nicht_zwingend_notwendig }}</td>
 </tr><tr>
@@ -52,5 +54,9 @@
 <P>&nbsp;</P>
 
 {{ tabelle_ec2_instanztypen }}
+
+<P>&nbsp;</P>
+
+{{ t1_micro_warnung }}
 
 {% endblock %}
