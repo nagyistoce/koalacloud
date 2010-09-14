@@ -123,10 +123,7 @@ class Instanzen(webapp.RequestHandler):
               else:
                 instanzentabelle = instanzentabelle + '<th align="center">Type</th>'
               instanzentabelle = instanzentabelle + '<th align="center">Reservation ID</th>'
-              if sprache == "de":
-                instanzentabelle = instanzentabelle + '<th align="center">Root Device Typ</th>'
-              else:
-                instanzentabelle = instanzentabelle + '<th align="center">Root Device Type</th>'  
+              instanzentabelle = instanzentabelle + '<th align="center">Root Device</th>'  
               if sprache == "de":
                 instanzentabelle = instanzentabelle + '<th align="center">Besitzer</th>'
               else:
