@@ -202,6 +202,7 @@ class BucketInhalt(webapp.RequestHandler):
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
               else:
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
                 bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
@@ -209,6 +210,7 @@ class BucketInhalt(webapp.RequestHandler):
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
               # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
               if directory != '/':
@@ -265,13 +267,16 @@ class BucketInhalt(webapp.RequestHandler):
 
 
                   bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
+                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
+                  # Dann kommt hier ein anderes Icon hin
                   if str(liste_keys[i].name).endswith("$folder$") == True:
+                    # Es ist ein Verzeichnis...
                     if sprache == "de":
                       bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
                     else:
                       bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                  else:      # Ansonsten ist es eine Datei
+                  else:
+                    # Ansonsten ist es eine Datei...
                     if sprache == "de":
                       bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
                     else:
@@ -348,6 +353,9 @@ class BucketInhalt(webapp.RequestHandler):
                   else:
                     bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
               bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
             else: # Bei Eucalyptus gibt es eine andere Tabelle mit weniger Informationen
@@ -358,6 +366,10 @@ class BucketInhalt(webapp.RequestHandler):
               bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Name</th>'
+              if sprache == "de":
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
+              else:
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
               for i in range(laenge_liste_keys):
                   bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
@@ -394,7 +406,9 @@ class BucketInhalt(webapp.RequestHandler):
                     # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.
                     bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
                   bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
               bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
 

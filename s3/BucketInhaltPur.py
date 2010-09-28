@@ -129,11 +129,13 @@ class BucketInhaltPur(webapp.RequestHandler):
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
             else:
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
+              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
             bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
 
             for i in range(laenge_liste_keys):
@@ -208,6 +210,9 @@ class BucketInhaltPur(webapp.RequestHandler):
                   bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
                 else:
                   bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
             bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
