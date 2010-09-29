@@ -167,16 +167,10 @@ class BucketInhaltPur(webapp.RequestHandler):
                   bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
 
                 bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                # Darum erst mal nur Links bei Amazon
-                #if regionname == "Amazon":
                 bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
                 bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
                 bucket_keys_tabelle = bucket_keys_tabelle + '">'
                 bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                # Darum erst mal nur Links bei Amazon
-                #if regionname == "Amazon":
                 bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
 
@@ -220,9 +214,9 @@ class BucketInhaltPur(webapp.RequestHandler):
           # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
           if regionname != "Amazon":
             if sprache == "de":
-              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6, 1.6.1 und 1.6.2 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung:<BR><B>Failure: 500 Internal Server Error</B>'
+              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung: <B>Failure: 500 Internal Server Error</B>'
             else:
-              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6, 1.6.1 and 1.6.2 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message:<BR><B>Failure: 500 Internal Server Error</B>'
+              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message: <B>Failure: 500 Internal Server Error</B>'
           else: 
             eucalyptus_warnung = ''
 
@@ -240,7 +234,7 @@ class BucketInhaltPur(webapp.RequestHandler):
           policy_document = policy_document + '"conditions": ['
           policy_document = policy_document + '{"bucket": "'+bucketname+'"}, '
           policy_document = policy_document + '["starts-with", "$acl", ""],'
-          policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
+          policy_document = policy_document + '{"redirect": "http://koalacloud.appspot.com/bucket_inhalt_pure"},'
           policy_document = policy_document + '["starts-with", "$key", ""],'
           policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
           policy_document = policy_document + ']'
@@ -288,9 +282,7 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular = keys_upload_formular + '</tr>'
             keys_upload_formular = keys_upload_formular + '<tr>'
             keys_upload_formular = keys_upload_formular + '<td>'
-            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt_pure?bucket='
-            keys_upload_formular = keys_upload_formular + bucketname
-            keys_upload_formular = keys_upload_formular + '">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure">\n'        
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'

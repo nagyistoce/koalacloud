@@ -403,14 +403,29 @@ class BucketInhalt(webapp.RequestHandler):
                   if str(liste_keys[i].name).endswith("$folder$") == True:
                     bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
                   else:
-                    # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.
+                    # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.               
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
+                    bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                    bucket_keys_tabelle = bucket_keys_tabelle + '">'
                     bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                    
                   bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
                   bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
               bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
+
+          # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
+          if regionname != "Amazon":
+            if sprache == "de":
+              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung: <B>Failure: 500 Internal Server Error</B>'
+            else:
+              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message: <B>Failure: 500 Internal Server Error</B>'
+          else: 
+            eucalyptus_warnung = ''
+
 
           # "Verzeichnisse" gehen nur bei Amazon S3
           # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
@@ -459,7 +474,7 @@ class BucketInhalt(webapp.RequestHandler):
           policy_document = policy_document + '"conditions": ['
           policy_document = policy_document + '{"bucket": "'+bucketname+'"},'
           policy_document = policy_document + '["starts-with", "$acl", ""],'
-          policy_document = policy_document + '["starts-with", "$success_action_redirect", ""],'
+          policy_document = policy_document + '{"redirect": "http://koalacloud.appspot.com/bucket_inhalt"},'
           if directory == '/':
             policy_document = policy_document + '["starts-with", "$key", ""],'
           else:
@@ -514,15 +529,9 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular = keys_upload_formular + '<tr>'
             keys_upload_formular = keys_upload_formular + '<td>'
             if directory == '/':
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
-              keys_upload_formular = keys_upload_formular + bucketname
-              keys_upload_formular = keys_upload_formular + '">\n'
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt">\n'
             else:
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="/bucket_inhalt?bucket='
-              keys_upload_formular = keys_upload_formular + bucketname
-              keys_upload_formular = keys_upload_formular + '&amp;dir='
-              keys_upload_formular = keys_upload_formular + directory[:-1]
-              keys_upload_formular = keys_upload_formular + '">\n'
+              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt?dir='+directory[:-1]+'">\n'
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
             keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
@@ -559,6 +568,7 @@ class BucketInhalt(webapp.RequestHandler):
           'eingabeformular_neues_verzeichnis': eingabeformular_neues_verzeichnis,
           'keys_upload_formular': keys_upload_formular,
           'verzeichnis_warnung': verzeichnis_warnung,
+          'eucalyptus_warnung': eucalyptus_warnung,
           }
 
           #if sprache == "de": naechse_seite = "s3_keys_de.html"
