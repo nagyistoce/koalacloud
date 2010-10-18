@@ -103,7 +103,8 @@ class ZugangEinrichten(webapp.RequestHandler):
                   result.delete()
 
                 logindaten = KoalaCloudDatenbankAktiveZone(aktivezone="us-east-1",
-                                                           user=username)
+                                                           user=username,
+                                                           zugangstyp="Amazon")
                 # In den Datastore schreiben
                 logindaten.put()
 
@@ -200,7 +201,8 @@ class ZugangEinrichten(webapp.RequestHandler):
                   result.delete()
 
                 logindaten = KoalaCloudDatenbankAktiveZone(aktivezone=nameregion,
-                                                          user=username)
+                                                          user=username,
+                                                          zugangstyp="Nimbus")
                 # In den Datastore schreiben
                 logindaten.put()
 
@@ -296,7 +298,8 @@ class ZugangEinrichten(webapp.RequestHandler):
                   result.delete()
 
                 logindaten = KoalaCloudDatenbankAktiveZone(aktivezone=nameregion,
-                                                          user=username)
+                                                          user=username,
+                                                          zugangstyp="OpenNebula")
                 # In den Datastore schreiben
                 logindaten.put()
 
@@ -398,7 +401,8 @@ class ZugangEinrichten(webapp.RequestHandler):
                   result.delete()
 
                 logindaten = KoalaCloudDatenbankAktiveZone(aktivezone=nameregion,
-                                                          user=username)
+                                                          user=username,
+                                                          zugangstyp="Eucalyptus")
                 # In den Datastore schreiben
                 logindaten.put()
 

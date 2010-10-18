@@ -359,18 +359,42 @@ def logins3(username):
   return conn_s3
 
 def aws_access_key_erhalten(username,regionname):
-  Anfrage_nach_AWSAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user =  :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  Anfrage_nach_AWSAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
   for db_eintrag in Anfrage_nach_AWSAccessKeyId:
     AWSAccessKeyId = db_eintrag.accesskey
 
   return AWSAccessKeyId
 
 def aws_secret_access_key_erhalten(username,regionname):
-  Anfrage_nach_AWSSecretAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user =  :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  Anfrage_nach_AWSSecretAccessKeyId = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
   for db_eintrag in Anfrage_nach_AWSSecretAccessKeyId:
     AWSSecretAccessKeyId = db_eintrag.secretaccesskey
     secretaccesskey_base64decoded = base64.b64decode(str(AWSSecretAccessKeyId))
     AWSSecretAccessKeyId = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
 
   return AWSSecretAccessKeyId
+
+def endpointurl_erhalten(username,regionname):
+  Anfrage_nach_endpointurl = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  for db_eintrag in Anfrage_nach_endpointurl:
+    endpointurl = db_eintrag.endpointurl
+
+  return endpointurl
+
+
+def port_erhalten(username,regionname):
+  Anfrage_nach_port = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :regionname_db", username_db=username, regionname_db=regionname)
+  for db_eintrag in Anfrage_nach_port:
+    port = db_eintrag.port
+
+  return port
+
+def zugangstyp_erhalten(username):
+  Anfrage_nach_zugangstyp = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+  for db_eintrag in Anfrage_nach_zugangstyp:
+    zugangstyp = db_eintrag.zugangstyp
+
+  return zugangstyp
+
+
 
