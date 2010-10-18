@@ -20,6 +20,9 @@ from library import format_error_message_red
 from library import logins3
 from library import aws_access_key_erhalten
 from library import aws_secret_access_key_erhalten
+from library import endpointurl_erhalten
+from library import zugangstyp_erhalten
+from library import port_erhalten
 
 from dateutil.parser import *
 
@@ -64,7 +67,8 @@ class BucketInhalt(webapp.RequestHandler):
 
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
-
+          zugangstyp = zugangstyp_erhalten(username) 
+          
           zonen_liste = zonen_liste_funktion(username,sprache)
 
           AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
@@ -93,131 +97,78 @@ class BucketInhalt(webapp.RequestHandler):
 
           # Mit S3 verbinden
           conn_s3 = logins3(username)
-          bucket_instance = conn_s3.get_bucket(bucketname)
-
-          # Wenn die Variable "directory" gesetzt ist, also ein Verzeichnis angegeben wurde...
-          if directory:
-            # An das Verzeichnis ein "/" angängen
-            directory = directory + '/'
-            # Liste der Keys im Bucket
-            liste_keys = bucket_instance.get_all_keys(prefix=directory)
-            # Anzahl der Keys in der Liste
-            laenge_liste_keys = len(liste_keys)
-            # Die Variable "level" ist quasi die Ebene im Dateibaum.
-            # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
-            # in dem Verzeichnis drin sind.
-            level = directory.count("/")
-          # Wenn kein Verzeichnis angegeben wurde...
-          else:
-            # Dann wird die Variable "directory" gesetzt und zwar auf "/"
-            directory = '/'
-            # Liste der Keys im Bucket
-            liste_keys = bucket_instance.get_all_keys()
-            # Anzahl der Keys in der Liste
-            laenge_liste_keys = len(liste_keys)
-            # Die Variable "level" ist quasi die Ebene im Dateibaum.
-            # level = 0 heißt, wir sind in der Root-Ebene.
-            level = 0
-
-          # Wenn wir uns im "Root"-Verzeichnis des Buckets befinden, wird aus
-          # der Liste der Keys alle Keys entfernt, die einen / im Keynamen haben
-          if directory == '/':
-            liste_keys2 = []
-            for i in range(laenge_liste_keys):
-              if re.search(r'[/]', str(liste_keys[i].name)) == None:
-                liste_keys2.append(liste_keys[i])
-            laenge_liste_keys2 = len(liste_keys2)
-            laenge_liste_keys = laenge_liste_keys2
-            liste_keys = liste_keys2
-          # Wenn wir uns nicht im "Root"-Verzeichnis des Buckets befinden,
-          # dann wird für jeden Key geschaut, ob er die gleiche Anzahl an "/" im
-          # Namen hat, wie die Variable "level" als Zahl enthält.
-          else:
-            liste_keys2 = []
-            for i in range(laenge_liste_keys):
-              if str(liste_keys[i].name).count("/") == level:
-                liste_keys2.append(liste_keys[i])
-            laenge_liste_keys2 = len(liste_keys2)
-            laenge_liste_keys = laenge_liste_keys2
-            liste_keys = liste_keys2
-
-          # Wenn wir im Root-Verzeichnis sind und es sind keine Keys vorhanden...
-          if laenge_liste_keys == 0 and directory == '/':
+          
+          try:
+            # Liste der Buckets
+            bucket_instance = conn_s3.get_bucket(bucketname)
+          except:
+            # Wenn es nicht klappt...
             if sprache == "de":
-              bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
+              bucket_keys_tabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
             else:
-              bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
-          # Wenn wir nicht im Root-Verzeichnis sind und es sind keine Keys vorhanden...
-          elif laenge_liste_keys == 0 and directory != '/':
-            if sprache == "de":
-              bucket_keys_tabelle = 'Das Verzeichnis <B>'+ directory+' </B>ist leer.'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-              bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-              # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-              # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-              # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-              # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-              # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-              # Root-Ansicht zurückkehren.
-              if str(directory).count("/") >= 2:
-                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
-              bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-              bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
-              bucket_keys_tabelle = bucket_keys_tabelle + '"> '
-              bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-            else:
-              bucket_keys_tabelle = 'The directory <B>'+ directory+' </B>is empty.'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-              bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-              # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-              # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-              # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-              # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-              # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-              # Root-Ansicht zurückkehren.
-              if str(directory).count("/") >= 2:
-                bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
-              bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-              bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
-              bucket_keys_tabelle = bucket_keys_tabelle + '"> '
-              bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-          # Wenn wir irgendwo sind und es sind Keys vorhanden...
+              bucket_keys_tabelle = '<font color="red">An error occured</font>'
+            laenge_liste_keys = 0
           else:
-            if regionname == "Amazon": # Bei Amazon geht mehr (alles)
-              bucket_keys_tabelle = ''
-              bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+          
+
+
+            # Wenn die Variable "directory" gesetzt ist, also ein Verzeichnis angegeben wurde...
+            if directory:
+              # An das Verzeichnis ein "/" angängen
+              directory = directory + '/'
+              # Liste der Keys im Bucket
+              liste_keys = bucket_instance.get_all_keys(prefix=directory)
+              # Anzahl der Keys in der Liste
+              laenge_liste_keys = len(liste_keys)
+              # Die Variable "level" ist quasi die Ebene im Dateibaum.
+              # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
+              # in dem Verzeichnis drin sind.
+              level = directory.count("/")
+            # Wenn kein Verzeichnis angegeben wurde...
+            else:
+              # Dann wird die Variable "directory" gesetzt und zwar auf "/"
+              directory = '/'
+              # Liste der Keys im Bucket
+              liste_keys = bucket_instance.get_all_keys()
+              # Anzahl der Keys in der Liste
+              laenge_liste_keys = len(liste_keys)
+              # Die Variable "level" ist quasi die Ebene im Dateibaum.
+              # level = 0 heißt, wir sind in der Root-Ebene.
+              level = 0
+  
+            # Wenn wir uns im "Root"-Verzeichnis des Buckets befinden, wird aus
+            # der Liste der Keys alle Keys entfernt, die einen / im Keynamen haben
+            if directory == '/':
+              liste_keys2 = []
+              for i in range(laenge_liste_keys):
+                if re.search(r'[/]', str(liste_keys[i].name)) == None:
+                  liste_keys2.append(liste_keys[i])
+              laenge_liste_keys2 = len(liste_keys2)
+              laenge_liste_keys = laenge_liste_keys2
+              liste_keys = liste_keys2
+            # Wenn wir uns nicht im "Root"-Verzeichnis des Buckets befinden,
+            # dann wird für jeden Key geschaut, ob er die gleiche Anzahl an "/" im
+            # Namen hat, wie die Variable "level" als Zahl enthält.
+            else:
+              liste_keys2 = []
+              for i in range(laenge_liste_keys):
+                if str(liste_keys[i].name).count("/") == level:
+                  liste_keys2.append(liste_keys[i])
+              laenge_liste_keys2 = len(liste_keys2)
+              laenge_liste_keys = laenge_liste_keys2
+              liste_keys = liste_keys2
+  
+            # Wenn wir im Root-Verzeichnis sind und es sind keine Keys vorhanden...
+            if laenge_liste_keys == 0 and directory == '/':
               if sprache == "de":
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
-                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
+                bucket_keys_tabelle = 'Der Bucket <B>'+ bucketname+' </B>ist leer.'
               else:
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
-                bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-              # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
-              if directory != '/':
-                bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                bucket_keys_tabelle = 'The bucket <B>'+ bucketname+' </B>is empty.'
+            # Wenn wir nicht im Root-Verzeichnis sind und es sind keine Keys vorhanden...
+            elif laenge_liste_keys == 0 and directory != '/':
+              if sprache == "de":
+                bucket_keys_tabelle = 'Das Verzeichnis <B>'+ directory+' </B>ist leer.'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
                 bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
                 # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
@@ -229,203 +180,200 @@ class BucketInhalt(webapp.RequestHandler):
                 if str(directory).count("/") >= 2:
                   bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
                   bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
-
-                if sprache == "de":
-                  bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
-                else:
-                  bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
-                # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
+                bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-                if sprache == "de":
-                  bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
-                else:
-                  bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
-                bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
+                bucket_keys_tabelle = bucket_keys_tabelle + '"> '
                 bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-
-              for i in range(laenge_liste_keys):
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
-                  if sprache == "de":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                  else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
-                  # Dann kommt hier ein anderes Icon hin
-                  if str(liste_keys[i].name).endswith("$folder$") == True:
-                    # Es ist ein Verzeichnis...
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                  else:
-                    # Ansonsten ist es eine Datei...
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
-                  # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
-                  if str(liste_keys[i].name).endswith("$folder$") == True:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="In das Verzeichnis wechseln">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch to directory">'
-                    # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                    name_tmp = liste_keys[i].name.replace( directory, '')
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp[:-9])
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                  # Wenn es sich nicht um ein Verzeichnis handelt
-                  else:
-                    # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
-                    # if liste_keys[i].name != None:
-                    # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                    # Darum erst mal nur Links bei Amazon
-                    if regionname == "Amazon":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                      bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                      bucket_keys_tabelle = bucket_keys_tabelle + '">'
-                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                      name_tmp = liste_keys[i].name.replace(directory, '')
-                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
-                      bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                    else:
-                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                      name_tmp = liste_keys[i].name.replace(directory, '')
-                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
-                  if str(liste_keys[i].name) != None:
-                    # Wenn der Keyname auf "$folder" endet, dann wird keine
-                    # Dateigröße ausgegeben.
-                    if str(liste_keys[i].name).endswith("$folder$") == True:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                    # Wenn der Keyname nicht auf $folder$ endet, wird die 
-                    # Dateigröße ausgegeben.
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
-                  else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                  datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
-                  #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].last_modified)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='+str(liste_keys[i].name)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='+str(directory)
-                  if sprache == "de":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
-                  else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
-            else: # Bei Eucalyptus gibt es eine andere Tabelle mit weniger Informationen
-              # Bei Eucalyptus (Walrus) gibt es einige Sachen nicht
-              bucket_keys_tabelle = ''
-              bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Name</th>'
-              if sprache == "de":
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
               else:
-                bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-              for i in range(laenge_liste_keys):
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
-                  bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                  if sprache == "de":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                  else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis
-                  if str(liste_keys[i].name).endswith("$folder$") == True:
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                  else:      # Ansonsten ist es eine Datei
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                  # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
-                  # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
-                  if str(liste_keys[i].name).endswith("$folder$") == True:
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
-                  else:
-                    # Wenn der Key kein Verzeinis ist, muss auch nichts abgeschnitten werden.               
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                    bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                    bucket_keys_tabelle = bucket_keys_tabelle + '">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
-                    
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-                  bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
-
-          # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
-          if regionname != "Amazon":
-            if sprache == "de":
-              eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert der Download von Keys nicht. Dabei handelt es sich um einen Fehler von Eucalyptus. Es kommt zu dieser Fehlermeldung: <B>Failure: 500 Internal Server Error</B>'
+                bucket_keys_tabelle = 'The directory <B>'+ directory+' </B>is empty.'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<p>&nbsp;</p>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+                bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+                # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+                # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+                # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+                # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+                # Root-Ansicht zurückkehren.
+                if str(directory).count("/") >= 2:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
+                bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
+                bucket_keys_tabelle = bucket_keys_tabelle + '"> '
+                bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+            # Wenn wir irgendwo sind und es sind Keys vorhanden...
             else:
-              eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 the download of Keys is broken. This is a bug of Eucalyptus. The result is this error message: <B>Failure: 500 Internal Server Error</B>'
-          else: 
-            eucalyptus_warnung = ''
-
+                bucket_keys_tabelle = ''
+                bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;</th>'
+                if sprache == "de":
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Letzte &Auml;nderung</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Zugriffsberechtigung</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Pr&uuml;fsumme (MD5)</th>'
+                else:
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Filesize</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Last Modified</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Access Control List</th>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">MD5</th>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+                # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
+                if directory != '/':
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+                  bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                  # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+                  # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+                  # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+                  # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+                  # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+                  # Root-Ansicht zurückkehren.
+                  if str(directory).count("/") >= 2:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)[:str(directory)[:-1].rfind('/')]
+  
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Zur&uuml;ck">'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch back">'
+                  # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                  #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                  if sprache == "de":
+                    bucket_keys_tabelle = bucket_keys_tabelle + 'Zur&uuml;ck'
+                  else:
+                    bucket_keys_tabelle = bucket_keys_tabelle + 'Switch back'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
+                  bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+  
+                for i in range(laenge_liste_keys):
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucketkeyentfernen?bucket='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(directory)
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+  
+  
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                    # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
+                    # Dann kommt hier ein anderes Icon hin
+                    if str(liste_keys[i].name).endswith("$folder$") == True:
+                      # Es ist ein Verzeichnis...
+                      if sprache == "de":
+                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
+                      else:
+                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
+                    else:
+                      # Ansonsten ist es eine Datei...
+                      if sprache == "de":
+                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                      else:
+                        bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                    # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
+                    # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
+                    if str(liste_keys[i].name).endswith("$folder$") == True:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/bucket_inhalt?bucket='
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                      bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name[:-9])
+                      if sprache == "de":
+                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="In das Verzeichnis wechseln">'
+                      else:
+                        bucket_keys_tabelle = bucket_keys_tabelle + '" title="Switch to directory">'
+                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                      name_tmp = liste_keys[i].name.replace( directory, '')
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp[:-9])
+                      bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                    # Wenn es sich nicht um ein Verzeichnis handelt
+                    else:
+                      # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
+                      # if liste_keys[i].name != None:
+                      # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
+                      # Darum erst mal nur Links bei Amazon
+                      if regionname == "Amazon":
+                        bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
+                        bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                        bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace(directory, '')
+                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                        bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
+                        bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                      else:
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace(directory, '')
+                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                        bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
+                      bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+  
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'
+                    if str(liste_keys[i].name) != None:
+                      # Wenn der Keyname auf "$folder" endet, dann wird keine
+                      # Dateigröße ausgegeben.
+                      if str(liste_keys[i].name).endswith("$folder$") == True:
+                        bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                      # Wenn der Keyname nicht auf $folder$ endet, wird die 
+                      # Dateigröße ausgegeben.
+                      else:
+                        bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].size)
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '&nbsp;'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+  
+  
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
+                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                    datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
+                    #bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].last_modified)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+  
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<a href="/acl_einsehen?bucket='
+                    bucket_keys_tabelle = bucket_keys_tabelle + str(bucketname)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;typ=kompfort'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;key='+str(liste_keys[i].name)
+                    bucket_keys_tabelle = bucket_keys_tabelle + '&amp;dir='+str(directory)
+                    if sprache == "de":
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                    else:
+                      bucket_keys_tabelle = bucket_keys_tabelle + '" title="view/edit ACL">view/edit ACL</a>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<td align="center">'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '<tt>'+str(liste_keys[i].etag)+'</tt>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
+                    bucket_keys_tabelle = bucket_keys_tabelle + '</tr>'
+                bucket_keys_tabelle = bucket_keys_tabelle + '</table>'
 
           # "Verzeichnisse" gehen nur bei Amazon S3
           # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
@@ -487,73 +435,73 @@ class BucketInhalt(webapp.RequestHandler):
 
           signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
 
-          # Das Hochladen von Keys funktioniert nur unter Amazon EC2
-          if regionname == "Amazon":
-            keys_upload_formular = '<p>&nbsp;</p>\n'
-            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
-            keys_upload_formular = keys_upload_formular + bucketname
-            keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
-            keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
-            keys_upload_formular = keys_upload_formular + '<tr>'
-            keys_upload_formular = keys_upload_formular + '<td>'
-            if directory == '/':
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
-            else:
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="'+directory+'${filename}">\n'
-            keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
-            keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
-            keys_upload_formular = keys_upload_formular + '</select>\n'
-            keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
-            keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
-            keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
-            keys_upload_formular = keys_upload_formular + '</select>\n'
-            keys_upload_formular = keys_upload_formular + '</td>'
-            keys_upload_formular = keys_upload_formular + '</tr>'
-            keys_upload_formular = keys_upload_formular + '<tr>'
-            keys_upload_formular = keys_upload_formular + '<td>'
-            if directory == '/':
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt">\n'
-            else:
-              keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt?dir='+directory[:-1]+'">\n'
-            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
-            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
-            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
-            keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
-            keys_upload_formular = keys_upload_formular + '</td>'
-            keys_upload_formular = keys_upload_formular + '</tr>'
-            keys_upload_formular = keys_upload_formular + '<tr>'
-            keys_upload_formular = keys_upload_formular + '<td>'
-            if sprache == "de":
-              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
-            else:
-              keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
-            keys_upload_formular = keys_upload_formular + '</td>'
-            keys_upload_formular = keys_upload_formular + '</tr>'
-            keys_upload_formular = keys_upload_formular + '</table>'
-            keys_upload_formular = keys_upload_formular + '</form>'
-          # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
+
+          keys_upload_formular = '<p>&nbsp;</p>\n'
+          if zugangstyp == "Eucalyptus":
+            endpointurl = endpointurl_erhalten(username,regionname)
+            port = port_erhalten(username,regionname)
+            keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
           else:
-            if sprache == "de":
-              keys_upload_formular = '<p>&nbsp;</p>\n Das Hochladen von Keys funktioniert unter Eucalyptus noch nicht'
-            else:
-              keys_upload_formular = '<p>&nbsp;</p>\n The key upload is still not working with Eucaplyptus'
+            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
+          keys_upload_formular = keys_upload_formular + bucketname
+          keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
+          keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
+          keys_upload_formular = keys_upload_formular + '<tr>'
+          keys_upload_formular = keys_upload_formular + '<td>'
+          if directory == '/':
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
+          else:
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="'+directory+'${filename}">\n'
+          keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
+          keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
+          keys_upload_formular = keys_upload_formular + '</select>\n'
+          keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
+          keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
+          keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
+          keys_upload_formular = keys_upload_formular + '</select>\n'
+          keys_upload_formular = keys_upload_formular + '</td>'
+          keys_upload_formular = keys_upload_formular + '</tr>'
+          keys_upload_formular = keys_upload_formular + '<tr>'
+          keys_upload_formular = keys_upload_formular + '<td>'
+          if directory == '/':
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt">\n'
+          else:
+            keys_upload_formular = keys_upload_formular + '<input type="hidden" name="redirect" value="http://koalacloud.appspot.com/bucket_inhalt?dir='+directory[:-1]+'">\n'
+          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
+          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
+          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
+          keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
+          keys_upload_formular = keys_upload_formular + '</td>'
+          keys_upload_formular = keys_upload_formular + '</tr>'
+          keys_upload_formular = keys_upload_formular + '<tr>'
+          keys_upload_formular = keys_upload_formular + '<td>'
+          if sprache == "de":
+            keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
+          else:
+            keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
+          keys_upload_formular = keys_upload_formular + '</td>'
+          keys_upload_formular = keys_upload_formular + '</tr>'
+          keys_upload_formular = keys_upload_formular + '</table>'
+          keys_upload_formular = keys_upload_formular + '</form>'
+
+
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -568,7 +516,7 @@ class BucketInhalt(webapp.RequestHandler):
           'eingabeformular_neues_verzeichnis': eingabeformular_neues_verzeichnis,
           'keys_upload_formular': keys_upload_formular,
           'verzeichnis_warnung': verzeichnis_warnung,
-          'eucalyptus_warnung': eucalyptus_warnung,
+          #'eucalyptus_warnung': eucalyptus_warnung,
           }
 
           #if sprache == "de": naechse_seite = "s3_keys_de.html"
