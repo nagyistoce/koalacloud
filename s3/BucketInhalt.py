@@ -318,22 +318,22 @@ class BucketInhalt(webapp.RequestHandler):
                     else:
                       # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
                       # if liste_keys[i].name != None:
-                      # Dummerweise funktionieren die Links unter Eucalyptus nicht richtig
-                      # Darum erst mal nur Links bei Amazon
+                     
+                      bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
+
                       if regionname == "Amazon":
-                        bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                        bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                        bucket_keys_tabelle = bucket_keys_tabelle + '">'
-                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                        name_tmp = liste_keys[i].name.replace(directory, '')
-                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
-                        bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                        bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
                       else:
-                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                        name_tmp = liste_keys[i].name.replace(directory, '')
-                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                        bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
+                        port = port_erhalten(username,regionname) 
+                        bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;').replace('/services/Walrus/', ':'+str(port)+'/services/Walrus/')
+                
+                      bucket_keys_tabelle = bucket_keys_tabelle + '">'
+                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                      name_tmp = liste_keys[i].name.replace(directory, '')
+                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                      bucket_keys_tabelle = bucket_keys_tabelle + str(name_tmp)
+                      bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
+                     
                       bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
   
                     bucket_keys_tabelle = bucket_keys_tabelle + '<td align="right">'

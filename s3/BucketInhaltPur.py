@@ -3,6 +3,7 @@
 
 import os
 import re
+import urllib
 
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -181,7 +182,11 @@ class BucketInhaltPur(webapp.RequestHandler):
   
                   bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
-                  bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=False).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                  if regionname == "Amazon":
+                    bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                  else:
+                    port = port_erhalten(username,regionname) 
+                    bucket_keys_tabelle = bucket_keys_tabelle + liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;').replace('/services/Walrus/', ':'+str(port)+'/services/Walrus/')
                   bucket_keys_tabelle = bucket_keys_tabelle + '">'
                   bucket_keys_tabelle = bucket_keys_tabelle + str(liste_keys[i].name)
                   bucket_keys_tabelle = bucket_keys_tabelle + '</a>'
