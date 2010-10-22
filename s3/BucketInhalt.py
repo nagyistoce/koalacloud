@@ -116,25 +116,43 @@ class BucketInhalt(webapp.RequestHandler):
             if directory:
               # An das Verzeichnis ein "/" ang‰ngen
               directory = directory + '/'
-              # Liste der Keys im Bucket
-              liste_keys = bucket_instance.get_all_keys(prefix=directory)
-              # Anzahl der Keys in der Liste
-              laenge_liste_keys = len(liste_keys)
-              # Die Variable "level" ist quasi die Ebene im Dateibaum.
-              # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
-              # in dem Verzeichnis drin sind.
-              level = directory.count("/")
+              try:
+                # Liste der Keys im Bucket
+                liste_keys = bucket_instance.get_all_keys(prefix=directory)
+              except:
+                # Wenn es nicht klappt...
+                if sprache == "de":
+                  bucket_keys_tabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+                else:
+                  bucket_keys_tabelle = '<font color="red">An error occured</font>'
+                laenge_liste_keys = 0
+              else:
+                # Anzahl der Keys in der Liste
+                laenge_liste_keys = len(liste_keys)
+                # Die Variable "level" ist quasi die Ebene im Dateibaum.
+                # Die Zahl in "level" ist gleich der "/" in den Key-Namen der Keys, die
+                # in dem Verzeichnis drin sind.
+                level = directory.count("/")
             # Wenn kein Verzeichnis angegeben wurde...
             else:
               # Dann wird die Variable "directory" gesetzt und zwar auf "/"
               directory = '/'
-              # Liste der Keys im Bucket
-              liste_keys = bucket_instance.get_all_keys()
-              # Anzahl der Keys in der Liste
-              laenge_liste_keys = len(liste_keys)
-              # Die Variable "level" ist quasi die Ebene im Dateibaum.
-              # level = 0 heiﬂt, wir sind in der Root-Ebene.
-              level = 0
+              try:
+                # Liste der Keys im Bucket
+                liste_keys = bucket_instance.get_all_keys()
+              except:
+                # Wenn es nicht klappt...
+                if sprache == "de":
+                  bucket_keys_tabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+                else:
+                  bucket_keys_tabelle = '<font color="red">An error occured</font>'
+                laenge_liste_keys = 0
+              else:
+                # Anzahl der Keys in der Liste
+                laenge_liste_keys = len(liste_keys)
+                # Die Variable "level" ist quasi die Ebene im Dateibaum.
+                # level = 0 heiﬂt, wir sind in der Root-Ebene.
+                level = 0
   
             # Wenn wir uns im "Root"-Verzeichnis des Buckets befinden, wird aus
             # der Liste der Keys alle Keys entfernt, die einen / im Keynamen haben
