@@ -110,10 +110,22 @@ class BucketInhaltPur(webapp.RequestHandler):
             else:
               bucket_keys_tabelle = '<font color="red">An error occured</font>'
             laenge_liste_keys = 0
+            # Wenn es geklappt hat...
           else:
-            liste_keys = bucket_instance.get_all_keys()
-            # Anzahl der Keys in der Liste
-            laenge_liste_keys = len(liste_keys)
+            try:
+              # Liste der Keys
+              liste_keys = bucket_instance.get_all_keys()
+            except:
+              # Wenn es nicht klappt...
+              if sprache == "de":
+                bucket_keys_tabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+              else:
+                bucket_keys_tabelle = '<font color="red">An error occured</font>'
+              laenge_liste_keys = 0
+            else:
+              # Wenn es geklappt hat...
+              # Anzahl der Keys in der Liste
+              laenge_liste_keys = len(liste_keys)
   
             # Wenn wir in einer Eucalyputs-Infrastruktur sind, dann muss dieser
             # dämliche None-Eintrag weg
