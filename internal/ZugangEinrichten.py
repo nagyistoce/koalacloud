@@ -13,6 +13,7 @@ from library import xor_crypt_string
 from internal.Datastore import *
 
 from boto.ec2.connection import *
+from boto.s3.connection import *
 
 class ZugangEinrichten(webapp.RequestHandler):
     def post(self):
@@ -109,6 +110,92 @@ class ZugangEinrichten(webapp.RequestHandler):
                 logindaten.put()
 
                 self.redirect('/regionen')
+
+          # Wenn ein Google Storage-Zugang angelegt werden soll
+          elif typ == "googlestorage":
+
+            if accesskey == "" and secretaccesskey == "":
+              # Wenn kein Access Key und kein Secret Access Key angegeben wurde
+              #fehlermeldung = "Sie haben keinen Access Key und keinen Secret Access Key angegeben"
+              fehlermeldung = "89"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif accesskey == "": 
+              #fehlermeldung = "Sie haben keinen Access Key angegeben"
+              fehlermeldung = "90"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif secretaccesskey == "": 
+              # Wenn kein Secret Access Key angegeben wurde
+              #fehlermeldung = "Sie haben keinen Secret Access Key angegeben"
+              fehlermeldung = "91"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif re.search(r'[^a-zA-Z0-9]', accesskey) != None:
+              # Wenn der Access Key nicht erlaubte Zeichen enthält
+              #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
+              fehlermeldung = "94"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif re.search(r'[^\/a-zA-Z0-9+=]', secretaccesskey) != None:
+              # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
+              #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
+              fehlermeldung = "95"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            else: # Access Key und Secret Access Key wurden angegeben
+              
+              # Prüfen, ob die Zugangsdaten für Google Storage korrekt sind
+              try:
+                # Zugangsdaten testen
+                calling_format=boto.s3.connection.OrdinaryCallingFormat()
+                connection = boto.s3.Connection(aws_access_key_id=accesskey,
+                                                aws_secret_access_key=secretaccesskey,
+                                                is_secure=False,
+                                                host="commondatastorage.googleapis.com",
+                                                calling_format=calling_format,
+                                                path="/")
+                
+                liste_zonen = connection.get_all_buckets()
+
+              except EC2ResponseError:
+                # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
+                fehlermeldung = "98"
+                self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+              else:
+                # Wenn die Zugangsdaten für EC2 korrekt sind, dann wird hier weiter gemacht...
+                # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="Amazon")
+                # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+                results = testen.fetch(100)
+                for result in results:
+                  result.delete()
+
+
+                secretaccesskey_encrypted = xor_crypt_string(str(secretaccesskey), key=str(username))
+                secretaccesskey_base64encoded = base64.b64encode(secretaccesskey_encrypted)
+                logindaten = KoalaCloudDatenbank(regionname=typ,
+                                                eucalyptusname=nameregion,
+                                                accesskey=accesskey,
+                                                endpointurl=endpointurl,
+                                                zugangstyp="GoogleStorage",
+                                                secretaccesskey=secretaccesskey_base64encoded,
+                                                port=None,
+                                                user=username)
+                # In den Datastore schreiben
+                logindaten.put()
+
+                # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+
+                # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+                results = testen.fetch(100)
+                for result in results:
+                  result.delete()
+
+                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone=nameregion,
+                                                           user=username,
+                                                           zugangstyp="GoogleStorage")
+                # In den Datastore schreiben
+                logindaten.put()
+
+                self.redirect('/regionen')
+
 
           # Wenn ein Nimbus-Zugang angelegt werden soll
           elif typ == "nimbus":
