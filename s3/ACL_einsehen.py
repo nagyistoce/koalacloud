@@ -171,13 +171,16 @@ class ACL_einsehen(webapp.RequestHandler):
           acl_tabelle = acl_tabelle + '</table> \n'
 
           # Wenn man sich NICHT unter Amazon befindet, funktioniert das Ändern der ACL nicht.
-          if regionname != "Amazon":
+          if regionname == "Amazon":
+            eucalyptus_warnung = ''
+          elif regionname == "GoogleStorage":
+            eucalyptus_warnung = ''
+          else: 
             if sprache == "de":
               eucalyptus_warnung = '<B>Achtung!</B> Unter Eucalyptus 1.6 und 1.6.1 funktioniert das &Auml;ndern der Zugriffsberechtigung (Access Control List) nicht.</B>'
             else:
               eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 changing the ACL is broken.</B>'
-          else: 
-            eucalyptus_warnung = ''
+            
 
           template_values = {
           'navigations_bar': navigations_bar,

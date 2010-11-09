@@ -49,63 +49,81 @@ class Zonen(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          try:
-            # Liste mit den Zonen
-            liste_zonen = conn_region.get_all_zones()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+          # It is Google Storage and not am IaaS  
+          if regionname == "GoogleStorage":
+            
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            }
+  
+            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+            self.response.out.write(template.render(path,template_values))
+            
+          # It is not Google Storage. It is an IaaS
+          else:   
+            
+            try:
+              # Liste mit den Zonen
+              liste_zonen = conn_region.get_all_zones()
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
+              if sprache == "de":
+                zonentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+              else:
+                zonentabelle = '<font color="red">An error occured</font>'
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              if sprache == "de":
+                zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+              else:
+                zonentabelle = '<font color="red">A timeout error occured</font>'
             else:
-              zonentabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              zonentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              zonentabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_zonen = len(liste_zonen)
-
-            zonentabelle = ''
-            zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-            zonentabelle = zonentabelle + '<tr>'
-            zonentabelle = zonentabelle + '<th align="center">Name</th>'
-            zonentabelle = zonentabelle + '<th align="center">Status</th>'
-            zonentabelle = zonentabelle + '</tr>'
-            for i in range(laenge_liste_zonen):
-                zonentabelle = zonentabelle + '<tr>'
-                zonentabelle = zonentabelle + '<td>'+str(liste_zonen[i].name)+'</td>'
-                if liste_zonen[i].state == u'available':
-                  zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
-                  if sprache == "de":
-                    zonentabelle = zonentabelle + 'verf&uuml;gbar'
+              # Wenn es geklappt hat...
+              # Anzahl der Elemente in der Liste
+              laenge_liste_zonen = len(liste_zonen)
+  
+              zonentabelle = ''
+              zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+              zonentabelle = zonentabelle + '<tr>'
+              zonentabelle = zonentabelle + '<th align="center">Name</th>'
+              zonentabelle = zonentabelle + '<th align="center">Status</th>'
+              zonentabelle = zonentabelle + '</tr>'
+              for i in range(laenge_liste_zonen):
+                  zonentabelle = zonentabelle + '<tr>'
+                  zonentabelle = zonentabelle + '<td>'+str(liste_zonen[i].name)+'</td>'
+                  if liste_zonen[i].state == u'available':
+                    zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
+                    if sprache == "de":
+                      zonentabelle = zonentabelle + 'verf&uuml;gbar'
+                    else:
+                      zonentabelle = zonentabelle + str(liste_zonen[i].state)
                   else:
+                    zonentabelle = zonentabelle + '<td align="center">'
                     zonentabelle = zonentabelle + str(liste_zonen[i].state)
-                else:
-                  zonentabelle = zonentabelle + '<td align="center">'
-                  zonentabelle = zonentabelle + str(liste_zonen[i].state)
-                zonentabelle = zonentabelle + '</td>'
-                zonentabelle = zonentabelle + '</tr>'
-            zonentabelle = zonentabelle + '</table>'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'zonenliste': zonentabelle,
-          'zonen_liste': zonen_liste,
-          }
-
-          #if sprache == "de": naechse_seite = "zonen_de.html"
-          #else:               naechse_seite = "zonen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "zonen.html")
-          self.response.out.write(template.render(path,template_values))
+                  zonentabelle = zonentabelle + '</td>'
+                  zonentabelle = zonentabelle + '</tr>'
+              zonentabelle = zonentabelle + '</table>'
+  
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonenliste': zonentabelle,
+            'zonen_liste': zonen_liste,
+            }
+  
+            #if sprache == "de": naechse_seite = "zonen_de.html"
+            #else:               naechse_seite = "zonen_en.html"
+            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "zonen.html")
+            self.response.out.write(template.render(path,template_values))
           
