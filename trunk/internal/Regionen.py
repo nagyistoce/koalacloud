@@ -48,6 +48,7 @@ class Regionen(webapp.RequestHandler):
               conn_region, regionname = login(username)
               zone_amazon = amazon_region(username)
 
+
             url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Logout'
 
@@ -237,10 +238,10 @@ class Regionen(webapp.RequestHandler):
               eingabefelder = eingabefelder + '  </tr>'
               eingabefelder = eingabefelder + '</table>'
               eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "googlestorage":
+            elif neuerzugang == "GoogleStorage":
               eingabefelder = '<p>&nbsp;</p>'
               eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="googlestorage">'
+              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="GoogleStorage">'
               eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
               eingabefelder = eingabefelder + '  <tr>'
               eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'

@@ -61,84 +61,102 @@ class Keys(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache)
 
-          if sprache != "de":
-            sprache = "en"
+          # It is Google Storage and not am IaaS  
+          if regionname == "GoogleStorage":
+            
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            }
+  
+            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+            self.response.out.write(template.render(path,template_values))
+            
+          # It is not Google Storage. It is an IaaS
+          else:   
 
-          input_error_message = error_messages.get(message, {}).get(sprache)
-
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("99", "103"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "92", "100", "101", "102", "104"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          try:
-            # Liste mit den Keys
-            liste_key_pairs = conn_region.get_all_key_pairs()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              keytabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            if sprache != "de":
+              sprache = "en"
+  
+            input_error_message = error_messages.get(message, {}).get(sprache)
+  
+            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+            if input_error_message == None:
+              input_error_message = ""
+  
+            # Wenn die Nachricht grün formatiert werden soll...
+            if message in ("99", "103"):
+              # wird sie hier, in der Hilfsfunktion grün formatiert
+              input_error_message = format_error_message_green(input_error_message)
+            # Ansonsten wird die Nachricht rot formatiert
+            elif message in ("8", "92", "100", "101", "102", "104"):
+              input_error_message = format_error_message_red(input_error_message)
             else:
-              keytabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              keytabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              keytabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
-
-            if laenge_liste_keys == 0:
-              keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
-            else:
-              keytabelle = ''
-              keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              keytabelle = keytabelle + '<tr>'
-              keytabelle = keytabelle + '<th>&nbsp;</th>'
-              keytabelle = keytabelle + '<th align="center">Name</th>'
+              input_error_message = ""
+  
+            try:
+              # Liste mit den Keys
+              liste_key_pairs = conn_region.get_all_key_pairs()
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
               if sprache == "de":
-                keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
+                keytabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
               else:
-                keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
-              keytabelle = keytabelle + '</tr>'
-              for i in range(laenge_liste_keys):
-                  keytabelle = keytabelle + '<tr>'
-                  keytabelle = keytabelle + '<td>'
-                  keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
-                  keytabelle = keytabelle + liste_key_pairs[i].name
-                  keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
-                  keytabelle = keytabelle + '</td>'
-                  keytabelle = keytabelle + '<td>'
-                  keytabelle = keytabelle + '<tt>'
-                  keytabelle = keytabelle + liste_key_pairs[i].name
-                  keytabelle = keytabelle + '</tt>'
-                  keytabelle = keytabelle + '</td><td>'
-                  keytabelle = keytabelle + '<tt>'
-                  keytabelle = keytabelle + liste_key_pairs[i].fingerprint
-                  keytabelle = keytabelle + '</tt>'
-                  keytabelle = keytabelle + '</td>'
-                  keytabelle = keytabelle + '</tr>'
-              keytabelle = keytabelle + '</table>'
-
-            if neu == "ja":
-              secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
-              secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
-              # Das wird in den Body-Tag der Datei base.html eingefügt. 
-              bodycommand = ' onLoad="newkey()" '
-              javascript_funktion = '''
+                keytabelle = '<font color="red">An error occured</font>'
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              if sprache == "de":
+                keytabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+              else:
+                keytabelle = '<font color="red">A timeout error occured</font>'
+            else:
+              # Wenn es geklappt hat...
+              laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
+  
+              if laenge_liste_keys == 0:
+                keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
+              else:
+                keytabelle = ''
+                keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
+                keytabelle = keytabelle + '<tr>'
+                keytabelle = keytabelle + '<th>&nbsp;</th>'
+                keytabelle = keytabelle + '<th align="center">Name</th>'
+                if sprache == "de":
+                  keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
+                else:
+                  keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
+                keytabelle = keytabelle + '</tr>'
+                for i in range(laenge_liste_keys):
+                    keytabelle = keytabelle + '<tr>'
+                    keytabelle = keytabelle + '<td>'
+                    keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
+                    keytabelle = keytabelle + liste_key_pairs[i].name
+                    keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
+                    keytabelle = keytabelle + '</td>'
+                    keytabelle = keytabelle + '<td>'
+                    keytabelle = keytabelle + '<tt>'
+                    keytabelle = keytabelle + liste_key_pairs[i].name
+                    keytabelle = keytabelle + '</tt>'
+                    keytabelle = keytabelle + '</td><td>'
+                    keytabelle = keytabelle + '<tt>'
+                    keytabelle = keytabelle + liste_key_pairs[i].fingerprint
+                    keytabelle = keytabelle + '</tt>'
+                    keytabelle = keytabelle + '</td>'
+                    keytabelle = keytabelle + '</tr>'
+                keytabelle = keytabelle + '</table>'
+  
+              if neu == "ja":
+                secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
+                secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
+                # Das wird in den Body-Tag der Datei base.html eingefügt. 
+                bodycommand = ' onLoad="newkey()" '
+                javascript_funktion = '''
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--  to hide script contents from old browsers
   function newkey()
@@ -158,23 +176,23 @@ class Keys(webapp.RequestHandler):
   OpenWindow.document.write("<h1>Secret Key<\/h1>")
   OpenWindow.document.write("<P>&nbsp;<\/P>")
   OpenWindow.document.write("<tt>'''
-              javascript_funktion = javascript_funktion + secretkey_memcache
-              if sprache == "de":
-                javascript_funktion = javascript_funktion + '''<\/tt>")
+                javascript_funktion = javascript_funktion + secretkey_memcache
+                if sprache == "de":
+                  javascript_funktion = javascript_funktion + '''<\/tt>")
+                  OpenWindow.document.write("<P>&nbsp;<\/P>")
+                  OpenWindow.document.write("<B>Achtung!<\/B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
+                  OpenWindow.document.write("Am besten in einer Datei <tt>'''
+                else:
+                  javascript_funktion = javascript_funktion + '''<\/tt>")
+                  OpenWindow.document.write("<P>&nbsp;<\/P>")
+                  OpenWindow.document.write("<B>Attention!<\/B> The secret key need to be saved.<BR>")
+                  OpenWindow.document.write("As an advise use the filename <tt>'''
+                javascript_funktion = javascript_funktion + neuerkeyname
+                javascript_funktion = javascript_funktion + '''.secret<\/tt>.")
                 OpenWindow.document.write("<P>&nbsp;<\/P>")
-                OpenWindow.document.write("<B>Achtung!<\/B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
-                OpenWindow.document.write("Am besten in einer Datei <tt>'''
-              else:
-                javascript_funktion = javascript_funktion + '''<\/tt>")
-                OpenWindow.document.write("<P>&nbsp;<\/P>")
-                OpenWindow.document.write("<B>Attention!<\/B> The secret key need to be saved.<BR>")
-                OpenWindow.document.write("As an advise use the filename <tt>'''
-              javascript_funktion = javascript_funktion + neuerkeyname
-              javascript_funktion = javascript_funktion + '''.secret<\/tt>.")
-              OpenWindow.document.write("<P>&nbsp;<\/P>")
-              OpenWindow.document.write("<tt>chmod 600 '''
-              javascript_funktion = javascript_funktion + neuerkeyname
-              javascript_funktion = javascript_funktion + '''.secret<\/tt>")
+                OpenWindow.document.write("<tt>chmod 600 '''
+                javascript_funktion = javascript_funktion + neuerkeyname
+                javascript_funktion = javascript_funktion + '''.secret<\/tt>")
   OpenWindow.document.write("<\/BODY>")
   OpenWindow.document.write("<\/HTML>")
   OpenWindow.document.close()
@@ -182,26 +200,26 @@ class Keys(webapp.RequestHandler):
   }
   // end hiding contents from old browsers  -->
 </SCRIPT>'''
-            else:
-                bodycommand = " "
-                javascript_funktion = " "
-
-            template_values = {
-            'navigations_bar': navigations_bar,
-            'url': url,
-            'url_linktext': url_linktext,
-            'zone': regionname,
-            'zone_amazon': zone_amazon,
-            'keytabelle': keytabelle,
-            'bodycommand': bodycommand,
-            'javascript_funktion': javascript_funktion,
-            'zonen_liste': zonen_liste,
-            'input_error_message': input_error_message,
-            }
-
-            #if sprache == "de": naechse_seite = "keys_de.html"
-            #else:               naechse_seite = "keys_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
-            self.response.out.write(template.render(path,template_values))
+              else:
+                  bodycommand = " "
+                  javascript_funktion = " "
+  
+              template_values = {
+              'navigations_bar': navigations_bar,
+              'url': url,
+              'url_linktext': url_linktext,
+              'zone': regionname,
+              'zone_amazon': zone_amazon,
+              'keytabelle': keytabelle,
+              'bodycommand': bodycommand,
+              'javascript_funktion': javascript_funktion,
+              'zonen_liste': zonen_liste,
+              'input_error_message': input_error_message,
+              }
+  
+              #if sprache == "de": naechse_seite = "keys_de.html"
+              #else:               naechse_seite = "keys_en.html"
+              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
+              self.response.out.write(template.render(path,template_values))
 

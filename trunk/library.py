@@ -69,6 +69,17 @@ def login(username):
       conn_region = boto.connect_ec2(str(accesskey), str(secretaccesskey), port=int(port))
       conn_region.host = str(endpointurl)
 
+    elif regionname == "GoogleStorage":
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      calling_format=boto.s3.connection.OrdinaryCallingFormat()
+      conn_region = boto.connect_s3(aws_access_key_id=accesskey,
+                                    aws_secret_access_key=secretaccesskey,
+                                    is_secure=False,
+                                    host="commondatastorage.googleapis.com",
+                                    calling_format=calling_format,
+                                    path="/")
+
       regionname = aktuellezone
     elif regionname == "opennebula":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
@@ -338,6 +349,18 @@ def logins3(username):
                                         host="s3.amazonaws.com",
                                         calling_format=calling_format,
                                         path="/")
+
+      regionname = aktuellezone
+    if zoneinderdb == "GoogleStorage":
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      calling_format=boto.s3.connection.OrdinaryCallingFormat()
+      conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
+                                    aws_secret_access_key=secretaccesskey,
+                                    is_secure=False,
+                                    host="commondatastorage.googleapis.com",
+                                    calling_format=calling_format,
+                                    path="/")
 
       regionname = aktuellezone
     else:

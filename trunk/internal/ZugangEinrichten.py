@@ -112,7 +112,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 self.redirect('/regionen')
 
           # Wenn ein Google Storage-Zugang angelegt werden soll
-          elif typ == "googlestorage":
+          elif typ == "GoogleStorage":
 
             if accesskey == "" and secretaccesskey == "":
               # Wenn kein Access Key und kein Secret Access Key angegeben wurde
@@ -144,7 +144,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               try:
                 # Zugangsdaten testen
                 calling_format=boto.s3.connection.OrdinaryCallingFormat()
-                connection = boto.s3.Connection(aws_access_key_id=accesskey,
+                connection = boto.connect_s3(aws_access_key_id=accesskey,
                                                 aws_secret_access_key=secretaccesskey,
                                                 is_secure=False,
                                                 host="commondatastorage.googleapis.com",
@@ -153,14 +153,15 @@ class ZugangEinrichten(webapp.RequestHandler):
                 
                 liste_zonen = connection.get_all_buckets()
 
+
               except EC2ResponseError:
                 # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
                 fehlermeldung = "98"
                 self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
               else:
-                # Wenn die Zugangsdaten für EC2 korrekt sind, dann wird hier weiter gemacht...
+                # Wenn die Zugangsdaten für Google Storage korrekt sind, dann wird hier weiter gemacht...
                 # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="Amazon")
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="GoogleStorage")
                 # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
                 results = testen.fetch(100)
                 for result in results:
@@ -169,10 +170,10 @@ class ZugangEinrichten(webapp.RequestHandler):
 
                 secretaccesskey_encrypted = xor_crypt_string(str(secretaccesskey), key=str(username))
                 secretaccesskey_base64encoded = base64.b64encode(secretaccesskey_encrypted)
-                logindaten = KoalaCloudDatenbank(regionname=typ,
-                                                eucalyptusname=nameregion,
+                logindaten = KoalaCloudDatenbank(regionname="GoogleStorage",
+                                                eucalyptusname="GoogleStorage",
                                                 accesskey=accesskey,
-                                                endpointurl=endpointurl,
+                                                endpointurl="commondatastorage.googleapis.com",
                                                 zugangstyp="GoogleStorage",
                                                 secretaccesskey=secretaccesskey_base64encoded,
                                                 port=None,
@@ -188,7 +189,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 for result in results:
                   result.delete()
 
-                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone=nameregion,
+                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone="GoogleStorage",
                                                            user=username,
                                                            zugangstyp="GoogleStorage")
                 # In den Datastore schreiben
