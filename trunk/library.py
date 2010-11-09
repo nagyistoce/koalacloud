@@ -351,7 +351,7 @@ def logins3(username):
                                         path="/")
 
       regionname = aktuellezone
-    if zoneinderdb == "GoogleStorage":
+    elif zoneinderdb == "GoogleStorage":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
