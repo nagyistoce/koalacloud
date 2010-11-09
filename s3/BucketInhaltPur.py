@@ -282,6 +282,8 @@ class BucketInhaltPur(webapp.RequestHandler):
             endpointurl = endpointurl_erhalten(username,regionname)
             port = port_erhalten(username,regionname) 
             keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+          elif zugangstyp == "GoogleStorage":
+            keys_upload_formular = keys_upload_formular + '<form action="http://commondatastorage.googleapis.com/'
           else:
             keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
             
@@ -329,7 +331,7 @@ class BucketInhaltPur(webapp.RequestHandler):
           keys_upload_formular = keys_upload_formular + '<tr>'
           keys_upload_formular = keys_upload_formular + '<td>'
           if sprache == "de":
-            keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="Datei hochladen">\n'
+            keys_upload_formular = keys_upload_formular + '<input type="submit" name="" value="Datei hochladen">\n'
           else:
             keys_upload_formular = keys_upload_formular + '<input type="submit" name="submit" value="upload file">\n'
           keys_upload_formular = keys_upload_formular + '</td>'

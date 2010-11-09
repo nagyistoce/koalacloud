@@ -396,7 +396,7 @@ class BucketInhalt(webapp.RequestHandler):
           # "Verzeichnisse" gehen nur bei Amazon S3
           # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
           # In Walrus wird das so gespeichert: _%24folder%24
-          if regionname == "Amazon":
+          if regionname in ("Amazon", "GoogleStorage"):
             if sprache == "de":
               eingabeformular_neues_verzeichnis = ''
               eingabeformular_neues_verzeichnis = eingabeformular_neues_verzeichnis + '<form action="/bucketverzeichniserzeugen" method="post" accept-charset="utf-8">\n'
@@ -459,6 +459,8 @@ class BucketInhalt(webapp.RequestHandler):
             endpointurl = endpointurl_erhalten(username,regionname)
             port = port_erhalten(username,regionname)
             keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+          elif zugangstyp == "GoogleStorage":
+            keys_upload_formular = keys_upload_formular + '<form action="http://commondatastorage.googleapis.com/'
           else:
             keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
           keys_upload_formular = keys_upload_formular + bucketname
