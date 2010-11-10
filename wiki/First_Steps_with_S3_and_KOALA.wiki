@@ -17,9 +17,7 @@ The following table shows the cloud services available that are compatible to th
 || [http://aws.amazon.com/s3/ Amazon S3  ] || Public Cloud           || proprietary || yes ||
 || Walrus from [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || GPL v3      || yes ||
 || Cumulus from [http://www.nimbusproject.org Nimbus]  || Private Cloud          || Apache License v2.0  || no ||
-|| [http://code.google.com/intl/de/apis/storage/ Google Storage]  || Public Cloud          || proprietary  || no ||
-
-[http://code.google.com/intl/de/apis/storage/ Google Storage] support is not yet implemented because this service is currently available to a limited number of U.S. developers only.
+|| [http://code.google.com/intl/de/apis/storage/ Google Storage]  || Public Cloud          || proprietary  || yes ||
 
 If you don't have any S3 compatible Private Cloud services running, the most easy way is to get access to [http://aws.amazon.com/s3/ Amazon S3]. If you don't want this because e.g. you don't have a credit card you need a Private Cloud S3 service.
 
@@ -33,7 +31,11 @@ Don't fear you account or data here. No new account at the IaaS is created or da
 
 The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. The service can be used via a SOAP interface and a REST interface. Bucket names and keys are addressable using HTTP URLs automatically:
 
-*http://s3.amazonaws.com/bucket/key*
+*http://s3.amazonaws.com/bucket/key
+
+In Google Storage, Bucket names and keys are also addressable using HTTP URLs automatically:
+
+*http://commondatastorage.googleapis.com/bucket/key
 
 Keys are stored in so called buckets and a bucket cannot include another bucket. Because S3 has a flat name space, every buckets name has be unique. This means S3 has provides nothing like directories.
 
