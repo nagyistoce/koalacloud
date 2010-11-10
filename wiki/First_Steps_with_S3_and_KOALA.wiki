@@ -39,7 +39,7 @@ In [http://code.google.com/intl/de/apis/storage/ Google Storage], Bucket names a
 
 Keys are stored in so called buckets and a bucket cannot include another bucket. Because S3 has a flat name space, every buckets name has be unique. This means S3 has provides nothing like directories.
 
-Inside the *S3* windows you can see a table with a list of you buckets and here you can create new buckets and erase existing ones.
+Inside the *S3* window you can see a table with a list of you buckets and here you can create new buckets and erase existing ones.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_1_list_of_buckets_small.png]
 
