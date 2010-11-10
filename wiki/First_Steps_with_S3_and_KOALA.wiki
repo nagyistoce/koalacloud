@@ -33,7 +33,7 @@ The _Simple_ in Simple Storage Service means not using this service is simple fo
 
 *http://s3.amazonaws.com/bucket/key
 
-In Google Storage, Bucket names and keys are also addressable using HTTP URLs automatically:
+In [http://code.google.com/intl/de/apis/storage/ Google Storage], Bucket names and keys are also addressable using HTTP URLs automatically:
 
 *http://commondatastorage.googleapis.com/bucket/key
 
