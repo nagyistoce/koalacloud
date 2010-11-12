@@ -93,7 +93,7 @@ class Snapshots(webapp.RequestHandler):
               # Liste mit den Snapshots
               #liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
               #liste_snapshots = conn_region.get_all_snapshots(owner="self")
-              liste_snapshots = conn_region.get_all_snapshots()
+              liste_snapshots = conn_region.get_all_snapshots(owner="self")
             except EC2ResponseError:
               # Wenn es nicht klappt...
               if sprache == "de":
