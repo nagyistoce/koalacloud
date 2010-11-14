@@ -25,7 +25,7 @@ from dateutil.parser import *
 
 from boto.ec2.connection import *
 
-class Snapshots(webapp.RequestHandler):
+class SnapshotsAmazonAll(webapp.RequestHandler):
     def get(self):
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -91,7 +91,7 @@ class Snapshots(webapp.RequestHandler):
   
             try:
               # Liste mit den Snapshots
-              liste_snapshots = conn_region.get_all_snapshots(owner="self")
+              liste_snapshots = conn_region.get_all_snapshots(owner="amazon")
             except EC2ResponseError:
               # Wenn es nicht klappt...
               if sprache == "de":
@@ -194,13 +194,13 @@ class Snapshots(webapp.RequestHandler):
             if regionname == "Amazon":
                 if sprache == "de":
                   ansicht_amazon_button = '<p>&nbsp;</p>\n'
-                  ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
-                  ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="Alle erreichbaren Snapshots anzeigen">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots" method="get">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="Nur eigene Snapshots anzeigen">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '</form>\n'
                 else:
                   ansicht_amazon_button = '<p>&nbsp;</p>\n'
-                  ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
-                  ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="show all available snapshots">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots" method="get">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="show only your snapshots">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '</form>\n'
             else:  
                 ansicht_amazon_button = ""

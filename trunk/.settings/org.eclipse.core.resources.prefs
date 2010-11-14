@@ -1,8 +1,9 @@
-#Wed Aug 11 22:01:50 CEST 2010
+#Sun Nov 14 13:04:41 CET 2010
 eclipse.preferences.version=1
 encoding//ebs/AlleVolumesLoeschenDefinitiv.py=iso-8859-15
 encoding//ebs/AlleVolumesLoeschenFrage.py=iso-8859-15
 encoding//ebs/Snapshots.py=iso-8859-15
+encoding//ebs/SnapshotsAmazonAll.py=iso-8859-15
 encoding//ebs/SnapshotsEntfernen.py=iso-8859-15
 encoding//ebs/SnapshotsErzeugen.py=iso-8859-15
 encoding//ebs/SnapshotsErzeugenDefinitiv.py=iso-8859-15
