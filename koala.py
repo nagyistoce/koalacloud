@@ -32,6 +32,7 @@ from ebs.VolumesAnhaengen import *
 from ebs.Volumes import *
 from ebs.AlleVolumesLoeschenFrage import *
 from ebs.Snapshots import *
+from ebs.SnapshotsAmazonAll import *
 from ebs.SnapshotsErzeugen import *
 from ebs.SnapshotsEntfernen import *
 from ebs.SnapshotsErzeugenDefinitiv import *
@@ -319,6 +320,7 @@ def main():
                                           ('/acl_aendern', ACL_Aendern),
                                           ('/alle_keys_loeschen', AlleKeysLoeschenFrage),
                                           ('/alle_keys_loeschen_definitiv', AlleKeysLoeschenDefinitiv),
+                                          ('/snapshots_amazon_all', SnapshotsAmazonAll),
                                           ('/snapshots', Snapshots),
                                           ('/snapshotsentfernen', SnapshotsEntfernen),
                                           ('/snapshoterzeugen', SnapshotsErzeugen),
