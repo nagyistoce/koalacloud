@@ -191,8 +191,5 @@ class Elastic_IPs(webapp.RequestHandler):
             'input_error_message': input_error_message,
             }
   
-            #if sprache == "de": naechse_seite = "adressen_de.html"
-            #else:               naechse_seite = "adressen_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
             path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "adressen.html")
             self.response.out.write(template.render(path,template_values))
