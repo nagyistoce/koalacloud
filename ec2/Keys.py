@@ -117,7 +117,8 @@ class Keys(webapp.RequestHandler):
                 keytabelle = '<font color="red">A timeout error occured</font>'
             else:
               # Wenn es geklappt hat...
-              laenge_liste_keys = len(liste_key_pairs)        # Anzahl der Elemente in der Liste
+              # Anzahl der Elemente in der Liste
+              laenge_liste_keys = len(liste_key_pairs)
   
               if laenge_liste_keys == 0:
                 keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
@@ -201,6 +202,7 @@ class Keys(webapp.RequestHandler):
   // end hiding contents from old browsers  -->
 </SCRIPT>'''
               else:
+                  # neu ist nicht "ja"
                   bodycommand = " "
                   javascript_funktion = " "
   
@@ -217,9 +219,6 @@ class Keys(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
   
-              #if sprache == "de": naechse_seite = "keys_de.html"
-              #else:               naechse_seite = "keys_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
               path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
               self.response.out.write(template.render(path,template_values))
 
