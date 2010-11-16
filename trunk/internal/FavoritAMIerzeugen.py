@@ -11,6 +11,9 @@ from library import login
 
 from internal.Datastore import *
 
+from boto.ec2.connection import *
+from boto.s3.connection import *
+
 class FavoritAMIerzeugen(webapp.RequestHandler):
     def post(self):
         #self.response.out.write('posted!')
