@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class Associate_IP(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         # Anzuhängende Elastic IP-Adresse holen
         address = self.request.get('address')
@@ -43,7 +45,7 @@ class Associate_IP(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           #url = users.create_logout_url(self.request.uri)
@@ -93,12 +95,13 @@ class Associate_IP(webapp.RequestHandler):
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="hidden" name="mobile" value="'+mobile+'">\n'
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
             if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP-Adresse:</B></td>'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP:</B></td>'
             else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP Address:</B></td>'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP:</B></td>'
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
             tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
@@ -146,8 +149,8 @@ class Associate_IP(webapp.RequestHandler):
             'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
             }
 
-            #if sprache == "de": naechse_seite = "ip_anhaengen_de.html"
-            #else:               naechse_seite = "ip_anhaengen_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "ip_anhaengen.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "ip_anhaengen.html")
+            else:  
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "ip_anhaengen.html")
             self.response.out.write(template.render(path,template_values))

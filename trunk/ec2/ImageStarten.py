@@ -25,6 +25,9 @@ from boto.ec2.connection import *
 
 class ImageStarten(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('test')
         # Den Usernamen erfahren
         # Get the username
@@ -42,7 +45,7 @@ class ImageStarten(webapp.RequestHandler):
         root = self.request.get('root')
 
         sprache = aktuelle_sprache(username)
-        navigations_bar = navigations_bar_funktion(sprache)
+        navigations_bar = navigations_bar_funktion(sprache,mobile)
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)

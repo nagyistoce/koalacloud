@@ -21,6 +21,9 @@ from boto.ec2.connection import *
 
 class AlleInstanzenBeendenFrage(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -32,7 +35,7 @@ class AlleInstanzenBeendenFrage(webapp.RequestHandler):
 
         if results:
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
 
@@ -50,8 +53,9 @@ class AlleInstanzenBeendenFrage(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           }
 
-          #if sprache == "de": naechse_seite = "alle_images_beenden_frage_de.html"
-          #else:               naechse_seite = "alle_images_beenden_frage_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_images_beenden_frage.html")
+
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "alle_images_beenden_frage.html")
+          else:  
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_images_beenden_frage.html")
           self.response.out.write(template.render(path,template_values))
