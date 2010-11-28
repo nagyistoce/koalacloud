@@ -31,6 +31,8 @@ class ConsoleOutput(webapp.RequestHandler):
     def get(self):
         # self.response.out.write('posted!')
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()  
         if not username:

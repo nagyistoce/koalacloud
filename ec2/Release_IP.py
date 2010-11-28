@@ -12,6 +12,8 @@ from boto.ec2.connection import *
 class Release_IP(webapp.RequestHandler):
     def get(self):
       mobile = self.request.get('mobile')
+      if mobile != "true":
+          mobile = "false"
       # Zu löschende (release) Elastic IP-Adresse holen
       address = self.request.get('address')
       # Den Usernamen erfahren

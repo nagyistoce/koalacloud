@@ -12,6 +12,8 @@ from boto.ec2.connection import *
 class Allocate_IP(webapp.RequestHandler):
     def post(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
 

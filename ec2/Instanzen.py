@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class Instanzen(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()  
         if not username:
@@ -432,18 +434,19 @@ class Instanzen(webapp.RequestHandler):
   
             if laenge_liste_reservations >= 1:
               alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<table border="0" cellspacing="5" cellpadding="5">\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<tr>\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<td align="center">\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<form action="/alle_instanzen_beenden" method="get">\n'
+              alle_instanzen_loeschen_button += '<table border="0" cellspacing="5" cellpadding="5">\n'
+              alle_instanzen_loeschen_button += '<tr>\n'
+              alle_instanzen_loeschen_button += '<td align="center">\n'
+              alle_instanzen_loeschen_button += '<form action="/alle_instanzen_beenden" method="get">\n'
+              alle_instanzen_loeschen_button += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
               if sprache == "de":
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="Alle Instanzen beenden">\n'
+                alle_instanzen_loeschen_button += '<input type="submit" value="Alle Instanzen beenden">\n'
               else:
-                alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '<input type="submit" value="terminate all instances">\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</form>\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</td>\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</tr>\n'
-              alle_instanzen_loeschen_button = alle_instanzen_loeschen_button + '</table>\n'
+                alle_instanzen_loeschen_button += '<input type="submit" value="terminate all instances">\n'
+              alle_instanzen_loeschen_button += '</form>\n'
+              alle_instanzen_loeschen_button += '</td>\n'
+              alle_instanzen_loeschen_button += '</tr>\n'
+              alle_instanzen_loeschen_button += '</table>\n'
             else:
               alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
 

@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class Images(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         # Eventuell vorhande Fehlermeldung holen
