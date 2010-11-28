@@ -4,19 +4,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KOALA Cloud Manager</title>
-<link type="text/css" rel="stylesheet" href="stylesheets/style.css">
+<link type="text/css" rel="stylesheet" href="stylesheets/style_mobile.css">
 <link rel="apple-touch-icon-precomposed" href="custom_icon_precomposed.png">
 <link rel="SHORTCUT ICON" href="favicon.ico">
-
-<script type="text/javascript">
-if((navigator.userAgent.match(/iPhone/i)) || 
-                (navigator.userAgent.match(/Android/i)) ||
-                (navigator.userAgent.match(/iPod/i))) 
-        { 
-        location.replace("/?mobile=true");
-    }
-</script>
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -30,6 +22,15 @@ if((navigator.userAgent.match(/iPhone/i)) ||
   })();
 </script>
 
+<script type="text/javascript">
+
+function go()
+{
+location=document.forms.gowhereform.gowhere.value;
+}
+
+</script>
+
 </head>
 <body {{ bodycommand }}>
 
@@ -37,16 +38,18 @@ if((navigator.userAgent.match(/iPhone/i)) ||
 
 <table width="100%" border="0">
 <tr>
-<td width="120"><h3>
+<td><h3>
 <a href="{{ url }}">{{ url_linktext }}</a></h3></td>
-<td ALIGN="center">{{ zonen_liste }}</td>
-<td rowspan="2" ALIGN="right" width="120">
+<td ALIGN="right">
 <a href="/sprache?lang=de" title="Deutsch"><img src="bilder/german.png" width="37" height="20" border="0" alt="Deutsch"></a>
 <a href="/sprache?lang=en" title="Englisch"><img src="bilder/english.png" width="37" height="20" border="0" alt="English"></a>
 </td>
 </tr>
 <tr>
-<td colspan="2"><h3>Region: {{ zone }} {{ zone_amazon }}</h3></td>
+<td colspan="2" ALIGN="center">{{ zonen_liste }}</td>
+</tr>
+<tr>
+<td colspan="2"><h3>Active region: {{ zone }} {{ zone_amazon }}</h3></td>
 </tr>
 </table>
 </div>
@@ -57,9 +60,9 @@ if((navigator.userAgent.match(/iPhone/i)) ||
 
   <div id="navigationsBar">
   <div id="innerNavigationsBar">
-  <h3>
+
 {{ navigations_bar }}
-  </h3>
+
   </div>
   </div>
 

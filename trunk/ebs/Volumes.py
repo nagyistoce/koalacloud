@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class Volumes(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Den Usernamen erfahren
@@ -41,7 +42,7 @@ class Volumes(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           #url = users.create_logout_url(self.request.uri)
           url_linktext = 'Logout'
@@ -62,8 +63,11 @@ class Volumes(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:  
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS
@@ -160,7 +164,7 @@ class Volumes(webapp.RequestHandler):
               if laenge_liste_volumes == 0:
                 # Wenn es noch keine Volumes in der Region gibt...
                 if sprache == "de":
-                  volumestabelle = 'Es sind keine Volumes in der Region vorhanden.'
+                  volumestabelle = 'Es sind keine Volumen in der Region vorhanden.'
                 else:
                   volumestabelle = 'No volumes exist inside this region.'
               else: 
@@ -338,7 +342,7 @@ class Volumes(webapp.RequestHandler):
               alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<td align="center">\n'
               alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<form action="/alle_volumes_loeschen" method="get">\n'
               if sprache == "de":
-                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumes l&ouml;schen">\n'
+                alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="Alle Volumen l&ouml;schen">\n'
               else:
                 alle_volumes_loeschen_button = alle_volumes_loeschen_button + '<input type="submit" value="erase all volumes">\n'
               alle_volumes_loeschen_button = alle_volumes_loeschen_button + '</form>\n'
@@ -361,10 +365,10 @@ class Volumes(webapp.RequestHandler):
             'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
             }
   
-            #if sprache == "de": naechse_seite = "volumes_de.html"
-            #else:               naechse_seite = "volumes_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volumes.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "volumes.html")
+            else:  
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volumes.html")
             self.response.out.write(template.render(path,template_values))
 
           

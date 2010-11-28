@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class Images(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
         # Eventuell vorhande Fehlermeldung holen
@@ -40,7 +41,7 @@ class Images(webapp.RequestHandler):
           self.redirect('/')
         else:
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           # So wird der HTML-Code korrekt
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           #url = users.create_logout_url(self.request.uri)

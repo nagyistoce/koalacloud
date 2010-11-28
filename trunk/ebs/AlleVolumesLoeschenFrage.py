@@ -18,6 +18,7 @@ from library import format_error_message_red
 
 class AlleVolumesLoeschenFrage(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -31,7 +32,7 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
           self.redirect('/')
         else:
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
 
@@ -49,9 +50,9 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           }
 
-          #if sprache == "de": naechse_seite = "alle_volumes_loeschen_frage_de.html"
-          #else:               naechse_seite = "alle_volumes_loeschen_frage_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_volumes_loeschen_frage.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "snapshots.html")
+          else:  
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "snapshots.html")
           self.response.out.write(template.render(path,template_values))
 
