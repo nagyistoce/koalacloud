@@ -27,6 +27,7 @@ from boto.ec2.elb import ELBConnection
 
 class LoadBalancer(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -46,7 +47,7 @@ class LoadBalancer(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')  
           #url = users.create_logout_url(self.request.uri)

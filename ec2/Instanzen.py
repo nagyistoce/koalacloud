@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class Instanzen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()  
         if not username:
@@ -41,7 +42,7 @@ class Instanzen(webapp.RequestHandler):
         else:
                   
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
 

@@ -10,6 +10,15 @@
 <link rel="SHORTCUT ICON" href="favicon.ico">
 
 <script type="text/javascript">
+if((navigator.userAgent.match(/iPhone/i)) || 
+                (navigator.userAgent.match(/Android/i)) ||
+                (navigator.userAgent.match(/iPod/i))) 
+        { 
+        location.replace("/?mobile=true");
+    }
+</script>
+
+<script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18085909-1']);
   _gaq.push(['_trackPageview']);

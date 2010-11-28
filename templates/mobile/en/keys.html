@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+{{ neues_fenster }}
+
+<h3>
+<b>Keys</b>
+</h3>
+<br>
+<b>Create new keypair</b>
+
+<p>&nbsp;</p>
+
+<form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
+<input name="keyname" type="text" size="25" maxlength="25">
+<input type="submit" value="create keypair">
+</form>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>List of keypairs</b>
+
+<p>&nbsp;</p>
+
+{{ keytabelle }}
+
+<p>&nbsp;</p>
+
+{{ secretkey_memcache }}
+
+{% endblock %}

@@ -40,6 +40,7 @@ import base64
 
 class BucketInhaltPur(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -59,7 +60,7 @@ class BucketInhaltPur(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           results = aktivezone.fetch(100)
 

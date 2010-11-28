@@ -26,6 +26,7 @@ from boto.ec2.connection import *
 class Regionen(webapp.RequestHandler):
     def get(self):
         message = self.request.get('message')
+        mobile = self.request.get('mobile')
         neuerzugang = self.request.get('neuerzugang')
         # Den Usernamen erfahren
         # Get the username
@@ -36,7 +37,7 @@ class Regionen(webapp.RequestHandler):
         # wenn ein Benutzer noch keinen Zugang eingerichtet hat.
         if users.get_current_user():
             sprache = aktuelle_sprache(username)
-            navigations_bar = navigations_bar_funktion(sprache)
+            navigations_bar = navigations_bar_funktion(sprache,mobile)
             # Nachsehen, ob eine Region/Zone ausgewählte wurde
             aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
             results = aktivezone.fetch(100)
@@ -508,7 +509,11 @@ class Regionen(webapp.RequestHandler):
             'version_warnung': version_warnung,
             }
 
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "index.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "index.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "index.html")
             self.response.out.write(template.render(path,template_values))
         else:
             self.redirect('/')

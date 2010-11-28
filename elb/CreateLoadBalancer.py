@@ -27,6 +27,7 @@ from boto.ec2.elb import ELBConnection
 
 class CreateLoadBalancer(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         #self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -36,7 +37,7 @@ class CreateLoadBalancer(webapp.RequestHandler):
         message = self.request.get('message')
 
         sprache = aktuelle_sprache(username)
-        navigations_bar = navigations_bar_funktion(sprache)
+        navigations_bar = navigations_bar_funktion(sprache,mobile)
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)

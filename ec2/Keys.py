@@ -27,6 +27,7 @@ from boto.ec2.connection import *
 
 class Keys(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -52,7 +53,7 @@ class Keys(webapp.RequestHandler):
           self.redirect('/')
         else:
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
 
@@ -219,6 +220,9 @@ class Keys(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
   
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "keys.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "keys.html")
               self.response.out.write(template.render(path,template_values))
 

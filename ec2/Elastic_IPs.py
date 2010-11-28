@@ -26,6 +26,7 @@ from boto.ec2.connection import *
 class Elastic_IPs(webapp.RequestHandler):
     def get(self):
         # self.response.out.write('posted!')
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -42,7 +43,7 @@ class Elastic_IPs(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           # So ist der HTML-Code korrekt
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')

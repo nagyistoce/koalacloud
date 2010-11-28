@@ -38,6 +38,7 @@ import base64
 
 class BucketInhalt(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -60,7 +61,7 @@ class BucketInhalt(webapp.RequestHandler):
         else:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'

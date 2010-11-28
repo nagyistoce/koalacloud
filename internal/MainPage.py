@@ -25,7 +25,10 @@ from boto.ec2.connection import *
 
 class MainPage(webapp.RequestHandler):
     def get(self):
-        # Den Usernamen erfahren
+        # self.response.out.write('posted!')
+
+        mobile = self.request.get('mobile')
+        # Get the username
         username = users.get_current_user()
 
         if users.get_current_user():
@@ -46,7 +49,7 @@ class MainPage(webapp.RequestHandler):
             # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
             # See if a language has already been chosen 
             sprache = aktuelle_sprache(username)
-            navigations_bar = navigations_bar_funktion(sprache)
+            navigations_bar = navigations_bar_funktion(sprache,mobile)
             
             login_howto = ''
 
@@ -65,13 +68,15 @@ class MainPage(webapp.RequestHandler):
         else:
             # If the user is not logged in or has no account yet...
             sprache = "en"
-            navigations_bar = navigations_bar_funktion(sprache)
+            navigations_bar = navigations_bar_funktion(sprache,mobile)
             url = users.create_login_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Login'
             regionname = '---'
             zone_amazon = ""
             
-            zonen_liste = '<p><font color="red"><b><=== You need to login first with your Google account!</b></font></p>'
+            zonen_liste = '<p><font color="red"><b>Please login first with your Google account</b></font></p>'
+
+
 
         template_values = {
         'navigations_bar': navigations_bar,
@@ -82,10 +87,10 @@ class MainPage(webapp.RequestHandler):
         'zonen_liste': zonen_liste,
         }
 
-        #if sprache == "en":   naechse_seite = "start_en.html"
-        #elif sprache == "de": naechse_seite = "start_de.html"
-        #else:                 naechse_seite = "start_en.html"
-        #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-        path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "start.html")
+
+        if mobile == "true":
+          path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "start.html")
+        else:
+          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "start.html")
         self.response.out.write(template.render(path,template_values))
 
