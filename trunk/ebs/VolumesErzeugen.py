@@ -12,6 +12,7 @@ from boto.ec2.connection import *
 class VolumesErzeugen(webapp.RequestHandler):
     def post(self):
         #self.response.out.write('posted!')
+        mobile = self.request.get('mobile')
         groesse = self.request.get('groesse')
         GB_oder_TB = self.request.get('GB_oder_TB')
         zone = self.request.get('zone')
@@ -26,19 +27,19 @@ class VolumesErzeugen(webapp.RequestHandler):
           # Wenn keine Größe angegeben wurde, kann kein Volume angelegt werden
           #fehlermeldung = "Sie haben keine Größe angegeben"
           fehlermeldung = "16"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung) 
         elif groesse.isdigit() == False: 
           # Testen ob die Größe eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           #fehlermeldung = "Sie haben keine Zahl angegeben"
           fehlermeldung = "17"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif GB_oder_TB == "TB" and int(groesse) > 1:
           # Testen ob TB als Maßeinheit angegeben wurde und die Größe > 1 TB ist
           # fehlermeldung = "Amazon EBS ermöglicht die Erstellung von Datenträgern
           # mit einer Speicherkapazität von 1 GB bis 1 TB"
           fehlermeldung = "25"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Die Eingabe in Integer umwandeln
           groesse = int(groesse)
@@ -53,15 +54,16 @@ class VolumesErzeugen(webapp.RequestHandler):
           except EC2ResponseError:
             # Wenn es nicht klappt...
             fehlermeldung = "18"
-            self.redirect('/volumes?message='+fehlermeldung)
+            self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
           except DownloadError:
             # Wenn es nicht klappt...
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "8"
-            self.redirect('/volumes?message='+fehlermeldung) 
+            self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
             # Wenn es geklappt hat...
             fehlermeldung = "15"
-            self.redirect('/volumes?message='+fehlermeldung)
+            self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
+            

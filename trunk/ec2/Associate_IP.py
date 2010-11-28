@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class Associate_IP(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         #self.response.out.write('posted!')
         # Anzuhängende Elastic IP-Adresse holen
         address = self.request.get('address')

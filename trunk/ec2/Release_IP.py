@@ -11,6 +11,7 @@ from boto.ec2.connection import *
 
 class Release_IP(webapp.RequestHandler):
     def get(self):
+      mobile = self.request.get('mobile')
       # Zu löschende (release) Elastic IP-Adresse holen
       address = self.request.get('address')
       # Den Usernamen erfahren
@@ -24,14 +25,14 @@ class Release_IP(webapp.RequestHandler):
       except EC2ResponseError:
         # Wenn es nicht geklappt hat...
         fehlermeldung = "4"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
+        self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)
       except DownloadError:
         # Diese Exception hilft gegen diese beiden Fehler:
         # DownloadError: ApplicationError: 2 timed out
         # DownloadError: ApplicationError: 5
         fehlermeldung = "8"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
+        self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)
       else:
         # Wenn es geklappt hat...
         fehlermeldung = "5"
-        self.redirect('/elastic_ips?message='+fehlermeldung)
+        self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)

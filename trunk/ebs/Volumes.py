@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class Volumes(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Den Usernamen erfahren
@@ -207,6 +209,8 @@ class Volumes(webapp.RequestHandler):
                     if liste_volumes[i].attach_data.status == None:
                       volumestabelle = volumestabelle + '<a href="/volumeentfernen?volume='
                       volumestabelle = volumestabelle + liste_volumes[i].id
+                      volumestabelle = volumestabelle + "&amp;mobile="
+                      volumestabelle = volumestabelle + str(mobile)
                       if sprache == "de":
                         volumestabelle = volumestabelle + '" title="Volume l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Volume l&ouml;schen"></a>'
                       else:
@@ -219,6 +223,8 @@ class Volumes(webapp.RequestHandler):
                     volumestabelle = volumestabelle + '<td>'
                     volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
                     volumestabelle = volumestabelle + liste_volumes[i].id
+                    volumestabelle = volumestabelle + "&amp;mobile="
+                    volumestabelle = volumestabelle + str(mobile)
                     if sprache == "de":
                       volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
                     else:
@@ -363,6 +369,7 @@ class Volumes(webapp.RequestHandler):
             'input_error_message': input_error_message,
             'zonen_liste': zonen_liste,
             'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
+            'mobile': mobile
             }
   
             if mobile == "true":

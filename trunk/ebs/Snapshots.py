@@ -28,6 +28,8 @@ from boto.ec2.connection import *
 class Snapshots(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -196,11 +198,13 @@ class Snapshots(webapp.RequestHandler):
                 if sprache == "de":
                   ansicht_amazon_button = '<p>&nbsp;</p>\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="Alle erreichbaren Snapshots anzeigen">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '</form>\n'
                 else:
                   ansicht_amazon_button = '<p>&nbsp;</p>\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
+                  ansicht_amazon_button = ansicht_amazon_button + '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="show all available snapshots">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '</form>\n'
             else:  

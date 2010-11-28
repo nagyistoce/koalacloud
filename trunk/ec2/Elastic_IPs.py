@@ -27,6 +27,8 @@ class Elastic_IPs(webapp.RequestHandler):
     def get(self):
         # self.response.out.write('posted!')
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -140,6 +142,8 @@ class Elastic_IPs(webapp.RequestHandler):
                     adressentabelle = adressentabelle + '<td>'
                     adressentabelle = adressentabelle + '<a href="/release_address?address='
                     adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                    adressentabelle = adressentabelle + "&amp;mobile="
+                    adressentabelle = adressentabelle + str(mobile)
                     if sprache == "de":
                       adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
                       adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
@@ -162,6 +166,8 @@ class Elastic_IPs(webapp.RequestHandler):
                     if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
                       adressentabelle = adressentabelle + '<a href="/associate_address?address='
                       adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                      adressentabelle = adressentabelle + "&amp;mobile="
+                      adressentabelle = adressentabelle + str(mobile)
                       if sprache == "de":
                         adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
                         adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
@@ -171,6 +177,8 @@ class Elastic_IPs(webapp.RequestHandler):
                     else:
                       adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
                       adressentabelle = adressentabelle + liste_adressen[i].public_ip
+                      adressentabelle = adressentabelle + "&amp;mobile="
+                      adressentabelle = adressentabelle + str(mobile)
                       if sprache == "de":
                         adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
                         adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
@@ -190,7 +198,11 @@ class Elastic_IPs(webapp.RequestHandler):
             'adressentabelle': adressentabelle,
             'zonen_liste': zonen_liste,
             'input_error_message': input_error_message,
+            'mobile': mobile,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "adressen.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "adressen.html")
+            else:  
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "adressen.html")
             self.response.out.write(template.render(path,template_values))
