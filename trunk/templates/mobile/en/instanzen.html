@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Instances</b>
+</h3>
+<!-- <br> -->
+<!--<b>Start instances</b>
+
+<p>&nbsp;</p>
+
+<form action="/instanzstarten" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="submit" value="Start instance (only for testing)">
+</form>-->
+
+<p>&nbsp;</p>
+
+<b>List of instances</b>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+{{ reservationliste }}
+
+{{ alle_instanzen_loeschen_button }}
+
+{% endblock %}
