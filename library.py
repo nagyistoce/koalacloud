@@ -147,7 +147,7 @@ def navigations_bar_funktion(sprache,mobile):
         navigations_bar = navigations_bar + '<option value="/schluessel?mobile=true">Schl&uuml;ssel\n'
         navigations_bar = navigations_bar + '<option value="/volumes?mobile=true">Elastic Block Store\n'
         navigations_bar = navigations_bar + '<option value="/snapshots?mobile=true">Snapshots\n'
-        navigations_bar = navigations_bar + '<option value="/elastic_ips?mobile=true">Elastic IPs\n'
+        navigations_bar = navigations_bar + '<option value="/elastic_ips?mobile=true">Elastische IPs\n'
         navigations_bar = navigations_bar + '<option value="/zonen?mobile=true">Verf&uuml;gbarkeitszonen\n'
         navigations_bar = navigations_bar + '<option value="/securitygroups?mobile=true">Sicherheitsgruppen\n'
         navigations_bar = navigations_bar + '<option value="/s3?mobile=true">Simple Storage Service\n'

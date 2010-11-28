@@ -11,6 +11,7 @@ from boto.ec2.connection import *
 
 class VolumesEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
         # Name des zu löschenden Volumes holen
         volume = self.request.get('volume')
         # Den Usernamen erfahren
@@ -24,15 +25,15 @@ class VolumesEntfernen(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht klappt...
           fehlermeldung = "19"
-          self.redirect('/volumes?message='+fehlermeldung) 
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung) 
         except DownloadError:
           # Wenn es nicht klappt...
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung) 
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung) 
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "22"
-          self.redirect('/volumes?message='+fehlermeldung) 
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung) 

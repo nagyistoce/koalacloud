@@ -11,6 +11,7 @@ from boto.ec2.connection import *
 
 class Allocate_IP(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
         # Den Usernamen erfahren
         username = users.get_current_user()
 
@@ -22,15 +23,15 @@ class Allocate_IP(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
           fehlermeldung = "6"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
+          self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
+          self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "7"
-          self.redirect('/elastic_ips?message='+fehlermeldung)
+          self.redirect('/elastic_ips?mobile='+str(mobile)+'&message='+fehlermeldung)
           
