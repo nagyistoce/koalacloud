@@ -75,8 +75,10 @@ class Keys(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS

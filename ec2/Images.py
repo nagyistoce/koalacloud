@@ -117,144 +117,278 @@ class Images(webapp.RequestHandler):
                 liste_favoriten_ami_images = conn_region.get_all_images(image_ids=liste_ami_favoriten)
                 laenge_liste_favoriten_ami_images = len(liste_favoriten_ami_images)
   
-                liste_favouriten = ''
-                liste_favouriten = liste_favouriten + '<table border="3" cellspacing="0" cellpadding="5">'
-                liste_favouriten = liste_favouriten + '<tr>'
-                liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
-                liste_favouriten = liste_favouriten + '<th>&nbsp;</th>'
-                liste_favouriten = liste_favouriten + '<th align="center">Image ID</th>'
-                liste_favouriten = liste_favouriten + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
-                if sprache == "de":
-                  liste_favouriten = liste_favouriten + '<th align="center">Typ</th>'
-                else:
-                  liste_favouriten = liste_favouriten + '<th align="center">Type</th>'
-                liste_favouriten = liste_favouriten + '<th align="center">Manifest</th>'
-                if sprache == "de":
-                  liste_favouriten = liste_favouriten + '<th align="center">Architektur</th>'
-                else:
-                  liste_favouriten = liste_favouriten + '<th align="center">Architecture</th>'
-                liste_favouriten = liste_favouriten + '<th align="center">Status</th>'
-                liste_favouriten = liste_favouriten + '<th align="center">Root Device</th>'  
-                if sprache == "de":
-                  liste_favouriten = liste_favouriten + '<th align="center">Besitzer</th>'
-                else:
-                  liste_favouriten = liste_favouriten + '<th align="center">Owner</th>'
-                liste_favouriten = liste_favouriten + '</tr>'
-                for i in range(laenge_liste_favoriten_ami_images):
-                    liste_favouriten = liste_favouriten + '<tr>'
-                    #liste_favouriten = liste_favouriten + '<td>&nbsp;</td>'
-                    liste_favouriten = liste_favouriten + '<td>'
-                    if liste_favoriten_ami_images[i].type == u'machine':
-                      if sprache == "de":
-                        liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                        liste_favouriten = liste_favouriten + '&amp;arch='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                        liste_favouriten = liste_favouriten + '&amp;root='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
-                        liste_favouriten = liste_favouriten + "&amp;mobile="
-                        liste_favouriten = liste_favouriten +  str(mobile)
-                        liste_favouriten = liste_favouriten + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                if mobile == "true":
+                  # mobile version
+                  liste_favouriten = ''
+                  liste_favouriten += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+                  
+                  counter = 0
+                  for i in range(laenge_liste_favoriten_ami_images):
+                      if counter > 0:
+                          liste_favouriten += '<tr><td colspan="4">&nbsp;</td></tr>'
+                      counter += 1
+                      
+                      liste_favouriten += '<tr>'
+                      #liste_favouriten += '<td>&nbsp;</td>'
+                      liste_favouriten += '<td>'
+                      if liste_favoriten_ami_images[i].type == u'machine':
+                        if sprache == "de":
+                          liste_favouriten += '<a href="/imagestarten?image='
+                          liste_favouriten += liste_favoriten_ami_images[i].id
+                          liste_favouriten += '&amp;arch='
+                          liste_favouriten += liste_favoriten_ami_images[i].architecture
+                          liste_favouriten += '&amp;root='
+                          liste_favouriten += liste_favoriten_ami_images[i].root_device_type
+                          liste_favouriten += "&amp;mobile="
+                          liste_favouriten +=  str(mobile)
+                          liste_favouriten += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                        else:
+                          liste_favouriten += '<a href="/imagestarten?image='
+                          liste_favouriten += liste_favoriten_ami_images[i].id
+                          liste_favouriten += '&amp;arch='
+                          liste_favouriten += liste_favoriten_ami_images[i].architecture
+                          liste_favouriten += '&amp;root='
+                          liste_favouriten += liste_favoriten_ami_images[i].root_device_type
+                          liste_favouriten += "&amp;mobile="
+                          liste_favouriten +=  str(mobile)
+                          liste_favouriten += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
                       else:
-                        liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                        liste_favouriten = liste_favouriten + '&amp;arch='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
-                        liste_favouriten = liste_favouriten + '&amp;root='
-                        liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
-                        liste_favouriten = liste_favouriten + "&amp;mobile="
-                        liste_favouriten = liste_favouriten +  str(mobile)
-                        liste_favouriten = liste_favouriten + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
-                    else:
-                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                      liste_favouriten = liste_favouriten + '&nbsp;'
-                    liste_favouriten = liste_favouriten + '</td>'
-                    liste_favouriten = liste_favouriten + '<td>'
-                    if sprache == "de":
-                      liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                      liste_favouriten = liste_favouriten + '&amp;zone='
-                      liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                      liste_favouriten = liste_favouriten + "&amp;mobile="
-                      liste_favouriten = liste_favouriten +  str(mobile)
-                      liste_favouriten = liste_favouriten + '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
-                    else:
-                      liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
-                      liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
-                      liste_favouriten = liste_favouriten + '&amp;zone='
-                      liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                      liste_favouriten = liste_favouriten + "&amp;mobile="
-                      liste_favouriten = liste_favouriten +  str(mobile)
-                      liste_favouriten = liste_favouriten + '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
-                    liste_favouriten = liste_favouriten + '</td>'
-  
-                    # Hier kommt die Spalte mit der Image-ID
-                    liste_favouriten = liste_favouriten + '<td>'
-                    liste_favouriten = liste_favouriten + '<tt>'+str(liste_favoriten_ami_images[i].id)+'</tt>'
-                    liste_favouriten = liste_favouriten + '</td>'
-  
-                    liste_favouriten = liste_favouriten + '<td align="center">'
-                    beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
-                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    else:
-                      liste_favouriten = liste_favouriten + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
-                    liste_favouriten = liste_favouriten + '</td>'
-  
-                    # Hier kommt die Spalte mit dem Instanztyp
-                    liste_favouriten = liste_favouriten + '<td align="center">'
-                    liste_favouriten = liste_favouriten + str(liste_favoriten_ami_images[i].type)
-                    liste_favouriten = liste_favouriten + '</td>'
-  
-                    # Hier kommt die Spalte mit der Manifest-Datei
-                    liste_favouriten = liste_favouriten + '<td>'
-                    liste_favouriten = liste_favouriten + '<tt>'+str(liste_favoriten_ami_images[i].location)+'</tt>'
-                    liste_favouriten = liste_favouriten + '</td>'
-                    liste_favouriten = liste_favouriten + '<td align="center">'
-                    liste_favouriten = liste_favouriten + '<tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt>'
-                    liste_favouriten = liste_favouriten + '</td>'
-                    if liste_favoriten_ami_images[i].state == u'available':
-                      liste_favouriten = liste_favouriten + '<td bgcolor="#c3ddc3" align="center">'
-                      liste_favouriten = liste_favouriten + str(liste_favoriten_ami_images[i].state)
-                    else:
-                      liste_favouriten = liste_favouriten + '<td align="center">'
-                      liste_favouriten = liste_favouriten + str(liste_favoriten_ami_images[i].state)
-                    liste_favouriten = liste_favouriten + '</td>'
-                    liste_favouriten = liste_favouriten + '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
-                    liste_favouriten = liste_favouriten + '<td>'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
-                    liste_favouriten = liste_favouriten + '</tr>'
-                liste_favouriten = liste_favouriten + '</table>'
-  
+                        # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+                        liste_favouriten += '&nbsp;'
+                      liste_favouriten += '</td>'
+                      
+                      liste_favouriten += '<td align="center">'
+                      beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
+                      if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                        liste_favouriten += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                      elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                        liste_favouriten += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                      elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                        liste_favouriten += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                      elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                        liste_favouriten += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                      elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                        liste_favouriten += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                      elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                        liste_favouriten += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                      elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                        liste_favouriten += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                      elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                        liste_favouriten += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                      elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+                        liste_favouriten += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                      elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      else:
+                        liste_favouriten += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+                      liste_favouriten += '</td>'
+
+                      # Hier kommt die Spalte mit der Image-ID
+                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].id)+'</tt></td>'
+
+                      liste_favouriten += '<td align="right">'
+                      if sprache == "de":
+                        liste_favouriten += '<a href="/favoritentfernen?ami='
+                        liste_favouriten += liste_favoriten_ami_images[i].id
+                        liste_favouriten += '&amp;zone='
+                        liste_favouriten += zone_in_der_wir_uns_befinden
+                        liste_favouriten += "&amp;mobile="
+                        liste_favouriten +=  str(mobile)
+                        liste_favouriten += '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
+                      else:
+                        liste_favouriten += '<a href="/favoritentfernen?ami='
+                        liste_favouriten += liste_favoriten_ami_images[i].id
+                        liste_favouriten += '&amp;zone='
+                        liste_favouriten += zone_in_der_wir_uns_befinden
+                        liste_favouriten += "&amp;mobile="
+                        liste_favouriten +=  str(mobile)
+                        liste_favouriten += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
+                      liste_favouriten += '</td>'
+    
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+    
+                      if sprache == "de":
+                        liste_favouriten += '<td align="left" colspan="2"><b>Typ:</b></td>'
+                      else:
+                        liste_favouriten += '<td align="left" colspan="2"><b>Type:</b></td>'
+                      # Hier kommt die Spalte mit dem Instanztyp
+                      liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].type)+'</td>'
+                    
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                    
+                      liste_favouriten += '<td align="left" colspan="2"><b>Manifest:</b></td>'
+                      # Hier kommt die Spalte mit der Manifest-Datei
+                      liste_favouriten += '<td colspan="2"><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
+                      
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                      
+                      if sprache == "de":
+                        liste_favouriten += '<td align="left" colspan="2"><b>Architektur:</b></td>'
+                      else:
+                        liste_favouriten += '<td align="left" colspan="2"><b>Architecture:</b></td>'
+                      liste_favouriten += '<td align="center" colspan="2"><tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt></td>'
+                      
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                      
+                      liste_favouriten += '<td align="left" colspan="2"><b>Status:</b></td>'                         
+                      if liste_favoriten_ami_images[i].state == u'available':
+                        liste_favouriten += '<td bgcolor="#c3ddc3" align="center" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                      else:
+                        liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                      
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                      
+                      liste_favouriten += '<td align="left" colspan="2"><b>Root:</b></td>'     
+                      liste_favouriten += '<td align="center" colspan="2">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
+                      
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                      
+                      if sprache == "de":
+                        liste_favouriten += '<td align="left" colspan="2"><b>Besitzer:</b></td>'
+                      else:
+                        liste_favouriten += '<td align="left" colspan="2"><b>Owner:</b></td>'
+                      liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+                      liste_favouriten += '</tr>'
+                  liste_favouriten += '</table>'
+                else:
+                  # not the mobile version
+                  liste_favouriten = ''
+                  liste_favouriten += '<table border="3" cellspacing="0" cellpadding="5">'
+                  liste_favouriten += '<tr>'
+                  liste_favouriten += '<th>&nbsp;</th>'
+                  liste_favouriten += '<th>&nbsp;</th>'
+                  liste_favouriten += '<th align="center">ID</th>'
+                  liste_favouriten += '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+                  if sprache == "de":
+                    liste_favouriten += '<th align="center">Typ</th>'
+                  else:
+                    liste_favouriten += '<th align="center">Type</th>'
+                  liste_favouriten += '<th align="center">Manifest</th>'
+                  if sprache == "de":
+                    liste_favouriten += '<th align="center">Architektur</th>'
+                  else:
+                    liste_favouriten += '<th align="center">Architecture</th>'
+                  liste_favouriten += '<th align="center">Status</th>'
+                  liste_favouriten += '<th align="center">Root Device</th>'  
+                  if sprache == "de":
+                    liste_favouriten += '<th align="center">Besitzer</th>'
+                  else:
+                    liste_favouriten += '<th align="center">Owner</th>'
+                  liste_favouriten += '</tr>'
+                  for i in range(laenge_liste_favoriten_ami_images):
+                      liste_favouriten += '<tr>'
+                      #liste_favouriten += '<td>&nbsp;</td>'
+                      liste_favouriten += '<td>'
+                      if liste_favoriten_ami_images[i].type == u'machine':
+                        if sprache == "de":
+                          liste_favouriten += '<a href="/imagestarten?image='
+                          liste_favouriten += liste_favoriten_ami_images[i].id
+                          liste_favouriten += '&amp;arch='
+                          liste_favouriten += liste_favoriten_ami_images[i].architecture
+                          liste_favouriten += '&amp;root='
+                          liste_favouriten += liste_favoriten_ami_images[i].root_device_type
+                          liste_favouriten += "&amp;mobile="
+                          liste_favouriten +=  str(mobile)
+                          liste_favouriten += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                        else:
+                          liste_favouriten += '<a href="/imagestarten?image='
+                          liste_favouriten += liste_favoriten_ami_images[i].id
+                          liste_favouriten += '&amp;arch='
+                          liste_favouriten += liste_favoriten_ami_images[i].architecture
+                          liste_favouriten += '&amp;root='
+                          liste_favouriten += liste_favoriten_ami_images[i].root_device_type
+                          liste_favouriten += "&amp;mobile="
+                          liste_favouriten +=  str(mobile)
+                          liste_favouriten += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+                      else:
+                        # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+                        liste_favouriten += '&nbsp;'
+                      liste_favouriten += '</td>'
+                      liste_favouriten += '<td>'
+                      if sprache == "de":
+                        liste_favouriten += '<a href="/favoritentfernen?ami='
+                        liste_favouriten += liste_favoriten_ami_images[i].id
+                        liste_favouriten += '&amp;zone='
+                        liste_favouriten += zone_in_der_wir_uns_befinden
+                        liste_favouriten += "&amp;mobile="
+                        liste_favouriten +=  str(mobile)
+                        liste_favouriten += '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
+                      else:
+                        liste_favouriten += '<a href="/favoritentfernen?ami='
+                        liste_favouriten += liste_favoriten_ami_images[i].id
+                        liste_favouriten += '&amp;zone='
+                        liste_favouriten += zone_in_der_wir_uns_befinden
+                        liste_favouriten += "&amp;mobile="
+                        liste_favouriten +=  str(mobile)
+                        liste_favouriten += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
+                      liste_favouriten += '</td>'
+    
+                      # Hier kommt die Spalte mit der Image-ID
+                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].id)+'</tt></td>'
+    
+                      liste_favouriten += '<td align="center">'
+                      beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
+                      if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                        liste_favouriten += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                      elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                        liste_favouriten += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                      elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                        liste_favouriten += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                      elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                        liste_favouriten += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                      elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                        liste_favouriten += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                      elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                        liste_favouriten += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                      elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                        liste_favouriten += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                      elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                        liste_favouriten += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                      elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+                        liste_favouriten += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                      elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                        liste_favouriten += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                      else:
+                        liste_favouriten += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+                      liste_favouriten += '</td>'
+    
+                      # Hier kommt die Spalte mit dem Instanztyp
+                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].type)+'</td>'
+    
+                      # Hier kommt die Spalte mit der Manifest-Datei
+                      liste_favouriten += '<td><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
+                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt></td>'
+                      if liste_favoriten_ami_images[i].state == u'available':
+                        liste_favouriten += '<td bgcolor="#c3ddc3" align="center">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                      else:
+                        liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                      liste_favouriten += '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
+                      liste_favouriten += '<td>'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+                      liste_favouriten += '</tr>'
+                  liste_favouriten += '</table>'
+                
               else:
                 if sprache == "de":
-                  liste_favouriten = 'Es wurden noch keine Favoriten in der Zone '
-                  liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
-                  liste_favouriten = liste_favouriten + ' festgelegt'
+                  liste_favouriten = 'Sie haben noch keine Favoriten in der Zone '
+                  liste_favouriten += zone_in_der_wir_uns_befinden
+                  liste_favouriten += ' festgelegt'
                 else:
-                  liste_favouriten = 'No favourite AMIs exist in the zone '
-                  liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                  liste_favouriten = 'You have still no favourite AMIs inside the zone '
+                  liste_favouriten += zone_in_der_wir_uns_befinden
   
               template_values = {
               'navigations_bar': navigations_bar,
@@ -266,12 +400,13 @@ class Images(webapp.RequestHandler):
               'liste_favouriten': liste_favouriten,
               'zone_in_der_wir_uns_befinden': zone_in_der_wir_uns_befinden,
               'input_error_message': input_error_message,
+              'mobile': mobile,
               }
   
-              #if sprache == "de": naechse_seite = "images_amazon_de.html"
-              #else:               naechse_seite = "images_amazon_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "images_amazon.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "images_amazon.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "images_amazon.html")
               self.response.out.write(template.render(path,template_values))
   
             # Die Region ist Eucalyptus oder Nimbus
@@ -419,10 +554,11 @@ class Images(webapp.RequestHandler):
               'zone_amazon': zone_amazon,
               'imagestabelle': imagestabelle,
               'zonen_liste': zonen_liste,
+              'mobile': mobile,
               }
   
-              #if sprache == "de": naechse_seite = "images_de.html"
-              #else:               naechse_seite = "images_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "images.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "images.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "images.html")
               self.response.out.write(template.render(path,template_values))
