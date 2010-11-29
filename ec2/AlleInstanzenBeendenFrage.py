@@ -51,6 +51,7 @@ class AlleInstanzenBeendenFrage(webapp.RequestHandler):
           'zone': regionname,
           'zone_amazon': zone_amazon,
           'zonen_liste': zonen_liste,
+          'mobile': mobile,
           }
 
 

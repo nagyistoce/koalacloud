@@ -10,6 +10,9 @@ from library import login
 
 class DeleteLoadBalancer(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name des zu löschenden Load Balancers holen
         name = self.request.get('name')
         # Den Usernamen erfahren
@@ -25,15 +28,15 @@ class DeleteLoadBalancer(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht klappt...
           fehlermeldung = "71"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
+          self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
+          self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "70"
-          self.redirect('/loadbalancer?message='+fehlermeldung)
+          self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
           

@@ -28,6 +28,8 @@ from boto.ec2.elb import ELBConnection
 class LoadBalancer_Aendern(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Name des zu löschenden Load Balancers holen
@@ -85,13 +87,13 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
           except EC2ResponseError:
             # Wenn es nicht klappt...
             fehlermeldung = "10"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
+            self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "9"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
+            self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
             # Wenn es geklappt hat und die Liste geholt wurde...
             # Anzahl der Elemente in der Liste
@@ -115,35 +117,37 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
 
             try:
               # Liste mit den LoadBalancern
-              liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_name=str(loadbalancer_name))
+              liste_load_balancers = conn_elb.get_all_load_balancers(load_balancer_names=str(loadbalancer_name))
             except EC2ResponseError:
               # Wenn es nicht klappt...
               fehlermeldung = "10"
-              self.redirect('/loadbalancer?message='+fehlermeldung)
+              self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
             except DownloadError:
               # Diese Exception hilft gegen diese beiden Fehler:
               # DownloadError: ApplicationError: 2 timed out
               # DownloadError: ApplicationError: 5
               fehlermeldung = "9"
-              self.redirect('/loadbalancer?message='+fehlermeldung)
+              self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
             else:
               # Wenn es geklappt hat...
 
               tabelle_instanz_anhaengen = ''
               tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/loadbalancer_instanz_zuordnen?loadbalancer='
               tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + "&amp;mobile="
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + str(mobile)
               tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
               tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">\n'
+              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="0" cellspacing="0" cellpadding="5">\n'
 
               # Wenn dem Load Balancer noch keine Instanzen zugewiesen wurden...
               if len(liste_load_balancers[0].instances) == 0:
                 tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
                 tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
                 if sprache == "de":
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Dem Load Balancer wurden noch keine Instanzen zugewiesen'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Es wurden noch keine Instanzen zugewiesen'
                 else:
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'This load balancer is not asigned with any instances'
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'No instances asigned yet'
                 tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
                 tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
               # Wenn dem Load Balancer schon Instanzen zugewiesen wurden...
@@ -155,6 +159,8 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + loadbalancer_name
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '&amp;instanz='
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + "&amp;mobile="
+                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + str(mobile)
                   if sprache == "de":
                     tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" title="Instanz deregistrieren">'
                     tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz deregistrieren"></a>'
@@ -230,9 +236,11 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                 tabelle_zonen_aendern = ''
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '<form action="/loadbalancer_zone_zuordnen?loadbalancer='
                 tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
+                tabelle_zonen_aendern = tabelle_zonen_aendern + "&amp;mobile="
+                tabelle_zonen_aendern = tabelle_zonen_aendern + str(mobile)
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '" method="post" accept-charset="utf-8">'
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '\n'
-                tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="3" cellspacing="0" cellpadding="5">\n'
+                tabelle_zonen_aendern = tabelle_zonen_aendern + '<table border="0" cellspacing="0" cellpadding="5">\n'
 
                 for z in range(len(liste_load_balancers[0].availability_zones)):
                   tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
@@ -242,6 +250,8 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                     tabelle_zonen_aendern = tabelle_zonen_aendern + '<a href="/loadbalanceraendern?loadbalancer='
                     tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
                     tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;message=67'
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + "&amp;mobile="
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + str(mobile)
                     if sprache == "de":
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
@@ -254,6 +264,8 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                     tabelle_zonen_aendern = tabelle_zonen_aendern + loadbalancer_name
                     tabelle_zonen_aendern = tabelle_zonen_aendern + '&amp;zone='
                     tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + "&amp;mobile="
+                    tabelle_zonen_aendern = tabelle_zonen_aendern + str(mobile)
                     if sprache == "de":
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '" title="Zone deregistrieren">'
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Zone deregistrieren"></a>'
@@ -305,8 +317,8 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
               'input_error_message': input_error_message,
               }
 
-              #if sprache == "de": naechse_seite = "loadbalancer_change_de.html"
-              #else:               naechse_seite = "loadbalancer_change_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer_change.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "loadbalancer_change.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer_change.html")
               self.response.out.write(template.render(path,template_values))
