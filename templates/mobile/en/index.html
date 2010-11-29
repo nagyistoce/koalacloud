@@ -11,20 +11,22 @@
 
 <b>Erase your personal data inside KOALA</b>
 
-<table border="0" cellspacing="5" cellpadding="5">
+<table border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center">
       <form action="/persoenliche_datan_loeschen" method="get">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
         <input type="submit" value="erase all your personal data in KOALA">
       </form>
     </td>
   </tr>
 </table>
 
-<table border="0" cellspacing="5" cellpadding="5">
+<table border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center">
       <form action="/persoenliche_favoriten_loeschen" method="get">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
         <input type="submit" value="erase only your EC2 favorites in KOALA">
       </form>
     </td>
@@ -35,72 +37,58 @@
 
 <p>&nbsp;</p>
 
-<p><font color="green">Here you can import your credentials into KOALA.</font></p>
+<p><font color="green">Here you can import your credentials</font></p>
 
-<p>&nbsp;</p>
-
-<table border="0" cellspacing="5" cellpadding="5">
-  <tr>
-    <td align="center" valign="middle">
-      <a href="http://aws.amazon.com"><img src="bilder/amazon-web-services-logo_kleiner.png" width="130" height="47" border="0" alt="create EC2 account"></a>
-    </td>
-    <td align="center" valign="middle">
-      <a href="http://open.eucalyptus.com"><img src="bilder/eucalyptus_logo_awh.png" width="143" height="42" border="0" alt="create Eucalyptus account"></a>
-    </td>
-    <td align="center" valign="middle">
-      <a href="http://www.nimbusproject.org"><img src="bilder/nimbus_logo.png" width="164" height="44" border="0" alt="create Nimbus account"></a>
-    </td>
-    <td align="center" valign="middle">
-      <a href="http://www.opennebula.org"><img src="bilder/opennebula-logo.png" width="162" height="34" border="0" alt="create OpenNebula account"></a>
-    </td>
-    <td align="center" valign="middle">
-      <a href="http://code.google.com/apis/storage/"><img src="bilder/google_logo.png" width="150" height="50" border="0" alt="create Google Storage account"></a>
-    </td>
-<!--
-    <td align="center" valign="middle">
-      <a href="http://www.pittsburgh.intel-research.net/projects/tashi/"><img src="bilder/intel_tashi_logo.png" width="150" height="35" border="0" alt="create Tashi account"></a>
-    </td>
--->
-  </tr>
+<table border="0" cellspacing="2" cellpadding="2">
   <tr>
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="ec2">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
         <input type="submit" value="create account">
       </form>
     </td>
-    <td align="center">
-      <form action="/regionen" method="get">
-        <input type="hidden" name="neuerzugang" value="eucalyptus">
-        <input type="submit" value="create account">
-      </form>
-    </td>
-    <td align="center">
-      <form action="/regionen" method="get">
-        <input type="hidden" name="neuerzugang" value="nimbus">
-        <input type="submit" value="create account">
-      </form>
-    </td>
-    <td align="center">
-      <form action="/regionen" method="get">
-        <input type="hidden" name="neuerzugang" value="opennebula">
-        <input type="submit" value="create account">
-      </form>
-    </td>
+    <td align="left">Amazon Web Services</td>
+  </tr>
+  <tr>
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="GoogleStorage">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
         <input type="submit" value="create account">
       </form>
     </td>
-<!--
+    <td align="left">GoogleStorage</td>
+  </tr>
+  <tr>
     <td align="center">
       <form action="/regionen" method="get">
-        <input type="hidden" name="neuerzugang" value="tashi">
+        <input type="hidden" name="neuerzugang" value="eucalyptus">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
         <input type="submit" value="create account">
       </form>
     </td>
--->
+    <td align="left">Eucalyptus</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <form action="/regionen" method="get">
+        <input type="hidden" name="neuerzugang" value="nimbus">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="submit" value="create account">
+      </form>
+    </td>
+    <td align="left">Nimbus</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <form action="/regionen" method="get">
+        <input type="hidden" name="neuerzugang" value="opennebula">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="submit" value="create account">
+      </form>
+    </td>
+    <td align="left">OpenNebula</td>
   </tr>
 </table>
 

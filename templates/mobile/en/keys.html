@@ -3,17 +3,31 @@
 
 {{ neues_fenster }}
 
+<!--
 <h3>
 <b>Keys</b>
 </h3>
 <br>
-<b>Create new keypair</b>
+-->
 
-<p>&nbsp;</p>
+<!-- <b>Create new keypair</b> --> 
+
+<!-- <p>&nbsp;</p> --> 
 
 <form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="2" cellpadding="2">
+<tr>
+<td>
 <input name="keyname" type="text" size="25" maxlength="25">
-<input type="submit" value="create keypair">
+</td>
+</tr>
+<tr>
+<td>
+<input type="submit" value="create new keypair">
+</td>
+</tr>
+</table>
 </form>
 
 {{ input_error_message }}

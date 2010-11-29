@@ -53,7 +53,7 @@ class Snapshots(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
@@ -196,13 +196,13 @@ class Snapshots(webapp.RequestHandler):
   
             if regionname == "Amazon":
                 if sprache == "de":
-                  ansicht_amazon_button = '<p>&nbsp;</p>\n'
+                  ansicht_amazon_button = ''
                   ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="Alle erreichbaren Snapshots anzeigen">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '</form>\n'
                 else:
-                  ansicht_amazon_button = '<p>&nbsp;</p>\n'
+                  ansicht_amazon_button = ''
                   ansicht_amazon_button = ansicht_amazon_button + '<form action="/snapshots_amazon_all" method="get">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button = ansicht_amazon_button + '<input type="submit" value="show all available snapshots">\n'

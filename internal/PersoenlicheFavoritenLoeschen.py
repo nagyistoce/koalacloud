@@ -7,6 +7,9 @@ from google.appengine.ext import webapp
 
 class PersoenlicheFavoritenLoeschen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
 
@@ -17,4 +20,4 @@ class PersoenlicheFavoritenLoeschen(webapp.RequestHandler):
         for result in results:
           result.delete()
 
-        self.redirect('/')
+        self.redirect('/regionen?mobile='+str(mobile))

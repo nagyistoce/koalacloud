@@ -10,6 +10,9 @@ from internal.Datastore import *
 
 class PersoenlicheDatanLoeschen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
 
@@ -41,4 +44,4 @@ class PersoenlicheDatanLoeschen(webapp.RequestHandler):
         for result in results:
           result.delete()
 
-        self.redirect('/')
+        self.redirect('/?mobile='+str(mobile))

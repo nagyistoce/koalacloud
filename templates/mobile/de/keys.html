@@ -3,17 +3,31 @@
 
 {{ neues_fenster }}
 
+<!--
 <h3>
 <b>Schl&uuml;ssel</b>
 </h3>
 <br>
-<b>Neues Schl&uuml;sselpaar erzeugen</b>
+-->
 
-<p>&nbsp;</p>
+<!-- <b>Neues Schl&uuml;sselpaar erzeugen</b> -->
+
+<!-- <p>&nbsp;</p> --> 
 
 <form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="2" cellpadding="2">
+<tr>
+<td>
 <input name="keyname" type="text" size="25" maxlength="25">
-<input type="submit" value="Schl&uuml;sselpaar erzeugen">
+</td>
+</tr>
+<tr>
+<td>
+<input type="submit" value="Neues Schl&uuml;sselpaar erzeugen">
+</td>
+</tr>
+</table>
 </form>
 
 {{ input_error_message }}

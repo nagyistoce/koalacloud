@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class SecurityGroups(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Den Usernamen erfahren 
@@ -48,7 +50,7 @@ class SecurityGroups(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           if sprache != "de":
             sprache = "en"
@@ -114,6 +116,8 @@ class SecurityGroups(webapp.RequestHandler):
                   gruppentabelle = gruppentabelle + '<td>'
                   gruppentabelle = gruppentabelle + '<a href="/gruppenentfernen?gruppe='
                   gruppentabelle = gruppentabelle + liste_security_groups[i].name
+                  gruppentabelle = gruppentabelle + "&amp;mobile="
+                  gruppentabelle = gruppentabelle + str(mobile)
                   if sprache == "de":
                     gruppentabelle = gruppentabelle + '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
                   else:
@@ -148,12 +152,13 @@ class SecurityGroups(webapp.RequestHandler):
           'securitygroupsliste': gruppentabelle,
           'input_error_message': input_error_message,
           'zonen_liste': zonen_liste,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "securitygroups_de.html"
-          #else:               naechse_seite = "securitygroups_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygroups.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "securitygroups.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygroups.html")
           self.response.out.write(template.render(path,template_values))
 
           

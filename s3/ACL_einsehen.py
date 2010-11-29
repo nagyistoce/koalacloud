@@ -58,7 +58,7 @@ class ACL_einsehen(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           # Mit S3 verbinden
           conn_s3 = logins3(username)

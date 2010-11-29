@@ -16,6 +16,9 @@ from boto.ec2.connection import *
 
 class KeyErzeugen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         neuerkeyname = self.request.get('keyname')
 
@@ -29,11 +32,11 @@ class KeyErzeugen(webapp.RequestHandler):
           # Wenn kein Name angegeben wurde, kann kein Key angelegt werden
           #fehlermeldung = "Sie haben keine Namen angegeben"
           fehlermeldung = "92"
-          self.redirect('/schluessel?message='+fehlermeldung)
+          self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif re.search(r'[^\-_a-zA-Z0-9]', neuerkeyname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
           fehlermeldung = "100"
-          self.redirect('/schluessel?message='+fehlermeldung)
+          self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
 
           liste_key_pairs = conn_region.get_all_key_pairs()
@@ -49,7 +52,7 @@ class KeyErzeugen(webapp.RequestHandler):
               schon_vorhanden = 1
               neu = "nein"
               fehlermeldung = "102"
-              self.redirect('/schluessel?message='+fehlermeldung)
+              self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung)
 
           # Wenn der Schlüssel noch nicht existiert...
           if schon_vorhanden == 0:
@@ -58,13 +61,13 @@ class KeyErzeugen(webapp.RequestHandler):
               neuer_key = conn_region.create_key_pair(neuerkeyname)
             except EC2ResponseError:
               fehlermeldung = "101"
-              self.redirect('/schluessel?message='+fehlermeldung)
+              self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung)
             except DownloadError:
               # Diese Exception hilft gegen diese beiden Fehler:
               # DownloadError: ApplicationError: 2 timed out
               # DownloadError: ApplicationError: 5
               fehlermeldung = "8"
-              self.redirect('/schluessel?message='+fehlermeldung)
+              self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung)
             else:
               neu = "ja"
               secretkey = neuer_key.material
@@ -76,4 +79,4 @@ class KeyErzeugen(webapp.RequestHandler):
               # der Secret Key wird für 10 Minuten im Memcache gespeichert
               memcache.add(key=keyname, value=secretkey, time=600)
               fehlermeldung = "99"
-              self.redirect('/schluessel?message='+fehlermeldung+'&neu='+neu+'&neuerkeyname='+neuerkeyname+'&secretkey='+keyname)
+              self.redirect('/schluessel?mobile='+str(mobile)+'&message='+fehlermeldung+'&neu='+neu+'&neuerkeyname='+neuerkeyname+'&secretkey='+keyname)
