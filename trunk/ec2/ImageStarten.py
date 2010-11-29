@@ -289,10 +289,10 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
-                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Kerne</th>'
               else:               # Wenn die Sprache Englisch ist...
-                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
-              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Cores</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th align="center">ECU</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Speicher</th>'
               else:               # Wenn die Sprache Englisch ist...
@@ -344,10 +344,10 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Architecture</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
-                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtuelle Cores</th>'
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Kerne</th>'
               else:               # Wenn die Sprache Englisch ist...
-                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Virtual Cores</th>'
-              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>EC2 Compute Units</th>'
+                tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Cores</th>'
+              tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th align="center">ECU</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
                 tabelle_ec2_instanztypen = tabelle_ec2_instanztypen + '<th>Speicher</th>'
               else:               # Wenn die Sprache Englisch ist...
@@ -450,8 +450,12 @@ class ImageStarten(webapp.RequestHandler):
           'laenge_liste_zonen': laenge_liste_zonen,
           'zonen_anfang': zonen_anfang,
           't1_micro_warnung': t1_micro_warnung,
+          'mobile': mobile,
           }
 
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "image_starten.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "image_starten.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "image_starten.html")
           self.response.out.write(template.render(path,template_values))
 

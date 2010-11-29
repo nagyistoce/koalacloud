@@ -124,7 +124,7 @@ class SnapshotsAmazonAll(webapp.RequestHandler):
                 if mobile == "true":
                   # Mobile version of the table
                   snapshotstabelle = ''
-                  snapshotstabelle += '<table border="0" cellspacing="0" cellpadding="5">'
+                  snapshotstabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
                  
                   counter = 0
                   for i in range(laenge_liste_snapshots):

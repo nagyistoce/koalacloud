@@ -127,9 +127,9 @@ class Instanzen(webapp.RequestHandler):
   
               if laenge_liste_reservations == 0:
                 if sprache == "de":
-                  instanzentabelle = 'Es sind keine Instanzen in der Region vorhanden.'
+                  instanzentabelle = 'Sie haben keine Instanzen in dieser Region.'
                 else:
-                  instanzentabelle = 'Still no instances exist inside this region.'
+                  instanzentabelle = 'You have no instances inside region.'
               else:
                 instanzentabelle = ''
                 instanzentabelle = instanzentabelle + '<table border="3" cellspacing="0" cellpadding="5">'

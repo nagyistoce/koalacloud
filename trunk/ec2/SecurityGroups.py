@@ -52,161 +52,182 @@ class SecurityGroups(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
-          if sprache != "de":
-            sprache = "en"
+          # It is Google Storage and not am IaaS  
+          if regionname == "GoogleStorage":
+            
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            }
 
-          input_error_message = error_messages.get(message, {}).get(sprache)
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:  
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+            self.response.out.write(template.render(path,template_values))
+            
+          # It is not Google Storage. It is an IaaS
+          else:   
 
-          # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
-          if input_error_message == None:
-            input_error_message = ""
-
-          # Wenn die Nachricht grün formatiert werden soll...
-          if message in ("40", "48"):
-            # wird sie hier, in der Hilfsfunktion grün formatiert
-            input_error_message = format_error_message_green(input_error_message)
-          # Ansonsten wird die Nachricht rot formatiert
-          elif message in ("8", "41", "42", "43", "44", "45", "46", "47", "49"):
-            input_error_message = format_error_message_red(input_error_message)
-          else:
-            input_error_message = ""
-
-          try:
-            # Liste mit den Security Groups
-            liste_security_groups = conn_region.get_all_security_groups()
-          except EC2ResponseError:
-            # Wenn es nicht klappt...
-            if sprache == "de":
-              gruppentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
+            if sprache != "de":
+              sprache = "en"
+  
+            input_error_message = error_messages.get(message, {}).get(sprache)
+  
+            # Wenn keine Fehlermeldung gefunden wird, ist das Ergebnis "None"
+            if input_error_message == None:
+              input_error_message = ""
+  
+            # Wenn die Nachricht grün formatiert werden soll...
+            if message in ("40", "48"):
+              # wird sie hier, in der Hilfsfunktion grün formatiert
+              input_error_message = format_error_message_green(input_error_message)
+            # Ansonsten wird die Nachricht rot formatiert
+            elif message in ("8", "41", "42", "43", "44", "45", "46", "47", "49"):
+              input_error_message = format_error_message_red(input_error_message)
             else:
-              gruppentabelle = '<font color="red">An error occured</font>'
-          except DownloadError:
-            # Diese Exception hilft gegen diese beiden Fehler:
-            # DownloadError: ApplicationError: 2 timed out
-            # DownloadError: ApplicationError: 5
-            if sprache == "de":
-              gruppentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
-            else:
-              gruppentabelle = '<font color="red">A timeout error occured</font>'
-          else:
-            # Wenn es geklappt hat...
-            # Anzahl der Elemente in der Liste
-            laenge_liste_security_groups = len(liste_security_groups)
-
-            if laenge_liste_security_groups == 0:
-              gruppentabelle = 'Es sind keine Sicherheitsgruppen in der Zone vorhanden.'
-            else:
-              
-              if mobile == "true":
-                gruppentabelle = ''
-                gruppentabelle += '<table border="0" cellspacing="0" cellpadding="5">'
-                counter = 0
-                for i in range(laenge_liste_security_groups):
-                  
-                    if counter > 0:
-                        gruppentabelle += '<tr><td colspan="3">&nbsp;</td></tr>'
-                    counter += 1
-                  
-                    gruppentabelle += '<tr>'
-                    gruppentabelle += '<td>'
-                    gruppentabelle += '<a href="/gruppenentfernen?gruppe='
-                    gruppentabelle += liste_security_groups[i].name
-                    gruppentabelle += "&amp;mobile="
-                    gruppentabelle += str(mobile)
-                    if sprache == "de":
-                      gruppentabelle += '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
-                    else:
-                      gruppentabelle += '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
-                    gruppentabelle += '</td>'
-                    gruppentabelle += '<td align="center">'
-                    gruppentabelle += '<a href="/gruppenaendern?gruppe='
-                    gruppentabelle += liste_security_groups[i].name
-                    gruppentabelle += "&amp;mobile="
-                    gruppentabelle += str(mobile)
-                    if sprache == "de":
-                      gruppentabelle += '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
-                    else:
-                      gruppentabelle += '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
-                    gruppentabelle += '</td>'
-                    gruppentabelle += '<td>'+liste_security_groups[i].name+'</td>'
-                    gruppentabelle += '</tr>'
-                    gruppentabelle += '<tr>'
-                    if sprache == "de":
-                      gruppentabelle += '<td colspan="2" align="right"><b>Beschreibung:</b></td>'
-                    else:
-                      gruppentabelle += '<td colspan="2" align="right"><b>Description:</b></td>'
-                    
-                    gruppentabelle += '<td>'+liste_security_groups[i].description+'</td>'
-                    gruppentabelle += '</tr>'
-                    gruppentabelle += '<tr>'
-                    if sprache == "de":
-                      gruppentabelle += '<td colspan="2" align="right"><b>Besitzer:</b></td>'
-                    else:
-                      gruppentabelle += '<td colspan="2" align="right"><b>Owner:</b></td>'
-                    
-                    gruppentabelle += '<td>'+liste_security_groups[i].owner_id+'</td>'
-                    gruppentabelle += '</tr>'
-                gruppentabelle += '</table>'  
+              input_error_message = ""
+  
+            try:
+              # Liste mit den Security Groups
+              liste_security_groups = conn_region.get_all_security_groups()
+            except EC2ResponseError:
+              # Wenn es nicht klappt...
+              if sprache == "de":
+                gruppentabelle = '<font color="red">Es ist zu einem Fehler gekommen</font>'
               else:
-                gruppentabelle = ''
-                gruppentabelle += '<table border="3" cellspacing="0" cellpadding="5">'
-                gruppentabelle += '<tr>'
-                gruppentabelle += '<th>&nbsp;</th>'
-                if sprache == "de":
-                  gruppentabelle += '<th align="center">Besitzer</th>'
+                gruppentabelle = '<font color="red">An error occured</font>'
+            except DownloadError:
+              # Diese Exception hilft gegen diese beiden Fehler:
+              # DownloadError: ApplicationError: 2 timed out
+              # DownloadError: ApplicationError: 5
+              if sprache == "de":
+                gruppentabelle = '<font color="red">Es ist zu einem Timeout-Fehler gekommen</font>'
+              else:
+                gruppentabelle = '<font color="red">A timeout error occured</font>'
+            else:
+              # Wenn es geklappt hat...
+              # Anzahl der Elemente in der Liste
+              laenge_liste_security_groups = len(liste_security_groups)
+  
+              if laenge_liste_security_groups == 0:
+                gruppentabelle = 'Es sind keine Sicherheitsgruppen in der Zone vorhanden.'
+              else:
+                
+                if mobile == "true":
+                  gruppentabelle = ''
+                  gruppentabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+                  counter = 0
+                  for i in range(laenge_liste_security_groups):
+                    
+                      if counter > 0:
+                          gruppentabelle += '<tr><td colspan="3">&nbsp;</td></tr>'
+                      counter += 1
+                    
+                      gruppentabelle += '<tr>'
+                      gruppentabelle += '<td>'
+                      gruppentabelle += '<a href="/gruppenentfernen?gruppe='
+                      gruppentabelle += liste_security_groups[i].name
+                      gruppentabelle += "&amp;mobile="
+                      gruppentabelle += str(mobile)
+                      if sprache == "de":
+                        gruppentabelle += '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
+                      else:
+                        gruppentabelle += '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
+                      gruppentabelle += '</td>'
+                      gruppentabelle += '<td align="center">'
+                      gruppentabelle += '<a href="/gruppenaendern?gruppe='
+                      gruppentabelle += liste_security_groups[i].name
+                      gruppentabelle += "&amp;mobile="
+                      gruppentabelle += str(mobile)
+                      if sprache == "de":
+                        gruppentabelle += '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
+                      else:
+                        gruppentabelle += '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
+                      gruppentabelle += '</td>'
+                      gruppentabelle += '<td>'+liste_security_groups[i].name+'</td>'
+                      gruppentabelle += '</tr>'
+                      gruppentabelle += '<tr>'
+                      if sprache == "de":
+                        gruppentabelle += '<td colspan="2" align="right"><b>Beschreibung:</b></td>'
+                      else:
+                        gruppentabelle += '<td colspan="2" align="right"><b>Description:</b></td>'
+                      
+                      gruppentabelle += '<td>'+liste_security_groups[i].description+'</td>'
+                      gruppentabelle += '</tr>'
+                      gruppentabelle += '<tr>'
+                      if sprache == "de":
+                        gruppentabelle += '<td colspan="2" align="right"><b>Besitzer:</b></td>'
+                      else:
+                        gruppentabelle += '<td colspan="2" align="right"><b>Owner:</b></td>'
+                      
+                      gruppentabelle += '<td>'+liste_security_groups[i].owner_id+'</td>'
+                      gruppentabelle += '</tr>'
+                  gruppentabelle += '</table>'  
                 else:
-                  gruppentabelle += '<th align="center">Owner</th>'
-                gruppentabelle += '<th align="center">Name</th>'
-                if sprache == "de":
-                  gruppentabelle += '<th align="center">Beschreibung</th>'
-                else:
-                  gruppentabelle += '<th align="center">Description</th>'
-                gruppentabelle += '<th>&nbsp;</th>'
-                gruppentabelle += '</tr>'
-                for i in range(laenge_liste_security_groups):
-                    gruppentabelle += '<tr>'
-                    gruppentabelle += '<td>'
-                    gruppentabelle += '<a href="/gruppenentfernen?gruppe='
-                    gruppentabelle += liste_security_groups[i].name
-                    gruppentabelle += "&amp;mobile="
-                    gruppentabelle += str(mobile)
-                    if sprache == "de":
-                      gruppentabelle += '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
-                    else:
-                      gruppentabelle += '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
-                    gruppentabelle += '</td>'
-                    gruppentabelle += '<td>'+liste_security_groups[i].owner_id+'</td>'
-                    gruppentabelle += '<td>'+liste_security_groups[i].name+'</td>'
-                    gruppentabelle += '<td>'+liste_security_groups[i].description+'</td>'
-                    gruppentabelle += '<td>'
-                    gruppentabelle += '<a href="/gruppenaendern?gruppe='
-                    gruppentabelle += liste_security_groups[i].name
-                    gruppentabelle += "&amp;mobile="
-                    gruppentabelle += str(mobile)
-                    if sprache == "de":
-                      gruppentabelle += '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
-                    else:
-                      gruppentabelle += '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
-                    gruppentabelle += '</td>'
-                    gruppentabelle += '</tr>'
-                gruppentabelle += '</table>'
-
-          template_values = {
-          'navigations_bar': navigations_bar,
-          'url': url,
-          'url_linktext': url_linktext,
-          'zone': regionname,
-          'zone_amazon': zone_amazon,
-          'securitygroupsliste': gruppentabelle,
-          'input_error_message': input_error_message,
-          'zonen_liste': zonen_liste,
-          'mobile': mobile,
-          }
-
-          if mobile == "true":
-              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "securitygroups.html")
-          else:
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygroups.html")
-          self.response.out.write(template.render(path,template_values))
+                  gruppentabelle = ''
+                  gruppentabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                  gruppentabelle += '<tr>'
+                  gruppentabelle += '<th>&nbsp;</th>'
+                  if sprache == "de":
+                    gruppentabelle += '<th align="center">Besitzer</th>'
+                  else:
+                    gruppentabelle += '<th align="center">Owner</th>'
+                  gruppentabelle += '<th align="center">Name</th>'
+                  if sprache == "de":
+                    gruppentabelle += '<th align="center">Beschreibung</th>'
+                  else:
+                    gruppentabelle += '<th align="center">Description</th>'
+                  gruppentabelle += '<th>&nbsp;</th>'
+                  gruppentabelle += '</tr>'
+                  for i in range(laenge_liste_security_groups):
+                      gruppentabelle += '<tr>'
+                      gruppentabelle += '<td>'
+                      gruppentabelle += '<a href="/gruppenentfernen?gruppe='
+                      gruppentabelle += liste_security_groups[i].name
+                      gruppentabelle += "&amp;mobile="
+                      gruppentabelle += str(mobile)
+                      if sprache == "de":
+                        gruppentabelle += '" title=" Sicherheitsgruppe l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Security Gruppe l&ouml;schen"></a>'
+                      else:
+                        gruppentabelle += '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
+                      gruppentabelle += '</td>'
+                      gruppentabelle += '<td>'+liste_security_groups[i].owner_id+'</td>'
+                      gruppentabelle += '<td>'+liste_security_groups[i].name+'</td>'
+                      gruppentabelle += '<td>'+liste_security_groups[i].description+'</td>'
+                      gruppentabelle += '<td>'
+                      gruppentabelle += '<a href="/gruppenaendern?gruppe='
+                      gruppentabelle += liste_security_groups[i].name
+                      gruppentabelle += "&amp;mobile="
+                      gruppentabelle += str(mobile)
+                      if sprache == "de":
+                        gruppentabelle += '" title="Regeln einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Regeln einsehen/&auml;ndern"></a>'
+                      else:
+                        gruppentabelle += '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
+                      gruppentabelle += '</td>'
+                      gruppentabelle += '</tr>'
+                  gruppentabelle += '</table>'
+  
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'securitygroupsliste': gruppentabelle,
+            'input_error_message': input_error_message,
+            'zonen_liste': zonen_liste,
+            'mobile': mobile,
+            }
+  
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "securitygroups.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygroups.html")
+            self.response.out.write(template.render(path,template_values))
 
           

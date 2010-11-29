@@ -7,6 +7,9 @@ from google.appengine.ext import webapp
 
 class FavoritEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # AMI des zu löschenden Favoriten holen
         ami = self.request.get('ami')
         # Zone des zu löschenden Favoriten holen
@@ -25,10 +28,10 @@ class FavoritEntfernen(webapp.RequestHandler):
             # Versuchen den Favorit zu löschen
           except:
             # Wenn es nicht klappt...
-            self.redirect('/images')
+            self.redirect('/images?mobile='+str(mobile))
           else:
             # Wenn es geklappt hat...
-            self.redirect('/images')
+            self.redirect('/images?mobile='+str(mobile))
 
         # Wenn es keine Einträge im Datastore gab...
-        self.redirect('/images')
+        self.redirect('/images?mobile='+str(mobile))
