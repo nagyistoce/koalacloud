@@ -58,7 +58,7 @@ class LoadBalancer(webapp.RequestHandler):
 
           #self.response.out.write(regionname)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":

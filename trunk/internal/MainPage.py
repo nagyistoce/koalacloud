@@ -57,7 +57,7 @@ class MainPage(webapp.RequestHandler):
             url_linktext = 'Logout'
             
             # Get the pull-down menu with the users regions he has already configured 
-            zonen_liste = zonen_liste_funktion(username,sprache)
+            zonen_liste = zonen_liste_funktion(username,sprache,mobile)
             # If the user has still no credentials for cloud services
             if zonen_liste == '':
               if sprache == "de":

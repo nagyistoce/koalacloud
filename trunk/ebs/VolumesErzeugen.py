@@ -13,6 +13,8 @@ class VolumesErzeugen(webapp.RequestHandler):
     def post(self):
         #self.response.out.write('posted!')
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         groesse = self.request.get('groesse')
         GB_oder_TB = self.request.get('GB_oder_TB')
         zone = self.request.get('zone')

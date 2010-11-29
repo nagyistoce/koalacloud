@@ -28,6 +28,8 @@ from boto.ec2.connection import *
 class Keys(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -60,7 +62,7 @@ class Keys(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
@@ -124,34 +126,53 @@ class Keys(webapp.RequestHandler):
               if laenge_liste_keys == 0:
                 keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
               else:
-                keytabelle = ''
-                keytabelle = keytabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                keytabelle = keytabelle + '<tr>'
-                keytabelle = keytabelle + '<th>&nbsp;</th>'
-                keytabelle = keytabelle + '<th align="center">Name</th>'
-                if sprache == "de":
-                  keytabelle = keytabelle + '<th align="center">Pr&uuml;fsumme (Fingerprint)</th>'
+                if mobile == "true":
+                    keytabelle = ''
+                    keytabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                    keytabelle += '<tr>'
+                    keytabelle += '<th>&nbsp;</th>'
+                    keytabelle += '<th align="center">Name</th>'
+                    keytabelle += '</tr>'
+                    for i in range(laenge_liste_keys):
+                        keytabelle += '<tr>'
+                        keytabelle += '<td>'
+                        keytabelle += '<a href="/schluesselentfernen?key='
+                        keytabelle += liste_key_pairs[i].name
+                        keytabelle += "&amp;mobile="
+                        keytabelle += str(mobile)
+                        keytabelle += '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
+                        keytabelle += '</td>'
+                        keytabelle += '<td><tt>'+liste_key_pairs[i].name+'</tt></td>'
+                        keytabelle += '</tr>'
+#                        keytabelle += '<tr>'
+#                        keytabelle += '<td>&nbsp;</td>'
+#                        keytabelle += '<td><tt>'+liste_key_pairs[i].fingerprint+'</tt></td>'
+#                        keytabelle += '</tr>'
+                    keytabelle = keytabelle + '</table>'
                 else:
-                  keytabelle = keytabelle + '<th align="center">Fingerprint</th>'
-                keytabelle = keytabelle + '</tr>'
-                for i in range(laenge_liste_keys):
-                    keytabelle = keytabelle + '<tr>'
-                    keytabelle = keytabelle + '<td>'
-                    keytabelle = keytabelle + '<a href="/schluesselentfernen?key='
-                    keytabelle = keytabelle + liste_key_pairs[i].name
-                    keytabelle = keytabelle + '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
-                    keytabelle = keytabelle + '</td>'
-                    keytabelle = keytabelle + '<td>'
-                    keytabelle = keytabelle + '<tt>'
-                    keytabelle = keytabelle + liste_key_pairs[i].name
-                    keytabelle = keytabelle + '</tt>'
-                    keytabelle = keytabelle + '</td><td>'
-                    keytabelle = keytabelle + '<tt>'
-                    keytabelle = keytabelle + liste_key_pairs[i].fingerprint
-                    keytabelle = keytabelle + '</tt>'
-                    keytabelle = keytabelle + '</td>'
+                    keytabelle = ''
+                    keytabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                    keytabelle += '<tr>'
+                    keytabelle += '<th>&nbsp;</th>'
+                    keytabelle += '<th align="center">Name</th>'
+                    if sprache == "de":
+                      keytabelle += '<th align="center">Pr&uuml;fsumme</th>'
+                    else:
+                      keytabelle += '<th align="center">Fingerprint</th>'
                     keytabelle = keytabelle + '</tr>'
-                keytabelle = keytabelle + '</table>'
+                    for i in range(laenge_liste_keys):
+                        keytabelle += '<tr>'
+                        keytabelle += '<td>'
+                        keytabelle += '<a href="/schluesselentfernen?key='
+                        keytabelle += liste_key_pairs[i].name
+                        keytabelle += "&amp;mobile="
+                        keytabelle += str(mobile)
+                        keytabelle += '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
+                        keytabelle += '</td>'
+                        keytabelle += '<td><tt>'+liste_key_pairs[i].name+'</tt></td>'
+                        keytabelle += '<td><tt>'+liste_key_pairs[i].fingerprint+'</tt></td>'
+                        keytabelle += '</tr>'
+                    keytabelle = keytabelle + '</table>'
   
               if neu == "ja":
                 secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
@@ -218,6 +239,7 @@ class Keys(webapp.RequestHandler):
               'javascript_funktion': javascript_funktion,
               'zonen_liste': zonen_liste,
               'input_error_message': input_error_message,
+              'mobile': mobile,
               }
   
               if mobile == "true":

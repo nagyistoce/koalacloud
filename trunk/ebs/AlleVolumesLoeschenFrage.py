@@ -39,7 +39,7 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           template_values = {
           'navigations_bar': navigations_bar,

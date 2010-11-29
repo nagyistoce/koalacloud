@@ -27,6 +27,8 @@ class Regionen(webapp.RequestHandler):
     def get(self):
         message = self.request.get('message')
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         neuerzugang = self.request.get('neuerzugang')
         # Den Usernamen erfahren
         # Get the username
@@ -53,7 +55,7 @@ class Regionen(webapp.RequestHandler):
             url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
             url_linktext = 'Logout'
 
-            zonen_liste = zonen_liste_funktion(username,sprache)
+            zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
             if sprache != "de":
               sprache = "en"
@@ -82,54 +84,101 @@ class Regionen(webapp.RequestHandler):
 
             if anzahl:
               # wenn schon Einträge für den Benutzer vorhanden sind...
-              tabelle_logins = ''
-              tabelle_logins = tabelle_logins + '<table border="3" cellspacing="0" cellpadding="5">'
-              tabelle_logins = tabelle_logins + '<tr>'
-              tabelle_logins = tabelle_logins + '<th>&nbsp;</th>'
-              if sprache == "de":
-                tabelle_logins = tabelle_logins + '<th align="center">Art der Region</th>'
+              
+              if mobile == "true":
+                # Format the mobile version
+
+                tabelle_logins = ''
+                durchlauf = 0
+                for test in results:
+                  if durchlauf > 0:
+                     tabelle_logins += '<p>&nbsp;</p>'
+                  
+                  tabelle_logins += '<table border="0" cellspacing="0" cellpadding="5">'
+                  tabelle_logins += '<tr>'
+                  tabelle_logins += '<td>'
+                  tabelle_logins += '<a href="/zugangentfernen?region='
+                  tabelle_logins += str(test.regionname)
+                  tabelle_logins += '&amp;endpointurl='
+                  tabelle_logins += str(test.endpointurl)
+                  tabelle_logins += '&amp;accesskey='
+                  tabelle_logins += str(test.accesskey)
+                  tabelle_logins += "&amp;mobile="
+                  tabelle_logins += str(mobile)
+                  if sprache == "de":
+                    tabelle_logins += '" title="Zugang l&ouml;schen'
+                  else:
+                    tabelle_logins += '" title="erase credentials'
+                  tabelle_logins += '"><img src="bilder/delete.png" width="16" height="16" border="0"'
+                  if sprache == "de":
+                    tabelle_logins += ' alt="Zugang l&ouml;schen"></a>'
+                  else:
+                    tabelle_logins += ' alt="erase credentials"></a>'
+                  tabelle_logins += '</td>'
+                  tabelle_logins += '<td align="left">'+str(test.eucalyptusname)+'</td>'
+                  tabelle_logins += '</tr>'
+                  tabelle_logins += '<tr>'
+                  tabelle_logins += '<td align="left">&nbsp;</td>'
+                  tabelle_logins += '<td align="left">'+str(test.endpointurl)+'</td>'
+                  tabelle_logins += '</tr>'
+                  tabelle_logins += '<tr>'
+                  tabelle_logins += '<td align="left">&nbsp;</td>'
+                  tabelle_logins += '<td align="left">'+str(test.accesskey)+'</td>'
+                  tabelle_logins += '</tr>'
+                  tabelle_logins += '</table>'
+                  
+                  durchlauf += 1 
               else:
-                tabelle_logins = tabelle_logins + '<th align="center">Sort of Region</th>'
-              tabelle_logins = tabelle_logins + '<th align="center">Endpoint URL</th>'
-              tabelle_logins = tabelle_logins + '<th align="center">Access Key</th>'
-              if sprache == "de":
-                tabelle_logins = tabelle_logins + '<th align="center">Name/Beschreibung</th>'
-              else:
-                tabelle_logins = tabelle_logins + '<th align="center">Name/Description</th>'
-              tabelle_logins = tabelle_logins + '</tr>'
-              for test in results:
+                # Not the mobile version
+                tabelle_logins = ''
+                tabelle_logins = tabelle_logins + '<table border="3" cellspacing="0" cellpadding="5">'
                 tabelle_logins = tabelle_logins + '<tr>'
-                tabelle_logins = tabelle_logins + '<td>'
-                tabelle_logins = tabelle_logins + '<a href="/zugangentfernen?region='
-                tabelle_logins = tabelle_logins + str(test.regionname)
-                tabelle_logins = tabelle_logins + '&amp;endpointurl='
-                tabelle_logins = tabelle_logins + str(test.endpointurl)
-                tabelle_logins = tabelle_logins + '&amp;accesskey='
-                tabelle_logins = tabelle_logins + str(test.accesskey)
+                tabelle_logins = tabelle_logins + '<th>&nbsp;</th>'
                 if sprache == "de":
-                  tabelle_logins = tabelle_logins + '" title="Zugang l&ouml;schen'
+                  tabelle_logins = tabelle_logins + '<th align="center">Art der Region</th>'
                 else:
-                  tabelle_logins = tabelle_logins + '" title="erase credentials'
-                tabelle_logins = tabelle_logins + '"><img src="bilder/delete.png" width="16" height="16" border="0"'
+                  tabelle_logins = tabelle_logins + '<th align="center">Sort of Region</th>'
+                tabelle_logins = tabelle_logins + '<th align="center">Endpoint URL</th>'
+                tabelle_logins = tabelle_logins + '<th align="center">Access Key</th>'
                 if sprache == "de":
-                  tabelle_logins = tabelle_logins + ' alt="Zugang l&ouml;schen"></a>'
+                  tabelle_logins = tabelle_logins + '<th align="center">Name/Beschreibung</th>'
                 else:
-                  tabelle_logins = tabelle_logins + ' alt="erase credentials"></a>'
-                tabelle_logins = tabelle_logins + '</td>'
-                tabelle_logins = tabelle_logins + '<td align="center">'
-                tabelle_logins = tabelle_logins + str(test.zugangstyp)
-                tabelle_logins = tabelle_logins + '</td>'
-                tabelle_logins = tabelle_logins + '<td align="center">'
-                tabelle_logins = tabelle_logins + str(test.endpointurl)
-                tabelle_logins = tabelle_logins + '</td>'
-                tabelle_logins = tabelle_logins + '<td align="left">'
-                tabelle_logins = tabelle_logins + str(test.accesskey)
-                tabelle_logins = tabelle_logins + '</td>'
-                tabelle_logins = tabelle_logins + '<td align="left">'
-                tabelle_logins = tabelle_logins + test.eucalyptusname
-                tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<th align="center">Name/Description</th>'
                 tabelle_logins = tabelle_logins + '</tr>'
-              tabelle_logins = tabelle_logins + '</table>'
+                for test in results:
+                  tabelle_logins = tabelle_logins + '<tr>'
+                  tabelle_logins = tabelle_logins + '<td>'
+                  tabelle_logins = tabelle_logins + '<a href="/zugangentfernen?region='
+                  tabelle_logins = tabelle_logins + str(test.regionname)
+                  tabelle_logins = tabelle_logins + '&amp;endpointurl='
+                  tabelle_logins = tabelle_logins + str(test.endpointurl)
+                  tabelle_logins = tabelle_logins + '&amp;accesskey='
+                  tabelle_logins = tabelle_logins + str(test.accesskey)
+                  if sprache == "de":
+                    tabelle_logins = tabelle_logins + '" title="Zugang l&ouml;schen'
+                  else:
+                    tabelle_logins = tabelle_logins + '" title="erase credentials'
+                  tabelle_logins = tabelle_logins + '"><img src="bilder/delete.png" width="16" height="16" border="0"'
+                  if sprache == "de":
+                    tabelle_logins = tabelle_logins + ' alt="Zugang l&ouml;schen"></a>'
+                  else:
+                    tabelle_logins = tabelle_logins + ' alt="erase credentials"></a>'
+                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<td align="center">'
+                  tabelle_logins = tabelle_logins + str(test.zugangstyp)
+                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<td align="center">'
+                  tabelle_logins = tabelle_logins + str(test.endpointurl)
+                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<td align="left">'
+                  tabelle_logins = tabelle_logins + str(test.accesskey)
+                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<td align="left">'
+                  tabelle_logins = tabelle_logins + test.eucalyptusname
+                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '</tr>'
+                tabelle_logins = tabelle_logins + '</table>'
+                
             else:
               # wenn noch keine Einträge für den Benutzer vorhanden sind...
               if sprache == "de":
@@ -138,302 +187,606 @@ class Regionen(webapp.RequestHandler):
                 tabelle_logins = 'No credentials available'
               tabelle_logins = tabelle_logins + '<p>&nbsp;</p>'
 
-            if neuerzugang == "eucalyptus":
-              eingabefelder = '<p>&nbsp;</p>'
-              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="eucalyptus">'
-              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value="">'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS ohne <tt>/services/Eucalyptus</tt></font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS without <tt>/services/Eucalyptus</tt></font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value="">'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
-              #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
-              eingabefelder = eingabefelder + '    <td colspan="2">'
-              eingabefelder = eingabefelder + '      <select name="port" size="1">'
-              eingabefelder = eingabefelder + '        <option>80</option>'
-              eingabefelder = eingabefelder + '        <option>443</option>'
-              eingabefelder = eingabefelder + '        <option>4443</option>'
-              eingabefelder = eingabefelder + '        <option>8080</option>'
-              eingabefelder = eingabefelder + '        <option>8081</option>'
-              eingabefelder = eingabefelder + '        <option>8082</option>'
-              eingabefelder = eingabefelder + '        <option>8083</option>'
-              eingabefelder = eingabefelder + '        <option>8084</option>'
-              eingabefelder = eingabefelder + '        <option>8085</option>'
-              eingabefelder = eingabefelder + '        <option>8086</option>'
-              eingabefelder = eingabefelder + '        <option>8087</option>'
-              eingabefelder = eingabefelder + '        <option>8088</option>'
-              eingabefelder = eingabefelder + '        <option>8089</option>'
-              eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
-#              eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
-              eingabefelder = eingabefelder + '        <option>8444</option>'
-              eingabefelder = eingabefelder + '        <option>8990</option>'
-              eingabefelder = eingabefelder + '      </select>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '</table>'
-              eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "ec2":
-              eingabefelder = '<p>&nbsp;</p>'
-              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="ec2">'
-              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '</table>'
-              eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "GoogleStorage":
-              eingabefelder = '<p>&nbsp;</p>'
-              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="GoogleStorage">'
-              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '</table>'
-              eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "nimbus":
-              eingabefelder = '<p>&nbsp;</p>'
-              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="nimbus">'
-              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
-              #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
-              eingabefelder = eingabefelder + '    <td colspan="2">'
-              eingabefelder = eingabefelder + '      <select name="port" size="1">'
-              eingabefelder = eingabefelder + '        <option>80</option>'
-              eingabefelder = eingabefelder + '        <option>443</option>'
-              eingabefelder = eingabefelder + '        <option>4443</option>'
-              eingabefelder = eingabefelder + '        <option>8080</option>'
-              eingabefelder = eingabefelder + '        <option>8081</option>'
-              eingabefelder = eingabefelder + '        <option>8082</option>'
-              eingabefelder = eingabefelder + '        <option>8083</option>'
-              eingabefelder = eingabefelder + '        <option>8084</option>'
-              eingabefelder = eingabefelder + '        <option>8085</option>'
-              eingabefelder = eingabefelder + '        <option>8086</option>'
-              eingabefelder = eingabefelder + '        <option>8087</option>'
-              eingabefelder = eingabefelder + '        <option>8088</option>'
-              eingabefelder = eingabefelder + '        <option>8089</option>'
-              eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
-              #eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
-              eingabefelder = eingabefelder + '        <option>8444</option>'
-              eingabefelder = eingabefelder + '        <option>8990</option>'
-              eingabefelder = eingabefelder + '      </select>'
-              eingabefelder = eingabefelder + '    </td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '</table>'
-              eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "opennebula":
-#              eingabefelder = '<p>&nbsp;</p>'
-#              if sprache == "de":
-#                eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r OpenNebula ist noch nicht implementiert</font>'
-#              else:
-#                eingabefelder = eingabefelder + '<font color="green">The support of OpenNebula is not yet finished</font>'
 
-              eingabefelder = '<p>&nbsp;</p>'
-              eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
-              eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="opennebula">'
-              eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
+            if mobile == "true":
+              # Format the mobile version
+              
+              if neuerzugang == "eucalyptus":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder += '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder += '<input type="hidden" name="mobile" value="'+mobile+'">' 
+                eingabefelder += '<input type="hidden" name="typ" value="eucalyptus">'
+                eingabefelder += '<table border="0" cellspacing="2" cellpadding="2">'
+                
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Name '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Der Name ist nur zur Unterscheidung)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Choose one you like)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="nameregion" value="">'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Endpoint URL '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Nur die IP oder den DNS)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Just the IP or DNS)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="endpointurl" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Port '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Die App Engine akzeptiert nur diese Ports)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(The App Engine accepts only these ports)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                #eingabefelder += '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder += '    <td colspan="2">'
+                eingabefelder += '      <select name="port" size="1">'
+                eingabefelder += '        <option>80</option>'
+                eingabefelder += '        <option>443</option>'
+                eingabefelder += '        <option>4443</option>'
+                eingabefelder += '        <option>8080</option>'
+                eingabefelder += '        <option>8081</option>'
+                eingabefelder += '        <option>8082</option>'
+                eingabefelder += '        <option>8083</option>'
+                eingabefelder += '        <option>8084</option>'
+                eingabefelder += '        <option>8085</option>'
+                eingabefelder += '        <option>8086</option>'
+                eingabefelder += '        <option>8087</option>'
+                eingabefelder += '        <option>8088</option>'
+                eingabefelder += '        <option>8089</option>'
+                eingabefelder += '        <option selected="selected">8188</option>'
+  #              eingabefelder += '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder += '        <option>8444</option>'
+                eingabefelder += '        <option>8990</option>'
+                eingabefelder += '      </select>'
+                eingabefelder += '  </tr>'
+
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Secret Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                if sprache == "de":
+                  eingabefelder += '    <td align="left"><input type="submit" value="Zugang einrichten"></td>'
+                else:
+                  eingabefelder += '    <td align="left"><input type="submit" value="send"></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '</table>'
+                eingabefelder += '</form>'
+              elif neuerzugang == "ec2":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder += '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder += '<input type="hidden" name="mobile" value="'+mobile+'">' 
+                eingabefelder += '<input type="hidden" name="typ" value="ec2">'
+                eingabefelder += '<table border="0" cellspacing="2" cellpadding="2">'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Secret Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                if sprache == "de":
+                  eingabefelder += '    <td align="left"><input type="submit" value="Zugang einrichten"></td>'
+                else:
+                  eingabefelder += '    <td align="left"><input type="submit" value="send"></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '</table>'
+                eingabefelder += '</form>'
+              elif neuerzugang == "GoogleStorage":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder += '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder += '<input type="hidden" name="mobile" value="'+mobile+'">' 
+                eingabefelder += '<input type="hidden" name="typ" value="GoogleStorage">'
+                eingabefelder += '<table border="0" cellspacing="2" cellpadding="2">'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Secret Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                if sprache == "de":
+                  eingabefelder += '    <td align="left"><input type="submit" value="Zugang einrichten"></td>'
+                else:
+                  eingabefelder += '    <td align="left"><input type="submit" value="send"></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '</table>'
+                eingabefelder += '</form>'
+              elif neuerzugang == "nimbus":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder += '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder += '<input type="hidden" name="mobile" value="'+mobile+'">' 
+                eingabefelder += '<input type="hidden" name="typ" value="nimbus">'
+                eingabefelder += '<table border="0" cellspacing="2" cellpadding="2">'
+                
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Name '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Der Name ist nur zur Unterscheidung)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Choose one you like)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="nameregion" value="">'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Endpoint URL '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Nur die IP oder den DNS)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Just the IP or DNS)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="endpointurl" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Port '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Die App Engine akzeptiert nur diese Ports)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(The App Engine accepts only these ports)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                #eingabefelder += '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder += '    <td colspan="2">'
+                eingabefelder += '      <select name="port" size="1">'
+                eingabefelder += '        <option>80</option>'
+                eingabefelder += '        <option>443</option>'
+                eingabefelder += '        <option>4443</option>'
+                eingabefelder += '        <option>8080</option>'
+                eingabefelder += '        <option>8081</option>'
+                eingabefelder += '        <option>8082</option>'
+                eingabefelder += '        <option>8083</option>'
+                eingabefelder += '        <option>8084</option>'
+                eingabefelder += '        <option>8085</option>'
+                eingabefelder += '        <option>8086</option>'
+                eingabefelder += '        <option>8087</option>'
+                eingabefelder += '        <option>8088</option>'
+                eingabefelder += '        <option>8089</option>'
+                eingabefelder += '        <option selected="selected">8188</option>'
+  #              eingabefelder += '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder += '        <option>8444</option>'
+                eingabefelder += '        <option>8990</option>'
+                eingabefelder += '      </select>'
+                eingabefelder += '  </tr>'
+
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Secret Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                if sprache == "de":
+                  eingabefelder += '    <td align="left"><input type="submit" value="Zugang einrichten"></td>'
+                else:
+                  eingabefelder += '    <td align="left"><input type="submit" value="send"></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '</table>'
+                eingabefelder += '</form>'
+              elif neuerzugang == "opennebula":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder += '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder += '<input type="hidden" name="mobile" value="'+mobile+'">' 
+                eingabefelder += '<input type="hidden" name="typ" value="opennebula">'
+                eingabefelder += '<table border="0" cellspacing="2" cellpadding="2">'
+                
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Name '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Der Name ist nur zur Unterscheidung)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Choose one you like)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="nameregion" value="">'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Endpoint URL '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Nur die IP oder den DNS)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(Just the IP or DNS)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="endpointurl" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Port '
+                if sprache == "de":
+                  eingabefelder += '<font color="green">(Die App Engine akzeptiert nur diese Ports)</font>:'
+                else:
+                  eingabefelder += '<font color="green">(The App Engine accepts only these ports)</font>:'
+                eingabefelder += '    </td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                #eingabefelder += '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder += '    <td colspan="2">'
+                eingabefelder += '      <select name="port" size="1">'
+                eingabefelder += '        <option>80</option>'
+                eingabefelder += '        <option>443</option>'
+                eingabefelder += '        <option>4443</option>'
+                eingabefelder += '        <option>8080</option>'
+                eingabefelder += '        <option>8081</option>'
+                eingabefelder += '        <option>8082</option>'
+                eingabefelder += '        <option>8083</option>'
+                eingabefelder += '        <option>8084</option>'
+                eingabefelder += '        <option>8085</option>'
+                eingabefelder += '        <option>8086</option>'
+                eingabefelder += '        <option>8087</option>'
+                eingabefelder += '        <option>8088</option>'
+                eingabefelder += '        <option>8089</option>'
+                eingabefelder += '        <option selected="selected">8188</option>'
+  #              eingabefelder += '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder += '        <option>8444</option>'
+                eingabefelder += '        <option>8990</option>'
+                eingabefelder += '      </select>'
+                eingabefelder += '  </tr>'
+
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td align="left">Secret Access Key:</td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                eingabefelder += '    <td><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '  <tr>'
+                if sprache == "de":
+                  eingabefelder += '    <td align="left"><input type="submit" value="Zugang einrichten"></td>'
+                else:
+                  eingabefelder += '    <td align="left"><input type="submit" value="send"></td>'
+                eingabefelder += '  </tr>'
+                eingabefelder += '</table>'
+                eingabefelder += '</form>'
               else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '  <td></td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
-              #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
-              eingabefelder = eingabefelder + '    <td colspan="2">'
-              eingabefelder = eingabefelder + '      <select name="port" size="1">'
-              eingabefelder = eingabefelder + '        <option>80</option>'
-              eingabefelder = eingabefelder + '        <option>443</option>'
-              eingabefelder = eingabefelder + '        <option>4443</option>'
-              #eingabefelder = eingabefelder + '        <option>4567</option>'  ### Nichte für die Produktion!!!
-              eingabefelder = eingabefelder + '        <option>8080</option>'
-              eingabefelder = eingabefelder + '        <option>8081</option>'
-              eingabefelder = eingabefelder + '        <option>8082</option>'
-              eingabefelder = eingabefelder + '        <option>8083</option>'
-              eingabefelder = eingabefelder + '        <option>8084</option>'
-              eingabefelder = eingabefelder + '        <option>8085</option>'
-              eingabefelder = eingabefelder + '        <option>8086</option>'
-              eingabefelder = eingabefelder + '        <option>8087</option>'
-              eingabefelder = eingabefelder + '        <option>8088</option>'
-              eingabefelder = eingabefelder + '        <option>8089</option>'
-              eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
-              #eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
-              eingabefelder = eingabefelder + '        <option>8444</option>'
-              eingabefelder = eingabefelder + '        <option>8990</option>'
-              eingabefelder = eingabefelder + '      </select>'
-              eingabefelder = eingabefelder + '    </td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
-              eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '  <tr>'
-              eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
-              else:
-                eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
-                eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
-              eingabefelder = eingabefelder + '  </tr>'
-              eingabefelder = eingabefelder + '</table>'
-              eingabefelder = eingabefelder + '</form>'
-            elif neuerzugang == "tashi":
-              eingabefelder = '<p>&nbsp;</p>'
-              if sprache == "de":
-                eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r Tashi ist noch nicht implementiert</font>'
-              else:
-                eingabefelder = eingabefelder + '<font color="green">The support of Tashi is not yet finished</font>'
+                eingabefelder = ''
+                
             else:
-              eingabefelder = ''
+              # Not the mobile version
+              if neuerzugang == "eucalyptus":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="eucalyptus">'
+                eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value="">'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS ohne <tt>/services/Eucalyptus</tt></font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS without <tt>/services/Eucalyptus</tt></font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value="">'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
+                #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder = eingabefelder + '    <td colspan="2">'
+                eingabefelder = eingabefelder + '      <select name="port" size="1">'
+                eingabefelder = eingabefelder + '        <option>80</option>'
+                eingabefelder = eingabefelder + '        <option>443</option>'
+                eingabefelder = eingabefelder + '        <option>4443</option>'
+                eingabefelder = eingabefelder + '        <option>8080</option>'
+                eingabefelder = eingabefelder + '        <option>8081</option>'
+                eingabefelder = eingabefelder + '        <option>8082</option>'
+                eingabefelder = eingabefelder + '        <option>8083</option>'
+                eingabefelder = eingabefelder + '        <option>8084</option>'
+                eingabefelder = eingabefelder + '        <option>8085</option>'
+                eingabefelder = eingabefelder + '        <option>8086</option>'
+                eingabefelder = eingabefelder + '        <option>8087</option>'
+                eingabefelder = eingabefelder + '        <option>8088</option>'
+                eingabefelder = eingabefelder + '        <option>8089</option>'
+                eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
+  #              eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder = eingabefelder + '        <option>8444</option>'
+                eingabefelder = eingabefelder + '        <option>8990</option>'
+                eingabefelder = eingabefelder + '      </select>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '</table>'
+                eingabefelder = eingabefelder + '</form>'
+              elif neuerzugang == "ec2":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="ec2">'
+                eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '</table>'
+                eingabefelder = eingabefelder + '</form>'
+              elif neuerzugang == "GoogleStorage":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="GoogleStorage">'
+                eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '</table>'
+                eingabefelder = eingabefelder + '</form>'
+              elif neuerzugang == "nimbus":
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="nimbus">'
+                eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
+                #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder = eingabefelder + '    <td colspan="2">'
+                eingabefelder = eingabefelder + '      <select name="port" size="1">'
+                eingabefelder = eingabefelder + '        <option>80</option>'
+                eingabefelder = eingabefelder + '        <option>443</option>'
+                eingabefelder = eingabefelder + '        <option>4443</option>'
+                eingabefelder = eingabefelder + '        <option>8080</option>'
+                eingabefelder = eingabefelder + '        <option>8081</option>'
+                eingabefelder = eingabefelder + '        <option>8082</option>'
+                eingabefelder = eingabefelder + '        <option>8083</option>'
+                eingabefelder = eingabefelder + '        <option>8084</option>'
+                eingabefelder = eingabefelder + '        <option>8085</option>'
+                eingabefelder = eingabefelder + '        <option>8086</option>'
+                eingabefelder = eingabefelder + '        <option>8087</option>'
+                eingabefelder = eingabefelder + '        <option>8088</option>'
+                eingabefelder = eingabefelder + '        <option>8089</option>'
+                eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
+                #eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder = eingabefelder + '        <option>8444</option>'
+                eingabefelder = eingabefelder + '        <option>8990</option>'
+                eingabefelder = eingabefelder + '      </select>'
+                eingabefelder = eingabefelder + '    </td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '</table>'
+                eingabefelder = eingabefelder + '</form>'
+              elif neuerzugang == "opennebula":
+  #              eingabefelder = '<p>&nbsp;</p>'
+  #              if sprache == "de":
+  #                eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r OpenNebula ist noch nicht implementiert</font>'
+  #              else:
+  #                eingabefelder = eingabefelder + '<font color="green">The support of OpenNebula is not yet finished</font>'
+  
+                eingabefelder = '<p>&nbsp;</p>'
+                eingabefelder = eingabefelder + '<form action="/zugangeinrichten" method="post" accept-charset="utf-8">'
+                eingabefelder = eingabefelder + '<input type="hidden" name="typ" value="opennebula">'
+                eingabefelder = eingabefelder + '<table border="0" cellspacing="5" cellpadding="5">'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Der Name ist nur zur Unterscheidung</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Choose one you like</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Name:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="nameregion" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Nur die IP oder DNS</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Just the IP or DNS</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Endpoint URL:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="endpointurl" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '  <td></td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine akzeptiert nur diese Ports</font></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td><font color="green">Google App Engine accepts only these ports</font></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Port:</td>'
+                #eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="5" maxlength="5" name="port" value=""></td>'
+                eingabefelder = eingabefelder + '    <td colspan="2">'
+                eingabefelder = eingabefelder + '      <select name="port" size="1">'
+                eingabefelder = eingabefelder + '        <option>80</option>'
+                eingabefelder = eingabefelder + '        <option>443</option>'
+                eingabefelder = eingabefelder + '        <option>4443</option>'
+                #eingabefelder = eingabefelder + '        <option>4567</option>'  ### Nichte für die Produktion!!!
+                eingabefelder = eingabefelder + '        <option>8080</option>'
+                eingabefelder = eingabefelder + '        <option>8081</option>'
+                eingabefelder = eingabefelder + '        <option>8082</option>'
+                eingabefelder = eingabefelder + '        <option>8083</option>'
+                eingabefelder = eingabefelder + '        <option>8084</option>'
+                eingabefelder = eingabefelder + '        <option>8085</option>'
+                eingabefelder = eingabefelder + '        <option>8086</option>'
+                eingabefelder = eingabefelder + '        <option>8087</option>'
+                eingabefelder = eingabefelder + '        <option>8088</option>'
+                eingabefelder = eingabefelder + '        <option>8089</option>'
+                eingabefelder = eingabefelder + '        <option selected="selected">8188</option>'
+                #eingabefelder = eingabefelder + '        <option>8442</option>' ####### weg damit!!! ###
+                eingabefelder = eingabefelder + '        <option>8444</option>'
+                eingabefelder = eingabefelder + '        <option>8990</option>'
+                eingabefelder = eingabefelder + '      </select>'
+                eingabefelder = eingabefelder + '    </td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="accesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td align="right">Secret Access Key:</td>'
+                eingabefelder = eingabefelder + '    <td colspan="2"><input type="text" size="40" name="secretaccesskey" value=""></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '  <tr>'
+                eingabefelder = eingabefelder + '    <td>&nbsp;</td>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="Zugang einrichten"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="L&ouml;schen"></td>'
+                else:
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="submit" value="send"></td>'
+                  eingabefelder = eingabefelder + '    <td align="center"><input type="reset" value="erase"></td>'
+                eingabefelder = eingabefelder + '  </tr>'
+                eingabefelder = eingabefelder + '</table>'
+                eingabefelder = eingabefelder + '</form>'
+              elif neuerzugang == "tashi":
+                eingabefelder = '<p>&nbsp;</p>'
+                if sprache == "de":
+                  eingabefelder = eingabefelder + '<font color="green">Unterst&uuml;tung f&uuml;r Tashi ist noch nicht implementiert</font>'
+                else:
+                  eingabefelder = eingabefelder + '<font color="green">The support of Tashi is not yet finished</font>'
+              else:
+                eingabefelder = ''
 
             if neuerzugang == "eucalyptus":
               version_warnung = '<p>&nbsp;</p>'
@@ -452,7 +805,7 @@ class Regionen(webapp.RequestHandler):
               port_warnung = '<p>&nbsp;</p>\n'
               if sprache == "de":
                 port_warnung = port_warnung + 'Die Google App Engine akzeptiert nur wenige Ports. '
-                port_warnung = port_warnung + 'Leider ist der Standard-Port von Eucalyputs (8773) nicht dabei. '
+                port_warnung = port_warnung + 'Leider ist der Standard-Port von Eucalyptus (8773) nicht dabei. '
                 port_warnung = port_warnung + 'Es empfiehlt sich darum, einen anderen Port auf den Eucalyptus-Port umzuleiten. '
                 port_warnung = port_warnung + 'Ein Beispiel:<br> \n'
                 port_warnung = port_warnung + '<tt>iptables -I INPUT -p tcp --dport 8188 -j ACCEPT</tt><br>\n '
@@ -507,6 +860,7 @@ class Regionen(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             'port_warnung': port_warnung,
             'version_warnung': version_warnung,
+            'mobile': mobile,
             }
 
 

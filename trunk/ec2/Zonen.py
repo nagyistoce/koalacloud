@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class Zonen(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -48,7 +50,7 @@ class Zonen(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":

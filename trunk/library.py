@@ -140,7 +140,7 @@ def navigations_bar_funktion(sprache,mobile):
         navigations_bar = ''
         navigations_bar = navigations_bar + '<form name="gowhereform" action="">\n'
         navigations_bar = navigations_bar + '<select id="gowhere" onchange="go()">\n'
-        navigations_bar = navigations_bar + '<option>- Funktionalit&auml;t/Dienst ausw&auml;hlen-\n'
+        navigations_bar = navigations_bar + '<option>- Funktionalit&auml;t/Dienst ausw&auml;hlen -\n'
         navigations_bar = navigations_bar + '<option value="/regionen?mobile=true">Regionen\n'
         navigations_bar = navigations_bar + '<option value="/instanzen?mobile=true">Instanzen\n'
         navigations_bar = navigations_bar + '<option value="/images?mobile=true">Images\n'
@@ -226,7 +226,7 @@ def amazon_region(username):
     return zone_amazon
   
   
-def zonen_liste_funktion(username,sprache):
+def zonen_liste_funktion(username,sprache,mobile):
     testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db", username_db=username)
     # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
     # Wie viele Einträge des Benutzers sind schon vorhanden?
@@ -237,6 +237,7 @@ def zonen_liste_funktion(username,sprache):
     zonen_liste = ''
     if anzahl:
         zonen_liste = zonen_liste + '<form action="/regionwechseln" method="post" accept-charset="utf-8">'
+        zonen_liste = zonen_liste + '<input type="hidden" name="mobile" value="'+mobile+'">'
         zonen_liste = zonen_liste + '<select name="regionen" size="1">'
         for test in results:
             zonen_liste = zonen_liste + '<option>'

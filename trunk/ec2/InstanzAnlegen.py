@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class InstanzAnlegen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         instance_type = self.request.get('type')
         keys_liste = self.request.get('key')
         image_id = self.request.get('image')
@@ -41,17 +44,17 @@ class InstanzAnlegen(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
           fehlermeldung = "78"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat
           fehlermeldung = "77"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
 
 
     def post(self):
@@ -107,14 +110,14 @@ class InstanzAnlegen(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht geklappt hat
           fehlermeldung = "78"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat
           fehlermeldung = "77"
-          self.redirect('/instanzen?message='+fehlermeldung)
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)

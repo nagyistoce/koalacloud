@@ -9,6 +9,9 @@ from internal.Datastore import *
 
 class RegionWechseln(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Zum Testen, ob das "post" geklappt hat
         #self.response.out.write('posted!')
         # Die ausgewählte Region holen
@@ -60,9 +63,9 @@ class RegionWechseln(webapp.RequestHandler):
         except:
           # Wenn es nicht klappt...
           # It it didn't work...
-          self.redirect('/')
+          self.redirect('/?mobile='+str(mobile))
         else:
           # Wenn es geklappt hat...
           # If it worked...
-          self.redirect('/')
+          self.redirect('/?mobile='+str(mobile))
 

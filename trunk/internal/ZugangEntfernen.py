@@ -7,6 +7,9 @@ from google.appengine.ext import webapp
 
 class ZugangEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         region = self.request.get('region')
         endpointurl = self.request.get('endpointurl')
         accesskey = self.request.get('accesskey')
@@ -26,5 +29,5 @@ class ZugangEntfernen(webapp.RequestHandler):
         for result in results:
           result.delete()
 
-        self.redirect('/regionen')
+        self.redirect('/regionen?mobile='+str(mobile))
         

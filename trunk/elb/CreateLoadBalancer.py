@@ -52,7 +52,7 @@ class CreateLoadBalancer(webapp.RequestHandler):
         url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
         url_linktext = 'Logout'
 
-        zonen_liste = zonen_liste_funktion(username,sprache)
+        zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
         if sprache != "de":
             sprache = "en"

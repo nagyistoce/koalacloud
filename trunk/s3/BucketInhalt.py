@@ -70,7 +70,7 @@ class BucketInhalt(webapp.RequestHandler):
           zone_amazon = amazon_region(username)
           zugangstyp = zugangstyp_erhalten(username) 
           
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           AWSAccessKeyId = aws_access_key_erhalten(username,regionname)
           AWSSecretAccessKeyId = aws_secret_access_key_erhalten(username,regionname)

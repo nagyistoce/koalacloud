@@ -17,6 +17,9 @@ from boto.s3.connection import *
 
 class ZugangEinrichten(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         nameregion = self.request.get('nameregion')
         endpointurl = self.request.get('endpointurl')
         port = self.request.get('port')

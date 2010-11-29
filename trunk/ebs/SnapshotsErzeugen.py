@@ -46,7 +46,7 @@ class SnapshotsErzeugen(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           tabelle_snapshot = ''
           tabelle_snapshot = tabelle_snapshot + '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
