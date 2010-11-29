@@ -9,11 +9,13 @@ Sind sie ganz sicher, dass Sie <b>alle</b> Ihre Instanzen beenden wollen?
 <tr>
 <td align="center">
 <form action="/alle_instanzen_beenden_definitiv" method="get">
+<input type="hidden" name="mobile" value="{{ mobile }}">
 <input type="submit" value="Ja! Alle Instanzen beenden">
 </form>
 </td>
 <td align="center">
 <form action="/instanzen" method="get">
+<input type="hidden" name="mobile" value="{{ mobile }}">
 <input type="submit" value="Nein">
 </form>
 </td>

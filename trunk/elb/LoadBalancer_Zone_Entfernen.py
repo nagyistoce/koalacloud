@@ -9,6 +9,9 @@ from library import loginelb
 
 class LoadBalancer_Zone_Entfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Betreffenden Load Balancer holen
         loadbalancer = self.request.get('loadbalancer')
@@ -31,15 +34,15 @@ class LoadBalancer_Zone_Entfernen(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht geklappt hat...
           fehlermeldung = "65"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+          self.redirect('/loadbalanceraendern?mobile='+str(mobile)+'&name='+loadbalancer+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+          self.redirect('/loadbalanceraendern?mobile='+str(mobile)+'&name='+loadbalancer+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "66"
-          self.redirect('/loadbalanceraendern?name='+loadbalancer+'&message='+fehlermeldung)
+          self.redirect('/loadbalanceraendern?mobile='+str(mobile)+'&name='+loadbalancer+'&message='+fehlermeldung)
           

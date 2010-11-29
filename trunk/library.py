@@ -151,7 +151,7 @@ def navigations_bar_funktion(sprache,mobile):
         navigations_bar = navigations_bar + '<option value="/zonen?mobile=true">Verf&uuml;gbarkeitszonen\n'
         navigations_bar = navigations_bar + '<option value="/securitygroups?mobile=true">Sicherheitsgruppen\n'
         navigations_bar = navigations_bar + '<option value="/s3?mobile=true">Simple Storage Service\n'
-        navigations_bar = navigations_bar + '<option value="/loadbalancer?mobile=true">Elastic Load Balancer\n'
+        navigations_bar = navigations_bar + '<option value="/loadbalancer?mobile=true">Elastische Lastverteiler\n'
         navigations_bar = navigations_bar + '<option value="/info?mobile=true">Info\n'
         navigations_bar = navigations_bar + '</select>\n'
         navigations_bar = navigations_bar + '</form>'

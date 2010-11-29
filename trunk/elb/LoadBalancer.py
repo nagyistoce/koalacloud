@@ -95,10 +95,10 @@ class LoadBalancer(webapp.RequestHandler):
               'zonen_liste': zonen_liste,
               }
   
-              #if sprache == "de": naechse_seite = "loadbalancer_non_aws_de.html"
-              #else:               naechse_seite = "loadbalancer_non_aws_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer_non_aws.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "loadbalancer_non_aws.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer_non_aws.html")
               self.response.out.write(template.render(path,template_values))
             else:
   
@@ -153,90 +153,165 @@ class LoadBalancer(webapp.RequestHandler):
                   else:
                     loadbalancertabelle = 'No load balancer exist inside this region.'
                 else:
-                  loadbalancertabelle = ''
-                  loadbalancertabelle = loadbalancertabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  loadbalancertabelle = loadbalancertabelle + '<tr>'
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">&nbsp;</th>'
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Name</th>'
-                  loadbalancertabelle = loadbalancertabelle + '<th>&nbsp;</th>'
-                  if sprache == "de":
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Instanzen</th>'
+                  
+                  if mobile == "true":
+                    loadbalancertabelle = ''
+                    loadbalancertabelle += '<table border="0" cellspacing="0" cellpadding="5">'
+                    
+                    counter = 0
+                    
+                    for i in range(laenge_liste_load_balancers):
+                    
+                        if counter > 0:
+                            loadbalancertabelle += '<tr><td colspan="3">&nbsp;</td></tr>'
+                        counter += 1
+                        loadbalancertabelle += '<tr>'
+                        loadbalancertabelle += '<td>'
+                        loadbalancertabelle += '<a href="/delete_load_balancer?name='
+                        loadbalancertabelle += liste_load_balancers[i].name
+                        loadbalancertabelle += "&amp;mobile="
+                        loadbalancertabelle += str(mobile)
+                        if sprache == "de":
+                          loadbalancertabelle += '" title="Load Balancer l&ouml;schen">'
+                          loadbalancertabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
+                        else:
+                          loadbalancertabelle += '" title="delete load balancer">'
+                          loadbalancertabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '<td align="center"><tt>'+liste_load_balancers[i].name+'</tt></td>'
+                        loadbalancertabelle += '<td align="center">'
+                        loadbalancertabelle += '<a href="/loadbalanceraendern?name='
+                        loadbalancertabelle += liste_load_balancers[i].name
+                        loadbalancertabelle += "&amp;mobile="
+                        loadbalancertabelle += str(mobile)
+                        if sprache == "de":
+                          loadbalancertabelle += '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
+                        else:
+                          loadbalancertabelle += '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '</tr>'
+                        
+                        loadbalancertabelle += '<tr>'
+                        loadbalancertabelle += '<td colspan="3"><tt>'+liste_load_balancers[i].dns_name+'</tt></td>'
+                        loadbalancertabelle += '</tr>'
+                        
+                        loadbalancertabelle += '<tr>'
+                        if sprache == "de":
+                          loadbalancertabelle += '<td align="left"><b>Zonen:</b></td>'
+                        else:
+                          loadbalancertabelle += '<td align="left"><b>Zones:</b></td>'
+                        loadbalancertabelle += '<td colspan="2" align="center"><tt>'
+                        for x in range(len(liste_load_balancers[i].availability_zones)):
+                          loadbalancertabelle += str(liste_load_balancers[i].availability_zones[x])
+                          loadbalancertabelle += '&nbsp;'
+                        loadbalancertabelle += '</tt></td>'
+                        loadbalancertabelle += '</tr>'
+                        
+                        loadbalancertabelle += '<tr>'
+                        if sprache == "de":
+                          loadbalancertabelle += '<td align="left"><b>Datum:</b></td>'
+                        else:
+                          loadbalancertabelle += '<td align="left"><b>Creation Date:</b></td>'
+                        loadbalancertabelle += '<td colspan="2" align="center"><tt>'
+                        datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
+                        loadbalancertabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+                        loadbalancertabelle += '</tt></td>'
+                        loadbalancertabelle += '</tr>'
+                        
+                        loadbalancertabelle += '<tr>'
+                        if sprache == "de":
+                          loadbalancertabelle += '<td align="left"><b>Datum:</b></td>'
+                        else:
+                          loadbalancertabelle += '<td align="left"><b>Creation Date:</b></td>'
+                        loadbalancertabelle += '<td colspan="2" align="center"><tt>'+str(len(liste_load_balancers[i].instances))+'</tt></td>'
+                        loadbalancertabelle += '</tr>'
+                        
+                        loadbalancertabelle += '<tr>'
+                        loadbalancertabelle += '<td align="left"><b>Ports:</b></td>'
+                        loadbalancertabelle += '<td colspan="2" align="center"><tt>'
+                        for x in range(len(liste_load_balancers[i].listeners)):
+                          loadbalancertabelle += str(liste_load_balancers[i].listeners[x])
+                        loadbalancertabelle += '</tt></td>'
+                        loadbalancertabelle += '</tr>'
+                    loadbalancertabelle += '</table>'
+                    
                   else:
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Instances</th>'
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">DNS Name</th>'
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Ports</th>'
-                  if sprache == "de":
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Zonen</th>'
-                  else:
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Zones</th>'
-                  loadbalancertabelle = loadbalancertabelle + '<th align="center">Health Check</th>'
-                  if sprache == "de":
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Datum der Erzeugung</th>'
-                  else:
-                    loadbalancertabelle = loadbalancertabelle + '<th align="center">Creation Date</th>'
-                  loadbalancertabelle = loadbalancertabelle + '</tr>'
-                  for i in range(laenge_liste_load_balancers):
-                      loadbalancertabelle = loadbalancertabelle + '<tr>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<a href="/delete_load_balancer?name='
-                      loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                      if sprache == "de":
-                        loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer l&ouml;schen">'
-                        loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
-                      else:
-                        loadbalancertabelle = loadbalancertabelle + '" title="delete load balancer">'
-                        loadbalancertabelle = loadbalancertabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<a href="/loadbalanceraendern?name='
-                      loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].name
-                      if sprache == "de":
-                        loadbalancertabelle = loadbalancertabelle + '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
-                      else:
-                        loadbalancertabelle = loadbalancertabelle + '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td align="center">'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      loadbalancertabelle = loadbalancertabelle + str(len(liste_load_balancers[i].instances))
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      loadbalancertabelle = loadbalancertabelle + liste_load_balancers[i].dns_name
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      for x in range(len(liste_load_balancers[i].listeners)):
-                        loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].listeners[x])
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      for x in range(len(liste_load_balancers[i].availability_zones)):
-                        loadbalancertabelle = loadbalancertabelle + str(liste_load_balancers[i].availability_zones[x])
-                        loadbalancertabelle = loadbalancertabelle + '&nbsp;'
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
-                      loadbalancertabelle = loadbalancertabelle + health_check_final
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '<td>'
-                      loadbalancertabelle = loadbalancertabelle + '<tt>'
-                      datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
-                      loadbalancertabelle = loadbalancertabelle + str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
-                      loadbalancertabelle = loadbalancertabelle + '</tt>'
-                      loadbalancertabelle = loadbalancertabelle + '</td>'
-                      loadbalancertabelle = loadbalancertabelle + '</tr>'
-                  loadbalancertabelle = loadbalancertabelle + '</table>'
+                    
+                    loadbalancertabelle = ''
+                    loadbalancertabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                    loadbalancertabelle += '<tr>'
+                    loadbalancertabelle += '<th align="center">&nbsp;</th>'
+                    loadbalancertabelle += '<th align="center">Name</th>'
+                    loadbalancertabelle += '<th>&nbsp;</th>'
+                    if sprache == "de":
+                      loadbalancertabelle += '<th align="center">Instanzen</th>'
+                    else:
+                      loadbalancertabelle += '<th align="center">Instances</th>'
+                    loadbalancertabelle += '<th align="center">DNS</th>'
+                    loadbalancertabelle += '<th align="center">Ports</th>'
+                    if sprache == "de":
+                      loadbalancertabelle += '<th align="center">Zonen</th>'
+                    else:
+                      loadbalancertabelle += '<th align="center">Zones</th>'
+#                    loadbalancertabelle += '<th align="center">Health Check</th>'
+                    if sprache == "de":
+                      loadbalancertabelle += '<th align="center">Datum</th>'
+                    else:
+                      loadbalancertabelle += '<th align="center">Creation Date</th>'
+                    loadbalancertabelle += '</tr>'
+                    for i in range(laenge_liste_load_balancers):
+                        loadbalancertabelle += '<tr>'
+                        loadbalancertabelle += '<td>'
+                        loadbalancertabelle += '<a href="/delete_load_balancer?name='
+                        loadbalancertabelle += liste_load_balancers[i].name
+                        loadbalancertabelle += "&amp;mobile="
+                        loadbalancertabelle += str(mobile)
+                        if sprache == "de":
+                          loadbalancertabelle += '" title="Load Balancer l&ouml;schen">'
+                          loadbalancertabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Load Balancer l&ouml;schen"></a>'
+                        else:
+                          loadbalancertabelle += '" title="delete load balancer">'
+                          loadbalancertabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '<td>'
+                        loadbalancertabelle += '<tt>'
+                        loadbalancertabelle += liste_load_balancers[i].name
+                        loadbalancertabelle += '</tt>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '<td>'
+                        loadbalancertabelle += '<a href="/loadbalanceraendern?name='
+                        loadbalancertabelle += liste_load_balancers[i].name
+                        if sprache == "de":
+                          loadbalancertabelle += '" title="Load Balancer einsehen/&auml;ndern"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="Load Balancer einsehen/&auml;ndern"></a>'
+                        else:
+                          loadbalancertabelle += '" title="check/alter load balancer"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter load balancer"></a>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '<td align="center"><tt>'+str(len(liste_load_balancers[i].instances))+'</tt></td>'
+                        loadbalancertabelle += '<td><tt>'+liste_load_balancers[i].dns_name+'</tt></td>'
+                        loadbalancertabelle += '<td><tt>'
+                        for x in range(len(liste_load_balancers[i].listeners)):
+                          loadbalancertabelle += str(liste_load_balancers[i].listeners[x])
+                        loadbalancertabelle += '</tt></td>'
+                        loadbalancertabelle += '<td><tt>'
+                        for x in range(len(liste_load_balancers[i].availability_zones)):
+                          loadbalancertabelle += str(liste_load_balancers[i].availability_zones[x])
+                          loadbalancertabelle += '&nbsp;'
+                        loadbalancertabelle += '</tt>'
+                        loadbalancertabelle += '</td>'
+#                        loadbalancertabelle += '<td>'
+#                        loadbalancertabelle += '<tt>'
+#                        health_check_final = str(liste_load_balancers[i].health_check).replace( 'HealthCheck:', '' )
+#                        loadbalancertabelle += health_check_final
+#                        loadbalancertabelle += '</tt>'
+#                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '<td>'
+                        loadbalancertabelle += '<tt>'
+                        datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
+                        loadbalancertabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
+                        loadbalancertabelle += '</tt>'
+                        loadbalancertabelle += '</td>'
+                        loadbalancertabelle += '</tr>'
+                    loadbalancertabelle += '</table>'
   
               template_values = {
               'navigations_bar': navigations_bar,
