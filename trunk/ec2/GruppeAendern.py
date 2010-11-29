@@ -112,15 +112,17 @@ class GruppeAendern(webapp.RequestHandler):
               else:
                 for i in range(laenge_liste_regeln): 
                   regelntabelle = ''
-                  regelntabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                  regelntabelle += '<table border="0" cellspacing="0" cellpadding="5">'
                   regelntabelle += '<tr>'
                   regelntabelle += '<th>&nbsp;</th>'
                   if sprache == "de":
                     regelntabelle += '<th align="center">Protokoll</th>'
+                    regelntabelle += '<th align="center">Extern</th>'
+                    regelntabelle += '<th align="center">Intern</th>'
                   else:
                     regelntabelle += '<th align="center">Protocol</th>'
-                  regelntabelle += '<th align="center">From Port</th>'
-                  regelntabelle += '<th align="center">To Port</th>'
+                    regelntabelle += '<th align="center">From Port</th>'
+                    regelntabelle += '<th align="center">To Port</th>'
                   regelntabelle += '</tr>'
                   for i in range(laenge_liste_regeln):
                       regelntabelle += '<tr>'
@@ -133,7 +135,7 @@ class GruppeAendern(webapp.RequestHandler):
                       regelntabelle += gruppe
                       regelntabelle += '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
                       regelntabelle += '</td>'
-                      regelntabelle += '<td>'
+                      regelntabelle += '<td align="center">'
                       if str(liste_regeln[i].ip_protocol) == "tcp":
                         regelntabelle += 'TCP'
                       if str(liste_regeln[i].ip_protocol) == "udp":
@@ -141,8 +143,8 @@ class GruppeAendern(webapp.RequestHandler):
                       if str(liste_regeln[i].ip_protocol) == "icmp":
                         regelntabelle += 'ICMP'
                       regelntabelle += '</td>'
-                      regelntabelle += '<td>'+str(liste_regeln[i].from_port)+'</td>'
-                      regelntabelle += '<td>'+str(liste_regeln[i].to_port)+'</td>'
+                      regelntabelle += '<td align="center">'+str(liste_regeln[i].from_port)+'</td>'
+                      regelntabelle += '<td align="center">'+str(liste_regeln[i].to_port)+'</td>'
                       regelntabelle += '</tr>'
                   regelntabelle += '</table>'
 

@@ -28,6 +28,8 @@ from boto.ec2.elb import ELBConnection
 class LoadBalancer(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -71,8 +73,11 @@ class LoadBalancer(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS
@@ -144,7 +149,7 @@ class LoadBalancer(webapp.RequestHandler):
   
                 if laenge_liste_load_balancers == 0:
                   if sprache == "de":
-                    loadbalancertabelle = 'Es sind keine Load Balancer in der Region vorhanden.'
+                    loadbalancertabelle = 'Es sind keine Lastverteiler in der Region vorhanden.'
                   else:
                     loadbalancertabelle = 'No load balancer exist inside this region.'
                 else:
@@ -242,12 +247,13 @@ class LoadBalancer(webapp.RequestHandler):
               'loadbalancertabelle': loadbalancertabelle,
               'zonen_liste': zonen_liste,
               'input_error_message': input_error_message,
+              'mobile': mobile,
               }
   
-              #if sprache == "de": naechse_seite = "loadbalancer_de.html"
-              #else:               naechse_seite = "loadbalancer_en.html"
-              #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer.html")
+              if mobile == "true":
+                  path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "loadbalancer.html")
+              else:
+                  path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "loadbalancer.html")
               self.response.out.write(template.render(path,template_values))
 
           

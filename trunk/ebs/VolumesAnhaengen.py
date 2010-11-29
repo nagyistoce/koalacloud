@@ -26,6 +26,8 @@ from boto.ec2.connection import *
 class VolumesAnhaengen(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name des zu anzuhängenden Volumes holen
         volume = self.request.get('volume')
         # Name der Zone holen
@@ -52,7 +54,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
   
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
   
           liste_reservations = conn_region.get_all_instances()
           # Anzahl der Elemente in der Liste
@@ -74,24 +76,17 @@ class VolumesAnhaengen(webapp.RequestHandler):
           tabelle_anhaengen = ''
           tabelle_anhaengen = tabelle_anhaengen + '<form action="/volumedefinitivanhaengen?volume='
           tabelle_anhaengen = tabelle_anhaengen + volume
-          tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">'
-          tabelle_anhaengen = tabelle_anhaengen + '\n'
-          tabelle_anhaengen = tabelle_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Volume:</B></td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          tabelle_anhaengen = tabelle_anhaengen + volume
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
+          tabelle_anhaengen = tabelle_anhaengen + '" method="post" accept-charset="utf-8">\n'
+          tabelle_anhaengen = tabelle_anhaengen + '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+          tabelle_anhaengen = tabelle_anhaengen + '<table border="0" cellspacing="0" cellpadding="5">'
+          tabelle_anhaengen += '<tr>'
           if sprache == "de":
-            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
+            tabelle_anhaengen += '<td align="right"><B>Volumen:</B></td>'
           else:
-            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-          tabelle_anhaengen = tabelle_anhaengen + volume_zone
-          tabelle_anhaengen = tabelle_anhaengen + '</B>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+            tabelle_anhaengen += '<td align="right"><B>Volume:</B></td>'
+          tabelle_anhaengen += '<td>'+volume+'</td>'
+          tabelle_anhaengen += '</tr>'
+          tabelle_anhaengen += '<tr>'
           if sprache == "de":
             tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
           else:
@@ -99,9 +94,9 @@ class VolumesAnhaengen(webapp.RequestHandler):
           tabelle_anhaengen = tabelle_anhaengen + '<td>'
           if instanzen_in_region == 0:
             if sprache == "de":
-              tabelle_anhaengen = tabelle_anhaengen + 'Sie haben keine Instanz'
+              tabelle_anhaengen += 'Sie haben keine Instanz in der Region <b>'+volume_zone+'</b></td>'
             else:
-              tabelle_anhaengen = tabelle_anhaengen + 'You have still no instance'
+              tabelle_anhaengen += 'You have still no instance in the region <b>'+volume_zone+'</b></td>'
           else:
             if instanzen_in_region > 0:
               tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'
@@ -112,18 +107,13 @@ class VolumesAnhaengen(webapp.RequestHandler):
                     tabelle_anhaengen = tabelle_anhaengen + x.id
                     tabelle_anhaengen = tabelle_anhaengen + '</option>'
               tabelle_anhaengen = tabelle_anhaengen + '</select>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          if sprache == "de":
-            tabelle_anhaengen = tabelle_anhaengen + 'in der Region <B>'
-          else:
-            tabelle_anhaengen = tabelle_anhaengen + 'in the region <B>'
-          tabelle_anhaengen = tabelle_anhaengen + volume_zone
-          tabelle_anhaengen = tabelle_anhaengen + '</B>'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+            tabelle_anhaengen = tabelle_anhaengen + '</td>'
           tabelle_anhaengen = tabelle_anhaengen + '</tr>'
           tabelle_anhaengen = tabelle_anhaengen + '<tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
+          if sprache == "de":
+            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Ger&auml;t:</B></td>'
+          else:
+            tabelle_anhaengen = tabelle_anhaengen + '<td align="right"><B>Device:</B></td>'
           tabelle_anhaengen = tabelle_anhaengen + '<td>'
           tabelle_anhaengen = tabelle_anhaengen + '<select name="device" size="1">'
           tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sda</option>'
@@ -154,21 +144,21 @@ class VolumesAnhaengen(webapp.RequestHandler):
           tabelle_anhaengen = tabelle_anhaengen + '<option>/dev/sdz</option>'
           tabelle_anhaengen = tabelle_anhaengen + '</select>'
           tabelle_anhaengen = tabelle_anhaengen + '</td>'
-          tabelle_anhaengen = tabelle_anhaengen + '<td>'
-          tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
-          tabelle_anhaengen = tabelle_anhaengen + '</td>'
           tabelle_anhaengen = tabelle_anhaengen + '</tr>'
-          tabelle_anhaengen = tabelle_anhaengen + '</table>'
-          tabelle_anhaengen = tabelle_anhaengen + '<p>&nbsp;</p>'
+          tabelle_anhaengen = tabelle_anhaengen + '<tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '<td align="left" colspan="2">'
           tabelle_anhaengen = tabelle_anhaengen + '\n'
           if instanzen_in_region == 0:
-            tabelle_anhaengen = tabelle_anhaengen + ' '
+            tabelle_anhaengen = tabelle_anhaengen + '&nbsp;'
           else:
             if sprache == "de":
-              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volume anh&auml;ngen">'
+              tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="Volumen anh&auml;ngen">'
             else:
               tabelle_anhaengen = tabelle_anhaengen + '<input type="submit" value="attach volume">'
           tabelle_anhaengen = tabelle_anhaengen + '\n'
+          tabelle_anhaengen = tabelle_anhaengen + '</td>'
+          tabelle_anhaengen = tabelle_anhaengen + '</tr>'
+          tabelle_anhaengen = tabelle_anhaengen + '</table>'
           tabelle_anhaengen = tabelle_anhaengen + '</form>'
   
           if regionname != "Amazon":   # Wenn die Region nicht Amazon EC2, sondern Eucalyptus ist...
@@ -190,10 +180,10 @@ class VolumesAnhaengen(webapp.RequestHandler):
           'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
           }
   
-          #if sprache == "de": naechse_seite = "volume_anhaengen_de.html"
-          #else:               naechse_seite = "volume_anhaengen_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volume_anhaengen.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "volume_anhaengen.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "volume_anhaengen.html")
           self.response.out.write(template.render(path,template_values))
 
           

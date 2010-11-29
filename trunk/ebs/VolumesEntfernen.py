@@ -12,6 +12,8 @@ from boto.ec2.connection import *
 class VolumesEntfernen(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name des zu löschenden Volumes holen
         volume = self.request.get('volume')
         # Den Usernamen erfahren

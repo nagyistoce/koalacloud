@@ -66,13 +66,15 @@ class Images(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS
           else:          
-          
           
           
             # Herausfinden, in welcher Zone wird gerade sind
@@ -150,6 +152,8 @@ class Images(webapp.RequestHandler):
                         liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
                         liste_favouriten = liste_favouriten + '&amp;root='
                         liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
+                        liste_favouriten = liste_favouriten + "&amp;mobile="
+                        liste_favouriten = liste_favouriten +  str(mobile)
                         liste_favouriten = liste_favouriten + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
                       else:
                         liste_favouriten = liste_favouriten + '<a href="/imagestarten?image='
@@ -158,6 +162,8 @@ class Images(webapp.RequestHandler):
                         liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].architecture
                         liste_favouriten = liste_favouriten + '&amp;root='
                         liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].root_device_type
+                        liste_favouriten = liste_favouriten + "&amp;mobile="
+                        liste_favouriten = liste_favouriten +  str(mobile)
                         liste_favouriten = liste_favouriten + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
                     else:
                       # Wenn es kein Machine-Image ist, dann das Feld leer lassen
@@ -169,12 +175,16 @@ class Images(webapp.RequestHandler):
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
                       liste_favouriten = liste_favouriten + '&amp;zone='
                       liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                      liste_favouriten = liste_favouriten + "&amp;mobile="
+                      liste_favouriten = liste_favouriten +  str(mobile)
                       liste_favouriten = liste_favouriten + '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
                     else:
                       liste_favouriten = liste_favouriten + '<a href="/favoritentfernen?ami='
                       liste_favouriten = liste_favouriten + liste_favoriten_ami_images[i].id
                       liste_favouriten = liste_favouriten + '&amp;zone='
                       liste_favouriten = liste_favouriten + zone_in_der_wir_uns_befinden
+                      liste_favouriten = liste_favouriten + "&amp;mobile="
+                      liste_favouriten = liste_favouriten +  str(mobile)
                       liste_favouriten = liste_favouriten + '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
                     liste_favouriten = liste_favouriten + '</td>'
   

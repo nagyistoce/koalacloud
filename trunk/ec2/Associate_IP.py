@@ -54,7 +54,7 @@ class Associate_IP(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
           try:
             # Liste mit den Instanzen
@@ -91,53 +91,50 @@ class Associate_IP(webapp.RequestHandler):
                     instanzen_in_region = instanzen_in_region + 1
 
             tabelle_instanz_anhaengen = ''
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<form action="/ip_definitiv_anhaengen?address='
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '" method="post" accept-charset="utf-8">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="hidden" name="mobile" value="'+mobile+'">\n'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<table border="3" cellspacing="0" cellpadding="5">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+            tabelle_instanz_anhaengen += '<form action="/ip_definitiv_anhaengen?address='
+            tabelle_instanz_anhaengen += address
+            tabelle_instanz_anhaengen += '" method="post" accept-charset="utf-8">'
+            tabelle_instanz_anhaengen += '\n'
+            tabelle_instanz_anhaengen += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+            tabelle_instanz_anhaengen += '<table border="0" cellspacing="0" cellpadding="5">'
+            tabelle_instanz_anhaengen += '<tr>'
             if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastische IP:</B></td>'
+              tabelle_instanz_anhaengen += '<td align="right"><B>Elastische IP:</B></td>'
             else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Elastic IP:</B></td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + address
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>'
+              tabelle_instanz_anhaengen += '<td align="right"><B>Elastic IP:</B></td>'
+            tabelle_instanz_anhaengen += '<td>'+address+'</td>'
+            tabelle_instanz_anhaengen += '</tr>'
+            tabelle_instanz_anhaengen += '<tr>'
             if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instanzen:</B></td>'
+              tabelle_instanz_anhaengen += '<td align="right"><B>Instanz:</B></td>'
             else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td align="right"><B>Instances:</B></td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td>'
+              tabelle_instanz_anhaengen += '<td align="right"><B>Instance:</B></td>'
+            tabelle_instanz_anhaengen += '<td>'
             if instanzen_in_region == 0:
               if sprache == "de":
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'Sie haben keine Instanz'
+                tabelle_instanz_anhaengen += 'Sie haben keine Instanz'
               else:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + 'You have still no instance'
+                tabelle_instanz_anhaengen += 'You have still no instance'
             else:
               if instanzen_in_region > 0:
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<select name="instanzen" size="1">'
+                tabelle_instanz_anhaengen += '<select name="instanzen" size="1">'
                 for i in liste_reservations:
                   for x in i.instances:
                     if x.state == u'running':
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<option>'
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + x.id
-                      tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</option>'
-                tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</select>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</table>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<p>&nbsp;</p>'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
+                      tabelle_instanz_anhaengen += '<option>'
+                      tabelle_instanz_anhaengen += x.id
+                      tabelle_instanz_anhaengen += '</option>'
+                tabelle_instanz_anhaengen += '</select>'
+            tabelle_instanz_anhaengen += '</td>'
+            tabelle_instanz_anhaengen += '</tr>'
+            tabelle_instanz_anhaengen += '<tr>'
             if sprache == "de":
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="verkn&uuml;pfen">'
+              tabelle_instanz_anhaengen += '<td align="left" colspan="2"><input type="submit" value="verkn&uuml;pfen"></td>\n'
             else:
-              tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<input type="submit" value="associate">'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '\n'
-            tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</form>'
+              tabelle_instanz_anhaengen += '<td align="left" colspan="2"><input type="submit" value="associate"></td>\n'
+            tabelle_instanz_anhaengen += '</tr>\n'
+            tabelle_instanz_anhaengen += '</table>\n'
+            tabelle_instanz_anhaengen += '</form>\n'
 
             template_values = {
             'navigations_bar': navigations_bar,
@@ -147,6 +144,7 @@ class Associate_IP(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
+            'mobile': mobile,
             }
 
             if mobile == "true":

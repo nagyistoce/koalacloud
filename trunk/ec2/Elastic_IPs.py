@@ -70,7 +70,10 @@ class Elastic_IPs(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
   
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS
@@ -119,75 +122,73 @@ class Elastic_IPs(webapp.RequestHandler):
   
               if laenge_liste_adressen == 0:
                 if sprache == "de":
-                  adressentabelle = 'Es sind keine elastischen IPs in der Region vorhanden.'
+                  adressentabelle = 'Sie haben keine elastischen IPs in dieser Region.'
                 else:
-                  adressentabelle = 'No elastic IPs exist inside this region.'
+                  adressentabelle = 'You have no elastic IPs inside this region.'
               else:
                 adressentabelle = ''
-                adressentabelle = adressentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                adressentabelle = adressentabelle + '<tr>'
-                adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-                if sprache == "de":
-                  adressentabelle = adressentabelle + '<th align="center">Adresse</th>'
-                else:
-                  adressentabelle = adressentabelle + '<th align="center">Address</th>'
-                if sprache == "de":
-                  adressentabelle = adressentabelle + '<th align="center">Instanz ID</th>'
-                else:
-                  adressentabelle = adressentabelle + '<th align="center">Instance ID</th>'
-                adressentabelle = adressentabelle + '<th align="center">&nbsp;</th>'
-                adressentabelle = adressentabelle + '</tr>'
+                adressentabelle += '<table border="0" cellspacing="0" cellpadding="5">'
+                
+                counter = 0
                 for i in range(laenge_liste_adressen):
-                    adressentabelle = adressentabelle + '<tr>'
-                    adressentabelle = adressentabelle + '<td>'
-                    adressentabelle = adressentabelle + '<a href="/release_address?address='
-                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                    adressentabelle = adressentabelle + "&amp;mobile="
-                    adressentabelle = adressentabelle + str(mobile)
+                  
+                    if counter > 0:
+                        adressentabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                    counter += 1
+                  
+                    adressentabelle += '<tr>'
+                    adressentabelle += '<td>'
+                    adressentabelle += '<a href="/release_address?address='
+                    adressentabelle += liste_adressen[i].public_ip
+                    adressentabelle += "&amp;mobile="
+                    adressentabelle += str(mobile)
                     if sprache == "de":
-                      adressentabelle = adressentabelle + '" title="Elastische IP freigeben">'
-                      adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
+                      adressentabelle += '" title="Elastische IP freigeben">'
+                      adressentabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="Elastische IP freigeben"></a>'
                     else:
-                      adressentabelle = adressentabelle + '" title="release elastic IP">'
-                      adressentabelle = adressentabelle + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
-                    adressentabelle = adressentabelle + '</td>'
-                    adressentabelle = adressentabelle + '<td>'
-                    adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                    adressentabelle = adressentabelle + '</td>'
-                    adressentabelle = adressentabelle + '<td>'
-                    adressentabelle = adressentabelle + '<tt>'
-                    if liste_adressen[i].instance_id:
-                      adressentabelle = adressentabelle + liste_adressen[i].instance_id
-                    else:
-                      adressentabelle = adressentabelle + '&nbsp;'
-                    adressentabelle = adressentabelle + '</tt>'
-                    adressentabelle = adressentabelle + '</td>'
-                    adressentabelle = adressentabelle + '<td>'
+                      adressentabelle += '" title="release elastic IP">'
+                      adressentabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
+                    adressentabelle += '</td>'
+
+                    adressentabelle += '<td>'
+                    adressentabelle += liste_adressen[i].public_ip
+                    adressentabelle += '</td>'
+
                     if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
-                      adressentabelle = adressentabelle + '<a href="/associate_address?address='
-                      adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                      adressentabelle = adressentabelle + "&amp;mobile="
-                      adressentabelle = adressentabelle + str(mobile)
+                      adressentabelle += '<td>'
+                      adressentabelle += '<a href="/associate_address?address='
+                      adressentabelle += liste_adressen[i].public_ip
+                      adressentabelle += "&amp;mobile="
+                      adressentabelle += str(mobile)
                       if sprache == "de":
-                        adressentabelle = adressentabelle + '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
-                        adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                        adressentabelle += '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
+                        adressentabelle += '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
                       else:
-                        adressentabelle = adressentabelle + '" title="associate elastic IP with instance">'
-                        adressentabelle = adressentabelle + '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                        adressentabelle += '" title="associate elastic IP with instance">'
+                        adressentabelle += '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                      adressentabelle += '</td>'
                     else:
-                      adressentabelle = adressentabelle + '<a href="/disassociate_address?address='
-                      adressentabelle = adressentabelle + liste_adressen[i].public_ip
-                      adressentabelle = adressentabelle + "&amp;mobile="
-                      adressentabelle = adressentabelle + str(mobile)
+                      adressentabelle += '<td>'
+                      adressentabelle += '<a href="/disassociate_address?address='
+                      adressentabelle += liste_adressen[i].public_ip
+                      adressentabelle += "&amp;mobile="
+                      adressentabelle += str(mobile)
                       if sprache == "de":
-                        adressentabelle = adressentabelle + '" title="Elastische IP von der Instanz l&ouml;sen">'
-                        adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                        adressentabelle += '" title="Elastische IP von der Instanz l&ouml;sen">'
+                        adressentabelle += '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
                       else:
-                        adressentabelle = adressentabelle + '" title="disassociate elastic IP from instance">'
-                        adressentabelle = adressentabelle + '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
-                    adressentabelle = adressentabelle + '</td>'
-                    adressentabelle = adressentabelle + '</tr>'
-                adressentabelle = adressentabelle + '</table>'
+                        adressentabelle += '" title="disassociate elastic IP from instance">'
+                        adressentabelle += '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                      adressentabelle += '</td>'
+                      
+
+                    if liste_adressen[i].instance_id:
+                      adressentabelle += '<td align="center"><tt>'+liste_adressen[i].instance_id+'</tt></td>'
+                    else:
+                      adressentabelle += '<td align="center"><tt>---</tt></td>'
+                      
+                    adressentabelle += '</tr>'
+                adressentabelle += '</table>'
   
             template_values = {
             'navigations_bar': navigations_bar,

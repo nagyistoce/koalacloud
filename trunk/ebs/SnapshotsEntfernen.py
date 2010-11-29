@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class SnapshotsEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name des zu löschenden Snapshots holen
         snapshot = self.request.get('snapshot')
         # Den Usernamen erfahren
@@ -24,14 +27,14 @@ class SnapshotsEntfernen(webapp.RequestHandler):
         except EC2ResponseError:
             # Wenn es nicht klappt...
             fehlermeldung = "12"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "8"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
             # Wenn es geklappt hat...
             fehlermeldung = "11"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)

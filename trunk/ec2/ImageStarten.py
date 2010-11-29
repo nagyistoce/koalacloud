@@ -62,7 +62,7 @@ class ImageStarten(webapp.RequestHandler):
         #url = users.create_logout_url(self.request.uri)
         url_linktext = 'Logout'
 
-        zonen_liste = zonen_liste_funktion(username,sprache)
+        zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
         for result in results:
 

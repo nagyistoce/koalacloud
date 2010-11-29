@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class VolumeDefinitivAnhaengen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name des anzuhängenden Volumes holen
         volume = self.request.get('volume')
         # Instanz-ID holen
@@ -28,14 +31,15 @@ class VolumeDefinitivAnhaengen(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht klappt...
           fehlermeldung = "21"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "8"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "23"
-          self.redirect('/volumes?message='+fehlermeldung)
+          self.redirect('/volumes?mobile='+str(mobile)+'&message='+fehlermeldung)
+          

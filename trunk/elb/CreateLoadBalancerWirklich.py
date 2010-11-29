@@ -13,6 +13,9 @@ from library import login
 
 class CreateLoadBalancerWirklich(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         elb_name = self.request.get('elb_name')
         elb_protokoll = self.request.get('elb_protokoll')
         ELBPort = self.request.get('ELBPort')
@@ -50,7 +53,7 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
           # Testen ob der Load Balancer Port eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           fehlermeldung = "55"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Der Load Balancer Port muss ein Integer sein
           ELBPort = int(ELBPort)
@@ -59,7 +62,7 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
           # Testen ob der EC2 Instanz Port eine Zahl ist
           # Wenn nicht ausschließlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           fehlermeldung = "56"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Der EC2 Instanz Port muss ein Integer sein
           InstPort = int(InstPort)
@@ -67,50 +70,50 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
         if elb_name == "":
           # Testen ob ein Name für den neue ELB angegeben wurde
           fehlermeldung = "50"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif re.search(r'[^\-a-zA-Z0-9]', elb_name) != None:
           # Überprüfen, ob der name nur erlaubte Zeichen enthält
           # Die Zeichen - und a-zA-Z0-9 sind erlaubt. Alle anderen nicht. Darum das ^
           fehlermeldung = "51"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif InstPort == "" and ELBPort == "":
           # Testen ob ein Load Balancer Port und ein EC2 Instanz Port für den neue ELB angegeben wurde
           fehlermeldung = "54"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif ELBPort == "":
           # Testen ob ein Load Balancer Port für den neue ELB angegeben wurde
           fehlermeldung = "52"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif InstPort == "":
           # Testen ob ein EC2 Instanz Port für den neue ELB angegeben wurde
           fehlermeldung = "53"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif aktivezone == "us-east-1" and useast1a == "" and useast1b == "" and useast1c == "" and useast1d == "":
           # Testen ob mindestens eine Zone angegeben wurde
           fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif aktivezone == "us-west-1" and uswest1a == "" and uswest1b == "":
           # Testen ob mindestens eine Zone angegeben wurde
           fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif aktivezone == "eu-west-1" and euwest1a == "" and euwest1b == "":
           # Testen ob mindestens eine Zone angegeben wurde
           fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif aktivezone == "ap-southeast-1" and apsoutheast1a == "" and apsoutheast1b == "":
           # Testen ob mindestens eine Zone angegeben wurde
           fehlermeldung = "58"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif not (ELBPort == 80 or ELBPort == 443 or (1024 <= ELBPort <= 65535)):
           # Testen ob ein korrekter Port für den Load Balancer Port angegeben wurde
           # Load Balancer port must be either 80, 443 or 1024~65535 inclusive
           fehlermeldung = "59"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif InstPort >= 65535:
           # Testen ob ein korrekter Port für den EC2 Instanz Port angegeben wurde
           # Member must have value less than or equal to 65535
           fehlermeldung = "60"
-          self.redirect('/create_load_balancer?message='+fehlermeldung)
+          self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
 
           conn_elb = loginelb(username) # Mit ELB verbinden
@@ -149,14 +152,15 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
           except EC2ResponseError:
             # Wenn es nicht geklappt hat...
             fehlermeldung = "57"
-            self.redirect('/create_load_balancer?message='+fehlermeldung)
+            self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "8"
-            self.redirect('/create_load_balancer?message='+fehlermeldung)
+            self.redirect('/create_load_balancer?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
             # Wenn es geklappt hat...
             fehlermeldung = "72"
-            self.redirect('/loadbalancer?message='+fehlermeldung)
+            self.redirect('/loadbalancer?mobile='+str(mobile)+'&message='+fehlermeldung)
+            
