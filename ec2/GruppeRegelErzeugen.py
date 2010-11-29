@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class GruppeRegelErzeugen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         gruppe = self.request.get('gruppe')
         protokoll_input = self.request.get('protokoll')
@@ -37,31 +40,31 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
         if port_from == "" and port_to == "" and ausnahme == 0:
           # Wenn die Ports nicht angegeben wurden, kann keine Regel angelegt werden
           fehlermeldung = "29"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         # Testen ob der Port FROM angegeben wurde
         elif port_from == "" and ausnahme == 0:
           # Wenn der Port nicht angegeben wurde, kann keine Regel angelegt werden
           fehlermeldung = "30"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_to == "" and ausnahme == 0:   # Testen ob der Port TO angegeben wurde
           # Wenn der Port nicht angegeben wurde, kann keine Regel angelegt werden
           fehlermeldung = "31"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_from.isdigit() == False and port_to.isdigit() == False and ausnahme == 0:
           # Testen ob der Port FROM und Port TO eine Zahl ist
           # Wenn nicht ausschlieﬂlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           fehlermeldung = "32"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_from.isdigit() == False and ausnahme == 0:
           # Testen ob der Port FROM eine Zahl ist
           # Wenn nicht ausschlieﬂlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           fehlermeldung = "33"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         elif port_to.isdigit() == False and ausnahme == 0:
           # Testen ob der Port TO eine Zahl ist
           # Wenn nicht ausschlieﬂlich eine Zahl eingegeben wurde sondern evtl. Buchstaben oder Sonderzeichen
           fehlermeldung = "34"
-          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
         else:
 
           try:
@@ -73,13 +76,13 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
           except EC2ResponseError:
             # Wenn es nicht klappt...
             fehlermeldung = "35"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "35"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
             # Wenn es geklappt hat und die Liste geholt wurde...
 
@@ -104,16 +107,16 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                     liste_security_groups[i].authorize(ip_protocol=protokoll, from_port=port_from, to_port=port_to, cidr_ip=cidr_ip, src_group=None)
                   except EC2ResponseError:
                     fehlermeldung = "39"
-                    self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                    self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                   except DownloadError:
                     # Diese Exception hilft gegen diese beiden Fehler:
                     # DownloadError: ApplicationError: 2 timed out
                     # DownloadError: ApplicationError: 5
                     fehlermeldung = "8"
-                    self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                    self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                   else:
                     fehlermeldung = "28"
-                    self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                    self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                 else:
                   for i in range(laenge_liste_regeln):
                     # self.response.out.write('nicht leer ')
@@ -126,7 +129,7 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                       if str(liste_regeln[k]) == regel:
                         schon_vorhanden = 1
                         fehlermeldung = "35"
-                        self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                        self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                   if schon_vorhanden == 0:
                     for z in range(laenge_liste_security_groups):
                       # Vergleichen
@@ -136,14 +139,14 @@ class GruppeRegelErzeugen(webapp.RequestHandler):
                           liste_security_groups[z].authorize(ip_protocol=protokoll, from_port=port_from, to_port=port_to, cidr_ip=cidr_ip, src_group=None)
                         except EC2ResponseError:
                           fehlermeldung = "39"
-                          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                         except DownloadError:
                           # Diese Exception hilft gegen diese beiden Fehler:
                           # DownloadError: ApplicationError: 2 timed out
                           # DownloadError: ApplicationError: 5
                           fehlermeldung = "8"
-                          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
                         else:
                           fehlermeldung = "28"
-                          self.redirect('/gruppenaendern?gruppe='+gruppe+'&message='+fehlermeldung)
+                          self.redirect('/gruppenaendern?mobile='+str(mobile)+'&gruppe='+gruppe+'&message='+fehlermeldung)
 

@@ -25,6 +25,9 @@ from boto.ec2.connection import *
 
 class GruppeAendern(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message')
         # Den Namen der zu löschenden Gruppe holen
@@ -35,7 +38,7 @@ class GruppeAendern(webapp.RequestHandler):
             self.redirect('/')
 
         sprache = aktuelle_sprache(username)
-        navigations_bar = navigations_bar_funktion(sprache)
+        navigations_bar = navigations_bar_funktion(sprache,mobile)
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
         results = aktivezone.fetch(100)
@@ -80,13 +83,13 @@ class GruppeAendern(webapp.RequestHandler):
         except EC2ResponseError:
           # Wenn es nicht klappt...
           fehlermeldung = "7"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+          self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
           # DownloadError: ApplicationError: 5
           fehlermeldung = "7"
-          self.redirect('/securitygroups?message='+fehlermeldung)
+          self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat und die Liste geholt wurde...
 
@@ -103,48 +106,45 @@ class GruppeAendern(webapp.RequestHandler):
               laenge_liste_regeln = len(liste_regeln)
               if laenge_liste_regeln == 0:
                 if sprache == "de":
-                  regelntabelle = 'Es sind noch keine Regeln in der  Sicherheitsgruppe '+gruppe+' vorhanden'
+                  regelntabelle = 'Es sind noch keine Regeln vorhanden'
                 else:
-                  regelntabelle = 'Still no rules exist inside the security group '+gruppe
+                  regelntabelle = 'Still no rules exist'
               else:
-                for i in range(laenge_liste_regeln):
-
+                for i in range(laenge_liste_regeln): 
                   regelntabelle = ''
-                  regelntabelle = regelntabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  regelntabelle = regelntabelle + '<tr>'
-                  regelntabelle = regelntabelle + '<th>&nbsp;</th>'
+                  regelntabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                  regelntabelle += '<tr>'
+                  regelntabelle += '<th>&nbsp;</th>'
                   if sprache == "de":
-                    regelntabelle = regelntabelle + '<th align="center">Protokoll</th>'
+                    regelntabelle += '<th align="center">Protokoll</th>'
                   else:
-                    regelntabelle = regelntabelle + '<th align="center">Protocol</th>'
-                  regelntabelle = regelntabelle + '<th align="center">From Port</th>'
-                  regelntabelle = regelntabelle + '<th align="center">To Port</th>'
-                  regelntabelle = regelntabelle + '</tr>'
+                    regelntabelle += '<th align="center">Protocol</th>'
+                  regelntabelle += '<th align="center">From Port</th>'
+                  regelntabelle += '<th align="center">To Port</th>'
+                  regelntabelle += '</tr>'
                   for i in range(laenge_liste_regeln):
-                      regelntabelle = regelntabelle + '<tr>'
-                      regelntabelle = regelntabelle + '<td>'
-                      regelntabelle = regelntabelle + '<a href="/grupperegelentfernen?regel='
-                      regelntabelle = regelntabelle + str(liste_regeln[i])
-                      regelntabelle = regelntabelle + '&amp;gruppe='
-                      regelntabelle = regelntabelle + gruppe
-                      regelntabelle = regelntabelle + '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
-                      regelntabelle = regelntabelle + '</td>'
-                      regelntabelle = regelntabelle + '<td>'
+                      regelntabelle += '<tr>'
+                      regelntabelle += '<td>'
+                      regelntabelle += '<a href="/grupperegelentfernen?regel='
+                      regelntabelle += str(liste_regeln[i])
+                      regelntabelle += "&amp;mobile="
+                      regelntabelle += str(mobile)
+                      regelntabelle += '&amp;gruppe='
+                      regelntabelle += gruppe
+                      regelntabelle += '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
+                      regelntabelle += '</td>'
+                      regelntabelle += '<td>'
                       if str(liste_regeln[i].ip_protocol) == "tcp":
-                        regelntabelle = regelntabelle + 'TCP'
+                        regelntabelle += 'TCP'
                       if str(liste_regeln[i].ip_protocol) == "udp":
-                        regelntabelle = regelntabelle + 'UDP'
+                        regelntabelle += 'UDP'
                       if str(liste_regeln[i].ip_protocol) == "icmp":
-                        regelntabelle = regelntabelle + 'ICMP'
-                      regelntabelle = regelntabelle + '</td>'
-                      regelntabelle = regelntabelle + '<td>'
-                      regelntabelle = regelntabelle + str(liste_regeln[i].from_port)
-                      regelntabelle = regelntabelle + '</td>'
-                      regelntabelle = regelntabelle + '<td>'
-                      regelntabelle = regelntabelle + str(liste_regeln[i].to_port)
-                      regelntabelle = regelntabelle + '</td>'
-                      regelntabelle = regelntabelle + '</tr>'
-                  regelntabelle = regelntabelle + '</table>'
+                        regelntabelle += 'ICMP'
+                      regelntabelle += '</td>'
+                      regelntabelle += '<td>'+str(liste_regeln[i].from_port)+'</td>'
+                      regelntabelle += '<td>'+str(liste_regeln[i].to_port)+'</td>'
+                      regelntabelle += '</tr>'
+                  regelntabelle += '</table>'
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -156,10 +156,11 @@ class GruppeAendern(webapp.RequestHandler):
           'regelntabelle': regelntabelle,
           'input_error_message': input_error_message,
           'zonen_liste': zonen_liste,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "securitygrouprules_de.html"
-          #else:               naechse_seite = "securitygrouprules_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygrouprules.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "securitygrouprules.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "securitygrouprules.html")
           self.response.out.write(template.render(path,template_values))

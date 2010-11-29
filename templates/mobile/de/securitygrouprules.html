@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+<form action="/grupperegelanlegen" method="post" accept-charset="utf-8">
+<input type="hidden" name="gruppe" value="{{ gruppe }}">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+  <td>Protokoll:</td>
+  <td><select name="protokoll" size="1">
+        <option selected="selected">TCP</option>
+        <option>UDP</option>
+        <option>ICMP</option>
+      </select>
+  </td>
+</tr>
+<tr>
+  <td>Externer Port:</td>
+  <td><input name="port_from" type="text" size="5" maxlength="5"></td>
+</tr>
+<tr>
+  <td>Interner Port:</td>
+  <td><input name="port_to" type="text" size="5" maxlength="5"></td>
+</tr>
+<tr>
+  <td colspan="2" align="left"><input type="submit" value="Neue Regel anlegen"></td>
+</tr>
+</table>
+</form>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>Regeln in {{ gruppe }}</b>
+
+<p>&nbsp;</p>
+
+{{ regelntabelle }}
+
+{% endblock %}

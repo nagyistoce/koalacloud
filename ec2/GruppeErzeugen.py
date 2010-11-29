@@ -13,6 +13,9 @@ from boto.ec2.connection import *
 
 class GruppeErzeugen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         neuergruppenname = self.request.get('gruppenname')
         neuegruppenbeschreibung = self.request.get('gruppenbeschreibung')
@@ -25,26 +28,26 @@ class GruppeErzeugen(webapp.RequestHandler):
             # Wenn kein Name und keine Beschreibung angegeben wurde
             #fehlermeldung = "Sie haben keinen Namen und keine Beschreibung angegeben"
             fehlermeldung = "41"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif neuergruppenname == "":
             # Testen ob ein Name für die neue Gruppe angegeben wurde
             #fehlermeldung = "Sie haben keinen Namen angegeben"
             fehlermeldung = "42"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif neuegruppenbeschreibung == "":
             # Testen ob eine Beschreibung für die neue Gruppe angegeben wurde
             #fehlermeldung = "Sie haben keine Beschreibung angegeben"
             fehlermeldung = "43"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif re.search(r'[^\-_a-zA-Z0-9]', neuergruppenname) != None:
             # Testen ob für den neuen Gruppennamen nur erlaubte Zeichen verwendet wurden
             fehlermeldung = "45"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif re.search(r'[^\ \-_a-zA-Z0-9]', neuegruppenbeschreibung) != None:
             # Testen ob für die Beschreibung der den neuen Gruppe nur erlaubte Zeichen verwendet wurden
             # Leerzeichen sind in der Gruppenbezeichnung ok
             fehlermeldung = "46"
-            self.redirect('/securitygroups?message='+fehlermeldung)
+            self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
             try:
                 # Liste mit den Security Groups
@@ -55,13 +58,13 @@ class GruppeErzeugen(webapp.RequestHandler):
             except EC2ResponseError:
                 # Wenn es nicht klappt...
                 fehlermeldung = "47"
-                self.redirect('/securitygroups?message='+fehlermeldung)
+                self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
             except DownloadError:
                 # Diese Exception hilft gegen diese beiden Fehler:
                 # DownloadError: ApplicationError: 2 timed out
                 # DownloadError: ApplicationError: 5
                 fehlermeldung = "47"
-                self.redirect('/securitygroups?message='+fehlermeldung)
+                self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
             else:
                 # Wenn es geklappt hat und die Liste geholt wurde...
 
@@ -78,7 +81,7 @@ class GruppeErzeugen(webapp.RequestHandler):
                         # Security Gruppe existiert schon!
                         schon_vorhanden = 1
                         fehlermeldung = "44"
-                        self.redirect('/securitygroups?message='+fehlermeldung)
+                        self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
 
                 # Wenn der Schlüssel noch nicht existiert...anlegen!
                 if schon_vorhanden == 0:
@@ -87,13 +90,13 @@ class GruppeErzeugen(webapp.RequestHandler):
                         conn_region.create_security_group(neuergruppenname, neuegruppenbeschreibung)
                     except EC2ResponseError:
                         fehlermeldung = "47"
-                        self.redirect('/securitygroups?message='+fehlermeldung)
+                        self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
                     except DownloadError:
                         # Diese Exception hilft gegen diese beiden Fehler:
                         # DownloadError: ApplicationError: 2 timed out
                         # DownloadError: ApplicationError: 5
                         fehlermeldung = "8"
-                        self.redirect('/securitygroups?message='+fehlermeldung)
+                        self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
                     else:
                         fehlermeldung = "40"
-                        self.redirect('/securitygroups?message='+fehlermeldung)
+                        self.redirect('/securitygroups?mobile='+str(mobile)+'&message='+fehlermeldung)
