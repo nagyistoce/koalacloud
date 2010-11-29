@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Name Volume holen, von dem ein Snapshot erzeugt werden soll
         volume = self.request.get('volume')
         # Die Beschreibung des Snapshots holen
@@ -30,15 +33,15 @@ class SnapshotsErzeugenDefinitiv(webapp.RequestHandler):
         except EC2ResponseError:
             # Wenn es nicht klappt...
             fehlermeldung = "14"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)
         except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
             # DownloadError: ApplicationError: 2 timed out
             # DownloadError: ApplicationError: 5
             fehlermeldung = "8"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
             # Wenn es geklappt hat...
             fehlermeldung = "13"
-            self.redirect('/snapshots?message='+fehlermeldung)
+            self.redirect('/snapshots?mobile='+str(mobile)+'&message='+fehlermeldung)
             

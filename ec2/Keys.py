@@ -128,12 +128,15 @@ class Keys(webapp.RequestHandler):
               else:
                 if mobile == "true":
                     keytabelle = ''
-                    keytabelle += '<table border="3" cellspacing="0" cellpadding="5">'
-                    keytabelle += '<tr>'
-                    keytabelle += '<th>&nbsp;</th>'
-                    keytabelle += '<th align="center">Name</th>'
-                    keytabelle += '</tr>'
+                    keytabelle += '<table border="0" cellspacing="0" cellpadding="5">'
+                   
+                    counter = 0
+                    
                     for i in range(laenge_liste_keys):
+                        if counter > 0:
+                            keytabelle += '<tr><td colspan="2">&nbsp;</td></tr>'
+                        counter += 1
+                      
                         keytabelle += '<tr>'
                         keytabelle += '<td>'
                         keytabelle += '<a href="/schluesselentfernen?key='

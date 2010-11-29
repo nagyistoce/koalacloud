@@ -19,6 +19,8 @@ from library import format_error_message_red
 class AlleVolumesLoeschenFrage(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -48,11 +50,12 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
           'zone': regionname,
           'zone_amazon': zone_amazon,
           'zonen_liste': zonen_liste,
+          'mobile': mobile,
           }
 
           if mobile == "true":
-              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "snapshots.html")
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "alle_volumes_loeschen_frage.html")
           else:  
-              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "snapshots.html")
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_volumes_loeschen_frage.html")
           self.response.out.write(template.render(path,template_values))
 

@@ -59,6 +59,9 @@ class InstanzAnlegen(webapp.RequestHandler):
 
     def post(self):
         #self.response.out.write('posted!')
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         instance_type = self.request.get('instance_type')
         number_instances = self.request.get('number_instances')
         keys_liste = self.request.get('keys_liste')

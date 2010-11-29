@@ -63,8 +63,11 @@ class Zonen(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
             }
-  
-            path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
           # It is not Google Storage. It is an IaaS
@@ -93,11 +96,7 @@ class Zonen(webapp.RequestHandler):
               laenge_liste_zonen = len(liste_zonen)
   
               zonentabelle = ''
-              zonentabelle = zonentabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              zonentabelle = zonentabelle + '<tr>'
-              zonentabelle = zonentabelle + '<th align="center">Name</th>'
-              zonentabelle = zonentabelle + '<th align="center">Status</th>'
-              zonentabelle = zonentabelle + '</tr>'
+              zonentabelle = zonentabelle + '<table border="0" cellspacing="0" cellpadding="5">'
               for i in range(laenge_liste_zonen):
                   zonentabelle = zonentabelle + '<tr>'
                   zonentabelle = zonentabelle + '<td>'+str(liste_zonen[i].name)+'</td>'
@@ -124,9 +123,6 @@ class Zonen(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
   
-            #if sprache == "de": naechse_seite = "zonen_de.html"
-            #else:               naechse_seite = "zonen_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
             if mobile == "true":
                 path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "zonen.html")
             else:
