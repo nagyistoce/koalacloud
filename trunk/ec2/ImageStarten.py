@@ -111,6 +111,7 @@ class ImageStarten(webapp.RequestHandler):
           'number_instances_min_anfang': number_instances_min_anfang,
           'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
           'value_button_image_starten': value_button_image_starten,
+          'instanz_starten_tabelle': instanz_starten_tabelle,
           'mobile': mobile,
           }
 
@@ -201,9 +202,7 @@ class ImageStarten(webapp.RequestHandler):
             keys_liste = keys_liste + liste_key_pairs[0].name
             keys_liste = keys_liste + '" readonly>'
           else:
-            keys_liste = keys_liste + '<select name="keys_liste" size="'
-            keys_liste = keys_liste + str(laenge_liste_keys)
-            keys_liste = keys_liste + '">'
+            keys_liste = keys_liste + '<select name="keys_liste" size="1">'
             for i in range(laenge_liste_keys):
               if i == 0:
                 keys_liste = keys_liste + '<option selected="selected">'
@@ -251,9 +250,7 @@ class ImageStarten(webapp.RequestHandler):
           elif laenge_liste_security_groups == 1:
             gruppen_liste = liste_security_groups[0].name
           else:
-            gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="'
-            gruppen_liste = gruppen_liste + str(laenge_liste_security_groups)
-            gruppen_liste = gruppen_liste + '">'
+            gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="1">'
             for i in range(laenge_liste_security_groups):
               if i == 0:
                 gruppen_liste = gruppen_liste + '<option selected="selected">'
@@ -277,6 +274,80 @@ class ImageStarten(webapp.RequestHandler):
           manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
           manifesttextfeld = manifesttextfeld + manifest
           manifesttextfeld = manifesttextfeld + '" readonly>'
+
+          instanz_starten_tabelle = ''
+          if mobile == "true":
+            # Mobile version
+            instanz_starten_tabelle += '<form action="/instanzanlegen" method="post" accept-charset="utf-8">\n'
+            instanz_starten_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+            instanz_starten_tabelle += '<input type="hidden" name="image_id" value="'+image+'">\n'
+            instanz_starten_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>AMI:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><tt>'+image+'</tt></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>Manifest:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><tt>'+manifest+'</tt></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>Root:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><tt>'+root+'</tt></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>AKI:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><input name="aki_id" type="text" size="12" maxlength="12"></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>ARI:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><input name="ari_id" type="text" size="12" maxlength="12"></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            if sprache == "de":
+              instanz_starten_tabelle += '<td align="right"><b>Typ:</b></td>\n'
+            else:
+              instanz_starten_tabelle += '<td align="right"><b>Type:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left">'
+            instanz_starten_tabelle += '<select name="instance_type" size="1">'+instance_types_liste+'</select>\n'
+            instanz_starten_tabelle += '</td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>Zone:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left">'
+            instanz_starten_tabelle += '<select name="zonen_auswahl" size="1">'+zonen_in_der_region+'</select>\n'
+            instanz_starten_tabelle += '</td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left"><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"></td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            if sprache == "de":
+              instanz_starten_tabelle += '<td align="right"><b>Schl&uuml;ssel:</b></td>\n'
+            else:
+              instanz_starten_tabelle += '<td align="right"><b>Keypair:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left">'+keys_liste+'</td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            if sprache == "de":
+              instanz_starten_tabelle += '<td align="right"><b>Gruppe:</b></td>\n'
+            else:
+              instanz_starten_tabelle += '<td align="right"><b>Group:</b></td>\n'
+            instanz_starten_tabelle += '<td align="left">'+gruppen_liste+'</td>\n'
+            instanz_starten_tabelle += '</tr>\n'
+            instanz_starten_tabelle += '<tr>\n'
+            instanz_starten_tabelle += '<td colspan="2" align="center">'
+            instanz_starten_tabelle += '<input type="submit" value="'+value_button_image_starten+'">'
+            instanz_starten_tabelle += '</td>\n'          
+            instanz_starten_tabelle += '</tr>\n'            
+            instanz_starten_tabelle += '</table>\n'
+            instanz_starten_tabelle += '</form>\n'
+            
+            
 
           # Wenn es Amazon EC2 ist
           if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
@@ -325,7 +396,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">5</td>'
               tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
-              tabelle_ec2_instanztypen += '</table'
+              tabelle_ec2_instanztypen += '</table>'
             
               if root != "ebs":
                 if sprache == "de":
@@ -408,7 +479,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">20</td>'
               tabelle_ec2_instanztypen += '<td align="center">7 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
-              tabelle_ec2_instanztypen += '</table'
+              tabelle_ec2_instanztypen += '</table>'
               
               if root != "ebs":
                 if sprache == "de":
@@ -453,6 +524,7 @@ class ImageStarten(webapp.RequestHandler):
           'laenge_liste_zonen': laenge_liste_zonen,
           'zonen_anfang': zonen_anfang,
           't1_micro_warnung': t1_micro_warnung,
+          'instanz_starten_tabelle': instanz_starten_tabelle,
           'mobile': mobile,
           }
 

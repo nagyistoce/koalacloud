@@ -99,6 +99,7 @@ class InstanzAnlegen(webapp.RequestHandler):
 
         conn_region, regionname = login(username)
 
+
         try:
           # Instanz(en) anlegen
           reservation = conn_region.run_instances(image_id,
