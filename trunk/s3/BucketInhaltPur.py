@@ -443,9 +443,9 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular += '<tr>'
             keys_upload_formular += '<td>'
             if sprache == "de":
-              keys_upload_formular += '<input type="submit" value="Datei in den Bucket hochladen">\n'
+              keys_upload_formular += '<input type="submit" value="Objekt in den Bucket hochladen">\n'
             else:
-              keys_upload_formular += '<input type="submit" value="upload file into bucket">\n'
+              keys_upload_formular += '<input type="submit" value="upload objekt into bucket">\n'
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '</table>'
@@ -494,9 +494,9 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular += '<tr>'
             keys_upload_formular += '<td>'
             if sprache == "de":
-              keys_upload_formular += '<input type="submit" value="Datei hochladen">\n'
+              keys_upload_formular += '<input type="submit" value="Objekt in den Bucket hochladen">\n'
             else:
-              keys_upload_formular += '<input type="submit" value="upload file">\n'
+              keys_upload_formular += '<input type="submit" value="upload objekt into bucket">\n'
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '</table>'
