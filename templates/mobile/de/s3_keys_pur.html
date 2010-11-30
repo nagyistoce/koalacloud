@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>Datei in den Bucket hochladen</b>
+
+{{ keys_upload_formular }}
+
+<p>&nbsp;</p>
+
+<b>Liste der Objekte in {{ bucketname }}</b>
+
+<p>&nbsp;</p>
+
+{{ bucket_keys_tabelle }}
+
+{{ alle_keys_loeschen_button }}
+
+<p>&nbsp;</p>
+
+{{ eucalyptus_warnung }}
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+<h3>
+<b>Inhalt des Buckets {{ bucketname }}</b>
+</h3>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>Datei in den Bucket {{ bucketname }} hochladen</b>
+
+{{ keys_upload_formular }}
+
+<p>&nbsp;</p>
+
+<b>Neues Verzeichnis im Bucket {{ bucketname }} erzeugen</b>
+
+<p>&nbsp;</p>
+
+{{ eingabeformular_neues_verzeichnis }}
+
+<p>&nbsp;</p>
+
+<b>Liste der Keys im Bucket {{ bucketname }}</b>
+
+<p>&nbsp;</p>
+
+{{ bucket_keys_tabelle }}
+
+{{ alle_keys_loeschen_button }}
+
+<p>&nbsp;</p>
+
+{{ verzeichnis_warnung }}
+
+<p>&nbsp;</p>
+
+{{ eucalyptus_warnung }}
+
+{% endblock %}
