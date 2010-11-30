@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+<form action="/bucketerzeugen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+<td>
+<input name="bucketname" type="text" size="40" maxlength="40">
+</td>
+</tr>
+<tr>
+<td>
+<input type="submit" value="Neuen Bucket erzeugen">
+</td>
+</tr>
+</table>
+</form>
+
+{{ input_error_message }}
+
+<p>&nbsp;</p>
+
+<b>Liste der Buckets in der Region {{ zone }}</b>
+
+<p>&nbsp;</p>
+
+{{ bucketstabelle }}
+
+<p>&nbsp;</p>
+
+KOALA unterst&uuml;tzt eine reine S3-Darstellung eine Komfort-Darstellung. Die reine Darstellung gibt den Inhalt der Buckets exakt wieder. Da S3 ein flacher Namensraum ist, existieren in S3 keine Verzeichnisse, sondern nur Keys. Die Komfort-Darstellung emuliert Verzeichnisse wie <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> es macht. Bestimmte Keys dienen als Platzhalter f&uuml;r Verzeichnisse. Diese enden auf den Namen <b>_$folder$</b>. Ein Key, der einem Verzeichnis zugeordnet werden soll, hat das Namensschema: <b>verzeichnis/unterverzeichnis/dateiname</b>
+
+{% endblock %}
