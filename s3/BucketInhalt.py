@@ -201,6 +201,8 @@ class BucketInhalt(webapp.RequestHandler):
                 if str(directory).count("/") >= 2:
                   bucket_keys_tabelle += '&amp;dir='
                   bucket_keys_tabelle += str(directory)[:str(directory)[:-1].rfind('/')]
+                bucket_keys_tabelle += "&amp;mobile="
+                bucket_keys_tabelle += str(mobile)
                 bucket_keys_tabelle += '" title="Zur&uuml;ck">'
                 bucket_keys_tabelle += '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
                 bucket_keys_tabelle += 'Zur&uuml;ck'
@@ -220,6 +222,8 @@ class BucketInhalt(webapp.RequestHandler):
                 if str(directory).count("/") >= 2:
                   bucket_keys_tabelle += '&amp;dir='
                   bucket_keys_tabelle += str(directory)[:str(directory)[:-1].rfind('/')]
+                bucket_keys_tabelle += "&amp;mobile="
+                bucket_keys_tabelle += str(mobile)
                 bucket_keys_tabelle += '" title="Switch back">'
                 bucket_keys_tabelle += '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
                 bucket_keys_tabelle += 'Switch back'
@@ -227,175 +231,362 @@ class BucketInhalt(webapp.RequestHandler):
                 bucket_keys_tabelle += '</a>'
             # Wenn wir irgendwo sind und es sind Keys vorhanden...
             else:
-                bucket_keys_tabelle = ''
-                bucket_keys_tabelle += '<table border="3" cellspacing="0" cellpadding="5">'
-                bucket_keys_tabelle += '<tr>'
-                bucket_keys_tabelle += '<th>&nbsp;</th>'
-                bucket_keys_tabelle += '<th>&nbsp;</th>'
-                if sprache == "de":
-                  bucket_keys_tabelle += '<th align="left">'
-                  bucket_keys_tabelle += str(directory)
-                  bucket_keys_tabelle += '</th>'
-                  bucket_keys_tabelle += '<th align="center">Gr&ouml;&szlig;e</th>'
-                  bucket_keys_tabelle += '<th align="center">Letzte &Auml;nderung</th>'
-                  bucket_keys_tabelle += '<th align="center">Zugriffsberechtigung</th>'
-                  bucket_keys_tabelle += '<th align="center">Pr&uuml;fsumme (MD5)</th>'
-                else:
-                  bucket_keys_tabelle += '<th align="left">'
-                  bucket_keys_tabelle += str(directory)
-                  bucket_keys_tabelle += '</th>'
-                  bucket_keys_tabelle += '<th align="center">Size</th>'
-                  bucket_keys_tabelle += '<th align="center">Last Modified</th>'
-                  bucket_keys_tabelle += '<th align="center">Access Control List</th>'
-                  bucket_keys_tabelle += '<th align="center">MD5</th>'
-                bucket_keys_tabelle += '</tr>'
-                # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
-                if directory != '/':
+              
+              if mobile == "true":
+                  # This is the mobile version
+                  
+                  bucket_keys_tabelle = ''
+                  bucket_keys_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
                   bucket_keys_tabelle += '<tr>'
-                  bucket_keys_tabelle += '<td>&nbsp;</td>'
-                  bucket_keys_tabelle += '<td>&nbsp;</td>'
-                  bucket_keys_tabelle += '<td>'
-                  bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
-                  bucket_keys_tabelle += str(bucketname)
-                  # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
-                  # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
-                  # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
-                  # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
-                  # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
-                  # Root-Ansicht zurückkehren.
-                  if str(directory).count("/") >= 2:
-                    bucket_keys_tabelle += '&amp;dir='
-                    bucket_keys_tabelle += str(directory)[:str(directory)[:-1].rfind('/')]
-  
-                  if sprache == "de":
-                    bucket_keys_tabelle += '" title="Zur&uuml;ck">'
-                  else:
-                    bucket_keys_tabelle += '" title="Switch back">'
-                  # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                  #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
-                  bucket_keys_tabelle += '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
-                  if sprache == "de":
-                    bucket_keys_tabelle += 'Zur&uuml;ck'
-                  else:
-                    bucket_keys_tabelle += 'Switch back'
-                  bucket_keys_tabelle += '">'
-                  bucket_keys_tabelle += '</a>'
-                  bucket_keys_tabelle += '</td>'
-                  bucket_keys_tabelle += '<td>&nbsp;</td>'
-                  bucket_keys_tabelle += '<td>&nbsp;</td>'
-                  bucket_keys_tabelle += '<td>&nbsp;</td>'
+                  bucket_keys_tabelle += '<th align="left" colspan="4">'+str(directory)+'</th>'
                   bucket_keys_tabelle += '</tr>'
-  
-                for i in range(laenge_liste_keys):
+                  # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
+                  if directory != '/':
                     bucket_keys_tabelle += '<tr>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
                     bucket_keys_tabelle += '<td>'
-                    bucket_keys_tabelle += '<a href="/bucketkeyentfernen?bucket='
+                    bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
                     bucket_keys_tabelle += str(bucketname)
-                    bucket_keys_tabelle += '&amp;typ=kompfort'
-                    bucket_keys_tabelle += '&amp;key='
-                    bucket_keys_tabelle += str(liste_keys[i].name)
-                    bucket_keys_tabelle += '&amp;dir='
-                    bucket_keys_tabelle += str(directory)
-                    bucket_keys_tabelle += "&amp;mobile="
-                    bucket_keys_tabelle += str(mobile)
-                    if sprache == "de":
-                      bucket_keys_tabelle += '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
-                    else:
-                      bucket_keys_tabelle += '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
-                    bucket_keys_tabelle += '</td>'
-  
-  
-                    bucket_keys_tabelle += '<td>'
-                    # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
-                    # Dann kommt hier ein anderes Icon hin
-                    if str(liste_keys[i].name).endswith("$folder$") == True:
-                      # Es ist ein Verzeichnis...
-                      if sprache == "de":
-                        bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
-                      else:
-                        bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
-                    else:
-                      # Ansonsten ist es eine Datei...
-                      if sprache == "de":
-                        bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                      else:
-                        bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                    bucket_keys_tabelle += '</td>'
-                    bucket_keys_tabelle += '<td>'
-                    # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
-                    # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
-                    if str(liste_keys[i].name).endswith("$folder$") == True:
-                      bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
-                      bucket_keys_tabelle += str(bucketname)
+                    # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+                    # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+                    # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+                    # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+                    # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+                    # Root-Ansicht zurückkehren.
+                    if str(directory).count("/") >= 2:
                       bucket_keys_tabelle += '&amp;dir='
-                      bucket_keys_tabelle += str(liste_keys[i].name[:-9])
+                      bucket_keys_tabelle += str(directory)[:str(directory)[:-1].rfind('/')]
+    
+                    if sprache == "de":
+                      bucket_keys_tabelle += '" title="Zur&uuml;ck">'
+                    else:
+                      bucket_keys_tabelle += '" title="Switch back">'
+                    # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                    #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
+                    bucket_keys_tabelle += '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                    if sprache == "de":
+                      bucket_keys_tabelle += 'Zur&uuml;ck'
+                    else:
+                      bucket_keys_tabelle += 'Switch back'
+                    bucket_keys_tabelle += '">'
+                    bucket_keys_tabelle += '</a>'
+                    bucket_keys_tabelle += '</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '</tr>'
+    
+                  counter = 0
+                  for i in range(laenge_liste_keys):
+                    
+                      if counter > 0:
+                          bucket_keys_tabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                      counter += 1
+                    
+                      bucket_keys_tabelle += '<tr>'
+                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<a href="/bucketkeyentfernen?bucket='
+                      bucket_keys_tabelle += str(bucketname)
+                      bucket_keys_tabelle += '&amp;typ=kompfort'
+                      bucket_keys_tabelle += '&amp;key='
+                      bucket_keys_tabelle += str(liste_keys[i].name)
+                      bucket_keys_tabelle += '&amp;dir='
+                      bucket_keys_tabelle += str(directory)
                       bucket_keys_tabelle += "&amp;mobile="
                       bucket_keys_tabelle += str(mobile)
                       if sprache == "de":
-                        bucket_keys_tabelle += '" title="In das Verzeichnis wechseln">'
+                        bucket_keys_tabelle += '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
                       else:
-                        bucket_keys_tabelle += '" title="Switch to directory">'
-                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                      name_tmp = liste_keys[i].name.replace( directory, '')
-                      bucket_keys_tabelle += str(name_tmp[:-9])
-                      bucket_keys_tabelle += '</a>'
-                    # Wenn es sich nicht um ein Verzeichnis handelt
-                    else:
-                      # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
-                      # if liste_keys[i].name != None:
-                     
-                      bucket_keys_tabelle += '<a href="'
-
-                      if regionname == "Amazon":
-                        bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
-                      else:
-                        port = port_erhalten(username,regionname) 
-                        bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;').replace('/services/Walrus/', ':'+str(port)+'/services/Walrus/')
-                
-                      bucket_keys_tabelle += '">'
-                      # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
-                      name_tmp = liste_keys[i].name.replace(directory, '')
-                      # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
-                      bucket_keys_tabelle += str(name_tmp)
-                      bucket_keys_tabelle += '</a>'
-                     
+                        bucket_keys_tabelle += '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
                       bucket_keys_tabelle += '</td>'
-  
-
-                    if str(liste_keys[i].name) != None:
-                      # Wenn der Keyname auf "$folder" endet, dann wird keine Dateigröße ausgegeben.
+    
+    
+                      bucket_keys_tabelle += '<td>'
+                      # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
+                      # Dann kommt hier ein anderes Icon hin
                       if str(liste_keys[i].name).endswith("$folder$") == True:
-                        bucket_keys_tabelle += '<td align="center">---</td>'
-                      # Wenn der Keyname nicht auf $folder$ endet, wird die Dateigröße ausgegeben.
+                        # Es ist ein Verzeichnis...
+                        if sprache == "de":
+                          bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
+                        else:
+                          bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
                       else:
-                        bucket_keys_tabelle += '<td align="right">'+str(liste_keys[i].size)+'</td>'
-                    else:
-                      bucket_keys_tabelle += '<td align="right">&nbsp;</td>'
+                        # Ansonsten ist es eine Datei...
+                        if sprache == "de":
+                          bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                        else:
+                          bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                      bucket_keys_tabelle += '</td>'
+                      bucket_keys_tabelle += '<td colspan="2" align="left">'
+                      # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
+                      # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
+                      if str(liste_keys[i].name).endswith("$folder$") == True:
+                        bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
+                        bucket_keys_tabelle += str(bucketname)
+                        bucket_keys_tabelle += '&amp;dir='
+                        bucket_keys_tabelle += str(liste_keys[i].name[:-9])
+                        bucket_keys_tabelle += "&amp;mobile="
+                        bucket_keys_tabelle += str(mobile)
+                        if sprache == "de":
+                          bucket_keys_tabelle += '" title="In das Verzeichnis wechseln">'
+                        else:
+                          bucket_keys_tabelle += '" title="Switch to directory">'
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace( directory, '')
+                        bucket_keys_tabelle += str(name_tmp[:-9])
+                        bucket_keys_tabelle += '</a>'
+                      # Wenn es sich nicht um ein Verzeichnis handelt
+                      else:
+                        # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
+                        # if liste_keys[i].name != None:
+                       
+                        bucket_keys_tabelle += '<a href="'
   
+                        if regionname == "Amazon":
+                          bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                        else:
+                          port = port_erhalten(username,regionname) 
+                          bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;').replace('/services/Walrus/', ':'+str(port)+'/services/Walrus/')
+                  
+                        bucket_keys_tabelle += '">'
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace(directory, '')
+                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                        bucket_keys_tabelle += str(name_tmp)
+                        bucket_keys_tabelle += '</a>'
+                       
+                        bucket_keys_tabelle += '</td>'
+    
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
   
+                      if sprache == "de":
+                        bucket_keys_tabelle += '<td colspan="3" align="right"><b>Gr&ouml;&szlig;e:</b></td>'
+                      else:
+                        bucket_keys_tabelle += '<td colspan="3" align="right"><b>Size:</b></td>'
+                      if str(liste_keys[i].name) != None:
+                        # Wenn der Keyname auf "$folder" endet, dann wird keine Dateigröße ausgegeben.
+                        if str(liste_keys[i].name).endswith("$folder$") == True:
+                          bucket_keys_tabelle += '<td align="center">---</td>'
+                        # Wenn der Keyname nicht auf $folder$ endet, wird die Dateigröße ausgegeben.
+                        else:
+                          bucket_keys_tabelle += '<td align="center">'+str(liste_keys[i].size)+'</td>'
+                      else:
+                        bucket_keys_tabelle += '<td align="right">&nbsp;</td>'
+    
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
+
+                      if sprache == "de":
+                        bucket_keys_tabelle += '<td colspan="3" align="right"><b>Datum:</b></td>'
+                      else:
+                        bucket_keys_tabelle += '<td colspan="3" align="right"><b>Date:</b></td>'
+                      bucket_keys_tabelle += '<td align="center">'
+                      # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                      datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
+                      bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
+                      #bucket_keys_tabelle += str(liste_keys[i].last_modified)
+                      bucket_keys_tabelle += '</td>'
+    
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
+
+                      bucket_keys_tabelle += '<td align="right" colspan="3"><b>ACL:</b></td>'
+                      bucket_keys_tabelle += '<td align="center">'
+                      bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
+                      bucket_keys_tabelle += str(bucketname)
+                      bucket_keys_tabelle += '&amp;typ=kompfort'
+                      bucket_keys_tabelle += '&amp;key='+str(liste_keys[i].name)
+                      bucket_keys_tabelle += '&amp;dir='+str(directory)
+                      bucket_keys_tabelle += "&amp;mobile="
+                      bucket_keys_tabelle += str(mobile)
+                      if sprache == "de":
+                        bucket_keys_tabelle += '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                      else:
+                        bucket_keys_tabelle += '" title="view/edit ACL">view/edit ACL</a>'
+                      bucket_keys_tabelle += '</td>'
+                      
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
+                      
+                      bucket_keys_tabelle += '<td align="right" colspan="3"><b>MD5:</b></td>'
+                      bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+                      bucket_keys_tabelle += '</tr>'
+                  bucket_keys_tabelle += '</table>'
+                  
+              else:                 
+                  # Not the mobile version
+                  
+                  bucket_keys_tabelle = ''
+                  bucket_keys_tabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                  bucket_keys_tabelle += '<tr>'
+                  bucket_keys_tabelle += '<th>&nbsp;</th>'
+                  bucket_keys_tabelle += '<th>&nbsp;</th>'
+                  if sprache == "de":
+                    bucket_keys_tabelle += '<th align="left">'
+                    bucket_keys_tabelle += str(directory)
+                    bucket_keys_tabelle += '</th>'
+                    bucket_keys_tabelle += '<th align="center">Gr&ouml;&szlig;e</th>'
+                    bucket_keys_tabelle += '<th align="center">Letzte &Auml;nderung</th>'
+                    bucket_keys_tabelle += '<th align="center">Zugriffsberechtigung</th>'
+                    bucket_keys_tabelle += '<th align="center">Pr&uuml;fsumme (MD5)</th>'
+                  else:
+                    bucket_keys_tabelle += '<th align="left">'
+                    bucket_keys_tabelle += str(directory)
+                    bucket_keys_tabelle += '</th>'
+                    bucket_keys_tabelle += '<th align="center">Size</th>'
+                    bucket_keys_tabelle += '<th align="center">Last Modified</th>'
+                    bucket_keys_tabelle += '<th align="center">Access Control List</th>'
+                    bucket_keys_tabelle += '<th align="center">MD5</th>'
+                  bucket_keys_tabelle += '</tr>'
+                  # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
+                  if directory != '/':
+                    bucket_keys_tabelle += '<tr>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
                     bucket_keys_tabelle += '<td>'
-                    # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
-                    datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
-                    bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
-                    #bucket_keys_tabelle += str(liste_keys[i].last_modified)
-                    bucket_keys_tabelle += '</td>'
-  
-                    bucket_keys_tabelle += '<td align="center">'
-                    bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
+                    bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
                     bucket_keys_tabelle += str(bucketname)
-                    bucket_keys_tabelle += '&amp;typ=kompfort'
-                    bucket_keys_tabelle += '&amp;key='+str(liste_keys[i].name)
-                    bucket_keys_tabelle += '&amp;dir='+str(directory)
-                    bucket_keys_tabelle += "&amp;mobile="
-                    bucket_keys_tabelle += str(mobile)
+                    # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
+                    # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
+                    # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
+                    # Wenn das aktuelle Verzeichnis NICHT zwei oder mehr "/" enthält,
+                    # dann geben wir gar kein Verzeichnis an, weil dann wollen wir zur
+                    # Root-Ansicht zurückkehren.
+                    if str(directory).count("/") >= 2:
+                      bucket_keys_tabelle += '&amp;dir='
+                      bucket_keys_tabelle += str(directory)[:str(directory)[:-1].rfind('/')]
+    
                     if sprache == "de":
-                      bucket_keys_tabelle += '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                      bucket_keys_tabelle += '" title="Zur&uuml;ck">'
                     else:
-                      bucket_keys_tabelle += '" title="view/edit ACL">view/edit ACL</a>'
+                      bucket_keys_tabelle += '" title="Switch back">'
+                    # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                    #liste_keys[i].name = liste_keys[i].name.replace ( directory, '' )
+                    bucket_keys_tabelle += '<img src="bilder/left.png" width="16" height="16" border="0" alt="'
+                    if sprache == "de":
+                      bucket_keys_tabelle += 'Zur&uuml;ck'
+                    else:
+                      bucket_keys_tabelle += 'Switch back'
+                    bucket_keys_tabelle += '">'
+                    bucket_keys_tabelle += '</a>'
                     bucket_keys_tabelle += '</td>'
-                    bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
+                    bucket_keys_tabelle += '<td>&nbsp;</td>'
                     bucket_keys_tabelle += '</tr>'
-                bucket_keys_tabelle += '</table>'
+    
+                  for i in range(laenge_liste_keys):
+                      bucket_keys_tabelle += '<tr>'
+                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<a href="/bucketkeyentfernen?bucket='
+                      bucket_keys_tabelle += str(bucketname)
+                      bucket_keys_tabelle += '&amp;typ=kompfort'
+                      bucket_keys_tabelle += '&amp;key='
+                      bucket_keys_tabelle += str(liste_keys[i].name)
+                      bucket_keys_tabelle += '&amp;dir='
+                      bucket_keys_tabelle += str(directory)
+                      bucket_keys_tabelle += "&amp;mobile="
+                      bucket_keys_tabelle += str(mobile)
+                      if sprache == "de":
+                        bucket_keys_tabelle += '" title="Key l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Key l&ouml;schen"></a>'
+                      else:
+                        bucket_keys_tabelle += '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
+                      bucket_keys_tabelle += '</td>'
+    
+    
+                      bucket_keys_tabelle += '<td>'
+                      # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
+                      # Dann kommt hier ein anderes Icon hin
+                      if str(liste_keys[i].name).endswith("$folder$") == True:
+                        # Es ist ein Verzeichnis...
+                        if sprache == "de":
+                          bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Verzeichnis">'
+                        else:
+                          bucket_keys_tabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Folder">'
+                      else:
+                        # Ansonsten ist es eine Datei...
+                        if sprache == "de":
+                          bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
+                        else:
+                          bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
+                      bucket_keys_tabelle += '</td>'
+                      bucket_keys_tabelle += '<td>'
+                      # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
+                      # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
+                      if str(liste_keys[i].name).endswith("$folder$") == True:
+                        bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
+                        bucket_keys_tabelle += str(bucketname)
+                        bucket_keys_tabelle += '&amp;dir='
+                        bucket_keys_tabelle += str(liste_keys[i].name[:-9])
+                        bucket_keys_tabelle += "&amp;mobile="
+                        bucket_keys_tabelle += str(mobile)
+                        if sprache == "de":
+                          bucket_keys_tabelle += '" title="In das Verzeichnis wechseln">'
+                        else:
+                          bucket_keys_tabelle += '" title="Switch to directory">'
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace( directory, '')
+                        bucket_keys_tabelle += str(name_tmp[:-9])
+                        bucket_keys_tabelle += '</a>'
+                      # Wenn es sich nicht um ein Verzeichnis handelt
+                      else:
+                        # Nur wenn es nicht der None-Eintrag bei Eucalyptus ist, wird ein Link gebildet
+                        # if liste_keys[i].name != None:
+                       
+                        bucket_keys_tabelle += '<a href="'
+  
+                        if regionname == "Amazon":
+                          bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
+                        else:
+                          port = port_erhalten(username,regionname) 
+                          bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;').replace('/services/Walrus/', ':'+str(port)+'/services/Walrus/')
+                  
+                        bucket_keys_tabelle += '">'
+                        # Hier wird das aktuelle Verzeichnis vom Key-Namen vorne abgeschnitten
+                        name_tmp = liste_keys[i].name.replace(directory, '')
+                        # Wenn der Key kein Verzeinis ist, muss hinten nichts abgeschnitten werden.
+                        bucket_keys_tabelle += str(name_tmp)
+                        bucket_keys_tabelle += '</a>'
+                       
+                        bucket_keys_tabelle += '</td>'
+    
+  
+                      if str(liste_keys[i].name) != None:
+                        # Wenn der Keyname auf "$folder" endet, dann wird keine Dateigröße ausgegeben.
+                        if str(liste_keys[i].name).endswith("$folder$") == True:
+                          bucket_keys_tabelle += '<td align="center">---</td>'
+                        # Wenn der Keyname nicht auf $folder$ endet, wird die Dateigröße ausgegeben.
+                        else:
+                          bucket_keys_tabelle += '<td align="right">'+str(liste_keys[i].size)+'</td>'
+                      else:
+                        bucket_keys_tabelle += '<td align="right">&nbsp;</td>'
+    
+    
+                      bucket_keys_tabelle += '<td>'
+                      # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
+                      datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
+                      bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
+                      #bucket_keys_tabelle += str(liste_keys[i].last_modified)
+                      bucket_keys_tabelle += '</td>'
+    
+                      bucket_keys_tabelle += '<td align="center">'
+                      bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
+                      bucket_keys_tabelle += str(bucketname)
+                      bucket_keys_tabelle += '&amp;typ=kompfort'
+                      bucket_keys_tabelle += '&amp;key='+str(liste_keys[i].name)
+                      bucket_keys_tabelle += '&amp;dir='+str(directory)
+                      bucket_keys_tabelle += "&amp;mobile="
+                      bucket_keys_tabelle += str(mobile)
+                      if sprache == "de":
+                        bucket_keys_tabelle += '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                      else:
+                        bucket_keys_tabelle += '" title="view/edit ACL">view/edit ACL</a>'
+                      bucket_keys_tabelle += '</td>'
+                      bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+                      bucket_keys_tabelle += '</tr>'
+                  bucket_keys_tabelle += '</table>'
 
           # "Verzeichnisse" gehen nur bei Amazon S3
           # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.

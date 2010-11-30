@@ -224,10 +224,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += '</tr>'
                     bucket_keys_tabelle += '<tr>'    
                     
-                    if sprache == "de":
-                      bucket_keys_tabelle += '<td align="right" colspan="2"><b>ACL:</b></td>'
-                    else:
-                      bucket_keys_tabelle += '<td align="right" colspan="2"><b>ACL:</b></td>'
+                    bucket_keys_tabelle += '<td align="right" colspan="2"><b>ACL:</b></td>'
                     bucket_keys_tabelle += '<td align="center">'
                     bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
                     bucket_keys_tabelle += str(bucketname)
@@ -245,10 +242,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += '</tr>'
                     bucket_keys_tabelle += '<tr>'    
 
-                    if sprache == "de":
-                      bucket_keys_tabelle += '<td align="right" colspan="2"><b>MD5:</b></td>'
-                    else:
-                      bucket_keys_tabelle += '<td align="right" colspan="2"><b>MD5:</b></td>'
+                    bucket_keys_tabelle += '<td align="right" colspan="2"><b>MD5:</b></td>'
                     bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
                     bucket_keys_tabelle += '</tr>'
                 bucket_keys_tabelle += '</table>'              
