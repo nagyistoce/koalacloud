@@ -246,7 +246,7 @@ error_messages = {
             'en' : 'The keys were erased successfully' },
   '121' : { 'de' : 'Beim Versuch, die Keys zu l&ouml;schen, kam es zu einem Fehler',
             'en' : 'An error occured while trying to erase the keys' },
-  '122' : { 'de' : 'Es ist nicht möglich, Instanzen zu stoppen, deren Root-Verzeichnis im Instance-Store liegt',
+  '122' : { 'de' : 'Es ist nicht m&ouml;glich, Instanzen zu stoppen, deren Root-Verzeichnis im Instance-Store liegt',
             'en' : 'It is impossible to stop instances where the root device is inside the instance-store' },
   '123' : { 'de' : 'Die Instanz wurde erfolgreich gestoppt',
             'en' : 'The instance was stopped successfully' },

@@ -82,10 +82,10 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
@@ -109,10 +109,10 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
           else:
             # Wenn es geklappt hat...
@@ -140,8 +140,8 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output_de.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
