@@ -144,6 +144,9 @@ import base64
 
 class ConsoleOutput(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()  
@@ -159,7 +162,7 @@ class ConsoleOutput(webapp.RequestHandler):
         if results:
           # Nachsehen, ob eine Sprache ausgewählte wurde und wenn ja, welche Sprache
           sprache = aktuelle_sprache(username)
-          navigations_bar = navigations_bar_funktion(sprache)
+          navigations_bar = navigations_bar_funktion(sprache,mobile)
 
           url = users.create_logout_url(self.request.uri).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
           url_linktext = 'Logout'
@@ -167,7 +170,7 @@ class ConsoleOutput(webapp.RequestHandler):
           conn_region, regionname = login(username)
           zone_amazon = amazon_region(username)
 
-          zonen_liste = zonen_liste_funktion(username,sprache)
+          zonen_liste = zonen_liste_funktion(username,sprache,mobile)
           fehlermeldung = ""
 
           try:
@@ -192,10 +195,10 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
           except DownloadError:
             # Diese Exception hilft gegen diese beiden Fehler:
@@ -219,10 +222,10 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
           else:
             # Wenn es geklappt hat...
@@ -250,10 +253,10 @@ class ConsoleOutput(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             }
 
-            #if sprache == "de": naechse_seite = "console_output_de.html"
-            #else:               naechse_seite = "console_output_en.html"
-            #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-            path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "templates/mobile", sprache, "console_output.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "templates", sprache, "console_output.html")
             self.response.out.write(template.render(path,template_values))
         else:
           self.redirect('/')
