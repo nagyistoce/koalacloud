@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block sideBarContent %}
+
+<form action="/instanzanlegen_nimbus" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="3" cellspacing="0" cellpadding="5">
+<tr>
+<td>AMI ID: </td><td><tt> {{ image }} </tt></td>
+</tr><tr>
+<td>AMI Manifest: </td><td><tt> {{ manifest }} </tt></td>
+</tr>
+<tr>
+<td colspan="2" align="center"><input type="submit" value="{{ value_button_image_starten }}"> </td>
+</tr>
+</table>
+</form>
+
+<P>&nbsp;</P>
+
+{{ tabelle_ec2_instanztypen }}
+
+{% endblock %}
