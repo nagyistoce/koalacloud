@@ -9,6 +9,9 @@ from library import logins3
 
 class BucketEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         # Den Namen des zu löschen Buckets holen
         bucketname = self.request.get('bucket')
@@ -24,8 +27,8 @@ class BucketEntfernen(webapp.RequestHandler):
         except:
           fehlermeldung = "109"
           # Wenn es nicht klappt...
-          self.redirect('/s3?message='+fehlermeldung)
+          self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           fehlermeldung = "110"
           # Wenn es geklappt hat...
-          self.redirect('/s3?message='+fehlermeldung)
+          self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)

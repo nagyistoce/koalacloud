@@ -28,6 +28,8 @@ from error_messages import error_messages
 class S3(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -97,53 +99,111 @@ class S3(webapp.RequestHandler):
               else:
                 bucketstabelle = 'Still no buckets exist inside this region.'
             else:
-              bucketstabelle = ''
-              bucketstabelle = bucketstabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-              bucketstabelle = bucketstabelle + '<tr>'
-              bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
-              bucketstabelle = bucketstabelle + '<th>&nbsp;</th>'
-              bucketstabelle = bucketstabelle + '<th align="left">Buckets</th>'
-              if sprache == "de":
-                bucketstabelle = bucketstabelle + '<th>Reine S3-Darstellung</th>'
-                bucketstabelle = bucketstabelle + '<th>Komfort-Darstellung</th>'
+              
+              if mobile == "true":
+                # Mobile version
+                
+                bucketstabelle = ''
+                bucketstabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+                for i in range(laenge_liste_buckets):
+                    bucketstabelle += '<tr>'
+                    bucketstabelle += '<td align="left">'
+                    bucketstabelle += '<a href="/bucketentfernen?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    bucketstabelle += "&amp;mobile="
+                    bucketstabelle += str(mobile)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
+                    else:
+                      bucketstabelle += '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td colspan="4" align="left">'+str(liste_buckets[i].name)+'</td>'
+                    bucketstabelle += '</tr>'
+                    bucketstabelle += '<tr>'
+                    bucketstabelle += '<td>&nbsp;</td>'
+                    if sprache == "de":
+                      bucketstabelle += '<td align="right"><b>Reines S3:</b></td>'
+                    else:
+                      bucketstabelle += '<td align="right"><b>pure S3:</b></td>'
+                    bucketstabelle += '<td align="left">'
+                    bucketstabelle += '<a href="/bucket_inhalt_pure?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    bucketstabelle += "&amp;mobile="
+                    bucketstabelle += str(mobile)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket einsehen (reine S3-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    else:
+                      bucketstabelle += '" title="List content of this bucket (pure S3)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    bucketstabelle += '</td>'
+                    if sprache == "de":
+                      bucketstabelle += '<td align="right"><b>Komfort S3:</b></td>'
+                    else:
+                      bucketstabelle += '<td align="right"><b>comfort S3:</b></td>'
+                    bucketstabelle += '<td align="left">'
+                    bucketstabelle += '<a href="/bucket_inhalt?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    bucketstabelle += "&amp;mobile="
+                    bucketstabelle += str(mobile)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket einsehen (Komfort-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    else:
+                      bucketstabelle += '" title="List content of this bucket (S3 with more comfort)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '</tr>'
+                bucketstabelle += '</table>'
+              
               else:
-                bucketstabelle = bucketstabelle + '<th>Pure S3</th>'
-                bucketstabelle = bucketstabelle + '<th>S3 with more comfort</th>'
-              bucketstabelle = bucketstabelle + '</tr>'
-              for i in range(laenge_liste_buckets):
-                  bucketstabelle = bucketstabelle + '<tr>'
-                  bucketstabelle = bucketstabelle + '<td>'
-                  bucketstabelle = bucketstabelle + '<a href="/bucketentfernen?bucket='
-                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                  if sprache == "de":
-                    bucketstabelle = bucketstabelle + '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
-                  else:
-                    bucketstabelle = bucketstabelle + '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
-                  bucketstabelle = bucketstabelle + '</td>'
-                  bucketstabelle = bucketstabelle + '<td>'
-                  bucketstabelle = bucketstabelle + '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Bucket">'
-                  bucketstabelle = bucketstabelle + '</td>'
-                  bucketstabelle = bucketstabelle + '<td>'
-                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                  bucketstabelle = bucketstabelle + '</td>'
-                  bucketstabelle = bucketstabelle + '<td align="center">'
-                  bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt_pure?bucket='
-                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                  if sprache == "de":
-                    bucketstabelle = bucketstabelle + '" title="Bucket einsehen (reine S3-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                  else:
-                    bucketstabelle = bucketstabelle + '" title="List content of this bucket (pure S3)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                  bucketstabelle = bucketstabelle + '</td>'
-                  bucketstabelle = bucketstabelle + '<td align="center">'
-                  bucketstabelle = bucketstabelle + '<a href="/bucket_inhalt?bucket='
-                  bucketstabelle = bucketstabelle + str(liste_buckets[i].name)
-                  if sprache == "de":
-                    bucketstabelle = bucketstabelle + '" title="Bucket einsehen (Komfort-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                  else:
-                    bucketstabelle = bucketstabelle + '" title="List content of this bucket (S3 with more comfort)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
-                  bucketstabelle = bucketstabelle + '</td>'
-                  bucketstabelle = bucketstabelle + '</tr>'
-              bucketstabelle = bucketstabelle + '</table>'
+                # Not the mobile version
+                
+                bucketstabelle = ''
+                bucketstabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                bucketstabelle += '<tr>'
+                bucketstabelle += '<th>&nbsp;</th>'
+                bucketstabelle += '<th>&nbsp;</th>'
+                bucketstabelle += '<th align="left">Buckets</th>'
+                if sprache == "de":
+                  bucketstabelle += '<th>Reine S3-Darstellung</th>'
+                  bucketstabelle += '<th>Komfort-Darstellung</th>'
+                else:
+                  bucketstabelle += '<th>Pure S3</th>'
+                  bucketstabelle += '<th>S3 with more comfort</th>'
+                bucketstabelle += '</tr>'
+                for i in range(laenge_liste_buckets):
+                    bucketstabelle += '<tr>'
+                    bucketstabelle += '<td>'
+                    bucketstabelle += '<a href="/bucketentfernen?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    bucketstabelle += "&amp;mobile="
+                    bucketstabelle += str(mobile)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
+                    else:
+                      bucketstabelle += '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td>'
+                    bucketstabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Bucket">'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td>'
+                    bucketstabelle += str(liste_buckets[i].name)
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td align="center">'
+                    bucketstabelle += '<a href="/bucket_inhalt_pure?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket einsehen (reine S3-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    else:
+                      bucketstabelle += '" title="List content of this bucket (pure S3)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td align="center">'
+                    bucketstabelle += '<a href="/bucket_inhalt?bucket='
+                    bucketstabelle += str(liste_buckets[i].name)
+                    if sprache == "de":
+                      bucketstabelle += '" title="Bucket einsehen (Komfort-Darstellung)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    else:
+                      bucketstabelle += '" title="List content of this bucket (S3 with more comfort)"><img src="bilder/right.png" width="16" height="16" border="0" alt="Bucket"></a>'
+                    bucketstabelle += '</td>'
+                    bucketstabelle += '</tr>'
+                bucketstabelle += '</table>'
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -154,11 +214,12 @@ class S3(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           'bucketstabelle': bucketstabelle,
           'input_error_message': input_error_message,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "s3_de.html"
-          #else:               naechse_seite = "s3_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "s3.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3.html")
           self.response.out.write(template.render(path,template_values))
 

@@ -25,6 +25,8 @@ from error_messages import error_messages
 class ACL_einsehen(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -196,12 +198,13 @@ class ACL_einsehen(webapp.RequestHandler):
           'typ': typ,
           'directory': directory,
           'eucalyptus_warnung': eucalyptus_warnung,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "acl_de.html"
-          #else:               naechse_seite = "acl_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "acl.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "acl.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "acl.html")
           self.response.out.write(template.render(path,template_values))
 
 

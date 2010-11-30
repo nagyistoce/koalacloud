@@ -24,6 +24,8 @@ from error_messages import error_messages
 class AlleKeysLoeschenFrage(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         if not username:
@@ -59,11 +61,12 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           'bucketname': bucketname,
           's3_ansicht': s3_ansicht,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "alle_keys_loeschen_frage_de.html"
-          #else:               naechse_seite = "alle_keys_loeschen_frage_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_keys_loeschen_frage.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "alle_keys_loeschen_frage.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "alle_keys_loeschen_frage.html")
           self.response.out.write(template.render(path,template_values))
 
