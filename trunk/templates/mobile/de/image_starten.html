@@ -2,6 +2,7 @@
 {% block sideBarContent %}
 
 <form action="/instanzanlegen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
 <table border="3" cellspacing="0" cellpadding="5">
 <tr>
 <td>AMI ID: </td><td><tt> {{ image }} </tt></td>
