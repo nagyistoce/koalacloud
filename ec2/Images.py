@@ -187,9 +187,6 @@ class Images(webapp.RequestHandler):
                         liste_favouriten += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
                       liste_favouriten += '</td>'
 
-                      # Hier kommt die Spalte mit der Image-ID
-                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].id)+'</tt></td>'
-
                       liste_favouriten += '<td align="right">'
                       if sprache == "de":
                         liste_favouriten += '<a href="/favoritentfernen?ami='
@@ -208,56 +205,60 @@ class Images(webapp.RequestHandler):
                         liste_favouriten +=  str(mobile)
                         liste_favouriten += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
                       liste_favouriten += '</td>'
-    
+
+                      # Hier kommt die Spalte mit der Image-ID
+                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].id)+'</tt></td>'
+
+   
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
     
                       if sprache == "de":
-                        liste_favouriten += '<td align="left" colspan="2"><b>Typ:</b></td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Typ:</b></td>'
                       else:
-                        liste_favouriten += '<td align="left" colspan="2"><b>Type:</b></td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Type:</b></td>'
                       # Hier kommt die Spalte mit dem Instanztyp
-                      liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].type)+'</td>'
+                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].type)+'</td>'
                     
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                     
-                      liste_favouriten += '<td align="left" colspan="2"><b>Manifest:</b></td>'
+                      liste_favouriten += '<td align="right" colspan="3"><b>Manifest:</b></td>'
                       # Hier kommt die Spalte mit der Manifest-Datei
-                      liste_favouriten += '<td colspan="2"><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
+                      liste_favouriten += '<td><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
                       
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                       
                       if sprache == "de":
-                        liste_favouriten += '<td align="left" colspan="2"><b>Architektur:</b></td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Architektur:</b></td>'
                       else:
-                        liste_favouriten += '<td align="left" colspan="2"><b>Architecture:</b></td>'
-                      liste_favouriten += '<td align="center" colspan="2"><tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt></td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Architecture:</b></td>'
+                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt></td>'
                       
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                       
-                      liste_favouriten += '<td align="left" colspan="2"><b>Status:</b></td>'                         
+                      liste_favouriten += '<td align="right" colspan="3"><b>Status:</b></td>'                         
                       if liste_favoriten_ami_images[i].state == u'available':
                         liste_favouriten += '<td bgcolor="#c3ddc3" align="center" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
                       else:
-                        liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                        liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].state)+'</td>'
                       
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                       
-                      liste_favouriten += '<td align="left" colspan="2"><b>Root:</b></td>'     
-                      liste_favouriten += '<td align="center" colspan="2">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
+                      liste_favouriten += '<td align="right" colspan="3"><b>Root:</b></td>'     
+                      liste_favouriten += '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
                       
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                       
                       if sprache == "de":
-                        liste_favouriten += '<td align="left" colspan="2"><b>Besitzer:</b></td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
                       else:
-                        liste_favouriten += '<td align="left" colspan="2"><b>Owner:</b></td>'
-                      liste_favouriten += '<td align="center" colspan="2">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+                        liste_favouriten += '<td align="right" colspan="3"><b>Owner:</b></td>'
+                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
                       liste_favouriten += '</tr>'
                   liste_favouriten += '</table>'
                 else:

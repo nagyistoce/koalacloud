@@ -137,7 +137,7 @@ class Instanzen(webapp.RequestHandler):
                 instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
                 instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
                 instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
-                instanzentabelle = instanzentabelle + '<th align="center">Instance ID</th>'
+                instanzentabelle = instanzentabelle + '<th align="center">ID</th>'
                 instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
                 instanzentabelle = instanzentabelle + '<th>&nbsp;</th>'
                 instanzentabelle = instanzentabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
@@ -147,7 +147,7 @@ class Instanzen(webapp.RequestHandler):
                 else:
                   instanzentabelle = instanzentabelle + '<th align="center">Type</th>'
                 instanzentabelle = instanzentabelle + '<th align="center">Reservation</th>'
-                instanzentabelle = instanzentabelle + '<th align="center">Root Device</th>'  
+                instanzentabelle = instanzentabelle + '<th align="center">Root</th>'  
                 if sprache == "de":
                   instanzentabelle = instanzentabelle + '<th align="center">Besitzer</th>'
                 else:
@@ -235,9 +235,7 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle = instanzentabelle + x.id
                       instanzentabelle = instanzentabelle + '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
                     instanzentabelle = instanzentabelle + '</td>'
-                    instanzentabelle = instanzentabelle + '<td align="center">'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.id)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.id)+'</tt></td>'
                     
                     # Console output
                     instanzentabelle = instanzentabelle + '<td>'
@@ -304,7 +302,6 @@ class Instanzen(webapp.RequestHandler):
                     # Hier kommt die Spalte mit den Icons der Betriebssysteme
                     instanzentabelle = instanzentabelle + '<td align="center">'                  
                     
-                    
                     try:
                       image = conn_region.get_image(str(x.image_id))
                     except EC2ResponseError:
@@ -352,85 +349,51 @@ class Instanzen(webapp.RequestHandler):
   
                     # Hier kommt die Spalte "Status"
                     if x.state == u'running':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#c3ddc3">'
-                      instanzentabelle = instanzentabelle + 'running'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#c3ddc3">running</td>'
                     elif x.state == u'pending':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffffcc">'
-                      instanzentabelle = instanzentabelle + 'pending'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffffcc">pending</td>'
                     elif x.state == u'shutting-down':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
-                      instanzentabelle = instanzentabelle + 'shutting-down'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">shutting-down</td>'
                     elif x.state == u'terminated':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcccc">'
-                      instanzentabelle = instanzentabelle + 'terminated'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcccc">terminated</td>'
                     elif x.state == u'stopping':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">'
-                      instanzentabelle = instanzentabelle + 'stopping'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffcc99">stopping</td>'
                     elif x.state == u'stopped':
-                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffce81">'
-                      instanzentabelle = instanzentabelle + 'stopped'
+                      instanzentabelle = instanzentabelle + '<td bgcolor="#ffce81">stopped</td>'
                     else:
-                      instanzentabelle = instanzentabelle + '<td>'+str(x.state)
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.instance_type)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td align="center">'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(i.id)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td align="center">'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.root_device_type)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td align="center">'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(i.owner_id)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.image_id)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.kernel)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + '<tt>'+str(x.ramdisk)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + str(x.placement)
-                    instanzentabelle = instanzentabelle + '</td><td>'
+                      instanzentabelle = instanzentabelle + '<td>'+str(x.state)+'</td>'
+
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.instance_type)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(i.id)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.root_device_type)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(i.owner_id)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.image_id)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.kernel)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.ramdisk)+'</tt></td>'
+                    instanzentabelle = instanzentabelle + '<td align="center">'+str(x.placement)+'</td>'
+                    
                     laenge_liste_guppen_reservations = len(i.groups)
                     if laenge_liste_guppen_reservations == 1:
                       # Wenn zu der Reservation nur eine Sicherheitsgruppe gehört
                       for z in range(laenge_liste_guppen_reservations):
-                        instanzentabelle = instanzentabelle + i.groups[z].id
+                        instanzentabelle = instanzentabelle + '<td align="center">'+i.groups[z].id+'</td>'
                     else:
                       # Wenn zu der Reservation mehrere Sicherheitsgruppen gehören
                       for z in range(laenge_liste_guppen_reservations):
-                        instanzentabelle = instanzentabelle + i.groups[z].id+' '
-                    #instanzentabelle = instanzentabelle + '</td><td align="center">'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + str(x.public_dns_name)
-                    #if x.public_dns_name != None:
-                      #instanzentabelle = instanzentabelle + '<a href="http://'+x.public_dns_name+'" style="color:blue">Link</a>'
-                    #else:
-                      #instanzentabelle = instanzentabelle + x.private_dns_name
-                    #instanzentabelle = instanzentabelle + '</td><td align="center">'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    instanzentabelle = instanzentabelle + str(x.private_dns_name)
-                    #if x.private_dns_name != None:
-                      #instanzentabelle = instanzentabelle + '<a href="http://'+x.private_dns_name+'" style="color:blue">Link</a>'
-                    #else:
-                      #instanzentabelle = instanzentabelle + x.public_dns_name
-                    instanzentabelle = instanzentabelle + '</td><td align="center">'
+                        instanzentabelle = instanzentabelle + '<td align="center">'+i.groups[z].id+' </td>'
+
+                    instanzentabelle = instanzentabelle + '<td align="center">'+str(x.public_dns_name)+'</td>'
+
+                    instanzentabelle = instanzentabelle + '<td align="center">'+str(x.private_dns_name)+'</td>'
+
                     # Bei Eucalyptus kommt es manchmal vor, dass der Keyname nicht geholt werden kann. In diesem Fall kommt es zu einer HTML-Warnung, weil <tt></tt> leer ist. Darum lieber nur ein Leerzeichen, wenn der Keyname leer ist.
                     if x.key_name == "":
-                      instanzentabelle = instanzentabelle + '&nbsp;'
+                      instanzentabelle = instanzentabelle + '<td align="center">&nbsp;</td>'
                     else:
-                      instanzentabelle = instanzentabelle + '<tt>'+str(x.key_name)+'</tt>'
-                    instanzentabelle = instanzentabelle + '</td><td>'
-                    #self.response.out.write(x.private_dns_name+" ")
-                    #self.response.out.write(str(x.state_code)+" ") 
-                    #self.response.out.write(x.key_name+" ")
-                    #self.response.out.write(str(x.shutdown_state)+" ")
-                    #self.response.out.write(str(x.previous_state)+" ")
-                    #self.response.out.write(str(x.ami_launch_index)+" ")
-                    #self.response.out.write(str(x.monitored)+" ")
-                    #self.response.out.write('<BR>')
+                      instanzentabelle = instanzentabelle + '<td align="center"><tt>'+str(x.key_name)+'</tt></td>'
+                      
                     datum_des_starts = parse(x.launch_time)
-                    #instanzentabelle = instanzentabelle + str(datum_des_starts)
-                    instanzentabelle = instanzentabelle + str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))
-                    #instanzentabelle = instanzentabelle + x.launch_time
-                    instanzentabelle = instanzentabelle + '</td>'
+                    instanzentabelle = instanzentabelle + '<td align="center">'+str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))+'</td>'
                     instanzentabelle = instanzentabelle + '</tr>'
                 instanzentabelle = instanzentabelle + '</table>'
   
