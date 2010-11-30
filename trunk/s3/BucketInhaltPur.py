@@ -41,6 +41,8 @@ import base64
 class BucketInhaltPur(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -150,7 +152,6 @@ class BucketInhaltPur(webapp.RequestHandler):
               bucket_keys_tabelle = bucket_keys_tabelle + '<table border="3" cellspacing="0" cellpadding="5">'
               bucket_keys_tabelle = bucket_keys_tabelle + '<tr>'
               bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
-              bucket_keys_tabelle = bucket_keys_tabelle + '<th>&nbsp;&nbsp;&nbsp;</th>'
               if sprache == "de":
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="left">Keys</th>'
                 bucket_keys_tabelle = bucket_keys_tabelle + '<th align="center">Dateigr&ouml;&szlig;e</th>'
@@ -181,18 +182,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                     else:
                       bucket_keys_tabelle = bucket_keys_tabelle + '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
                     bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-  
-                  if liste_keys[i].name == None and regionname != "Amazon":
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>&nbsp;</td>'
-                  else:
-                    bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
-                    # In der reinen S3-Darstellung ist alles eine Datei
-                    if sprache == "de":
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="Datei">'
-                    else:
-                      bucket_keys_tabelle = bucket_keys_tabelle + '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
-                    bucket_keys_tabelle = bucket_keys_tabelle + '</td>'
-  
+   
                   bucket_keys_tabelle = bucket_keys_tabelle + '<td>'
                   bucket_keys_tabelle = bucket_keys_tabelle + '<a href="'
                   if regionname == "Amazon":
@@ -282,63 +272,63 @@ class BucketInhaltPur(webapp.RequestHandler):
           if zugangstyp == "Eucalyptus":
             endpointurl = endpointurl_erhalten(username,regionname)
             port = port_erhalten(username,regionname) 
-            keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+            keys_upload_formular += '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
           elif zugangstyp == "GoogleStorage":
-            keys_upload_formular = keys_upload_formular + '<form action="http://commondatastorage.googleapis.com/'
+            keys_upload_formular += '<form action="http://commondatastorage.googleapis.com/'
           else:
-            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
+            keys_upload_formular += '<form action="http://s3.amazonaws.com/'
             
-          keys_upload_formular = keys_upload_formular + bucketname
-          keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
-          keys_upload_formular = keys_upload_formular + '<table border="0" cellspacing="0" cellpadding="5">'
-          keys_upload_formular = keys_upload_formular + '<tr>'
-          keys_upload_formular = keys_upload_formular + '<td>'
-          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="key" value="${filename}">\n'
-          keys_upload_formular = keys_upload_formular + '<select name="acl" size="1">\n'
-          keys_upload_formular = keys_upload_formular + '<option selected="selected">public-read</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>private</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>public-read-write</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>authenticated-read</option>\n'
-          keys_upload_formular = keys_upload_formular + '</select>\n'
-          keys_upload_formular = keys_upload_formular + '<select name="Content-Type" size="1">\n'
-          keys_upload_formular = keys_upload_formular + '<option selected="selected">application/octet-stream</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>application/pdf</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>application/zip</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>audio/mp4</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>audio/mpeg</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>audio/ogg</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>audio/vorbis</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>image/gif</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>image/jpeg</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>image/png</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>image/tiff</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>text/html</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>text/plain</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>video/mp4</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>video/mpeg</option>\n'
-          keys_upload_formular = keys_upload_formular + '<option>video/ogg</option>\n'
-          keys_upload_formular = keys_upload_formular + '</select>\n'
-          keys_upload_formular = keys_upload_formular + '</td>'
-          keys_upload_formular = keys_upload_formular + '</tr>'
-          keys_upload_formular = keys_upload_formular + '<tr>'
-          keys_upload_formular = keys_upload_formular + '<td>'
-          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure">\n'        
-          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
-          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="policy" value="'+policy+'">\n'
-          keys_upload_formular = keys_upload_formular + '<input type="hidden" name="signature" value="'+signature+'">\n'
-          keys_upload_formular = keys_upload_formular + '<input type="file" name="file" size="80">\n'
-          keys_upload_formular = keys_upload_formular + '</td>'
-          keys_upload_formular = keys_upload_formular + '</tr>'
-          keys_upload_formular = keys_upload_formular + '<tr>'
-          keys_upload_formular = keys_upload_formular + '<td>'
+          keys_upload_formular += bucketname
+          keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+          keys_upload_formular += '<table border="0" cellspacing="0" cellpadding="5">'
+          keys_upload_formular += '<tr>'
+          keys_upload_formular += '<td>'
+          keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
+          keys_upload_formular += '<select name="acl" size="1">\n'
+          keys_upload_formular += '<option selected="selected">public-read</option>\n'
+          keys_upload_formular += '<option>private</option>\n'
+          keys_upload_formular += '<option>public-read-write</option>\n'
+          keys_upload_formular += '<option>authenticated-read</option>\n'
+          keys_upload_formular += '</select>\n'
+          keys_upload_formular += '<select name="Content-Type" size="1">\n'
+          keys_upload_formular += '<option selected="selected">application/octet-stream</option>\n'
+          keys_upload_formular += '<option>application/pdf</option>\n'
+          keys_upload_formular += '<option>application/zip</option>\n'
+          keys_upload_formular += '<option>audio/mp4</option>\n'
+          keys_upload_formular += '<option>audio/mpeg</option>\n'
+          keys_upload_formular += '<option>audio/ogg</option>\n'
+          keys_upload_formular += '<option>audio/vorbis</option>\n'
+          keys_upload_formular += '<option>image/gif</option>\n'
+          keys_upload_formular += '<option>image/jpeg</option>\n'
+          keys_upload_formular += '<option>image/png</option>\n'
+          keys_upload_formular += '<option>image/tiff</option>\n'
+          keys_upload_formular += '<option>text/html</option>\n'
+          keys_upload_formular += '<option>text/plain</option>\n'
+          keys_upload_formular += '<option>video/mp4</option>\n'
+          keys_upload_formular += '<option>video/mpeg</option>\n'
+          keys_upload_formular += '<option>video/ogg</option>\n'
+          keys_upload_formular += '</select>\n'
+          keys_upload_formular += '</td>'
+          keys_upload_formular += '</tr>'
+          keys_upload_formular += '<tr>'
+          keys_upload_formular += '<td>'
+          keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure">\n'        
+          keys_upload_formular += '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
+          keys_upload_formular += '<input type="hidden" name="policy" value="'+policy+'">\n'
+          keys_upload_formular += '<input type="hidden" name="signature" value="'+signature+'">\n'
+          keys_upload_formular += '<input type="file" name="file" size="60">\n'
+          keys_upload_formular += '</td>'
+          keys_upload_formular += '</tr>'
+          keys_upload_formular += '<tr>'
+          keys_upload_formular += '<td>'
           if sprache == "de":
-            keys_upload_formular = keys_upload_formular + '<input type="submit" value="Datei hochladen">\n'
+            keys_upload_formular += '<input type="submit" value="Datei hochladen">\n'
           else:
-            keys_upload_formular = keys_upload_formular + '<input type="submit" value="upload file">\n'
-          keys_upload_formular = keys_upload_formular + '</td>'
-          keys_upload_formular = keys_upload_formular + '</tr>'
-          keys_upload_formular = keys_upload_formular + '</table>'
-          keys_upload_formular = keys_upload_formular + '</form>'
+            keys_upload_formular += '<input type="submit" value="upload file">\n'
+          keys_upload_formular += '</td>'
+          keys_upload_formular += '</tr>'
+          keys_upload_formular += '</table>'
+          keys_upload_formular += '</form>'
          
           # Unter Eucalyptus funktioniert das Hochladen von Keys nicht
           #else:
@@ -350,14 +340,15 @@ class BucketInhaltPur(webapp.RequestHandler):
 
           if laenge_liste_keys != 0:
             alle_keys_loeschen_button = '<p>&nbsp;</p>\n'
-            alle_keys_loeschen_button = alle_keys_loeschen_button + '<form action="/alle_keys_loeschen" method="get">\n'
-            alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="s3_ansicht" value="pur"> \n'
-            alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="hidden" name="bucket_name" value="'+bucketname+'"> \n'
+            alle_keys_loeschen_button += '<form action="/alle_keys_loeschen" method="get">\n'
+            alle_keys_loeschen_button += '<input type="hidden" name="mobile" value="'+mobile+'">'
+            alle_keys_loeschen_button += '<input type="hidden" name="s3_ansicht" value="pur"> \n'
+            alle_keys_loeschen_button += '<input type="hidden" name="bucket_name" value="'+bucketname+'"> \n'
             if sprache == "de":
-              alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Alle Keys l&ouml;schen">\n'
+              alle_keys_loeschen_button += '<input type="submit" value="Alle Keys l&ouml;schen">\n'
             else:
-              alle_keys_loeschen_button = alle_keys_loeschen_button + '<input type="submit" value="Erase all keys">\n'
-            alle_keys_loeschen_button = alle_keys_loeschen_button + '</form>\n'
+              alle_keys_loeschen_button += '<input type="submit" value="Erase all keys">\n'
+            alle_keys_loeschen_button += '</form>\n'
           else:
             alle_keys_loeschen_button = ''
 
@@ -374,11 +365,12 @@ class BucketInhaltPur(webapp.RequestHandler):
           'keys_upload_formular': keys_upload_formular,
           #'eucalyptus_warnung': eucalyptus_warnung,
           'alle_keys_loeschen_button': alle_keys_loeschen_button,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "s3_keys_pur_de.html"
-          #else:               naechse_seite = "s3_keys_pur_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3_keys_pur.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "s3_keys_pur.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3_keys_pur.html")
           self.response.out.write(template.render(path,template_values))
 

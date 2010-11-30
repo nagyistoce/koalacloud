@@ -11,6 +11,9 @@ from library import logins3
 
 class BucketVerzeichnisErzeugen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         # Die Eingabe aus dem Formular holen
         verzeichnisname = self.request.get('verzeichnisname') 

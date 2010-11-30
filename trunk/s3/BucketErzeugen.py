@@ -11,6 +11,9 @@ from library import logins3
 
 class BucketErzeugen(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Die Eingabe aus dem Formular holen
         neuerbucketname = self.request.get('bucketname')
@@ -23,11 +26,11 @@ class BucketErzeugen(webapp.RequestHandler):
           # Wenn kein Name angegeben wurde, kann kein Key angelegt werden
           #fehlermeldung = "Sie haben keine Namen angegeben"
           fehlermeldung = "92"
-          self.redirect('/s3?message='+fehlermeldung)
+          self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
         elif re.search(r'[^\-.a-zA-Z0-9]', neuerbucketname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
           fehlermeldung = "106"
-          self.redirect('/s3?message='+fehlermeldung)
+          self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
         else:
           # Mit S3 verbinden
           conn_s3 = logins3(username)
@@ -37,7 +40,7 @@ class BucketErzeugen(webapp.RequestHandler):
           except:
             # Wenn es nicht klappt...
             fehlermeldung = "107"
-            self.redirect('/s3?message='+fehlermeldung)
+            self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
             # Wenn es geklappt hat...
             # Variable erzeugen zum Erfassen, ob der neue Bucket schon existiert
@@ -61,13 +64,13 @@ class BucketErzeugen(webapp.RequestHandler):
               except:
                 fehlermeldung = "107"
                 # Wenn es nicht klappt...
-                self.redirect('/s3?message='+fehlermeldung)
+                self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
               else:
                 fehlermeldung = "105"
                 # Wenn es geklappt hat...
-                self.redirect('/s3?message='+fehlermeldung)
+                self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
             else:
               # Wenn man schon einen Bucket mit dem eingegeben Namen hat...
               fehlermeldung = "108"
-              self.redirect('/s3?message='+fehlermeldung)
+              self.redirect('/s3?mobile='+str(mobile)+'&message='+fehlermeldung)
 

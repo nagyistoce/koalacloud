@@ -156,7 +156,7 @@ class LoadBalancer(webapp.RequestHandler):
                   
                   if mobile == "true":
                     loadbalancertabelle = ''
-                    loadbalancertabelle += '<table border="0" cellspacing="0" cellpadding="5">'
+                    loadbalancertabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
                     
                     counter = 0
                     
@@ -192,14 +192,15 @@ class LoadBalancer(webapp.RequestHandler):
                         loadbalancertabelle += '</tr>'
                         
                         loadbalancertabelle += '<tr>'
-                        loadbalancertabelle += '<td colspan="3"><tt>'+liste_load_balancers[i].dns_name+'</tt></td>'
+                        loadbalancertabelle += '<td align="right"><b>DNS:</b></td>'
+                        loadbalancertabelle += '<td colspan="2"><tt>'+liste_load_balancers[i].dns_name+'</tt></td>'
                         loadbalancertabelle += '</tr>'
                         
                         loadbalancertabelle += '<tr>'
                         if sprache == "de":
-                          loadbalancertabelle += '<td align="left"><b>Zonen:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Zonen:</b></td>'
                         else:
-                          loadbalancertabelle += '<td align="left"><b>Zones:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Zones:</b></td>'
                         loadbalancertabelle += '<td colspan="2" align="center"><tt>'
                         for x in range(len(liste_load_balancers[i].availability_zones)):
                           loadbalancertabelle += str(liste_load_balancers[i].availability_zones[x])
@@ -209,9 +210,9 @@ class LoadBalancer(webapp.RequestHandler):
                         
                         loadbalancertabelle += '<tr>'
                         if sprache == "de":
-                          loadbalancertabelle += '<td align="left"><b>Datum:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Datum:</b></td>'
                         else:
-                          loadbalancertabelle += '<td align="left"><b>Creation Date:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Creation Date:</b></td>'
                         loadbalancertabelle += '<td colspan="2" align="center"><tt>'
                         datum_der_erzeugung = parse(liste_load_balancers[i].created_time)
                         loadbalancertabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
@@ -220,14 +221,14 @@ class LoadBalancer(webapp.RequestHandler):
                         
                         loadbalancertabelle += '<tr>'
                         if sprache == "de":
-                          loadbalancertabelle += '<td align="left"><b>Datum:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Instanzen:</b></td>'
                         else:
-                          loadbalancertabelle += '<td align="left"><b>Creation Date:</b></td>'
+                          loadbalancertabelle += '<td align="right"><b>Instances:</b></td>'
                         loadbalancertabelle += '<td colspan="2" align="center"><tt>'+str(len(liste_load_balancers[i].instances))+'</tt></td>'
                         loadbalancertabelle += '</tr>'
                         
                         loadbalancertabelle += '<tr>'
-                        loadbalancertabelle += '<td align="left"><b>Ports:</b></td>'
+                        loadbalancertabelle += '<td align="right"><b>Ports:</b></td>'
                         loadbalancertabelle += '<td colspan="2" align="center"><tt>'
                         for x in range(len(liste_load_balancers[i].listeners)):
                           loadbalancertabelle += str(liste_load_balancers[i].listeners[x])

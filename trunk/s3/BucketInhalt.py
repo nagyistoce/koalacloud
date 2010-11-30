@@ -39,6 +39,8 @@ import base64
 class BucketInhalt(webapp.RequestHandler):
     def get(self):
         mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # self.response.out.write('posted!')
         # Den Usernamen erfahren
         username = users.get_current_user()
@@ -538,12 +540,13 @@ class BucketInhalt(webapp.RequestHandler):
           'keys_upload_formular': keys_upload_formular,
           'verzeichnis_warnung': verzeichnis_warnung,
           #'eucalyptus_warnung': eucalyptus_warnung,
+          'mobile': mobile,
           }
 
-          #if sprache == "de": naechse_seite = "s3_keys_de.html"
-          #else:               naechse_seite = "s3_keys_en.html"
-          #path = os.path.join(os.path.dirname(__file__), naechse_seite)
-          path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3_keys.html")
+          if mobile == "true":
+              path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "s3_keys.html")
+          else:
+              path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "s3_keys.html")
           self.response.out.write(template.render(path,template_values))
 
 

@@ -10,6 +10,9 @@ from library import login
 
 class AlleKeysLoeschenDefinitiv(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Den Usernamen erfahren
         username = users.get_current_user()
         # Den Namen des Buckets erfahren
@@ -46,8 +49,8 @@ class AlleKeysLoeschenDefinitiv(webapp.RequestHandler):
         except:
           # Wenn es nicht klappt...
           fehlermeldung = "121"
-          self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+          self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "120"
-          self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+          self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)

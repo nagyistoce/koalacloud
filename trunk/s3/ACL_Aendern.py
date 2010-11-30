@@ -11,6 +11,9 @@ from boto.ec2.connection import *
 
 class ACL_Aendern(webapp.RequestHandler):
     def post(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         # Zum Testen, ob "post" funktioniert hat
         # self.response.out.write('posted!')
         keyname    = self.request.get('keyname')
@@ -34,21 +37,21 @@ class ACL_Aendern(webapp.RequestHandler):
           # Wenn es nicht klappt...
           fehlermeldung = "119"
           if typ == "pur":
-            self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+            self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
           else:
             if directory == "/":
-              self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+              self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
             else:
               directory = str(directory)[:-1]
-              self.redirect('/bucket_inhalt?bucket='+bucketname+'&dir='+directory+'&message='+fehlermeldung)
+              self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&dir='+directory+'&message='+fehlermeldung)
         else:
           # Wenn es geklappt hat...
           fehlermeldung = "118"
           if typ == "pur":
-            self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+            self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
           else:
             if directory == "/":
-              self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+              self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
             else:
               directory = str(directory)[:-1]
-              self.redirect('/bucket_inhalt?bucket='+bucketname+'&dir='+directory+'&message='+fehlermeldung)
+              self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&dir='+directory+'&message='+fehlermeldung)

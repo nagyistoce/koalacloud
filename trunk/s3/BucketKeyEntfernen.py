@@ -9,6 +9,9 @@ from library import logins3
 
 class BucketKeyEntfernen(webapp.RequestHandler):
     def get(self):
+        mobile = self.request.get('mobile')
+        if mobile != "true":
+            mobile = "false"
         #self.response.out.write('posted!')
         # Den Namen des zu löschen Keys holen
         keyname = self.request.get('key')
