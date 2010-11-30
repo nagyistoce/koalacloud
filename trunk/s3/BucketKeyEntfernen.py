@@ -51,24 +51,24 @@ class BucketKeyEntfernen(webapp.RequestHandler):
               # Wenn es nicht klappt...
               if typ == "pur":
                 if directory == "/":
-                  self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+                  self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
                 else:
-                  self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                  self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
               else:
                 if directory == "/":
-                  self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+                  self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
                 else:
-                  self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                  self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
             else:
               fehlermeldung = "111"
               # Wenn es geklappt hat...
               if typ == "pur":
                 if directory == "/":
-                  self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung)
+                  self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
                 else:
-                  self.redirect('/bucket_inhalt_pure?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                  self.redirect('/bucket_inhalt_pure?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
               else:
                 if directory == "/":
-                  self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+                  self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
                 else:
-                  self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                  self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)

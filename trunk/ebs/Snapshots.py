@@ -120,9 +120,9 @@ class Snapshots(webapp.RequestHandler):
   
               if laenge_liste_snapshots == 0:
                 if sprache == "de":
-                  snapshotstabelle = 'Es sind keine Snapshots in der Region vorhanden.'
+                  snapshotstabelle = 'Sie haben keine Snapshots in dieser Region.'
                 else:
-                  snapshotstabelle = 'No snapshots exist inside this region.'
+                  snapshotstabelle = 'You have no snapshots inside this region.'
               else: 
                 
                 if mobile == "true":

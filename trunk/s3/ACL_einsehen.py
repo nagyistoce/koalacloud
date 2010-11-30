@@ -119,7 +119,7 @@ class ACL_einsehen(webapp.RequestHandler):
           if OwnerFull  == '': OwnerFull  = 'delete.png'
 
           acl_tabelle = '\n'
-          acl_tabelle = acl_tabelle + '<table border="1" cellspacing="0" cellpadding="5"> \n'
+          acl_tabelle = acl_tabelle + '<table border="0" cellspacing="0" cellpadding="5"> \n'
           acl_tabelle = acl_tabelle + '<tr> \n'
           if sprache == "de": 
             acl_tabelle = acl_tabelle + '<th>Benutzer</th> \n'

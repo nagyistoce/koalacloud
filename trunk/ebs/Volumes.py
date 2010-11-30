@@ -166,9 +166,9 @@ class Volumes(webapp.RequestHandler):
               if laenge_liste_volumes == 0:
                 # Wenn es noch keine Volumes in der Region gibt...
                 if sprache == "de":
-                  volumestabelle = 'Es sind keine Volumen in der Region vorhanden.'
+                  volumestabelle = 'Sie haben keine Volumen in dieser Region.'
                 else:
-                  volumestabelle = 'No volumes exist inside this region.'
+                  volumestabelle = 'You have no volumes inside this region.'
               else: 
                 # Wenn es schon Volumes in der Region gibt...
                 

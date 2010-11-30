@@ -149,9 +149,9 @@ class LoadBalancer(webapp.RequestHandler):
   
                 if laenge_liste_load_balancers == 0:
                   if sprache == "de":
-                    loadbalancertabelle = 'Es sind keine Lastverteiler in der Region vorhanden.'
+                    loadbalancertabelle = 'Sie haben keine Lastverteiler in dieser Region.'
                   else:
-                    loadbalancertabelle = 'No load balancer exist inside this region.'
+                    loadbalancertabelle = 'You have no load balancers inside this region.'
                 else:
                   
                   if mobile == "true":

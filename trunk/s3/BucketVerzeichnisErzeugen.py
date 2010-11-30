@@ -31,20 +31,20 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
           #fehlermeldung = "Sie haben keine Namen angegeben"
           fehlermeldung = "113"
           if directory == "/":
-            self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+            self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
           else:
             # Den Slash am Ende des Verzeichnisses entfernen
             directory = str(directory[:-1])
-            self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+            self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
         elif re.search(r'[^\-_a-zA-Z0-9]', verzeichnisname) != None:
           # Testen ob der Name für den neuen key nicht erlaubte Zeichen enthält
           fehlermeldung = "114"
           if directory == "/":
-            self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+            self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
           else:
             # Den Slash am Ende des Verzeichnisses entfernen
             directory = str(directory[:-1])
-            self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+            self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
         else:
           # Mit S3 verbinden
           conn_s3 = logins3(username) 
@@ -68,11 +68,11 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
               schon_vorhanden = 1
               fehlermeldung = "117"
               if directory == "/":
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
               else:
                 # Den Slash am Ende des Verzeichnisses entfernen
                 directory = str(directory[:-1])
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
 
           # Wenn man noch kein Verzeichnis mit dem eingegebenen Namen besitzt... 
           if schon_vorhanden == 0:
@@ -91,18 +91,18 @@ class BucketVerzeichnisErzeugen(webapp.RequestHandler):
               # Wenn es nicht klappt...
               fehlermeldung = "116"
               if directory == "/":
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
               else:
                 # Den Slash am Ende des Verzeichnisses entfernen
                 directory = str(directory[:-1])
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
             else:
               # Wenn es geklappt hat...
               fehlermeldung = "115"
               if directory == "/":
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung)
               else:
                 # Den Slash am Ende des Verzeichnisses entfernen
                 directory = str(directory[:-1])
-                self.redirect('/bucket_inhalt?bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
+                self.redirect('/bucket_inhalt?mobile='+str(mobile)+'&bucket='+bucketname+'&message='+fehlermeldung+'&dir='+directory)
                 
