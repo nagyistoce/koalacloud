@@ -183,55 +183,71 @@ class Keys(webapp.RequestHandler):
                 secretkey_memcache_mit_zeilenumbruch = memcache.get(secretkey)
                 secretkey_memcache = secretkey_memcache_mit_zeilenumbruch.replace("\n","<BR>")
                 # Das wird in den Body-Tag der Datei base.html eingefügt. 
-                bodycommand = ' onLoad="newkey()" '
-                javascript_funktion = '''
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-  <!--  to hide script contents from old browsers
-  function newkey()
-  {
-  OpenWindow=window.open("", "newwin", "height=450, width=500,toolbar=no,scrollbars="+scroll+",menubar=no")
-  OpenWindow.document.write("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'")
-  OpenWindow.document.write("      'http://www.w3.org/TR/html4/loose.dtd'>")
-
-  OpenWindow.document.write("<HTML>")
-  OpenWindow.document.write("<HEAD>")
-  OpenWindow.document.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>")
-  OpenWindow.document.write("<TITLE>Secret Key<\/TITLE>")
-  OpenWindow.document.write("<link type='text/css' rel='stylesheet' href='/stylesheets/style.css'>")
-  OpenWindow.document.write("<link rel='SHORTCUT ICON' href='/favicon.ico'>")
-  OpenWindow.document.write("<\/HEAD>")
-  OpenWindow.document.write("<BODY BGCOLOR='white'>")
-  OpenWindow.document.write("<h1>Secret Key<\/h1>")
-  OpenWindow.document.write("<P>&nbsp;<\/P>")
-  OpenWindow.document.write("<tt>'''
-                javascript_funktion = javascript_funktion + secretkey_memcache
+#                bodycommand = ' onLoad="newkey()" '
+#                javascript_funktion = '''
+#<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+#  <!--  to hide script contents from old browsers
+#  function newkey()
+#  {
+#  OpenWindow=window.open("", "newwin", "height=450, width=500,toolbar=no,scrollbars="+scroll+",menubar=no")
+#  OpenWindow.document.write("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'")
+#  OpenWindow.document.write("      'http://www.w3.org/TR/html4/loose.dtd'>")
+#
+#  OpenWindow.document.write("<HTML>")
+#  OpenWindow.document.write("<HEAD>")
+#  OpenWindow.document.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>")
+#  OpenWindow.document.write("<TITLE>Secret Key<\/TITLE>")
+#  OpenWindow.document.write("<link type='text/css' rel='stylesheet' href='/stylesheets/style.css'>")
+#  OpenWindow.document.write("<link rel='SHORTCUT ICON' href='/favicon.ico'>")
+#  OpenWindow.document.write("<\/HEAD>")
+#  OpenWindow.document.write("<BODY BGCOLOR='white'>")
+#  OpenWindow.document.write("<h1>Secret Key<\/h1>")
+#  OpenWindow.document.write("<P>&nbsp;<\/P>")
+#  OpenWindow.document.write("<tt>'''
+#                javascript_funktion = javascript_funktion + secretkey_memcache
+#                if sprache == "de":
+#                  javascript_funktion = javascript_funktion + '''<\/tt>")
+#                  OpenWindow.document.write("<P>&nbsp;<\/P>")
+#                  OpenWindow.document.write("<B>Achtung!<\/B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
+#                  OpenWindow.document.write("Am besten in einer Datei <tt>'''
+#                else:
+#                  javascript_funktion = javascript_funktion + '''<\/tt>")
+#                  OpenWindow.document.write("<P>&nbsp;<\/P>")
+#                  OpenWindow.document.write("<B>Attention!<\/B> The secret key need to be saved.<BR>")
+#                  OpenWindow.document.write("As an advise use the filename <tt>'''
+#                javascript_funktion = javascript_funktion + neuerkeyname
+#                javascript_funktion = javascript_funktion + '''.secret<\/tt>.")
+#                OpenWindow.document.write("<P>&nbsp;<\/P>")
+#                OpenWindow.document.write("<tt>chmod 600 '''
+#                javascript_funktion = javascript_funktion + neuerkeyname
+#                javascript_funktion = javascript_funktion + '''.secret<\/tt>")
+#  OpenWindow.document.write("<\/BODY>")
+#  OpenWindow.document.write("<\/HTML>")
+#  OpenWindow.document.close()
+#  self.name="main"
+#  }
+#  // end hiding contents from old browsers  -->
+#</SCRIPT>'''
+                new_keypair_secretkey = ''
                 if sprache == "de":
-                  javascript_funktion = javascript_funktion + '''<\/tt>")
-                  OpenWindow.document.write("<P>&nbsp;<\/P>")
-                  OpenWindow.document.write("<B>Achtung!<\/B> Den Secret Key m&uuml;ssen Sie speichern.<BR>")
-                  OpenWindow.document.write("Am besten in einer Datei <tt>'''
+                  new_keypair_secretkey += '<b>Ihr neuer geheimer Schl&uuml;ssel</b>'
                 else:
-                  javascript_funktion = javascript_funktion + '''<\/tt>")
-                  OpenWindow.document.write("<P>&nbsp;<\/P>")
-                  OpenWindow.document.write("<B>Attention!<\/B> The secret key need to be saved.<BR>")
-                  OpenWindow.document.write("As an advise use the filename <tt>'''
-                javascript_funktion = javascript_funktion + neuerkeyname
-                javascript_funktion = javascript_funktion + '''.secret<\/tt>.")
-                OpenWindow.document.write("<P>&nbsp;<\/P>")
-                OpenWindow.document.write("<tt>chmod 600 '''
-                javascript_funktion = javascript_funktion + neuerkeyname
-                javascript_funktion = javascript_funktion + '''.secret<\/tt>")
-  OpenWindow.document.write("<\/BODY>")
-  OpenWindow.document.write("<\/HTML>")
-  OpenWindow.document.close()
-  self.name="main"
-  }
-  // end hiding contents from old browsers  -->
-</SCRIPT>'''
+                  new_keypair_secretkey += '<b>Your new secret key</b>'
+                new_keypair_secretkey += '<p>&nbsp;</p>'
+                new_keypair_secretkey += '<tt>'+secretkey_memcache+'</tt>'
+                new_keypair_secretkey += '<p>&nbsp;</p>'
+                if sprache == "de":
+                  new_keypair_secretkey += '<b>Achtung!</b> Ihren geheimen Schl&uuml;ssel m&uuml;ssen Sie speichern. Am besten in einer lokalen Datei mit den korrekten Benutzerrechten.<BR>'
+                  new_keypair_secretkey += '<tt>chmod 600 '+neuerkeyname+'.secret</tt>'
+                else:
+                  new_keypair_secretkey += '<b>Attention!</b> You need to save your new secret key. As an advise use a local file with the correct user access rights.BR>'
+                  new_keypair_secretkey += '<tt>chmod 600 '+neuerkeyname+'.secret</tt>'
+                new_keypair_secretkey += '<p>&nbsp;</p>'                
               else:
                   # neu ist nicht "ja"
-                  bodycommand = " "
-                  javascript_funktion = " "
+#                  bodycommand = " "
+#                  javascript_funktion = " "
+                  new_keypair_secretkey = " "
   
               template_values = {
               'navigations_bar': navigations_bar,
@@ -240,11 +256,12 @@ class Keys(webapp.RequestHandler):
               'zone': regionname,
               'zone_amazon': zone_amazon,
               'keytabelle': keytabelle,
-              'bodycommand': bodycommand,
-              'javascript_funktion': javascript_funktion,
+#              'bodycommand': bodycommand,
+#              'javascript_funktion': javascript_funktion,
               'zonen_liste': zonen_liste,
               'input_error_message': input_error_message,
               'mobile': mobile,
+              'new_keypair_secretkey': new_keypair_secretkey,
               }
   
               if mobile == "true":

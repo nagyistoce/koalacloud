@@ -3,17 +3,6 @@
 
 {{ neues_fenster }}
 
-<!--
-<h3>
-<b>Keys</b>
-</h3>
-<br>
--->
-
-<!-- <b>Create new keypair</b> --> 
-
-<!-- <p>&nbsp;</p> --> 
-
 <form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
 <table border="0" cellspacing="2" cellpadding="2">
@@ -33,6 +22,8 @@
 {{ input_error_message }}
 
 <p>&nbsp;</p>
+
+{{ new_keypair_secretkey }}
 
 <b>List of keypairs</b>
 
