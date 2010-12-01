@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-<b>Zug&auml;nge and Regionen</b>
+<b>Ihre Zugangsdaten</b>
 
 <p>&nbsp;</p>
 
@@ -9,31 +9,7 @@
 
 <p>&nbsp;</p>
 
-<b>Pers&ouml;nliche Daten in KOALA l&ouml;schen</b>
-
-<table border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td align="center">
-      <form action="/persoenliche_datan_loeschen" method="get">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
-        <input type="submit" value="Alle Ihre pers&ouml;nliche Daten aus KOALA l&ouml;schen">
-      </form>
-    </td>
-  </tr>
-</table>
-
-<table border="0" cellspacing="2" cellpadding="2">
-  <tr>
-    <td align="center">
-      <form action="/persoenliche_favoriten_loeschen" method="get">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
-        <input type="submit" value="Nur Ihre EC2 Favoriten in KOALA l&ouml;schen">
-      </form>
-    </td>
-  </tr>
-</table>
-
-<b>Neuen Zugang zu einer Region eintragen</b>
+<b>Ihre Zugangsdaten importieren</b>
 
 <p>&nbsp;</p>
 
@@ -100,5 +76,30 @@
 {{ version_warnung }}
 
 {{ port_warnung }}
+
+<b>Pers&ouml;nliche Daten in KOALA l&ouml;schen</b>
+
+<table border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td align="center">
+      <form action="/persoenliche_datan_loeschen" method="get">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="submit" value="Alle Ihre pers&ouml;nliche Daten aus KOALA l&ouml;schen">
+      </form>
+    </td>
+  </tr>
+</table>
+
+<table border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td align="center">
+      <form action="/persoenliche_favoriten_loeschen" method="get">
+        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="submit" value="Nur Ihre EC2 Favoriten in KOALA l&ouml;schen">
+      </form>
+    </td>
+  </tr>
+</table>
+
 
 {% endblock %}
