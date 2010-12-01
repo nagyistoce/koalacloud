@@ -1,21 +1,16 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<!--
-<h3><b>Elastic IPs</b></h3>
--->
-
-<!--<p>&nbsp;</p>-->
 
 <form action="/allocate_address" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
-<input type="submit" value="create elastic IP">
+<input type="submit" value="create new elastic IP">
 </form>
 
 {{ input_error_message }}
 
 <p>&nbsp;</p>
 
-<b>List of elastic IPs</b>
+<b>Your elastic IPs</b>
 
 <p>&nbsp;</p>
 

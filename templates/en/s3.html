@@ -1,23 +1,16 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>Simple Storage Service (S3) Buckets</b>
-</h3>
-<br>
-<b>Create new bucket inside the region {{ zone }}</b>
-
-<p>&nbsp;</p>
 
 <form action="/bucketerzeugen" method="post" accept-charset="utf-8">
 <input name="bucketname" type="text" size="63" maxlength="63">
-<input type="submit" value="create bucket">
+<input type="submit" value="create new bucket">
 </form>
 
 {{ input_error_message }}
 
 <p>&nbsp;</p>
 
-<b>List of buckets inside the region {{ zone }}</b>
+<b>Your buckets inside the region {{ zone }}</b>
 
 <p>&nbsp;</p>
 

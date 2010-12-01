@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3><b>Elastic Load Balancer (ELB)</b></h3>
-
-<p>&nbsp;</p>
 
 <form action="/create_load_balancer" method="get" accept-charset="utf-8">
-<input type="submit" value="create load balancer">
+<input type="submit" value="create new elastic load balancer">
 </form>
 
 <p>&nbsp;</p>
 
-<b>List of elastic load balancers inside the region {{ zone }} {{ zone_amazon }}</b>
+<b>Your elastic load balancers inside the region {{ zone }} {{ zone_amazon }}</b>
 
 {{ input_error_message }}
 

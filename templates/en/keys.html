@@ -3,17 +3,9 @@
 
 {{ neues_fenster }}
 
-<h3>
-<b>Keys</b>
-</h3>
-<br>
-<b>Create new keypair inside the region {{ zone }} {{ zone_amazon }}</b>
-
-<p>&nbsp;</p>
-
 <form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
 <input name="keyname" type="text" size="25" maxlength="25">
-<input type="submit" value="create keypair">
+<input type="submit" value="create new keypair">
 </form>
 
 {{ input_error_message }}
@@ -24,7 +16,7 @@
 
 <p>&nbsp;</p>
 
-<b>List of keys inside to Region {{ zone }} {{ zone_amazon }}</b>
+<b>Your keypairs inside the region {{ zone }} {{ zone_amazon }}</b>
 
 <p>&nbsp;</p>
 
