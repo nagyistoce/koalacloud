@@ -1,12 +1,5 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>Elastic Block Store (EBS) Datentr&auml;ger (Volumes)</b>
-</h3>
-<br>
-<b>Neues Volume in der Region {{ zone }} {{ zone_amazon }} anlegen</b>
-
-<p>&nbsp;</p>
 
 <form action="/volumeerzeugen" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
@@ -19,14 +12,14 @@ Verf&uuml;gbarkeitszone:
     <select name="zone" size="1">
 {{ zonen_in_der_region }}
     </select>
-<input type="submit" value="Volume anlegen">
+<input type="submit" value="Neues EBS Volumen anlegen">
 </form>
 
 {{ input_error_message }}
 
 <p>&nbsp;</p>
 
-<b>Liste der Volumes innerhalb der Region {{ zone }} {{ zone_amazon }}</b>
+<b>Ihre EBS Volumen in der Region {{ zone }} {{ zone_amazon }}</b>
 
 <p>&nbsp;</p>
 
