@@ -280,7 +280,7 @@ class Images(webapp.RequestHandler):
                   else:
                     liste_favouriten += '<th align="center">Architecture</th>'
                   liste_favouriten += '<th align="center">Status</th>'
-                  liste_favouriten += '<th align="center">Root Device</th>'  
+                  liste_favouriten += '<th align="center">Root</th>'  
                   if sprache == "de":
                     liste_favouriten += '<th align="center">Besitzer</th>'
                   else:
