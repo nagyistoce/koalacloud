@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/gruppenerzeugen" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
 <table border="0" cellspacing="0" cellpadding="5">
@@ -18,11 +20,9 @@
 </table>
 </form>
 
-{{ input_error_message }}
-
 <p>&nbsp;</p>
 
-<b>List of security groups</b>
+<b>Your security groups</b>
 
 <p>&nbsp;</p>
 

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/volumeerzeugen" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
 Size: <input name="groesse" type="text" size="3" maxlength="3">
@@ -14,8 +16,6 @@ Availabiliy Zone:
     </select>
 <input type="submit" value="create new EBS volume">
 </form>
-
-{{ input_error_message }}
 
 <p>&nbsp;</p>
 

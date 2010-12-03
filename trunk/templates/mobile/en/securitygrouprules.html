@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/grupperegelanlegen" method="post" accept-charset="utf-8">
 <input type="hidden" name="gruppe" value="{{ gruppe }}">
 <input type="hidden" name="mobile" value="{{ mobile }}">
@@ -27,8 +29,6 @@
 </tr>
 </table>
 </form>
-
-{{ input_error_message }}
 
 <p>&nbsp;</p>
 

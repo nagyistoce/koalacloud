@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/create_load_balancer" method="get" accept-charset="utf-8">
 <input type="submit" value="Neuen elastischen Lastverteiler erzeugen">
 </form>
@@ -8,8 +10,6 @@
 <p>&nbsp;</p>
 
 <b>Ihre elastischen Lastverteiler in der Region {{ zone }} {{ zone_amazon }}</b>
-
-{{ input_error_message }}
 
 <p>&nbsp;</p>
 

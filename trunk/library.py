@@ -274,14 +274,14 @@ def zonen_liste_funktion(username,sprache,mobile):
 # Hilfsfunktion für die Formatierung der grünen Fehlermeldungen
 def format_error_message_green(input_error_message):
     if input_error_message:
-        return "<p>&nbsp;</p> <font color='green'>%s</font>" % (input_error_message)
+        return "<font color='green'>%s</font><p>&nbsp;</p>" % (input_error_message)
     else:
         return ""
 
 # Hilfsfunktion für die Formatierung der roten Fehlermeldungen
 def format_error_message_red(input_error_message):
     if input_error_message:
-        return "<p>&nbsp;</p> <font color='red'>%s</font>" % (input_error_message)
+        return "<font color='red'>%s</font><p>&nbsp;</p>" % (input_error_message)
     else:
         return ""
       

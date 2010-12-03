@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/allocate_address" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
 <input type="submit" value="create new elastic IP">
 </form>
-
-{{ input_error_message }}
 
 <p>&nbsp;</p>
 
