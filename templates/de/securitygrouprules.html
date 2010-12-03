@@ -1,12 +1,7 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>Regeln der Security Gruppe {{ gruppe }} in der Zone {{ zone }} {{ zone_amazon }}</b>
-</h3>
-<br>
-<b>Neue Regel in der Sicherheitsgruppe {{ gruppe }} anlegen</b>
 
-<p>&nbsp;</p>
+{{ input_error_message }}
 
 <form action="/grupperegelanlegen" method="post" accept-charset="utf-8">
 <input type="hidden" name="gruppe" value="{{ gruppe }}">
@@ -21,11 +16,9 @@ To Port: <input name="port_to" type="text" size="5" maxlength="5">
 <input type="submit" value="Regel anlegen">
 </form>
 
-{{ input_error_message }}
-
 <p>&nbsp;</p>
 
-<b>Liste der Regeln in der Sicherheitsgruppe {{ gruppe }}</b>
+<b>Regeln in der Sicherheitsgruppe {{ gruppe }}</b>
 
 <p>&nbsp;</p>
 

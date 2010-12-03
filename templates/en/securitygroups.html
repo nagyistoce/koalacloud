@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
+{{ input_error_message }}
+
 <form action="/gruppenerzeugen" method="post" accept-charset="utf-8">
 Name: <input name="gruppenname" type="text" size="20" maxlength="20">
 Description: <input name="gruppenbeschreibung" type="text" size="30" maxlength="30">
 <input type="submit" value="create new security group">
 </form>
-
-{{ input_error_message }}
-
-<p>&nbsp;</p>
 
 <b>Your security groups in the region {{ zone }} {{ zone_amazon }}</b>
 
