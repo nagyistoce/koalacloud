@@ -270,17 +270,19 @@ class SnapshotsAmazonAll(webapp.RequestHandler):
   
             if regionname == "Amazon":
                 if sprache == "de":
-                  ansicht_amazon_button = '<p>&nbsp;</p>\n'
+                  ansicht_amazon_button = ''
                   ansicht_amazon_button += '<form action="/snapshots" method="get">\n'
                   ansicht_amazon_button += '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button += '<input type="submit" value="Nur eigene Snapshots anzeigen">\n'
                   ansicht_amazon_button += '</form>\n'
+                  ansicht_amazon_button += '<p>&nbsp;</p>\n'
                 else:
-                  ansicht_amazon_button = '<p>&nbsp;</p>\n'
+                  ansicht_amazon_button = ''
                   ansicht_amazon_button += '<form action="/snapshots" method="get">\n'
                   ansicht_amazon_button += '<input type="hidden" name="mobile" value="'+str(mobile)+'">\n'
                   ansicht_amazon_button += '<input type="submit" value="show only your snapshots">\n'
                   ansicht_amazon_button += '</form>\n'
+                  ansicht_amazon_button += '<p>&nbsp;</p>\n'
             else:  
                 ansicht_amazon_button = ""
   
