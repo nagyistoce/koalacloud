@@ -77,26 +77,7 @@ class ImageStarten(webapp.RequestHandler):
 
         
         if result.zugangstyp == "Nimbus":
-
-          imagetextfeld = '<input name="image_id" type="text" size="70" maxlength="70" value="'
-          imagetextfeld = imagetextfeld + image
-          imagetextfeld = imagetextfeld + '" readonly>'
-
-          manifesttextfeld = '<input name="image_manifest" type="text" size="70" maxlength="70" value="'
-          manifesttextfeld = manifesttextfeld + manifest
-          manifesttextfeld = manifesttextfeld + '" readonly>'
-
-          if sprache == "de": number_instances_min_anfang = "Instanzen (min):"
-          else:               number_instances_min_anfang = "Instances (min):"
-
-          if sprache == "de": number_instances_max_anfang = "Instanzen (max):"
-          else:               number_instances_max_anfang = "Instances (max):"
-
-          if sprache == "de": image_starten_ueberschrift_anfang = "Image starten: "
-          else:               image_starten_ueberschrift_anfang = "Start image: "
-
-          if sprache == "de": value_button_image_starten = "Image starten"
-          else:               value_button_image_starten = "start image"
+          # If it is a Nimbus infrastructure...
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -104,14 +85,9 @@ class ImageStarten(webapp.RequestHandler):
           'url_linktext': url_linktext,
           'zone': regionname,
           'zone_amazon': zone_amazon,
-          'image': imagetextfeld,
-          'manifest': manifesttextfeld,
+          'image': image,
+          'manifest': manifest,
           'zonen_liste': zonen_liste,
-          'number_instances_max_anfang': number_instances_max_anfang,
-          'number_instances_min_anfang': number_instances_min_anfang,
-          'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
-          'value_button_image_starten': value_button_image_starten,
-          'instanz_starten_tabelle': instanz_starten_tabelle,
           'mobile': mobile,
           }
 
@@ -121,7 +97,8 @@ class ImageStarten(webapp.RequestHandler):
               path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "image_starten_nimbus.html")
           self.response.out.write(template.render(path,template_values))
 
-        else: # Wenn es nicht Nimbus ist
+        else:
+          # If it is not a Nimbus infrastructure...
 
 
           # Wenn es Amazon EC2 ist
@@ -223,12 +200,6 @@ class ImageStarten(webapp.RequestHandler):
 
           if sprache == "de": typ_anfang = "Typ: "
           else:               typ_anfang = "Type: "
-
-          if sprache == "de": image_starten_ueberschrift_anfang = "Image starten:"
-          else:               image_starten_ueberschrift_anfang = "Start image:"
-
-          if sprache == "de": value_button_image_starten = "Image starten"
-          else:               value_button_image_starten = "start image"
 
           if sprache == "de": nicht_zwingend_notwendig = "Nicht zwingend notwendig"
           else:               nicht_zwingend_notwendig = "Not essential"
@@ -341,7 +312,10 @@ class ImageStarten(webapp.RequestHandler):
             instanz_starten_tabelle += '</tr>\n'
             instanz_starten_tabelle += '<tr>\n'
             instanz_starten_tabelle += '<td colspan="2" align="center">'
-            instanz_starten_tabelle += '<input type="submit" value="'+value_button_image_starten+'">'
+            if sprache == "de":
+              instanz_starten_tabelle += '<input type="submit" value="Instanz starten">'
+            else:
+              instanz_starten_tabelle += '<input type="submit" value="create Instance">'
             instanz_starten_tabelle += '</td>\n'          
             instanz_starten_tabelle += '</tr>\n'            
             instanz_starten_tabelle += '</table>\n'
@@ -510,8 +484,6 @@ class ImageStarten(webapp.RequestHandler):
           'number_instances_max_anfang': number_instances_max_anfang,
           'number_instances_min_anfang': number_instances_min_anfang,
           'typ_anfang': typ_anfang,
-          'image_starten_ueberschrift_anfang': image_starten_ueberschrift_anfang,
-          'value_button_image_starten': value_button_image_starten,
           'nicht_zwingend_notwendig': nicht_zwingend_notwendig,
           'tabelle_ec2_instanztypen':tabelle_ec2_instanztypen,
           'zonen_in_der_region': zonen_in_der_region,
