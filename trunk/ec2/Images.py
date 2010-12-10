@@ -378,7 +378,7 @@ class Images(webapp.RequestHandler):
                       else:
                         liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].state)+'</td>'
                       liste_favouriten += '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
-                      liste_favouriten += '<td>'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
                       liste_favouriten += '</tr>'
                   liste_favouriten += '</table>'
                 
@@ -443,109 +443,226 @@ class Images(webapp.RequestHandler):
                     imagestabelle = 'Es sind keine Images in der Region vorhanden.'
                   else:
                     imagestabelle = 'Still no images exist inside this region.'
-                else:
+                else:                  
                   # Wenn schon Images in der Region existieren
-                  imagestabelle = ''
-                  imagestabelle = imagestabelle + '<table border="3" cellspacing="0" cellpadding="5">'
-                  imagestabelle = imagestabelle + '<tr>'
-                  imagestabelle = imagestabelle + '<th>&nbsp;</th>'
-                  imagestabelle = imagestabelle + '<th align="center">Image ID</th>'
-                  imagestabelle = imagestabelle + '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
-                  if sprache == "de":
-                    imagestabelle = imagestabelle + '<th align="center">Typ</th>'
-                  else:
-                    imagestabelle = imagestabelle + '<th align="center">Type</th>'
-                  imagestabelle = imagestabelle + '<th align="center">Manifest</th>'
-                  if sprache == "de":
-                    imagestabelle = imagestabelle + '<th align="center">Architektur</th>'
-                  else:
-                    imagestabelle = imagestabelle + '<th align="center">Architecture</th>'
-                  imagestabelle = imagestabelle + '<th align="center">Status</th>'
-                  if sprache == "de":
-                    imagestabelle = imagestabelle + '<th align="center">Besitzer</th>'
-                  else:
-                    imagestabelle = imagestabelle + '<th align="center">Owner</th>'
-                  imagestabelle = imagestabelle + '</tr>'
-                  for i in range(laenge_liste_images):
-                      imagestabelle = imagestabelle + '<tr>'
-                      #imagestabelle = imagestabelle + '<td>&nbsp;</td>'
-                      imagestabelle = imagestabelle + '<td>'
+                  
+                  if mobile == "true":
+                    # This is the mobile version
+                    imagestabelle = ''
+                    imagestabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+                    
+                    counter = 0
+                    
+                    for i in range(laenge_liste_images):
+                      if counter > 0:
+                          imagestabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                      counter += 1
+                      
+                      imagestabelle += '<tr>'
+                      #liste_favouriten += '<td>&nbsp;</td>'
+                      imagestabelle += '<td>'
                       if liste_images[i].type == u'machine':
                         if sprache == "de":
-                          imagestabelle = imagestabelle + '<a href="/imagestarten?image='
-                          imagestabelle = imagestabelle + liste_images[i].id
-                          imagestabelle = imagestabelle + '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                          imagestabelle += '<a href="/imagestarten?image='
+                          imagestabelle += liste_images[i].id
+                          imagestabelle += "&amp;mobile="
+                          imagestabelle +=  str(mobile)
+                          imagestabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
                         else:
-                          imagestabelle = imagestabelle + '<a href="/imagestarten?image='
-                          imagestabelle = imagestabelle + liste_images[i].id
-                          imagestabelle = imagestabelle + '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+                          imagestabelle += '<a href="/imagestarten?image='
+                          imagestabelle += liste_images[i].id
+                          imagestabelle += "&amp;mobile="
+                          imagestabelle +=  str(mobile)
+                          imagestabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
                       else:
                         # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                        imagestabelle = imagestabelle + '&nbsp;'
-                      imagestabelle = imagestabelle + '</td>'
-                      imagestabelle = imagestabelle + '<td>'
-                      imagestabelle = imagestabelle + '<tt>'+liste_images[i].id+'</tt>'
-                      imagestabelle = imagestabelle + '</td>'
-  
-  
-                      imagestabelle = imagestabelle + '<td align="center">'
+                        imagestabelle += '&nbsp;'
+                      imagestabelle += '</td>'
+                      
+                      imagestabelle += '<td align="center">'
                       beschreibung_in_kleinbuchstaben = liste_images[i].location.lower()
                       if str(liste_images[i].type) == "kernel":
-                        imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                        imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
                       elif str(liste_images[i].type) == "ramdisk":
-                        imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                        imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
                       elif str(liste_images[i].type) == "machine":
                         if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                          imagestabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
                         elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                          imagestabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
                         elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                          imagestabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
                         elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                          imagestabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
                         elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                          imagestabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
                         elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                          imagestabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
                         elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                          imagestabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
                         elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                          imagestabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                         elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                          imagestabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
                         elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                         elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                         elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                          imagestabelle = imagestabelle + '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
                         else:
-                          imagestabelle = imagestabelle + '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+                          imagestabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
                       else:
-                        imagestabelle = imagestabelle + '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
-                      imagestabelle = imagestabelle + '</td>'
-  
-                      imagestabelle = imagestabelle + '<td align="center">'
-                      imagestabelle = imagestabelle + str(liste_images[i].type)
-                      imagestabelle = imagestabelle + '</td>'
-                      imagestabelle = imagestabelle + '<td>'
-                      imagestabelle = imagestabelle + '<tt>'+str(liste_images[i].location)+'</tt>'
-                      imagestabelle = imagestabelle + '</td>'
-                      imagestabelle = imagestabelle + '<td align="center">'
-                      imagestabelle = imagestabelle + '<tt>'+str(liste_images[i].architecture)+'</tt>'
-                      imagestabelle = imagestabelle + '</td>'
+                        imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+
+                      imagestabelle += '<td>&nbsp;</td>'
+
+                      # Hier kommt die Spalte mit der Image-ID
+                      imagestabelle += '<td align="center"><tt>'+str(liste_images[i].id)+'</tt></td>'
+
+                      imagestabelle += '<tr>'
+
+                      if sprache == "de":
+                        imagestabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
+                      else:
+                        imagestabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
+                      # Hier kommt die Spalte mit dem Instanztyp
+                      imagestabelle += '<td align="center">'+str(liste_images[i].type)+'</td>'
+                    
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                    
+                      imagestabelle += '<td align="right" colspan="3"><b>Manifest:</b></td>'
+                      # Hier kommt die Spalte mit der Manifest-Datei
+                      imagestabelle += '<td><tt>'+str(liste_images[i].location)+'</tt></td>'
+                      
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                      
+                      if sprache == "de":
+                        imagestabelle += '<td align="right" colspan="3"><b>Architektur:</b></td>'
+                      else:
+                        imagestabelle += '<td align="right" colspan="3"><b>Architecture:</b></td>'
+                      imagestabelle += '<td align="center"><tt>'+str(liste_images[i].architecture)+'</tt></td>'
+                      
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                      
+                      imagestabelle += '<td align="right" colspan="3"><b>Status:</b></td>'        
                       if liste_images[i].state == u'available':
-                        imagestabelle = imagestabelle + '<td bgcolor="#c3ddc3" align="center">'
-                        imagestabelle = imagestabelle + str(liste_images[i].state)
+                        imagestabelle += '<td bgcolor="#c3ddc3" align="center">'+str(liste_images[i].state)+'</td>'
                       else:
-                        imagestabelle = imagestabelle + '<td align="center">'
-                        imagestabelle = imagestabelle + str(liste_images[i].state)
-                      imagestabelle = imagestabelle + '</td>'
-                      imagestabelle = imagestabelle + '<td>'
-                      imagestabelle = imagestabelle + str(liste_images[i].ownerId)
-                      imagestabelle = imagestabelle + '</td>'
-                      imagestabelle = imagestabelle + '</tr>'
-                  imagestabelle = imagestabelle + '</table>'
+                        imagestabelle += '<td align="center">'+str(liste_images[i].state)+'</td>'
+  
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                      
+                      if sprache == "de":
+                        imagestabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
+                      else:
+                        imagestabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
+                      imagestabelle += '<td align="center">'+str(liste_images[i].ownerId)+'</td>'
+                      imagestabelle += '</tr>'
+                    imagestabelle += '</table>'
+                  
+                  
+                  else:
+                    # not the mobile version
+                    imagestabelle = ''
+                    imagestabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                    
+                    imagestabelle += '<tr>'
+                    if sprache == "de":
+                      imagestabelle += '<th>&nbsp;</th>'
+                      imagestabelle += '<th align="center">ID</th>'
+                      imagestabelle += '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+                      imagestabelle += '<th align="center">Typ</th>'
+                      imagestabelle += '<th align="center">Manifest</th>'
+                      imagestabelle += '<th align="center">Architektur</th>'
+                      imagestabelle += '<th align="center">Status</th>'
+                      imagestabelle += '<th align="center">Besitzer</th>'
+                    else:
+                      imagestabelle += '<th>&nbsp;</th>'
+                      imagestabelle += '<th align="center">ID</th>'
+                      imagestabelle += '<th align="center">&nbsp;&nbsp;&nbsp;</th>'
+                      imagestabelle += '<th align="center">Type</th>'
+                      imagestabelle += '<th align="center">Manifest</th>'
+                      imagestabelle += '<th align="center">Architecture</th>'
+                      imagestabelle += '<th align="center">Status</th>'
+                      imagestabelle += '<th align="center">Owner</th>'
+                    imagestabelle += '</tr>'
+                    
+                    for i in range(laenge_liste_images):
+                        imagestabelle += '<tr>'
+                        #imagestabelle += '<td>&nbsp;</td>'
+                        imagestabelle += '<td align="center">'
+                        if liste_images[i].type == u'machine':
+                          if sprache == "de":
+                            imagestabelle += '<a href="/imagestarten?image='
+                            imagestabelle += liste_images[i].id
+                            imagestabelle += "&amp;mobile="
+                            imagestabelle +=  str(mobile)
+                            imagestabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+                          else:
+                            imagestabelle += '<a href="/imagestarten?image='
+                            imagestabelle += liste_images[i].id
+                            imagestabelle += "&amp;mobile="
+                            imagestabelle +=  str(mobile)
+                            imagestabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+                        else:
+                          # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+                          imagestabelle += '&nbsp;'
+                        imagestabelle += '</td>'
+                        imagestabelle += '<td><tt>'+str(liste_images[i].id)+'</tt></td>'
+    
+    
+                        imagestabelle += '<td align="center">'
+                        beschreibung_in_kleinbuchstaben = liste_images[i].location.lower()
+                        if str(liste_images[i].type) == "kernel":
+                          imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                        elif str(liste_images[i].type) == "ramdisk":
+                          imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                        elif str(liste_images[i].type) == "machine":
+                          if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+                            imagestabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+                          elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+                            imagestabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+                          elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+                            imagestabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+                          elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+                            imagestabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+                          elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+                            imagestabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+                          elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+                            imagestabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+                          elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+                            imagestabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+                          elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+                            imagestabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                          elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+                            imagestabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+                          elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+                            imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+                            imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+                            imagestabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+                          else:
+                            imagestabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+                        else:
+                          imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
+                        imagestabelle += '</td>'
+    
+                        imagestabelle += '<td align="center">'+str(liste_images[i].type)+'</td>'
+                        imagestabelle += '<td><tt>'+str(liste_images[i].location)+'</tt></td>'
+                        imagestabelle += '<td align="center"><tt>'+str(liste_images[i].architecture)+'</tt></td>'
+                        if liste_images[i].state == u'available':
+                          imagestabelle += '<td bgcolor="#c3ddc3" align="center">'+str(liste_images[i].state)+'</td>'
+                        else:
+                          imagestabelle += '<td align="center">'+str(liste_images[i].state)+'</td>'
+                        imagestabelle += '<td align="center">'+str(liste_images[i].ownerId)+'</td>'
+                        imagestabelle += '</tr>'
+                    imagestabelle += '</table>'
   
               template_values = {
               'navigations_bar': navigations_bar,

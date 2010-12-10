@@ -242,12 +242,19 @@ class Keys(webapp.RequestHandler):
                 else:
                   new_keypair_secretkey += '<b>Attention!</b> You need to save your new secret key. As an advise use a local file with the correct user access rights.BR>'
                   new_keypair_secretkey += '<tt>chmod 600 '+neuerkeyname+'.secret</tt>'
-                new_keypair_secretkey += '<p>&nbsp;</p>'                
+                new_keypair_secretkey += '<p>&nbsp;</p>'         
+                
+                
+                new_keypair_secretkey_download_link = ''
+                new_keypair_secretkey_download_link += '<a href="'+secretkey_memcache+'">'+neuerkeyname+'.secret</a>'
+                new_keypair_secretkey_download_link += '<p>&nbsp;</p>' 
+                                       
               else:
                   # neu ist nicht "ja"
 #                  bodycommand = " "
 #                  javascript_funktion = " "
-                  new_keypair_secretkey = " "
+                  new_keypair_secretkey = ""
+                  new_keypair_secretkey_download_link = ""
   
               template_values = {
               'navigations_bar': navigations_bar,
@@ -262,6 +269,7 @@ class Keys(webapp.RequestHandler):
               'input_error_message': input_error_message,
               'mobile': mobile,
               'new_keypair_secretkey': new_keypair_secretkey,
+              'new_keypair_secretkey_download_link': new_keypair_secretkey_download_link,
               }
   
               if mobile == "true":

@@ -1,29 +1,21 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>{{ image_starten_ueberschrift_anfang }}</b>
-</h3>
-
-<p>&nbsp;</p>
 
 <form action="/instanzanlegen_nimbus" method="post" accept-charset="utf-8">
-<table border="3" cellspacing="0" cellpadding="5">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="image_id" value="{{ image }}">
+<input type="hidden" name="image_manifest" value="{{ manifest }}">
+
+<table border="0" cellspacing="0" cellpadding="5">
 <tr>
-<td>AMI ID: </td><td><tt> {{ image }} </tt></td>
+<td align="right"><b>ID:</b></td><td><tt> {{ image }} </tt></td>
 </tr><tr>
-<td>AMI Manifest: </td><td><tt> {{ manifest }} </tt></td>
+<td><b>Manifest:</b></td><td><tt> {{ manifest }} </tt></td>
 </tr>
 <tr>
-<td colspan="2" align="center"><input type="submit" value="{{ value_button_image_starten }}"> </td>
+<td colspan="2" align="center"><input type="submit" value="create instance"> </td>
 </tr>
 </table>
 </form>
-
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-
-{{ tabelle_ec2_instanztypen }}
 
 {% endblock %}

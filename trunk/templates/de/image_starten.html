@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>{{ image_starten_ueberschrift_anfang }}</b>
-</h3>
-
-<p>&nbsp;</p>
 
 <form action="/instanzanlegen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
 <table border="3" cellspacing="0" cellpadding="5">
 <tr>
 <td>AMI ID: </td><td><tt> {{ image }} </tt></td>
@@ -43,7 +39,7 @@
 </tr><tr>
 <td>Security Group: </td><td> {{ gruppen_liste }} </td>
 </tr><tr>
-<td colspan="2" align="center"><input type="submit" value="{{ value_button_image_starten }}"> </td>
+<td colspan="2" align="center"><input type="submit" value="Instanz erzeugen"> </td>
 </tr>
 </table>
 </form>
