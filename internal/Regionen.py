@@ -131,19 +131,12 @@ class Regionen(webapp.RequestHandler):
               else:
                 # Not the mobile version
                 tabelle_logins = ''
-                tabelle_logins = tabelle_logins + '<table border="3" cellspacing="0" cellpadding="5">'
+                tabelle_logins = tabelle_logins + '<table border="0" cellspacing="0" cellpadding="5">'
                 tabelle_logins = tabelle_logins + '<tr>'
                 tabelle_logins = tabelle_logins + '<th>&nbsp;</th>'
-                if sprache == "de":
-                  tabelle_logins = tabelle_logins + '<th align="center">Art der Region</th>'
-                else:
-                  tabelle_logins = tabelle_logins + '<th align="center">Sort of Region</th>'
+                tabelle_logins = tabelle_logins + '<th align="center">Region</th>'
                 tabelle_logins = tabelle_logins + '<th align="center">Endpoint URL</th>'
                 tabelle_logins = tabelle_logins + '<th align="center">Access Key</th>'
-                if sprache == "de":
-                  tabelle_logins = tabelle_logins + '<th align="center">Name/Beschreibung</th>'
-                else:
-                  tabelle_logins = tabelle_logins + '<th align="center">Name/Description</th>'
                 tabelle_logins = tabelle_logins + '</tr>'
                 for test in results:
                   tabelle_logins = tabelle_logins + '<tr>'
@@ -164,18 +157,9 @@ class Regionen(webapp.RequestHandler):
                   else:
                     tabelle_logins = tabelle_logins + ' alt="erase credentials"></a>'
                   tabelle_logins = tabelle_logins + '</td>'
-                  tabelle_logins = tabelle_logins + '<td align="center">'
-                  tabelle_logins = tabelle_logins + str(test.zugangstyp)
-                  tabelle_logins = tabelle_logins + '</td>'
-                  tabelle_logins = tabelle_logins + '<td align="center">'
-                  tabelle_logins = tabelle_logins + str(test.endpointurl)
-                  tabelle_logins = tabelle_logins + '</td>'
-                  tabelle_logins = tabelle_logins + '<td align="left">'
-                  tabelle_logins = tabelle_logins + str(test.accesskey)
-                  tabelle_logins = tabelle_logins + '</td>'
-                  tabelle_logins = tabelle_logins + '<td align="left">'
-                  tabelle_logins = tabelle_logins + test.eucalyptusname
-                  tabelle_logins = tabelle_logins + '</td>'
+                  tabelle_logins = tabelle_logins + '<td align="left">'+str(test.eucalyptusname)+'</td>'
+                  tabelle_logins = tabelle_logins + '<td align="left">'+str(test.endpointurl)+'</td>'
+                  tabelle_logins = tabelle_logins + '<td align="left">'+str(test.accesskey)+'</td>'
                   tabelle_logins = tabelle_logins + '</tr>'
                 tabelle_logins = tabelle_logins + '</table>'
                 
