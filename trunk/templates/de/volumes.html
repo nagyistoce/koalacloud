@@ -5,16 +5,33 @@
 
 <form action="/volumeerzeugen" method="post" accept-charset="utf-8">
 <input type="hidden" name="mobile" value="{{ mobile }}">
-Gr&ouml;&szlig;e: <input name="groesse" type="text" size="3" maxlength="3">
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+<td>Gr&ouml;&szlig;e:</td>
+<td><input name="groesse" type="text" size="3" maxlength="3"></td>
+<td align="left">
     <select name="GB_oder_TB" size="1">
       <option selected="selected">GB</option>
       <option>TB</option>
-    </select>
+    </select><br>
+</td>
+</tr>
+<tr>
+<td>
 Verf&uuml;gbarkeitszone:
-    <select name="zone" size="1">
+</td>
+<td colspan="2" align="left">
+<select name="zone" size="1">
 {{ zonen_in_der_region }}
-    </select>
+</select><br>
+</td>
+</tr>
+<tr>
+<td colspan="3"> 
 <input type="submit" value="Neues EBS Volumen anlegen">
+</td>
+</tr>
+</table>
 </form>
 
 <p>&nbsp;</p>

@@ -156,9 +156,8 @@ class S3(webapp.RequestHandler):
                 # Not the mobile version
                 
                 bucketstabelle = ''
-                bucketstabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                bucketstabelle += '<table border="0" cellspacing="0" cellpadding="5">'
                 bucketstabelle += '<tr>'
-                bucketstabelle += '<th>&nbsp;</th>'
                 bucketstabelle += '<th>&nbsp;</th>'
                 bucketstabelle += '<th align="left">Buckets</th>'
                 if sprache == "de":
@@ -179,9 +178,6 @@ class S3(webapp.RequestHandler):
                       bucketstabelle += '" title="Bucket l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Bucket l&ouml;schen"></a>'
                     else:
                       bucketstabelle += '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
-                    bucketstabelle += '</td>'
-                    bucketstabelle += '<td>'
-                    bucketstabelle += '<img src="bilder/folder.png" width="16" height="16" border="0" alt="Bucket">'
                     bucketstabelle += '</td>'
                     bucketstabelle += '<td>'
                     bucketstabelle += str(liste_buckets[i].name)

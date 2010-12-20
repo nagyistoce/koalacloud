@@ -112,9 +112,9 @@ class Associate_IP(webapp.RequestHandler):
             tabelle_instanz_anhaengen += '<td>'
             if instanzen_in_region == 0:
               if sprache == "de":
-                tabelle_instanz_anhaengen += 'Sie haben keine Instanz'
+                tabelle_instanz_anhaengen += 'Sie haben keine Instanz in dieser Region'
               else:
-                tabelle_instanz_anhaengen += 'You have still no instance'
+                tabelle_instanz_anhaengen += 'You still have no instance inside this region'
             else:
               if instanzen_in_region > 0:
                 tabelle_instanz_anhaengen += '<select name="instanzen" size="1">'

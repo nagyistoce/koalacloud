@@ -1,57 +1,13 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-<form action="/instanzanlegen" method="post" accept-charset="utf-8">
-<input type="hidden" name="mobile" value="{{ mobile }}">
-<table border="3" cellspacing="0" cellpadding="5">
-<tr>
-<td>AMI ID: </td><td><tt> {{ image }} </tt></td>
-</tr><tr>
-<td>AMI Manifest: </td><td><tt> {{ manifest }} </tt></td>
-</tr><tr>
-<td>Root Device: </td><td><tt> {{ root }} </tt></td>
-</tr><tr>
-<td>AKI ID: </td><td> <input name="aki_id" type="text" size="12" maxlength="12">
- {{ nicht_zwingend_notwendig }}</td>
-</tr><tr>
-<td>ARI ID: </td><td> <input name="ari_id" type="text" size="12" maxlength="12">
- {{ nicht_zwingend_notwendig }}</td>
-</tr><tr>
-<td>{{ typ_anfang }} </td>
-<td>
-<select name="instance_type" size="{{ instance_types_liste_laenge }}">
-{{ instance_types_liste }}
-</select>
-</td>
-</tr><tr>
-<td>{{ zonen_anfang }} </td>
-<td>
-<select name="zonen_auswahl" size="{{ laenge_liste_zonen }}">
-{{ zonen_in_der_region }}
-</select>
-</td>
-</tr><tr>
-<td>{{ number_instances_min_anfang }} </td><td><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"> </td>
-</tr><tr>
-<td>{{ number_instances_max_anfang }} </td><td><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"> </td>
-</tr><tr>
-<td>{{ keys_liste_anfang }} </td><td> {{ keys_liste }} </td>
-</tr><tr>
-<td>Security Group: </td><td> {{ gruppen_liste }} </td>
-</tr><tr>
-<td colspan="2" align="center"><input type="submit" value="Instanz erzeugen"> </td>
-</tr>
-</table>
-</form>
+{{ instanz_starten_tabelle }}
 
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
+<p>&nbsp;</p>
 
 {{ tabelle_ec2_instanztypen }}
 
-<P>&nbsp;</P>
+<p>&nbsp;</p>
 
 {{ t1_micro_warnung }}
 
