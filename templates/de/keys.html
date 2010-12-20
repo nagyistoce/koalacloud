@@ -6,9 +6,21 @@
 {{ input_error_message }}
 
 <form action="/schluesselerzeugen" method="post" accept-charset="utf-8">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="2" cellpadding="2">
+<tr>
+<td>
 <input name="keyname" type="text" size="25" maxlength="25">
+</td>
+</tr>
+<tr>
+<td>
 <input type="submit" value="Neues Schl&uuml;sselpaar erzeugen">
+</td>
+</tr>
+</table>
 </form>
+
 
 <p>&nbsp;</p>
 
@@ -16,7 +28,7 @@
 
 {{ new_keypair_secretkey }}
 
-<b>Ihre Schl&uuml;sselpaare innerhalb der Region {{ zone }} {{ zone_amazon }}</b>
+<b>Ihre Schl&uuml;sselpaare in der Region {{ zone }} {{ zone_amazon }}</b>
 
 <p>&nbsp;</p>
 

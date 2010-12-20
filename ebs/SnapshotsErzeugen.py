@@ -51,56 +51,30 @@ class SnapshotsErzeugen(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
-          if mobile == "true":
-              tabelle_snapshot = ''
-              tabelle_snapshot += '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
-              tabelle_snapshot += '<input type="hidden" name="mobile" value="'+mobile+'">'
-              tabelle_snapshot += '<input type="hidden" name="volume" value="'+volume+'"> \n'
-              tabelle_snapshot += '<table border="0" cellspacing="0" cellpadding="5">'
-              tabelle_snapshot += '<tr>'
-              tabelle_snapshot += '<td align="left"><B>Volume: </B>'+volume+'</td>'
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '<tr>'
-              if sprache == "de":
-                tabelle_snapshot += '<td align="left"><B>Beschreibung:</B></td>'
-              else:
-                tabelle_snapshot += '<td align="left"><B>Description:</B></td>'
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '<tr>'
-              tabelle_snapshot += '<td><input name="beschreibung" type="text" size="40" maxlength="40"></td>\n'              
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '<tr>'
-              if sprache == "de":
-                tabelle_snapshot += '<td><input type="submit" value="Snapshot erzeugen"></td> \n'
-              else:
-                tabelle_snapshot += '<td><input type="submit" value="create snapshot"></td> \n'
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '</table>'
-              tabelle_snapshot += '</form>'
+
+          tabelle_snapshot = ''
+          tabelle_snapshot += '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
+          tabelle_snapshot += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+          tabelle_snapshot += '<input type="hidden" name="volume" value="'+volume+'">\n'
+          tabelle_snapshot += '<table border="0" cellspacing="0" cellpadding="5">\n'
+          tabelle_snapshot += '<tr><td align="left"><B>Volume: </B>'+volume+'</td></tr>\n'
+          if sprache == "de":
+            tabelle_snapshot += '<tr><td align="left"><B>Beschreibung:</B></td></tr>\n'
           else:
-              tabelle_snapshot = ''
-              tabelle_snapshot += '<form action="/snapshoterzeugendefinitiv" method="post" accept-charset="utf-8"> \n'
-              tabelle_snapshot += '<input type="hidden" name="mobile" value="'+mobile+'">'
-              tabelle_snapshot += '<input type="hidden" name="volume" value="'+volume+'"> \n'
-              tabelle_snapshot += '<table border="0" cellspacing="0" cellpadding="5">'
-              tabelle_snapshot += '<tr>'
-              tabelle_snapshot += '<td align="right"><B>Volume:</B></td>'
-              tabelle_snapshot += '<td>'+volume+'</td>'
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '<tr>'
-              if sprache == "de":
-                tabelle_snapshot += '<td align="right"><B>Beschreibung:</B></td>'
-              else:
-                tabelle_snapshot += '<td align="right"><B>Description:</B></td>'
-              tabelle_snapshot += '<td><input name="beschreibung" type="text" size="80" maxlength="80"></td>\n'
-              tabelle_snapshot += '</tr>'
-              tabelle_snapshot += '</table>'
-              tabelle_snapshot += '<p>&nbsp;</p> \n'
-              if sprache == "de":
-                tabelle_snapshot += '<input type="submit" value="Snapshot erzeugen"> \n'
-              else:
-                tabelle_snapshot += '<input type="submit" value="create snapshot"> \n'
-              tabelle_snapshot += '</form>'
+            tabelle_snapshot += '<tr><td align="left"><B>Description:</B></td></tr>\n'
+            
+          if mobile == "true":
+              tabelle_snapshot += '<tr><td><input name="beschreibung" type="text" size="40" maxlength="40"></td></tr>\n'              
+          else:
+              tabelle_snapshot += '<tr><td><input name="beschreibung" type="text" size="60" maxlength="60"></td></tr>\n'
+
+          if sprache == "de":
+            tabelle_snapshot += '<tr><td align="left"><input type="submit" value="Snapshot erzeugen"></td></tr>\n'
+          else:
+            tabelle_snapshot += '<tr><td align="left"><input type="submit" value="create snapshot"></td></tr>\n'
+
+          tabelle_snapshot += '</table>'
+          tabelle_snapshot += '</form>'
 
 
           template_values = {

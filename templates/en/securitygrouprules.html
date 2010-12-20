@@ -5,15 +5,29 @@
 
 <form action="/grupperegelanlegen" method="post" accept-charset="utf-8">
 <input type="hidden" name="gruppe" value="{{ gruppe }}">
-Protocol:
-    <select name="protokoll" size="1">
-      <option selected="selected">TCP</option>
-      <option>UDP</option>
-      <option>ICMP</option>
-    </select>
-From Port: <input name="port_from" type="text" size="5" maxlength="5">
-To Port: <input name="port_to" type="text" size="5" maxlength="5">
-<input type="submit" value="create rule">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+  <td>Protocol:</td>
+  <td><select name="protokoll" size="1">
+        <option selected="selected">TCP</option>
+        <option>UDP</option>
+        <option>ICMP</option>
+      </select>
+  </td>
+</tr>
+<tr>
+  <td>From Port:</td>
+  <td><input name="port_from" type="text" size="5" maxlength="5"></td>
+</tr>
+<tr>
+  <td>To Port:</td>
+  <td><input name="port_to" type="text" size="5" maxlength="5"></td>
+</tr>
+<tr>
+  <td colspan="2" align="left"><input type="submit" value="create new rule"></td>
+</tr>
+</table>
 </form>
 
 <p>&nbsp;</p>

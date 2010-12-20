@@ -4,8 +4,19 @@
 {{ input_error_message }}
 
 <form action="/bucketerzeugen" method="post" accept-charset="utf-8">
-<input name="bucketname" type="text" size="63" maxlength="63">
+<input type="hidden" name="mobile" value="{{ mobile }}">
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+<td>
+<input name="bucketname" type="text" size="60" maxlength="60">
+</td>
+</tr>
+<tr>
+<td>
 <input type="submit" value="create new bucket">
+</td>
+</tr>
+</table>
 </form>
 
 <p>&nbsp;</p>
@@ -17,14 +28,10 @@
 {{ bucketstabelle }}
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 
 KOALA supports a pure S3 mode and a S3 mode with more comfort. The pure S3 mode presents the contend of the buckets exactly. S3 is a completely flat name space. Therefore S3 has no support for folders. However, folders can be simulated with clever use of key names. The S3 mode with more comfort uses keys that end with <b>_$folder$</b> as directory placeholders. A key that is meant staying inside are folder has a name following this schema <b>folder/subfolder/filename</b>.
 It is the same approach <a href="http://www.s3fox.net" style="color:blue">S3Fox</a> uses.
 
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 
 To conform with Amazon S3 and DNS requirements, bucket names:

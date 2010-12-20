@@ -94,9 +94,9 @@ class VolumesAnhaengen(webapp.RequestHandler):
           tabelle_anhaengen = tabelle_anhaengen + '<td>'
           if instanzen_in_region == 0:
             if sprache == "de":
-              tabelle_anhaengen += 'Sie haben keine Instanz in der Region <b>'+volume_zone+'</b></td>'
+              tabelle_anhaengen += 'Sie haben keine Instanzen in dieser Region <b>'+volume_zone+'</b></td>'
             else:
-              tabelle_anhaengen += 'You have still no instance in the region <b>'+volume_zone+'</b></td>'
+              tabelle_anhaengen += 'You have still no instances in this region <b>'+volume_zone+'</b></td>'
           else:
             if instanzen_in_region > 0:
               tabelle_anhaengen = tabelle_anhaengen + '<select name="instanzen" size="1">'

@@ -156,7 +156,7 @@ class Keys(webapp.RequestHandler):
                     keytabelle = keytabelle + '</table>'
                 else:
                     keytabelle = ''
-                    keytabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+                    keytabelle += '<table border="0" cellspacing="0" cellpadding="5">'
                     keytabelle += '<tr>'
                     keytabelle += '<th>&nbsp;</th>'
                     keytabelle += '<th align="center">Name</th>'
