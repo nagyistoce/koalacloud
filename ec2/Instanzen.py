@@ -216,19 +216,22 @@ class Instanzen(webapp.RequestHandler):
                       # Stop instance
                       instanzentabelle += '<td align="center">'
                       if x.root_device_type == 'instance-store': 
-                        fehlermeldung = "122"
-                        if sprache == "de":
-                          instanzentabelle += '<a href="/instanzen?message='
-                          instanzentabelle += fehlermeldung
-                          instanzentabelle += "&amp;mobile="
-                          instanzentabelle += str(mobile)       
-                          instanzentabelle += '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                        if x.state == u'running': 
+                          fehlermeldung = "122"
+                          if sprache == "de":
+                            instanzentabelle += '<a href="/instanzen?message='
+                            instanzentabelle += fehlermeldung
+                            instanzentabelle += "&amp;mobile="
+                            instanzentabelle += str(mobile)       
+                            instanzentabelle += '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                          else:
+                            instanzentabelle += '<a href="/instanzen?message='
+                            instanzentabelle += fehlermeldung
+                            instanzentabelle += "&amp;mobile="
+                            instanzentabelle += str(mobile)       
+                            instanzentabelle += '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
                         else:
-                          instanzentabelle += '<a href="/instanzen?message='
-                          instanzentabelle += fehlermeldung
-                          instanzentabelle += "&amp;mobile="
-                          instanzentabelle += str(mobile)       
-                          instanzentabelle += '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                          instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'
                       else:
                         if x.state == u'running': 
                           if sprache == "de":
@@ -259,9 +262,9 @@ class Instanzen(webapp.RequestHandler):
                         # If the instance status is "stopping", "pending", "shutting-down" oder "terminated"...                                           
                         else:
                           if sprache == "de":
-                            instanzentabelle += '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
+                            instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
                           else:
-                            instanzentabelle += '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
+                            instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
                       instanzentabelle += '</td>'
                       
                       # Id of the instance
@@ -270,34 +273,40 @@ class Instanzen(webapp.RequestHandler):
                       
                       # Reboot instance
                       instanzentabelle += '<td align="center">'
-                      if sprache == "de":
-                        instanzentabelle += '<a href="/instanzreboot?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
+                      if x.state == u'running':
+                        if sprache == "de":
+                          instanzentabelle += '<a href="/instanzreboot?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
+                        else:
+                          instanzentabelle += '<a href="/instanzreboot?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
                       else:
-                        instanzentabelle += '<a href="/instanzreboot?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
+                        instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'                        
                       instanzentabelle += '</td>'
                       
                       # Console output
                       instanzentabelle += '<td align="center">'
-                      if sprache == "de":
-                        instanzentabelle += '<a href="/console_output?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
+                      if x.state == u'running':
+                        if sprache == "de":
+                          instanzentabelle += '<a href="/console_output?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
+                        else:
+                          instanzentabelle += '<a href="/console_output?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
                       else:
-                        instanzentabelle += '<a href="/console_output?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
+                        instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'                        
                       instanzentabelle += '</td>'
     
                       # Launch more of these
@@ -570,19 +579,22 @@ class Instanzen(webapp.RequestHandler):
                       # Stop instance
                       instanzentabelle += '<td align="center">'
                       if x.root_device_type == 'instance-store': 
-                        fehlermeldung = "122"
-                        if sprache == "de":
-                          instanzentabelle += '<a href="/instanzen?message='
-                          instanzentabelle += fehlermeldung
-                          instanzentabelle += "&amp;mobile="
-                          instanzentabelle += str(mobile)       
-                          instanzentabelle += '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                        if x.state == u'running': 
+                          fehlermeldung = "122"
+                          if sprache == "de":
+                            instanzentabelle += '<a href="/instanzen?message='
+                            instanzentabelle += fehlermeldung
+                            instanzentabelle += "&amp;mobile="
+                            instanzentabelle += str(mobile)       
+                            instanzentabelle += '"title="Instanz beenden"><img src="bilder/stop.png" width="16" height="16" border="0" alt="Instanz beenden"></a>'
+                          else:
+                            instanzentabelle += '<a href="/instanzen?message='
+                            instanzentabelle += fehlermeldung
+                            instanzentabelle += "&amp;mobile="
+                            instanzentabelle += str(mobile)       
+                            instanzentabelle += '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
                         else:
-                          instanzentabelle += '<a href="/instanzen?message='
-                          instanzentabelle += fehlermeldung
-                          instanzentabelle += "&amp;mobile="
-                          instanzentabelle += str(mobile)       
-                          instanzentabelle += '"title="stop instance"><img src="bilder/stop.png" width="16" height="16" border="0" alt="stop instance"></a>'
+                          instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'                        
                       else:
                         if x.state == u'running': 
                           if sprache == "de":
@@ -613,9 +625,9 @@ class Instanzen(webapp.RequestHandler):
                         # If the instance status is "stopping", "pending", "shutting-down" oder "terminated"...                                           
                         else:
                           if sprache == "de":
-                            instanzentabelle += '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
+                            instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="Die Instanz kann jetzt nicht beendet werden">'
                           else:
-                            instanzentabelle += '<img src="bilder/stop_grey.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
+                            instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
                       instanzentabelle += '</td>'
                       
                       # Id of the instance
@@ -624,34 +636,40 @@ class Instanzen(webapp.RequestHandler):
                       
                       # Reboot instance
                       instanzentabelle += '<td align="center">'
-                      if sprache == "de":
-                        instanzentabelle += '<a href="/instanzreboot?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
+                      if x.state == u'running':
+                        if sprache == "de":
+                          instanzentabelle += '<a href="/instanzreboot?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="Instanz neustarten"><img src="bilder/gear.png" width="16" height="16" border="0" alt="Instanz neustarten"></a>'
+                        else:
+                          instanzentabelle += '<a href="/instanzreboot?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
                       else:
-                        instanzentabelle += '<a href="/instanzreboot?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="reboot instance"><img src="bilder/gear.png" width="16" height="16" border="0" alt="reboot instance"></a>'
+                        instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'                        
                       instanzentabelle += '</td>'
                       
                       # Console output
                       instanzentabelle += '<td align="center">'
-                      if sprache == "de":
-                        instanzentabelle += '<a href="/console_output?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
+                      if x.state == u'running':
+                        if sprache == "de":
+                          instanzentabelle += '<a href="/console_output?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="Konsolenausgabe"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="Konsolenausgabe"></a>'
+                        else:
+                          instanzentabelle += '<a href="/console_output?id='
+                          instanzentabelle += x.id
+                          instanzentabelle += "&amp;mobile="
+                          instanzentabelle += str(mobile)    
+                          instanzentabelle += '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
                       else:
-                        instanzentabelle += '<a href="/console_output?id='
-                        instanzentabelle += x.id
-                        instanzentabelle += "&amp;mobile="
-                        instanzentabelle += str(mobile)    
-                        instanzentabelle += '"title="console output"><img src="bilder/terminal.png" width="22" height="16" border="0" alt="console output"></a>'
+                        instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'                        
                       instanzentabelle += '</td>'
     
                       # Launch more of these
