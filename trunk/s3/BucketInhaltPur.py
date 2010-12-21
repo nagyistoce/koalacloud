@@ -198,7 +198,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                       bucket_keys_tabelle += '<td align="right" colspan="2"><b>Gr&ouml;&szlig;e:</b></td>'
                     else:
                       bucket_keys_tabelle += '<td align="right" colspan="2"><b>Size:</b></td>'
-                    bucket_keys_tabelle += '<td align="center">'
+                    bucket_keys_tabelle += '<td align="left">'
                     if liste_keys[i].name == None and regionname != "Amazon":
                       bucket_keys_tabelle += '&nbsp;'
                     else:
@@ -212,7 +212,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                       bucket_keys_tabelle += '<td align="right" colspan="2"><b>Datum:</b></td>'
                     else:
                       bucket_keys_tabelle += '<td align="right" colspan="2"><b>Date:</b></td>'
-                    bucket_keys_tabelle += '<td align="center">'
+                    bucket_keys_tabelle += '<td align="left">'
                     # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                     if liste_keys[i].name == None and regionname != "Amazon":
                       bucket_keys_tabelle += '&nbsp;'
@@ -225,7 +225,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += '<tr>'    
                     
                     bucket_keys_tabelle += '<td align="right" colspan="2"><b>ACL:</b></td>'
-                    bucket_keys_tabelle += '<td align="center">'
+                    bucket_keys_tabelle += '<td align="left">'
                     bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
                     bucket_keys_tabelle += str(bucketname)
                     bucket_keys_tabelle += '&amp;typ=pur'
@@ -243,7 +243,7 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += '<tr>'    
 
                     bucket_keys_tabelle += '<td align="right" colspan="2"><b>MD5:</b></td>'
-                    bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
                     bucket_keys_tabelle += '</tr>'
                 bucket_keys_tabelle += '</table>'              
               
@@ -251,29 +251,20 @@ class BucketInhaltPur(webapp.RequestHandler):
                 # not the mobile version
                               
                 bucket_keys_tabelle = ''
-                bucket_keys_tabelle += '<table border="3" cellspacing="0" cellpadding="5">'
-                bucket_keys_tabelle += '<tr>'
-                bucket_keys_tabelle += '<th>&nbsp;&nbsp;&nbsp;</th>'
-                if sprache == "de":
-                  bucket_keys_tabelle += '<th align="left">Objekte</th>'
-                  bucket_keys_tabelle += '<th align="center">Gr&ouml;&szlig;e</th>'
-                  bucket_keys_tabelle += '<th align="center">Letzte &Auml;nderung</th>'
-                  bucket_keys_tabelle += '<th align="center">Zugriffsberechtigung</th>'
-                  bucket_keys_tabelle += '<th align="center">Pr&uuml;fsumme (MD5)</th>'
-                else:
-                  bucket_keys_tabelle += '<th align="left">Objects</th>'
-                  bucket_keys_tabelle += '<th align="center">Size</th>'
-                  bucket_keys_tabelle += '<th align="center">Last Modified</th>'
-                  bucket_keys_tabelle += '<th align="center">Access Control List</th>'
-                  bucket_keys_tabelle += '<th align="center">MD5</th>'
-                bucket_keys_tabelle += '</tr>'
+                bucket_keys_tabelle += '<table border="0" cellspacing="0" cellpadding="5">'
     
+                counter = 0
                 for i in range(laenge_liste_keys):
+                  
+                    if counter > 0:
+                        bucket_keys_tabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                    counter += 1
+                    
                     bucket_keys_tabelle += '<tr>'
                     if liste_keys[i].name == None and regionname != "Amazon":
                       bucket_keys_tabelle += '<td>&nbsp;</td>'
                     else:
-                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<td align="left" bgcolor="#D4D4D4">'
                       bucket_keys_tabelle += '<a href="/bucketkeyentfernen?bucket='
                       bucket_keys_tabelle += str(bucketname)
                       bucket_keys_tabelle += '&amp;typ=pur'
@@ -287,7 +278,13 @@ class BucketInhaltPur(webapp.RequestHandler):
                         bucket_keys_tabelle += '" title="erase key"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase key"></a>'
                       bucket_keys_tabelle += '</td>'
      
-                    bucket_keys_tabelle += '<td>'
+                    bucket_keys_tabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">&nbsp;</td>'
+     
+                    bucket_keys_tabelle += '</tr>'
+                    bucket_keys_tabelle += '<tr>'   
+     
+                    bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>ID:</b></td>'
+                    bucket_keys_tabelle += '<td colspan="3" align="left">'
                     bucket_keys_tabelle += '<a href="'
                     if regionname == "Amazon":
                       bucket_keys_tabelle += liste_keys[i].generate_url(600, method='GET', headers=None, query_auth=True, force_http=True).replace('&', '&amp;').replace('&amp;amp;', '&amp;')
@@ -298,19 +295,25 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += str(liste_keys[i].name)
                     bucket_keys_tabelle += '</a>'
                     bucket_keys_tabelle += '</td>'
-    
-                    bucket_keys_tabelle += '<td align="right">'
+                    
+                    bucket_keys_tabelle += '</tr>'
+                    bucket_keys_tabelle += '<tr>'    
+                    if sprache == "de":
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Gr&ouml;&szlig;e:</b></td>'
+                    else:
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Size:</b></td>'
+                    bucket_keys_tabelle += '<td align="left">'
                     if liste_keys[i].name == None and regionname != "Amazon":
                       bucket_keys_tabelle += '&nbsp;'
                     else:
                       bucket_keys_tabelle += str(liste_keys[i].size)
                     bucket_keys_tabelle += '</td>'
-    
-                    #bucket_keys_tabelle += '<td>'
-                    #bucket_keys_tabelle += str(liste_keys[i].content_type)
-                    #bucket_keys_tabelle += '</td>'
-    
-                    bucket_keys_tabelle += '<td>'
+
+                    if sprache == "de":
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
+                    else:
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Date:</b></td>'
+                    bucket_keys_tabelle += '<td align="left">'
                     # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                     if liste_keys[i].name == None and regionname != "Amazon":
                       bucket_keys_tabelle += '&nbsp;'
@@ -318,8 +321,12 @@ class BucketInhaltPur(webapp.RequestHandler):
                       datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
                       bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
                     bucket_keys_tabelle += '</td>'
-    
-                    bucket_keys_tabelle += '<td align="center">'
+                    
+                    bucket_keys_tabelle += '</tr>'
+                    bucket_keys_tabelle += '<tr>'    
+                    
+                    bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>ACL:</b></td>'
+                    bucket_keys_tabelle += '<td align="left">'
                     bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
                     bucket_keys_tabelle += str(bucketname)
                     bucket_keys_tabelle += '&amp;typ=pur'
@@ -328,15 +335,16 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += "&amp;mobile="
                     bucket_keys_tabelle += str(mobile)
                     if sprache == "de":
-                      bucket_keys_tabelle += '" title="ACL einsehen/&auml;ndern">ACL einsehen/&auml;ndern</a>'
+                      bucket_keys_tabelle += '" title="einsehen/&auml;ndern">einsehen/&auml;ndern</a>'
                     else:
-                      bucket_keys_tabelle += '" title="view/edit ACL">view/edit ACL</a>'
+                      bucket_keys_tabelle += '" title="view/edit">view/edit</a>'
                     bucket_keys_tabelle += '</td>'
-                    bucket_keys_tabelle += '<td align="center">'
-                    bucket_keys_tabelle += '<tt>'+str(liste_keys[i].etag)+'</tt>'
-                    bucket_keys_tabelle += '</td>'
+
+                    bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>MD5:</b></td>'
+                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
                     bucket_keys_tabelle += '</tr>'
-                bucket_keys_tabelle += '</table>'
+                bucket_keys_tabelle += '</table>'    
+                
 
           # Wenn man sich NICHT unter Amazon befindet, funktioniert der Download von Keys nicht.
 #          if regionname != "Amazon":
@@ -364,7 +372,7 @@ class BucketInhaltPur(webapp.RequestHandler):
           if mobile == "true":
             policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt_pure?mobile=true"},'
           else:
-            policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt_pure"},'
+            policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt_pure?mobile=false"},'
           policy_document = policy_document + '["starts-with", "$key", ""],'
           policy_document = policy_document + '["starts-with", "$Content-Type", ""]'
           policy_document = policy_document + ']'
@@ -426,7 +434,7 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '<tr>'
-            keys_upload_formular += '<td>'
+            keys_upload_formular += '<td>\n'
             keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure?mobile=true">\n'        
             keys_upload_formular += '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular += '<input type="hidden" name="policy" value="'+policy+'">\n'
@@ -477,8 +485,8 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '<tr>'
-            keys_upload_formular += '<td>'
-            keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure">\n'        
+            keys_upload_formular += '<td>\n'
+            keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure?mobile=false">\n'        
             keys_upload_formular += '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular += '<input type="hidden" name="policy" value="'+policy+'">\n'
             keys_upload_formular += '<input type="hidden" name="signature" value="'+signature+'">\n'
