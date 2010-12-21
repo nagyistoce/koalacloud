@@ -150,12 +150,12 @@ class Snapshots(webapp.RequestHandler):
                       snapshotstabelle += '</td>'
   
                       snapshotstabelle += '<td align="right"><b>ID:</b></td>'
-                      snapshotstabelle += '<td align="center"><tt>'+liste_snapshots[i].id+'</tt></td>'
+                      snapshotstabelle += '<td align="center">'+liste_snapshots[i].id+'</td>'
                       snapshotstabelle += '</tr>'
                       
                       snapshotstabelle += '<tr>'
                       snapshotstabelle += '<td colspan="2" align="right"><b>Volume:</b></td>'
-                      snapshotstabelle += '<td align="center"><tt>'+liste_snapshots[i].volume_id+'</tt></td>'
+                      snapshotstabelle += '<td align="center">'+liste_snapshots[i].volume_id+'</td>'
                       snapshotstabelle += '</tr>'
                       
                       snapshotstabelle += '<tr>'
@@ -223,11 +223,11 @@ class Snapshots(webapp.RequestHandler):
                   for i in range(laenge_liste_snapshots):
                     
                       if counter > 0:
-                          snapshotstabelle += '<tr><td colspan="3">&nbsp;</td></tr>'
+                          snapshotstabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
                       counter += 1
                       
                       snapshotstabelle += '<tr>'
-                      snapshotstabelle += '<td align="left">'
+                      snapshotstabelle += '<td align="left" bgcolor="#D4D4D4">'
                       snapshotstabelle += '<a href="/snapshotsentfernen?snapshot='
                       snapshotstabelle += liste_snapshots[i].id
                       snapshotstabelle += "&amp;mobile="
@@ -237,71 +237,82 @@ class Snapshots(webapp.RequestHandler):
                       else:
                         snapshotstabelle += '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
                       snapshotstabelle += '</td>'
-  
-                      snapshotstabelle += '<td align="right"><b>ID:</b></td>'
-                      snapshotstabelle += '<td align="center"><tt>'+liste_snapshots[i].id+'</tt></td>'
-                      snapshotstabelle += '</tr>'
+
+                      snapshotstabelle += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
                       
+                      snapshotstabelle += '</tr>'                      
                       snapshotstabelle += '<tr>'
-                      snapshotstabelle += '<td colspan="2" align="right"><b>Volume:</b></td>'
-                      snapshotstabelle += '<td align="center"><tt>'+liste_snapshots[i].volume_id+'</tt></td>'
-                      snapshotstabelle += '</tr>'
                       
-                      snapshotstabelle += '<tr>'
-                      if sprache == "de":
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Gr&ouml;&szlig;e:</b></td>'
-                      else:
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Size:</b></td>'
-                      snapshotstabelle += '<td align="center">'+str(liste_snapshots[i].volume_size)+' GB</td>'
-                      snapshotstabelle += '</tr>'
+                      snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>ID:</b></td>'
+                      snapshotstabelle += '<td align="left">'+liste_snapshots[i].id+'</td>'
                       
-                      snapshotstabelle += '<tr>'
-                      snapshotstabelle += '<td colspan="2" align="right"><b>Status:</b></td>'
+                      snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'
                       if liste_snapshots[i].status == u'completed':
-                        snapshotstabelle += '<td bgcolor="#c3ddc3" align="center">'+liste_snapshots[i].status+'</td>'
+                        snapshotstabelle += '<td bgcolor="#c3ddc3" align="left">'+liste_snapshots[i].status+'</td>'
                       elif liste_snapshots[i].status == u'pending':
-                        snapshotstabelle += '<td bgcolor="#ffffcc" align="center">'+liste_snapshots[i].status+'</td>'
+                        snapshotstabelle += '<td bgcolor="#ffffcc" align="left">'+liste_snapshots[i].status+'</td>'
                       elif liste_snapshots[i].status == u'deleting':
-                        snapshotstabelle += '<td bgcolor="#ffcc99" align="center">'+liste_snapshots[i].status+'</td>'
+                        snapshotstabelle += '<td bgcolor="#ffcc99" align="left">'+liste_snapshots[i].status+'</td>'
                       else:
-                        snapshotstabelle += '<td align="center">'+liste_snapshots[i].status+'</td>'
-                      snapshotstabelle += '</tr>'
-                      
+                        snapshotstabelle += '<td align="left">'+liste_snapshots[i].status+'</td>'
+                        
+                      snapshotstabelle += '</tr>'                      
                       snapshotstabelle += '<tr>'
-                      if sprache == "de":
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Besitzer:</b></td>'
-                      else:
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Owner:</b></td>'
-                      snapshotstabelle += '<td align="center">'+str(liste_snapshots[i].owner_id)+'</td>'
-                      snapshotstabelle += '</tr>'
                       
-                      snapshotstabelle += '<tr>'
                       if sprache == "de":
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Beschreibung:</b></td>'
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Gr&ouml;&szlig;e:</b></td>'
                       else:
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Description:</b></td>'
-                      snapshotstabelle += '<td align="center">'+str(liste_snapshots[i].description)+'</td>'
-                      snapshotstabelle += '</tr>'
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Size:</b></td>'
+                      snapshotstabelle += '<td align="left">'+str(liste_snapshots[i].volume_size)+' GB</td>'
                       
+                      snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Volume:</b></td>'
+                      snapshotstabelle += '<td align="left">'+liste_snapshots[i].volume_id+'</td>'
+                      
+                      snapshotstabelle += '</tr>'
                       snapshotstabelle += '<tr>'
+
                       if sprache == "de":
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Datum:</b></td>'
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Fortschritt:</b></td>'
                       else:
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Start Time:</b></td>'
-                      snapshotstabelle += '<td align="center">'
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Progress:</b></td>'
+                      snapshotstabelle += '<td align="left">'+str(liste_snapshots[i].progress)+'</td>'
+                      
+                      if sprache == "de":
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
+                      else:
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Owner:</b></td>'
+                      snapshotstabelle += '<td align="left">'+str(liste_snapshots[i].owner_id)+'</td>'
+                      
+                      snapshotstabelle += '</tr>'                      
+                      snapshotstabelle += '<tr>'
+                      
+                      if sprache == "de":
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
+                      else:
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Start Time:</b></td>'
+                      snapshotstabelle += '<td align="left">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_erzeugung = parse(liste_snapshots[i].start_time)                      
                       snapshotstabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
                       snapshotstabelle += '</td>'
-                      snapshotstabelle += '</tr>'
+                      
+                      snapshotstabelle += '<td align="left" colspan="2">&nbsp;</td>'
                       
                       snapshotstabelle += '<tr>'
-                      if sprache == "de":
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Fortschritt:</b></td>'
-                      else:
-                        snapshotstabelle += '<td colspan="2" align="right"><b>Progress:</b></td>'
-                      snapshotstabelle += '<td align="center">'+str(liste_snapshots[i].progress)+'</td>'
                       snapshotstabelle += '</tr>'
+                      
+                      if sprache == "de":
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Beschreibung:</b></td>'
+                      else:
+                        snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Description:</b></td>'
+                        
+                      if liste_snapshots[i].description == "":
+                        snapshotstabelle += '<td align="left">---</td>'
+                        snapshotstabelle += '<td align="left" colspan="2">&nbsp;</td>'
+                      else:
+                        snapshotstabelle += '<td colspan="3" align="left">'+str(liste_snapshots[i].description)+'</td>'
+                      snapshotstabelle += '</tr>'
+
                   snapshotstabelle += '</table>'     
   
             if regionname == "Amazon":

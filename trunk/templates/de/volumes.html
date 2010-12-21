@@ -7,29 +7,19 @@
 <input type="hidden" name="mobile" value="{{ mobile }}">
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
-<td>Gr&ouml;&szlig;e:</td>
-<td><input name="groesse" type="text" size="3" maxlength="3"></td>
-<td align="left">
+  <td>Gr&ouml;&szlig;e:</td>
+  <td><input name="groesse" type="text" size="3" maxlength="3"></td>
+  <td align="left">
     <select name="GB_oder_TB" size="1">
       <option selected="selected">GB</option>
       <option>TB</option>
-    </select><br>
-</td>
+    </select>
+  </td>
+  <td>Verf&uuml;gbarkeitszone:</td>
+  <td align="left"><select name="zone" size="1">{{ zonen_in_der_region }}</select></td>
 </tr>
 <tr>
-<td>
-Verf&uuml;gbarkeitszone:
-</td>
-<td colspan="2" align="left">
-<select name="zone" size="1">
-{{ zonen_in_der_region }}
-</select><br>
-</td>
-</tr>
-<tr>
-<td colspan="3"> 
-<input type="submit" value="Neues EBS Volumen anlegen">
-</td>
+  <td colspan="5"><input type="submit" value="Neues EBS Volumen anlegen"></td>
 </tr>
 </table>
 </form>

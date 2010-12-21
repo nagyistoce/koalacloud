@@ -96,14 +96,14 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">'
             elb_erzeugen_tabelle += '<table border="0" cellspacing="0" cellpadding="5">'
             elb_erzeugen_tabelle += '<tr>\n'
-            elb_erzeugen_tabelle += '<td>Name</td>\n'      
-            elb_erzeugen_tabelle += '<td colspan="2"><input name="elb_name" type="text" size="20" maxlength="20"></td>\n'
+            elb_erzeugen_tabelle += '<td align="right">Name:</td>\n'      
+            elb_erzeugen_tabelle += '<td><input name="elb_name" type="text" size="20" maxlength="20"></td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td colspan="2">Zonen</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Zonen:</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td colspan="2">Zones</td>\n' 
+                elb_erzeugen_tabelle += '<td align="right">Zones:</td>\n' 
             elb_erzeugen_tabelle += '<td>\n'
             for i in range(laenge_liste_zonen):
                 elb_erzeugen_tabelle += '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
@@ -111,9 +111,9 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td colspan="2">Protokoll</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Protokoll:</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td colspan="2">Protocol</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Protocol:</td>\n'
             elb_erzeugen_tabelle += '<td>\n'
             elb_erzeugen_tabelle += '<select name="elb_protokoll" size="1">\n'
             elb_erzeugen_tabelle += '  <option selected="selected">TCP</option>\n'
@@ -122,41 +122,43 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
+            elb_erzeugen_tabelle += '<td align="right">Port:</td>\n'
+            elb_erzeugen_tabelle += '<td><input name="ELBPort" type="text" size="6" maxlength="6">'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td colspan="2">Port (Lastverteiler)</td>\n'
+                elb_erzeugen_tabelle += ' (Lastverteiler)</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td colspan="2">Load balancers port</td>\n'
-            elb_erzeugen_tabelle += '<td><input name="ELBPort" type="text" size="6" maxlength="6"></td>\n'
+                elb_erzeugen_tabelle += ' (load balancer)</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
+            elb_erzeugen_tabelle += '<td align="right">Port:</td>\n'              
+            elb_erzeugen_tabelle += '<td><input name="InstPort" type="text" size="6" maxlength="6">'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td colspan="2">Port (Instanz)</td>\n'
+                elb_erzeugen_tabelle += ' (Instanz)</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td colspan="2">Instance Port</td>\n'              
-            elb_erzeugen_tabelle += '<td><input name="InstPort" type="text" size="6" maxlength="6"></td>\n'
+                elb_erzeugen_tabelle += ' (instance)</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
  
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td align="center" colspan="3"><input type="submit" value="Elastischen Lastverteiler anlegen"></td>\n'
+                elb_erzeugen_tabelle += '<td align="left" colspan="2"><input type="submit" value="Elastischen Lastverteiler anlegen"></td>\n'
             else:
-                elb_erzeugen_tabelle += '<td align="center" colspan="3"><input type="submit" value="create elastic load balancer"></td>\n'
+                elb_erzeugen_tabelle += '<td align="left" colspan="2"><input type="submit" value="create elastic load balancer"></td>\n'
             elb_erzeugen_tabelle += '</table>'
             elb_erzeugen_tabelle += '</form>'
         else:
             elb_erzeugen_tabelle = ''
             elb_erzeugen_tabelle += '<form action="/elb_definiv_erzeugen" method="post" accept-charset="utf-8">\n'
             elb_erzeugen_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">'
-            elb_erzeugen_tabelle += '<table border="3" cellspacing="0" cellpadding="5">'
+            elb_erzeugen_tabelle += '<table border="0" cellspacing="0" cellpadding="5">'
             elb_erzeugen_tabelle += '<tr>\n'
-            elb_erzeugen_tabelle += '<td>Name</td>\n'
-            elb_erzeugen_tabelle += '<td><input name="elb_name" type="text" size="40" maxlength="40"></td>\n'
+            elb_erzeugen_tabelle += '<td align="right">Name:</td>\n'      
+            elb_erzeugen_tabelle += '<td><input name="elb_name" type="text" size="20" maxlength="20"></td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td>Verf&uuml;gbarkeitszonen</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Zonen:</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td>Availability Zones</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Zones:</td>\n' 
             elb_erzeugen_tabelle += '<td>\n'
             for i in range(laenge_liste_zonen):
                 elb_erzeugen_tabelle += '<input type="checkbox" name="'+liste_zonen[i].name+'" value="'+liste_zonen[i].name+'"> '+liste_zonen[i].name+'<BR>\n'
@@ -164,9 +166,9 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td>Protokoll</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Protokoll:</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td>Protocol</td>\n'
+                elb_erzeugen_tabelle += '<td align="right">Protocol:</td>\n'
             elb_erzeugen_tabelle += '<td>\n'
             elb_erzeugen_tabelle += '<select name="elb_protokoll" size="1">\n'
             elb_erzeugen_tabelle += '  <option selected="selected">TCP</option>\n'
@@ -175,27 +177,29 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
-            elb_erzeugen_tabelle += '<td>Port des Lastverteilers</td>\n'
-            elb_erzeugen_tabelle += '<td><input name="ELBPort" type="text" size="10" maxlength="10"></td>\n'
+            elb_erzeugen_tabelle += '<td align="right">Port:</td>\n'
+            elb_erzeugen_tabelle += '<td><input name="ELBPort" type="text" size="6" maxlength="6">'
+            if sprache == "de":
+                elb_erzeugen_tabelle += ' (Lastverteiler)</td>\n'
+            else:
+                elb_erzeugen_tabelle += ' (load balancer)</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
             elb_erzeugen_tabelle += '<tr>\n'
+            elb_erzeugen_tabelle += '<td align="right">Port:</td>\n'              
+            elb_erzeugen_tabelle += '<td><input name="InstPort" type="text" size="6" maxlength="6">'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td>Instanz Port</td>\n'
+                elb_erzeugen_tabelle += ' (Instanz)</td>\n'
             else:
-                elb_erzeugen_tabelle += '<td>Instance Port</td>\n'
-            elb_erzeugen_tabelle += '<td><input name="InstPort" type="text" size="10" maxlength="10"></td>\n'
+                elb_erzeugen_tabelle += ' (instance)</td>\n'
             elb_erzeugen_tabelle += '</tr>\n'
-    
-    
-            elb_erzeugen_tabelle += ''
+ 
             elb_erzeugen_tabelle += '<tr>\n'
             if sprache == "de":
-                elb_erzeugen_tabelle += '<td colspan="2"><input type="submit" value="Lastverteiler anlegen"></td>\n'
+                elb_erzeugen_tabelle += '<td align="left" colspan="2"><input type="submit" value="Elastischen Lastverteiler anlegen"></td>\n'
             else:
-                elb_erzeugen_tabelle += '<td colspan="2"><input type="submit" value="create load balancer"></td>\n'
+                elb_erzeugen_tabelle += '<td align="left" colspan="2"><input type="submit" value="create elastic load balancer"></td>\n'
             elb_erzeugen_tabelle += '</table>'
             elb_erzeugen_tabelle += '</form>'
-
 
         template_values = {
         'navigations_bar': navigations_bar,

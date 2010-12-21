@@ -505,13 +505,13 @@ class Instanzen(webapp.RequestHandler):
                   for i in liste_reservations:        
                     for x in i.instances:
                       if counter > 0:
-                          instanzentabelle += '<tr><td colspan="7">&nbsp;</td></tr>'
+                          instanzentabelle += '<tr><td colspan="6">&nbsp;</td></tr>'
                       counter += 1
                       
                       instanzentabelle += '<tr>'
                       
                       # Terminate instance
-                      instanzentabelle += '<td>'
+                      instanzentabelle += '<td bgcolor="#D4D4D4">'
                       if sprache == "de":
                         instanzentabelle += '<a href="/instanzterminate?id='
                         instanzentabelle += x.id
@@ -529,7 +529,7 @@ class Instanzen(webapp.RequestHandler):
                       # Die Icons der Betriebssysteme nur unter Amazon
                       #if regionname == "Amazon":
                       # Hier kommt die Spalte mit den Icons der Betriebssysteme
-                      instanzentabelle += '<td align="center">'                  
+                      instanzentabelle += '<td align="center" bgcolor="#D4D4D4">'                  
                       
                       try:
                         image = conn_region.get_image(str(x.image_id))
@@ -577,7 +577,7 @@ class Instanzen(webapp.RequestHandler):
                           #instanzentabelle += '<td><img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Linux"></td>'
 
                       # Stop instance
-                      instanzentabelle += '<td align="center">'
+                      instanzentabelle += '<td align="center" bgcolor="#D4D4D4">'
                       if x.root_device_type == 'instance-store': 
                         if x.state == u'running': 
                           fehlermeldung = "122"
@@ -630,12 +630,9 @@ class Instanzen(webapp.RequestHandler):
                             instanzentabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="This instance cannot be stopped now">'
                       instanzentabelle += '</td>'
                       
-                      # Id of the instance
-                      instanzentabelle += '<td align="center"><tt>'+str(x.id)+'</tt></td>'
-
                       
                       # Reboot instance
-                      instanzentabelle += '<td align="center">'
+                      instanzentabelle += '<td align="center" bgcolor="#D4D4D4">'
                       if x.state == u'running':
                         if sprache == "de":
                           instanzentabelle += '<a href="/instanzreboot?id='
@@ -654,7 +651,7 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle += '</td>'
                       
                       # Console output
-                      instanzentabelle += '<td align="center">'
+                      instanzentabelle += '<td align="center" bgcolor="#D4D4D4">'
                       if x.state == u'running':
                         if sprache == "de":
                           instanzentabelle += '<a href="/console_output?id='
@@ -673,7 +670,7 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle += '</td>'
     
                       # Launch more of these
-                      instanzentabelle += '<td align="center">'
+                      instanzentabelle += '<td align="center" bgcolor="#D4D4D4">'
                       if sprache == "de":
                         instanzentabelle += '<a href="/instanzanlegen?image='
                         instanzentabelle += str(x.image_id)
@@ -727,143 +724,135 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
-                      instanzentabelle += '<td align="right" colspan="3"><b>Status:</b></td>'        
+                      # Id of the instance
+                      instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'    
+                      instanzentabelle += '<td align="left">'+str(x.id)+'</td>'
+                      
+                      
+                      instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'        
                       # Hier kommt die Spalte "Status"
                       if x.state == u'running':
-                        instanzentabelle += '<td bgcolor="#c3ddc3" colspan="4" align="center">running</td>'
+                        instanzentabelle += '<td bgcolor="#c3ddc3" align="left">running</td>'
                       elif x.state == u'pending':
-                        instanzentabelle += '<td bgcolor="#ffffcc" colspan="4" align="center">pending</td>'
+                        instanzentabelle += '<td bgcolor="#ffffcc" align="left">pending</td>'
                       elif x.state == u'shutting-down':
-                        instanzentabelle += '<td bgcolor="#ffcc99" colspan="4" align="center">shutting-down</td>'
+                        instanzentabelle += '<td bgcolor="#ffcc99" align="left">shutting-down</td>'
                       elif x.state == u'terminated':
-                        instanzentabelle += '<td bgcolor="#ffcccc" colspan="4" align="center">terminated</td>'
+                        instanzentabelle += '<td bgcolor="#ffcccc" align="left">terminated</td>'
                       elif x.state == u'stopping':
-                        instanzentabelle += '<td bgcolor="#ffcc99" colspan="4" align="center">stopping</td>'
+                        instanzentabelle += '<td bgcolor="#ffcc99" align="left">stopping</td>'
                       elif x.state == u'stopped':
-                        instanzentabelle += '<td bgcolor="#ffce81" colspan="4" align="center">stopped</td>'
+                        instanzentabelle += '<td bgcolor="#ffce81" align="left">stopped</td>'
                       else:
-                        instanzentabelle += '<td colspan="4" align="center">'+str(x.state)+'</td>'
+                        instanzentabelle += '<td align="left">'+str(x.state)+'</td>'
   
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
-
-                      if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
-                      else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.instance_type)+'</tt></td>'
+                      
+                      instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Reservation:</b></td>'                      
+                      instanzentabelle += '<td align="left">'+str(i.id)+'</td>'
+                      
+                      instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Image:</b></td>'     
+                      instanzentabelle += '<td align="left">'+str(x.image_id)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
-                      
-                      instanzentabelle += '<td align="right" colspan="3"><b>Reservation:</b></td>'                      
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(i.id)+'</tt></td>'
-                      
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'
-                      
-                      instanzentabelle += '<td align="right" colspan="3"><b>Root:</b></td>'     
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.root_device_type)+'</tt></td>'
-                      
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'
-
-                      if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
-                      else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(i.owner_id)+'</tt></td>'
-                      
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'
-                      
-                      instanzentabelle += '<td align="right" colspan="3"><b>Image:</b></td>'     
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.image_id)+'</tt></td>'
-                      
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'
-                      
-                      instanzentabelle += '<td align="right" colspan="3"><b>Kernel:</b></td>'    
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.kernel)+'</tt></td>'
-
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'
-                      
-                      instanzentabelle += '<td align="right" colspan="3"><b>Ramdisk:</b></td>'    
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.ramdisk)+'</tt></td>'
-
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'          
-                                  
-                      instanzentabelle += '<td align="right" colspan="3"><b>Zone:</b></td>'   
-                      instanzentabelle += '<td align="center" colspan="4">'+str(x.placement)+'</td>'
-                      
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'      
                       
                       if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Gruppe:</b></td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Typ:</b></td>'
                       else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Group:</b></td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Type:</b></td>'
+                      instanzentabelle += '<td align="left">'+str(x.instance_type)+'</td>'
+
+                      instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Kernel:</b></td>'    
+                      instanzentabelle += '<td align="left">'+str(x.kernel)+'</td>'
+                      
+                      instanzentabelle += '</tr>'
+                      instanzentabelle += '<tr>'
+                      
+                      instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Root:</b></td>'     
+                      instanzentabelle += '<td align="left">'+str(x.root_device_type)+'</td>'
+
+                      instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Ramdisk:</b></td>'    
+                      instanzentabelle += '<td align="left">'+str(x.ramdisk)+'</td>'
+                      
+                      instanzentabelle += '</tr>'
+                      instanzentabelle += '<tr>'
+
+                      if sprache == "de":
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Gruppe:</b></td>'
+                      else:
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Group:</b></td>'
                       laenge_liste_guppen_reservations = len(i.groups)
                       if laenge_liste_guppen_reservations == 1:
                         # Wenn zu der Reservation nur eine Sicherheitsgruppe gehört
                         for z in range(laenge_liste_guppen_reservations):
-                          instanzentabelle += '<td align="center" colspan="4">'+i.groups[z].id+'</td>'
+                          instanzentabelle += '<td align="left">'+i.groups[z].id+'</td>'
                       else:
                         # Wenn zu der Reservation mehrere Sicherheitsgruppen gehören
                         for z in range(laenge_liste_guppen_reservations):
-                          instanzentabelle += '<td align="center" colspan="4">'+i.groups[z].id+' </td>'
+                          instanzentabelle += '<td align="left">'+i.groups[z].id+' </td>'
     
+                      if sprache == "de":
+                        instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
+                      else:
+                        instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Owner:</b></td>'
+                      instanzentabelle += '<td align="left">'+str(i.owner_id)+'</td>'
+
+                      instanzentabelle += '</tr>'
+                      instanzentabelle += '<tr>'          
+                                  
+                      instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Zone:</b></td>'   
+                      instanzentabelle += '<td align="left">'+str(x.placement)+'</td>'
+
+                      if sprache == "de":
+                        instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Schl&uuml;ssel:</b></td>'
+                      else:
+                        instanzentabelle += '<td align="right" bgcolor="#D4D4D4"><b>Keypair:</b></td>'
+                      # Bei Eucalyptus kommt es manchmal vor, dass der Keyname nicht geholt werden kann. In diesem Fall kommt es zu einer HTML-Warnung, weil <tt></tt> leer ist. Darum lieber nur ein Leerzeichen, wenn der Keyname leer ist.
+                      if x.key_name == "":
+                        instanzentabelle += '<td align="left">&nbsp;</td>'
+                      else:
+                        instanzentabelle += '<td align="left">'+str(x.key_name)+'</td>'
+                        
+                      instanzentabelle += '</tr>'
+                      instanzentabelle += '<tr>'                          
+  
+
+                      if sprache == "de":
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Intern:</b></td>'
+                      else:
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Private:</b></td>'
+                      instanzentabelle += '<td align="left" colspan="3">'+str(x.private_dns_name)+'</td>'
+                      
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'     
                       
                       if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Extern:</b></td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Extern:</b></td>'
                       else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Public:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4">'+str(x.public_dns_name)+'</td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Public:</b></td>'
+                      instanzentabelle += '<td align="left" colspan="3">'+str(x.public_dns_name)+'</td>'
 
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'     
 
-                      if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Intern:</b></td>'
-                      else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Private:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4">'+str(x.private_dns_name)+'</td>'
-
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'     
 
                       if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Schl&uuml;ssel:</b></td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Datum:</b></td>'
                       else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Keypair:</b></td>'
-                      # Bei Eucalyptus kommt es manchmal vor, dass der Keyname nicht geholt werden kann. In diesem Fall kommt es zu einer HTML-Warnung, weil <tt></tt> leer ist. Darum lieber nur ein Leerzeichen, wenn der Keyname leer ist.
-                      if x.key_name == "":
-                        instanzentabelle += '<td align="center" colspan="4">&nbsp;</td>'
-                      else:
-                        instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.key_name)+'</tt></td>'
-
-                      instanzentabelle += '</tr>'
-                      instanzentabelle += '<tr>'   
-
-                      if sprache == "de":
-                        instanzentabelle += '<td align="right" colspan="3"><b>Datum:</b></td>'
-                      else:
-                        instanzentabelle += '<td align="right" colspan="3"><b>Date:</b></td>'
+                        instanzentabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Date:</b></td>'
                       datum_des_starts = parse(x.launch_time)
-                      instanzentabelle += '<td align="center" colspan="4">'+str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))+'</td>'
+                      instanzentabelle += '<td align="left" colspan="3">'+str(datum_des_starts.strftime("%Y-%m-%d  %H:%M:%S"))+'</td>'
                       instanzentabelle += '</tr>'
                   instanzentabelle += '</table>'          
   
   
             if laenge_liste_reservations >= 1:
               alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
-              alle_instanzen_loeschen_button += '<table border="0" cellspacing="5" cellpadding="5">\n'
+              alle_instanzen_loeschen_button += '<table border="0" cellspacing="0" cellpadding="5">\n'
               alle_instanzen_loeschen_button += '<tr>\n'
-              alle_instanzen_loeschen_button += '<td align="center">\n'
+              alle_instanzen_loeschen_button += '<td align="left">\n'
               alle_instanzen_loeschen_button += '<form action="/alle_instanzen_beenden" method="get">\n'
               alle_instanzen_loeschen_button += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
               if sprache == "de":

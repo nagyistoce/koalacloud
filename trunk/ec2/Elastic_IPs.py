@@ -150,9 +150,7 @@ class Elastic_IPs(webapp.RequestHandler):
                       adressentabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="release elastic IP"></a>'
                     adressentabelle += '</td>'
 
-                    adressentabelle += '<td>'
-                    adressentabelle += liste_adressen[i].public_ip
-                    adressentabelle += '</td>'
+                    adressentabelle += '<td>'+liste_adressen[i].public_ip+'</td>'
 
                     if liste_adressen[i].instance_id == "" or liste_adressen[i].instance_id == "nobody":
                       adressentabelle += '<td>'
@@ -162,10 +160,10 @@ class Elastic_IPs(webapp.RequestHandler):
                       adressentabelle += str(mobile)
                       if sprache == "de":
                         adressentabelle += '" title="Elastische IP mit Instanz verkn&uuml;pfen">'
-                        adressentabelle += '<img src="bilder/attach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                        adressentabelle += '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
                       else:
                         adressentabelle += '" title="associate elastic IP with instance">'
-                        adressentabelle += '<img src="bilder/attach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                        adressentabelle += '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="associate elastic IP with instance"></a>'
                       adressentabelle += '</td>'
                     else:
                       adressentabelle += '<td>'
@@ -175,15 +173,15 @@ class Elastic_IPs(webapp.RequestHandler):
                       adressentabelle += str(mobile)
                       if sprache == "de":
                         adressentabelle += '" title="Elastische IP von der Instanz l&ouml;sen">'
-                        adressentabelle += '<img src="bilder/detach.png" width="52" height="18" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
+                        adressentabelle += '<img src="bilder/detach2.png" width="16" height="16" border="0" alt="Elastische IP mit Instanz verkn&uuml;pfen"></a>'
                       else:
                         adressentabelle += '" title="disassociate elastic IP from instance">'
-                        adressentabelle += '<img src="bilder/detach.png" width="52" height="18" border="0" alt="associate elastic IP with instance"></a>'
+                        adressentabelle += '<img src="bilder/detach2.png" width="16" height="16" border="0" alt="associate elastic IP with instance"></a>'
                       adressentabelle += '</td>'
                       
 
                     if liste_adressen[i].instance_id:
-                      adressentabelle += '<td align="center"><tt>'+liste_adressen[i].instance_id+'</tt></td>'
+                      adressentabelle += '<td align="center">'+liste_adressen[i].instance_id+'</td>'
                     else:
                       adressentabelle += '<td align="center"><tt>---</tt></td>'
                       
