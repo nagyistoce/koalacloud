@@ -1,18 +1,13 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
-<h3>
-<b>Access Control List</b>
-</h3>
 
-<p>&nbsp;</p>
-
-<table border="1" cellspacing="0" cellpadding="5">
+<table border="0" cellspacing="0" cellpadding="5">
 <tr>
-<td><b>Bucket:</b></td>
+<td align="right"><b>Bucket:</b></td>
 <td>{{ bucketname }}</td>
 </tr>
 <tr>
-<td><b>Key:</b></td>
+<td> align="right"<b>Objekt:</b></td>
 <td>{{ keyname }}</td>
 </tr>
 </table>
@@ -23,24 +18,19 @@
 
 <p>&nbsp;</p>
 
-<h3>
-<b>Chance Access Control List</b>
-</h3>
-
-<p>&nbsp;</p>
-
 <form action="/acl_aendern" method="post" accept-charset="utf-8">
 <input type="hidden" name="keyname" value="{{ keyname }}">
 <input type="hidden" name="bucketname" value="{{ bucketname }}">
 <input type="hidden" name="typ" value="{{ typ }}">
 <input type="hidden" name="dir" value="{{ directory }}">
+<input type="hidden" name="mobile" value="{{ mobile }}">
 <select name="canned_acl" size="1">
-<option selected="selected">public-read</option>
-<option>private</option>
-<option>public-read-write</option>
-<option>authenticated-read</option>
+  <option selected="selected">public-read</option>
+  <option>private</option>
+  <option>public-read-write</option>
+  <option>authenticated-read</option>
 </select>
-<input type="submit" value="submit changes">
+<input type="submit" value="chance Access Control List">
 </form>
 
 <p>&nbsp;</p>

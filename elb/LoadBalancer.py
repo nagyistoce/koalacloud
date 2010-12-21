@@ -262,7 +262,7 @@ class LoadBalancer(webapp.RequestHandler):
                           loadbalancertabelle += '<img src="bilder/stop.png" width="16" height="16" border="0" alt="delete load balancer"></a>'
                         loadbalancertabelle += '</td>'
                         
-                        loadbalancertabelle += '<td align="left" bgcolor="#D4D4D4">'
+                        loadbalancertabelle += '<td align="left">'
                         loadbalancertabelle += '<a href="/loadbalanceraendern?name='
                         loadbalancertabelle += liste_load_balancers[i].name
                         loadbalancertabelle += "&amp;mobile="

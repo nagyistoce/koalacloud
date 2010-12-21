@@ -3,11 +3,11 @@
 
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
-<td><b>Bucket:</b></td>
+<td align="right"><b>Bucket:</b></td>
 <td>{{ bucketname }}</td>
 </tr>
 <tr>
-<td><b>Objekt:</b></td>
+<td align="right"><b>Objekt:</b></td>
 <td>{{ keyname }}</td>
 </tr>
 </table>
@@ -24,19 +24,20 @@
 <input type="hidden" name="typ" value="{{ typ }}">
 <input type="hidden" name="dir" value="{{ directory }}">
 <input type="hidden" name="mobile" value="{{ mobile }}">
+
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
-<td>
-<select name="canned_acl" size="1">
-<option selected="selected">public-read</option>
-<option>private</option>
-<option>public-read-write</option>
-<option>authenticated-read</option>
-</select>
-</td>
+  <td>
+    <select name="canned_acl" size="1">
+      <option selected="selected">public-read</option>
+      <option>private</option>
+      <option>public-read-write</option>
+      <option>authenticated-read</option>
+    </select>
+  </td>
 </tr>
 <tr>
-<td><input type="submit" value="&Auml;nderungen &uuml;bermitteln"></td>
+  <td><input type="submit" value="Zugriffsberechtigung &auml;ndern"></td>
 </tr>
 </table>
 </form>

@@ -237,17 +237,14 @@ class BucketInhalt(webapp.RequestHandler):
                   
                   bucket_keys_tabelle = ''
                   bucket_keys_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
-                  bucket_keys_tabelle += '<tr>'
-                  bucket_keys_tabelle += '<th align="left" colspan="4">'+str(directory)+'</th>'
-                  bucket_keys_tabelle += '</tr>'
                   # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
                   if directory != '/':
                     bucket_keys_tabelle += '<tr>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>'
+                    bucket_keys_tabelle += '<td align="left" colspan="5">'
                     bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
                     bucket_keys_tabelle += str(bucketname)
+                    bucket_keys_tabelle += "&amp;mobile="
+                    bucket_keys_tabelle += str(mobile)
                     # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
                     # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
                     # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
@@ -272,11 +269,12 @@ class BucketInhalt(webapp.RequestHandler):
                     bucket_keys_tabelle += '">'
                     bucket_keys_tabelle += '</a>'
                     bucket_keys_tabelle += '</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
                     bucket_keys_tabelle += '</tr>'
-    
+
+                  bucket_keys_tabelle += '<tr>'
+                  bucket_keys_tabelle += '<td align="left" colspan="5"><b>'+str(directory)+'</b></td>'
+                  bucket_keys_tabelle += '</tr>'
+
                   counter = 0
                   for i in range(laenge_liste_keys):
                     
@@ -302,7 +300,7 @@ class BucketInhalt(webapp.RequestHandler):
                       bucket_keys_tabelle += '</td>'
     
     
-                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<td align="right">'
                       # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
                       # Dann kommt hier ein anderes Icon hin
                       if str(liste_keys[i].name).endswith("$folder$") == True:
@@ -368,10 +366,10 @@ class BucketInhalt(webapp.RequestHandler):
                       if str(liste_keys[i].name) != None:
                         # Wenn der Keyname auf "$folder" endet, dann wird keine Dateigröße ausgegeben.
                         if str(liste_keys[i].name).endswith("$folder$") == True:
-                          bucket_keys_tabelle += '<td align="center">---</td>'
+                          bucket_keys_tabelle += '<td align="left">---</td>'
                         # Wenn der Keyname nicht auf $folder$ endet, wird die Dateigröße ausgegeben.
                         else:
-                          bucket_keys_tabelle += '<td align="center">'+str(liste_keys[i].size)+'</td>'
+                          bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].size)+'</td>'
                       else:
                         bucket_keys_tabelle += '<td align="right">&nbsp;</td>'
     
@@ -382,7 +380,7 @@ class BucketInhalt(webapp.RequestHandler):
                         bucket_keys_tabelle += '<td colspan="3" align="right"><b>Datum:</b></td>'
                       else:
                         bucket_keys_tabelle += '<td colspan="3" align="right"><b>Date:</b></td>'
-                      bucket_keys_tabelle += '<td align="center">'
+                      bucket_keys_tabelle += '<td align="left">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
                       bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
@@ -393,7 +391,7 @@ class BucketInhalt(webapp.RequestHandler):
                       bucket_keys_tabelle += '<tr>'
 
                       bucket_keys_tabelle += '<td align="right" colspan="3"><b>ACL:</b></td>'
-                      bucket_keys_tabelle += '<td align="center">'
+                      bucket_keys_tabelle += '<td align="left">'
                       bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
                       bucket_keys_tabelle += str(bucketname)
                       bucket_keys_tabelle += '&amp;typ=kompfort'
@@ -411,7 +409,7 @@ class BucketInhalt(webapp.RequestHandler):
                       bucket_keys_tabelle += '<tr>'
                       
                       bucket_keys_tabelle += '<td align="right" colspan="3"><b>MD5:</b></td>'
-                      bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+                      bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
                       bucket_keys_tabelle += '</tr>'
                   bucket_keys_tabelle += '</table>'
                   
@@ -419,35 +417,15 @@ class BucketInhalt(webapp.RequestHandler):
                   # Not the mobile version
                   
                   bucket_keys_tabelle = ''
-                  bucket_keys_tabelle += '<table border="3" cellspacing="0" cellpadding="5">'
-                  bucket_keys_tabelle += '<tr>'
-                  bucket_keys_tabelle += '<th>&nbsp;</th>'
-                  bucket_keys_tabelle += '<th>&nbsp;</th>'
-                  if sprache == "de":
-                    bucket_keys_tabelle += '<th align="left">'
-                    bucket_keys_tabelle += str(directory)
-                    bucket_keys_tabelle += '</th>'
-                    bucket_keys_tabelle += '<th align="center">Gr&ouml;&szlig;e</th>'
-                    bucket_keys_tabelle += '<th align="center">Letzte &Auml;nderung</th>'
-                    bucket_keys_tabelle += '<th align="center">Zugriffsberechtigung</th>'
-                    bucket_keys_tabelle += '<th align="center">Pr&uuml;fsumme (MD5)</th>'
-                  else:
-                    bucket_keys_tabelle += '<th align="left">'
-                    bucket_keys_tabelle += str(directory)
-                    bucket_keys_tabelle += '</th>'
-                    bucket_keys_tabelle += '<th align="center">Size</th>'
-                    bucket_keys_tabelle += '<th align="center">Last Modified</th>'
-                    bucket_keys_tabelle += '<th align="center">Access Control List</th>'
-                    bucket_keys_tabelle += '<th align="center">MD5</th>'
-                  bucket_keys_tabelle += '</tr>'
+                  bucket_keys_tabelle += '<table border="0" cellspacing="0" cellpadding="5">'
                   # Wenn wir uns nicht im Root-Ordner des Buckets befinden, dann brauchen wir eine Rücksprungmöglichkeit
                   if directory != '/':
                     bucket_keys_tabelle += '<tr>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>'
+                    bucket_keys_tabelle += '<td colspan="5">'
                     bucket_keys_tabelle += '<a href="/bucket_inhalt?bucket='
                     bucket_keys_tabelle += str(bucketname)
+                    bucket_keys_tabelle += "&amp;mobile="
+                    bucket_keys_tabelle += str(mobile)
                     # Wenn das aktuelle Verzeichnis zwei oder mehr "/" enthält, dann müssen
                     # wir eine Rücksprungmöglichkeit bauen. Dabei wird erst der
                     # letzte Slash entfernt und dann der Text bis zum nächsten Slash.
@@ -472,14 +450,25 @@ class BucketInhalt(webapp.RequestHandler):
                     bucket_keys_tabelle += '">'
                     bucket_keys_tabelle += '</a>'
                     bucket_keys_tabelle += '</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
-                    bucket_keys_tabelle += '<td>&nbsp;</td>'
                     bucket_keys_tabelle += '</tr>'
-    
+
+                  bucket_keys_tabelle += '<tr>'
+                  bucket_keys_tabelle += '<td align="left" colspan="5"><b>'+str(directory)+'</b></td>'
+                  bucket_keys_tabelle += '</tr>'
+
+                  bucket_keys_tabelle += '<tr>'
+                  bucket_keys_tabelle += '<td align="left" colspan="5">&nbsp;</td>'
+                  bucket_keys_tabelle += '</tr>'
+                  
+                  counter = 0
                   for i in range(laenge_liste_keys):
+                    
+                      if counter > 0:
+                          bucket_keys_tabelle += '<tr><td colspan="5">&nbsp;</td></tr>'
+                      counter += 1
+                    
                       bucket_keys_tabelle += '<tr>'
-                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<td align="left" bgcolor="#D4D4D4">'
                       bucket_keys_tabelle += '<a href="/bucketkeyentfernen?bucket='
                       bucket_keys_tabelle += str(bucketname)
                       bucket_keys_tabelle += '&amp;typ=kompfort'
@@ -496,7 +485,7 @@ class BucketInhalt(webapp.RequestHandler):
                       bucket_keys_tabelle += '</td>'
     
     
-                      bucket_keys_tabelle += '<td>'
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4">'
                       # Wenn der Name des Key mit dem String $folder$ endet, dann ist es ein Verzeichnis.
                       # Dann kommt hier ein anderes Icon hin
                       if str(liste_keys[i].name).endswith("$folder$") == True:
@@ -512,7 +501,15 @@ class BucketInhalt(webapp.RequestHandler):
                         else:
                           bucket_keys_tabelle += '<img src="bilder/document.png" width="16" height="16" border="0" alt="File">'
                       bucket_keys_tabelle += '</td>'
-                      bucket_keys_tabelle += '<td>'
+                      
+                      bucket_keys_tabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">&nbsp;</td>'
+     
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'   
+       
+                      bucket_keys_tabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>ID:</b></td>'
+                                            
+                      bucket_keys_tabelle += '<td colspan="3" align="left">'
                       # Wenn der Key ein Verzeichnis ist, werden vom Key-Namen die letzten 9 Zeichen
                       # abgeschnitten. Es wird einfach nur das "_$folder$" abgeschnitten.
                       if str(liste_keys[i].name).endswith("$folder$") == True:
@@ -552,26 +549,39 @@ class BucketInhalt(webapp.RequestHandler):
                        
                         bucket_keys_tabelle += '</td>'
     
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
   
+                      if sprache == "de":
+                        bucket_keys_tabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Gr&ouml;&szlig;e:</b></td>'
+                      else:
+                        bucket_keys_tabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Size:</b></td>'
                       if str(liste_keys[i].name) != None:
                         # Wenn der Keyname auf "$folder" endet, dann wird keine Dateigröße ausgegeben.
                         if str(liste_keys[i].name).endswith("$folder$") == True:
-                          bucket_keys_tabelle += '<td align="center">---</td>'
+                          bucket_keys_tabelle += '<td align="left">---</td>'
                         # Wenn der Keyname nicht auf $folder$ endet, wird die Dateigröße ausgegeben.
                         else:
-                          bucket_keys_tabelle += '<td align="right">'+str(liste_keys[i].size)+'</td>'
+                          bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].size)+'</td>'
                       else:
                         bucket_keys_tabelle += '<td align="right">&nbsp;</td>'
-    
-    
-                      bucket_keys_tabelle += '<td>'
+
+                      if sprache == "de":
+                        bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
+                      else:
+                        bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Date:</b></td>'
+                      bucket_keys_tabelle += '<td align="left">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_letzten_aenderung = parse(liste_keys[i].last_modified)
                       bucket_keys_tabelle += str(datum_der_letzten_aenderung.strftime("%Y-%m-%d  %H:%M:%S"))
                       #bucket_keys_tabelle += str(liste_keys[i].last_modified)
                       bucket_keys_tabelle += '</td>'
-    
-                      bucket_keys_tabelle += '<td align="center">'
+                      
+                      bucket_keys_tabelle += '</tr>'
+                      bucket_keys_tabelle += '<tr>'
+                      
+                      bucket_keys_tabelle += '<td align="right" colspan="2" bgcolor="#D4D4D4"><b>ACL:</b></td>'
+                      bucket_keys_tabelle += '<td align="left">'
                       bucket_keys_tabelle += '<a href="/acl_einsehen?bucket='
                       bucket_keys_tabelle += str(bucketname)
                       bucket_keys_tabelle += '&amp;typ=kompfort'
@@ -584,9 +594,12 @@ class BucketInhalt(webapp.RequestHandler):
                       else:
                         bucket_keys_tabelle += '" title="view/edit ACL">view/edit ACL</a>'
                       bucket_keys_tabelle += '</td>'
-                      bucket_keys_tabelle += '<td align="center"><tt>'+str(liste_keys[i].etag)+'</tt></td>'
+ 
+                      bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>MD5:</b></td>'
+                      bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
                       bucket_keys_tabelle += '</tr>'
                   bucket_keys_tabelle += '</table>'
+                  
 
           # "Verzeichnisse" gehen nur bei Amazon S3
           # Der Grund ist, dass das _$folder$ nicht in Walrus gespeichert werden kann.
@@ -670,9 +683,15 @@ class BucketInhalt(webapp.RequestHandler):
           policy_document = policy_document + '{"bucket": "'+bucketname+'"},'
           policy_document = policy_document + '["starts-with", "$acl", ""],'
           if mobile == "true":
-            policy_document = policy_document + '{"redirect": "http://koalacloud.appspot.com/bucket_inhalt?mobile=true"},'
+            if directory == '/':
+              policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt?mobile=true"},'
+            else:
+              policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt?mobile=true&dir='+directory[:-1]+'"},'
           else:
-            policy_document = policy_document + '{"redirect": "http://koalacloud.appspot.com/bucket_inhalt"},'
+            if directory == '/':
+              policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt"},'
+            else:
+              policy_document = policy_document + '{"success_action_redirect": "http://koalacloud.appspot.com/bucket_inhalt?dir='+directory[:-1]+'"},'
           if directory == '/':
             policy_document = policy_document + '["starts-with", "$key", ""],'
           else:
@@ -703,7 +722,10 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '<table border="0" cellspacing="0" cellpadding="5">'
             keys_upload_formular += '<tr>'
             keys_upload_formular += '<td>'
-            keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
+            if directory == '/':
+              keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
+            else:
+              keys_upload_formular += '<input type="hidden" name="key" value="'+directory+'${filename}">\n'            
             keys_upload_formular += '<select name="acl" size="1">\n'
             keys_upload_formular += '<option selected="selected">public-read</option>\n'
             keys_upload_formular += '<option>private</option>\n'
@@ -735,8 +757,11 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '<tr>'
-            keys_upload_formular += '<td>'
-            keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure?mobile=true">\n'        
+            keys_upload_formular += '<td>\n'
+            if directory == '/':
+              keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt?mobile=true">\n'
+            else:
+              keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt?mobile=true&dir='+directory[:-1]+'">\n'     
             keys_upload_formular += '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular += '<input type="hidden" name="policy" value="'+policy+'">\n'
             keys_upload_formular += '<input type="hidden" name="signature" value="'+signature+'">\n'
@@ -758,7 +783,10 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '<table border="0" cellspacing="0" cellpadding="5">'
             keys_upload_formular += '<tr>'
             keys_upload_formular += '<td>'
-            keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
+            if directory == '/':
+              keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
+            else:
+              keys_upload_formular += '<input type="hidden" name="key" value="'+directory+'${filename}">\n'  
             keys_upload_formular += '<select name="acl" size="1">\n'
             keys_upload_formular += '<option selected="selected">public-read</option>\n'
             keys_upload_formular += '<option>private</option>\n'
@@ -786,8 +814,11 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '</td>'
             keys_upload_formular += '</tr>'
             keys_upload_formular += '<tr>'
-            keys_upload_formular += '<td>'
-            keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt_pure">\n'        
+            keys_upload_formular += '<td>\n'
+            if directory == '/':
+              keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt">\n'
+            else:
+              keys_upload_formular += '<input type="hidden" name="success_action_redirect" value="http://koalacloud.appspot.com/bucket_inhalt?dir='+directory[:-1]+'">\n'
             keys_upload_formular += '<input type="hidden" name="AWSAccessKeyId" value="'+AWSAccessKeyId+'">\n'
             keys_upload_formular += '<input type="hidden" name="policy" value="'+policy+'">\n'
             keys_upload_formular += '<input type="hidden" name="signature" value="'+signature+'">\n'
