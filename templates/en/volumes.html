@@ -8,28 +8,18 @@
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
 <td>Size:</td>
-<td><input name="groesse" type="text" size="3" maxlength="3"></td>
-<td align="left">
+  <td><input name="groesse" type="text" size="3" maxlength="3"></td>
+  <td align="left">
     <select name="GB_oder_TB" size="1">
       <option selected="selected">GB</option>
       <option>TB</option>
-    </select><br>
-</td>
+    </select>
+  </td>
+  <td>Availabiliy Zone:</td>
+  <td align="left"><select name="zone" size="1">{{ zonen_in_der_region }}</select></td>
 </tr>
 <tr>
-<td>
-Availabiliy Zone:
-</td>
-<td colspan="2" align="left">
-<select name="zone" size="1">
-{{ zonen_in_der_region }}
-</select><br>
-</td>
-</tr>
-<tr>
-<td colspan="3">
-<input type="submit" value="create new EBS volume">
-</td>
+  <td colspan="5"><input type="submit" value="create new EBS volume"></td>
 </tr>
 </table>
 </form>

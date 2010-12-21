@@ -269,12 +269,12 @@ class Images(webapp.RequestHandler):
                   counter = 0
                   for i in range(laenge_liste_favoriten_ami_images):
                       if counter > 0:
-                          liste_favouriten += '<tr><td colspan="4">&nbsp;</td></tr>'
+                          liste_favouriten += '<tr><td colspan="6">&nbsp;</td></tr>'
                       counter += 1
                       
                       liste_favouriten += '<tr>'
                       #liste_favouriten += '<td>&nbsp;</td>'
-                      liste_favouriten += '<td>'
+                      liste_favouriten += '<td bgcolor="#D4D4D4">'
                       if liste_favoriten_ami_images[i].type == u'machine':
                         if sprache == "de":
                           liste_favouriten += '<a href="/imagestarten?image='
@@ -301,7 +301,7 @@ class Images(webapp.RequestHandler):
                         liste_favouriten += '&nbsp;'
                       liste_favouriten += '</td>'
                       
-                      liste_favouriten += '<td align="center">'
+                      liste_favouriten += '<td align="center" bgcolor="#D4D4D4">'
                       beschreibung_in_kleinbuchstaben = liste_favoriten_ami_images[i].location.lower()
                       if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
                         liste_favouriten += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
@@ -331,7 +331,7 @@ class Images(webapp.RequestHandler):
                         liste_favouriten += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
                       liste_favouriten += '</td>'
 
-                      liste_favouriten += '<td align="right">'
+                      liste_favouriten += '<td align="right" bgcolor="#D4D4D4">'
                       if sprache == "de":
                         liste_favouriten += '<a href="/favoritentfernen?ami='
                         liste_favouriten += liste_favoriten_ami_images[i].id
@@ -349,60 +349,57 @@ class Images(webapp.RequestHandler):
                         liste_favouriten +=  str(mobile)
                         liste_favouriten += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
                       liste_favouriten += '</td>'
-
-                      # Hier kommt die Spalte mit der Image-ID
-                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].id)+'</tt></td>'
-
+                      
+                      liste_favouriten += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
    
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
-    
-                      if sprache == "de":
-                        liste_favouriten += '<td align="right" colspan="3"><b>Typ:</b></td>'
-                      else:
-                        liste_favouriten += '<td align="right" colspan="3"><b>Type:</b></td>'
-                      # Hier kommt die Spalte mit dem Instanztyp
-                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].type)+'</td>'
-                    
-                      liste_favouriten += '</tr>'
-                      liste_favouriten += '<tr>'
-                    
-                      liste_favouriten += '<td align="right" colspan="3"><b>Manifest:</b></td>'
-                      # Hier kommt die Spalte mit der Manifest-Datei
-                      liste_favouriten += '<td><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
                       
-                      liste_favouriten += '</tr>'
-                      liste_favouriten += '<tr>'
-                      
-                      if sprache == "de":
-                        liste_favouriten += '<td align="right" colspan="3"><b>Architektur:</b></td>'
-                      else:
-                        liste_favouriten += '<td align="right" colspan="3"><b>Architecture:</b></td>'
-                      liste_favouriten += '<td align="center"><tt>'+str(liste_favoriten_ami_images[i].architecture)+'</tt></td>'
-                      
-                      liste_favouriten += '</tr>'
-                      liste_favouriten += '<tr>'
-                      
-                      liste_favouriten += '<td align="right" colspan="3"><b>Status:</b></td>'                         
+                      liste_favouriten += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'  
+                      # Hier kommt die Spalte mit der Image-ID
+                      liste_favouriten += '<td align="left">'+str(liste_favoriten_ami_images[i].id)+'</td>'
+
+                      liste_favouriten += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'                         
                       if liste_favoriten_ami_images[i].state == u'available':
-                        liste_favouriten += '<td bgcolor="#c3ddc3" align="center" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+                        liste_favouriten += '<td bgcolor="#c3ddc3" align="left" colspan="2">'+str(liste_favoriten_ami_images[i].state)+'</td>'
                       else:
-                        liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].state)+'</td>'
-                      
+                        liste_favouriten += '<td align="left">'+str(liste_favoriten_ami_images[i].state)+'</td>'
+   
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                                            
+                      if sprache == "de":
+                        liste_favouriten += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architektur:</b></td>'
+                      else:
+                        liste_favouriten += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architecture:</b></td>'
+                      liste_favouriten += '<td align="left">'+str(liste_favoriten_ami_images[i].architecture)+'</td>'
+                                           
+                      if sprache == "de":
+                        liste_favouriten += '<td align="right" bgcolor="#D4D4D4"><b>Typ:</b></td>'
+                      else:
+                        liste_favouriten += '<td align="right" bgcolor="#D4D4D4"><b>Type:</b></td>'
+                      # Hier kommt die Spalte mit dem Instanztyp
+                      liste_favouriten += '<td align="left">'+str(liste_favoriten_ami_images[i].type)+'</td>'
+                    
                       liste_favouriten += '</tr>'
                       liste_favouriten += '<tr>'
                       
-                      liste_favouriten += '<td align="right" colspan="3"><b>Root:</b></td>'     
-                      liste_favouriten += '<td align="center">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
-                      
-                      liste_favouriten += '</tr>'
-                      liste_favouriten += '<tr>'
+                      liste_favouriten += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Root:</b></td>'     
+                      liste_favouriten += '<td align="left">'+liste_favoriten_ami_images[i].root_device_type+'</td>'                  
                       
                       if sprache == "de":
-                        liste_favouriten += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
+                        liste_favouriten += '<td align="right" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
                       else:
-                        liste_favouriten += '<td align="right" colspan="3"><b>Owner:</b></td>'
-                      liste_favouriten += '<td align="center">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+                        liste_favouriten += '<td align="right" bgcolor="#D4D4D4"><b>Owner:</b></td>'
+                      liste_favouriten += '<td align="left">'+str(liste_favoriten_ami_images[i].ownerId)+'</td>'
+
+                      liste_favouriten += '</tr>'
+                      liste_favouriten += '<tr>'
+                      
+                      liste_favouriten += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Manifest:</b></td>'
+                      # Hier kommt die Spalte mit der Manifest-Datei
+                      liste_favouriten += '<td align="left" colspan="3"><tt>'+str(liste_favoriten_ami_images[i].location)+'</tt></td>'
+
                       liste_favouriten += '</tr>'
                   liste_favouriten += '</table>'
                 
@@ -599,12 +596,12 @@ class Images(webapp.RequestHandler):
                     
                     for i in range(laenge_liste_images):
                       if counter > 0:
-                          imagestabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                          imagestabelle += '<tr><td colspan="6">&nbsp;</td></tr>'
                       counter += 1
                       
                       imagestabelle += '<tr>'
                       #liste_favouriten += '<td>&nbsp;</td>'
-                      imagestabelle += '<td>'
+                      imagestabelle += '<td bgcolor="#D4D4D4">'
                       if liste_images[i].type == u'machine':
                         if sprache == "de":
                           imagestabelle += '<a href="/imagestarten?image='
@@ -620,10 +617,10 @@ class Images(webapp.RequestHandler):
                           imagestabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
                       else:
                         # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                        imagestabelle += '&nbsp;'
+                        imagestabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'
                       imagestabelle += '</td>'
                       
-                      imagestabelle += '<td align="center">'
+                      imagestabelle += '<td align="center" bgcolor="#D4D4D4">'
                       beschreibung_in_kleinbuchstaben = liste_images[i].location.lower()
                       if str(liste_images[i].type) == "kernel":
                         imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
@@ -659,53 +656,55 @@ class Images(webapp.RequestHandler):
                       else:
                         imagestabelle += '<img src="bilder/1pixel.gif" width="24" height="24" border="0" alt="">'
 
-                      imagestabelle += '<td>&nbsp;</td>'
+                      imagestabelle += '<td bgcolor="#D4D4D4"><img src="bilder/platzhalter.png" width="16" height="16" border="0" alt=""></td>'
 
+                      imagestabelle += '<td align="left" colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
+
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                      
                       # Hier kommt die Spalte mit der Image-ID
-                      imagestabelle += '<td align="center"><tt>'+str(liste_images[i].id)+'</tt></td>'
+                      imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'
+                      imagestabelle += '<td align="left">'+str(liste_images[i].id)+'</td>'
 
-                      imagestabelle += '<tr>'
-
-                      if sprache == "de":
-                        imagestabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
-                      else:
-                        imagestabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
-                      # Hier kommt die Spalte mit dem Instanztyp
-                      imagestabelle += '<td align="center">'+str(liste_images[i].type)+'</td>'
-                    
-                      imagestabelle += '</tr>'
-                      imagestabelle += '<tr>'
-                    
-                      imagestabelle += '<td align="right" colspan="3"><b>Manifest:</b></td>'
-                      # Hier kommt die Spalte mit der Manifest-Datei
-                      imagestabelle += '<td><tt>'+str(liste_images[i].location)+'</tt></td>'
-                      
-                      imagestabelle += '</tr>'
-                      imagestabelle += '<tr>'
-                      
-                      if sprache == "de":
-                        imagestabelle += '<td align="right" colspan="3"><b>Architektur:</b></td>'
-                      else:
-                        imagestabelle += '<td align="right" colspan="3"><b>Architecture:</b></td>'
-                      imagestabelle += '<td align="center"><tt>'+str(liste_images[i].architecture)+'</tt></td>'
-                      
-                      imagestabelle += '</tr>'
-                      imagestabelle += '<tr>'
-                      
-                      imagestabelle += '<td align="right" colspan="3"><b>Status:</b></td>'        
+                      imagestabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'        
                       if liste_images[i].state == u'available':
-                        imagestabelle += '<td bgcolor="#c3ddc3" align="center">'+str(liste_images[i].state)+'</td>'
+                        imagestabelle += '<td bgcolor="#c3ddc3" align="left">'+str(liste_images[i].state)+'</td>'
                       else:
-                        imagestabelle += '<td align="center">'+str(liste_images[i].state)+'</td>'
-  
+                        imagestabelle += '<td align="left">'+str(liste_images[i].state)+'</td>'
+
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+
+                      if sprache == "de":
+                        imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architektur:</b></td>'
+                      else:
+                        imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architecture:</b></td>'
+                      imagestabelle += '<td align="left">'+str(liste_images[i].architecture)+'</td>'
+
+                      if sprache == "de":
+                        imagestabelle += '<td align="right" bgcolor="#D4D4D4"><b>Typ:</b></td>'
+                      else:
+                        imagestabelle += '<td align="right" bgcolor="#D4D4D4"><b>Type:</b></td>'
+                      # Hier kommt die Spalte mit dem Instanztyp
+                      imagestabelle += '<td align="left">'+str(liste_images[i].type)+'</td>'
+                      
                       imagestabelle += '</tr>'
                       imagestabelle += '<tr>'
                       
                       if sprache == "de":
-                        imagestabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
+                        imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
                       else:
-                        imagestabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
-                      imagestabelle += '<td align="center">'+str(liste_images[i].ownerId)+'</td>'
+                        imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Owner:</b></td>'
+                      imagestabelle += '<td align="left" colspan="3">'+str(liste_images[i].ownerId)+'</td>'
+                      
+                      imagestabelle += '</tr>'
+                      imagestabelle += '<tr>'
+                    
+                      imagestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Manifest:</b></td>'
+                      # Hier kommt die Spalte mit der Manifest-Datei
+                      imagestabelle += '<td align="left" colspan="3">'+str(liste_images[i].location)+'</td>'
+
                       imagestabelle += '</tr>'
                     imagestabelle += '</table>'
   
