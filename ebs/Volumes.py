@@ -180,7 +180,7 @@ class Volumes(webapp.RequestHandler):
                   counter = 0
                   for i in range(laenge_liste_volumes):
                       if counter > 0:
-                          volumestabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+                          volumestabelle += '<tr><td colspan="3">&nbsp;</td></tr>'
                       counter += 1
                     
                       volumestabelle += '<tr>'
@@ -214,7 +214,7 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle = volumestabelle + '</td>'
     
                       if liste_volumes[i].attach_data.status == None:
-                        volumestabelle = volumestabelle + '<td align="right">'
+                        volumestabelle = volumestabelle + '<td align="center">'
                         volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
                         volumestabelle = volumestabelle + liste_volumes[i].id
                         volumestabelle = volumestabelle + "&amp;zone="
@@ -252,21 +252,25 @@ class Volumes(webapp.RequestHandler):
                       else:
                         volumestabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0">'                  
                       
+                      volumestabelle += '</tr>'
+                      volumestabelle += '<tr>'
+                      
+                      volumestabelle += '<td colspan="2" align="right"><b>ID:</b></td>'
                       volumestabelle += '<td align="center">'+str(liste_volumes[i].id)+'</td>'
                       
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                       
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Gr&ouml;&szlig;e:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Gr&ouml;&szlig;e:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Size:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Size:</b></td>'
                       volumestabelle += '<td align="center">'+str(liste_volumes[i].size)+' GB</td>'
                       
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                          
-                      volumestabelle += '<td colspan="3" align="right"><b>Status:</b></td>'
+                      volumestabelle += '<td colspan="2" align="right"><b>Status:</b></td>'
                       if liste_volumes[i].status == u'available':
                         volumestabelle += '<td bgcolor="#c3ddc3" align="center">'+liste_volumes[i].status+'</td>'
                       elif liste_volumes[i].status == u'in-use':
@@ -279,16 +283,16 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                       
-                      volumestabelle += '<td colspan="3" align="right"><b>Zone:</b></td>'
+                      volumestabelle += '<td colspan="2" align="right"><b>Zone:</b></td>'
                       volumestabelle += '<td align="center">'+str(liste_volumes[i].zone)+'</td>'
                       
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                       
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Datum:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Datum:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Creation Date:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Creation Date:</b></td>'
                       volumestabelle += '<td>'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_erzeugung = parse(liste_volumes[i].create_time)
@@ -300,7 +304,7 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                       
-                      volumestabelle += '<td colspan="3" align="right"><b>Snapshot:</b></td>'
+                      volumestabelle += '<td colspan="2" align="right"><b>Snapshot:</b></td>'
                       if liste_volumes[i].snapshot_id == "":
                         volumestabelle += '<td align="center">---</td>'
                       else:
@@ -310,9 +314,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
                                
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Ger&auml;t:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Ger&auml;t:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Device:</b></td>'            
+                        volumestabelle += '<td colspan="2" align="right"><b>Device:</b></td>'            
                       if liste_volumes[i].attach_data.device == None:
                         volumestabelle += '<td align="center">---</td>'
                       else:
@@ -322,9 +326,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
 
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Verkn&uuml;pfung:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Verkn&uuml;pfung:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Attach Date:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Attach Date:</b></td>'
                       if liste_volumes[i].attach_data.attach_time == None:
                         volumestabelle += '<td align="center">---</td>'
                       else:
@@ -339,9 +343,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
 
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Instanz:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Instanz:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Instance:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Instance:</b></td>'
                       if liste_volumes[i].attach_data.instance_id == None:
                         volumestabelle += '<td align="center">---</td>'
                       else:
@@ -351,9 +355,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
 
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right"><b>Status:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Status:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right"><b>Attach Status:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right"><b>Attach Status:</b></td>'
                       if liste_volumes[i].attach_data.status == None:
                         volumestabelle += '<td align="center">---</td>'
                       elif liste_volumes[i].attach_data.status == u'attached':
@@ -374,7 +378,7 @@ class Volumes(webapp.RequestHandler):
                   counter = 0
                   for i in range(laenge_liste_volumes):
                       if counter > 0:
-                          volumestabelle += '<tr><td colspan="6">&nbsp;</td></tr>'
+                          volumestabelle += '<tr><td colspan="5">&nbsp;</td></tr>'
                       counter += 1
                     
                       volumestabelle += '<tr>'
@@ -396,46 +400,46 @@ class Volumes(webapp.RequestHandler):
                         volumestabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0">'
                       volumestabelle += '</td>'
     
-                      volumestabelle = volumestabelle + '<td align="center" bgcolor="#D4D4D4">'
-                      volumestabelle = volumestabelle + '<a href="/snapshoterzeugen?volume='
-                      volumestabelle = volumestabelle + liste_volumes[i].id
-                      volumestabelle = volumestabelle + "&amp;mobile="
-                      volumestabelle = volumestabelle + str(mobile)
+                      volumestabelle += '<td align="center" bgcolor="#D4D4D4">'
+                      volumestabelle += '<a href="/snapshoterzeugen?volume='
+                      volumestabelle += liste_volumes[i].id
+                      volumestabelle += "&amp;mobile="
+                      volumestabelle += str(mobile)
                       if sprache == "de":
-                        volumestabelle = volumestabelle + '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
+                        volumestabelle += '" title="Snapshot erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Snapshot erzeugen"></a>'
                       else:
-                        volumestabelle = volumestabelle + '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
-                      volumestabelle = volumestabelle + '</td>'
+                        volumestabelle += '" title="create snapshot"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create snapshot"></a>'
+                      volumestabelle += '</td>'
     
                       if liste_volumes[i].attach_data.status == None:
-                        volumestabelle = volumestabelle + '<td align="right" bgcolor="#D4D4D4">'
-                        volumestabelle = volumestabelle + '<a href="/volumeanhaengen?volume='
-                        volumestabelle = volumestabelle + liste_volumes[i].id
-                        volumestabelle = volumestabelle + "&amp;zone="
-                        volumestabelle = volumestabelle + str(liste_volumes[i].zone)
-                        volumestabelle = volumestabelle + "&amp;mobile="
-                        volumestabelle = volumestabelle + str(mobile)
+                        volumestabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">'
+                        volumestabelle += '<a href="/volumeanhaengen?volume='
+                        volumestabelle += liste_volumes[i].id
+                        volumestabelle += "&amp;zone="
+                        volumestabelle += str(liste_volumes[i].zone)
+                        volumestabelle += "&amp;mobile="
+                        volumestabelle += str(mobile)
                         if sprache == "de":
-                          volumestabelle = volumestabelle + '" title="Volume anh&auml;ngen">'
-                          volumestabelle = volumestabelle + '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="Volume anh&auml;ngen"></a>'
+                          volumestabelle += '" title="Volume anh&auml;ngen">'
+                          volumestabelle += '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="Volume anh&auml;ngen"></a>'
                         else:
-                          volumestabelle = volumestabelle + '" title="attach volume">'
-                          volumestabelle = volumestabelle + '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="attach volume"></a>'
+                          volumestabelle += '" title="attach volume">'
+                          volumestabelle += '<img src="bilder/attach2.png" width="16" height="16" border="0" alt="attach volume"></a>'
                       elif liste_volumes[i].attach_data.status == u'attaching':
-                        volumestabelle += '<td align="center">attaching</td>'
+                        volumestabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">attaching</td>'
 
                       elif liste_volumes[i].attach_data.status == u'deleting':
-                        volumestabelle += '<td align="center">deleting</td>'
+                        volumestabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">deleting</td>'
 
                       elif liste_volumes[i].attach_data.status == u'busy':
-                        volumestabelle += '<td align="center">busy</td>'
+                        volumestabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">busy</td>'
 
                       elif liste_volumes[i].attach_data.status == u'attached':
-                        volumestabelle += '<td align="center" bgcolor="#D4D4D4">'
+                        volumestabelle += '<td colspan="3" align="left" bgcolor="#D4D4D4">'
                         volumestabelle += '<a href="/volumeloesen?volume='
                         volumestabelle += liste_volumes[i].id
-                        volumestabelle = volumestabelle + "&amp;mobile="
-                        volumestabelle = volumestabelle + str(mobile)
+                        volumestabelle += "&amp;mobile="
+                        volumestabelle += str(mobile)
                         if sprache == "de":
                           volumestabelle += '" title="Volume l&ouml;sen">'
                           volumestabelle += '<img src="bilder/detach2.png" width="16" height="16" border="0" alt="Volume l&ouml;sen"></a>'
@@ -446,12 +450,10 @@ class Volumes(webapp.RequestHandler):
                       else:
                         volumestabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0">'                  
 
-                      volumestabelle += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
-
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
                       
-                      volumestabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'  
+                      volumestabelle += '<td align="right" colspan="2" bgcolor="#D4D4D4"><b>ID:</b></td>'  
                       volumestabelle += '<td align="left">'+str(liste_volumes[i].id)+'</td>'
 
                       volumestabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'
@@ -468,9 +470,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
                       
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Gr&ouml;&szlig;e:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Gr&ouml;&szlig;e:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Size:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Size:</b></td>'
                       volumestabelle += '<td align="left">'+str(liste_volumes[i].size)+' GB</td>'
                       
                       volumestabelle += '<td align="right" bgcolor="#D4D4D4"><b>Zone:</b></td>'
@@ -480,9 +482,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
                       
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Creation Date:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Creation Date:</b></td>'
                       volumestabelle += '<td align="left">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_erzeugung = parse(liste_volumes[i].create_time)
@@ -502,9 +504,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
 
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Instanz:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Instanz:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Instance:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Instance:</b></td>'
                       if liste_volumes[i].attach_data.instance_id == None:
                         volumestabelle += '<td align="left">---</td>'
                       else:
@@ -527,9 +529,9 @@ class Volumes(webapp.RequestHandler):
                       volumestabelle += '<tr>'
 
                       if sprache == "de":
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
                       else:
-                        volumestabelle += '<td colspan="3" align="right" bgcolor="#D4D4D4"><b>Attach Date:</b></td>'
+                        volumestabelle += '<td colspan="2" align="right" bgcolor="#D4D4D4"><b>Attach Date:</b></td>'
                       if liste_volumes[i].attach_data.attach_time == None:
                         volumestabelle += '<td align="left">---</td>'
                       else:
