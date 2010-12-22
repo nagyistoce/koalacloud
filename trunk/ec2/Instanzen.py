@@ -268,7 +268,7 @@ class Instanzen(webapp.RequestHandler):
                       instanzentabelle += '</td>'
                       
                       # Id of the instance
-                      instanzentabelle += '<td align="center"><tt>'+str(x.id)+'</tt></td>'
+                      instanzentabelle += '<td align="center">'+str(x.id)+'</td>'
 
                       
                       # Reboot instance
@@ -388,19 +388,19 @@ class Instanzen(webapp.RequestHandler):
                         instanzentabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
                       else:
                         instanzentabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.instance_type)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(x.instance_type)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
                       instanzentabelle += '<td align="right" colspan="3"><b>Reservation:</b></td>'                      
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(i.id)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(i.id)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
                       instanzentabelle += '<td align="right" colspan="3"><b>Root:</b></td>'     
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.root_device_type)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(x.root_device_type)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
@@ -409,25 +409,25 @@ class Instanzen(webapp.RequestHandler):
                         instanzentabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
                       else:
                         instanzentabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(i.owner_id)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(i.owner_id)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
                       instanzentabelle += '<td align="right" colspan="3"><b>Image:</b></td>'     
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.image_id)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(x.image_id)+'</td>'
                       
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
                       instanzentabelle += '<td align="right" colspan="3"><b>Kernel:</b></td>'    
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.kernel)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(x.kernel)+'</td>'
 
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'
                       
                       instanzentabelle += '<td align="right" colspan="3"><b>Ramdisk:</b></td>'    
-                      instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.ramdisk)+'</tt></td>'
+                      instanzentabelle += '<td align="center" colspan="4">'+str(x.ramdisk)+'</td>'
 
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'          
@@ -481,7 +481,7 @@ class Instanzen(webapp.RequestHandler):
                       if x.key_name == "":
                         instanzentabelle += '<td align="center" colspan="4">&nbsp;</td>'
                       else:
-                        instanzentabelle += '<td align="center" colspan="4"><tt>'+str(x.key_name)+'</tt></td>'
+                        instanzentabelle += '<td align="center" colspan="4">'+str(x.key_name)+'</td>'
 
                       instanzentabelle += '</tr>'
                       instanzentabelle += '<tr>'   
