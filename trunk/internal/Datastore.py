@@ -30,3 +30,7 @@ class KoalaCloudDatenbankFavouritenAMIs(db.Model):
     user = db.UserProperty(required=True)
     zone = db.StringProperty(required=True)
     ami = db.StringProperty(required=True)
+    
+class KoalaQuickStartAMIs(db.Model):
+    zone = db.StringProperty(required=True)
+    ami = db.StringProperty(required=True)
