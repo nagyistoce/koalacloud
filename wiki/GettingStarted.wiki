@@ -31,6 +31,7 @@ Implemented features:
   * create and erase security groups and create and erase rules inside security groups
   * create, attach, detach and erase EBS volumes
   * create and erase snapshots from EBS volumes
+  * create EBS volumes from snapshots
   * create and erase keypairs
   * check images
   * start, reboot, stop and terminate instances
