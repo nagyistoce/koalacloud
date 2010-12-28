@@ -1,4 +1,4 @@
-#Sun Nov 14 13:04:41 CET 2010
+#Tue Dec 28 11:29:25 CET 2010
 eclipse.preferences.version=1
 encoding//ebs/AlleVolumesLoeschenDefinitiv.py=iso-8859-15
 encoding//ebs/AlleVolumesLoeschenFrage.py=iso-8859-15
@@ -8,6 +8,8 @@ encoding//ebs/SnapshotsEntfernen.py=iso-8859-15
 encoding//ebs/SnapshotsErzeugen.py=iso-8859-15
 encoding//ebs/SnapshotsErzeugenDefinitiv.py=iso-8859-15
 encoding//ebs/VolumeDefinitivAnhaengen.py=iso-8859-15
+encoding//ebs/VolumeausSnapshotErzeugen.py=iso-8859-15
+encoding//ebs/VolumeausSnapshotErzeugenDefinitiv.py=iso-8859-15
 encoding//ebs/Volumes.py=iso-8859-15
 encoding//ebs/VolumesAnhaengen.py=iso-8859-15
 encoding//ebs/VolumesEntfernen.py=iso-8859-15

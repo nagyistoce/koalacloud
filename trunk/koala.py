@@ -36,6 +36,8 @@ from ebs.SnapshotsAmazonAll import *
 from ebs.SnapshotsErzeugen import *
 from ebs.SnapshotsEntfernen import *
 from ebs.SnapshotsErzeugenDefinitiv import *
+from ebs.VolumeausSnapshotErzeugen import *
+from ebs.VolumeausSnapshotErzeugenDefinitiv import *
 
 from ec2.AlleInstanzenBeenden import *
 from ec2.Zonen import *
@@ -334,6 +336,8 @@ def main():
                                           ('/volumedefinitivanhaengen', VolumeDefinitivAnhaengen),
                                           ('/volumeerzeugen', VolumesErzeugen),
                                           ('/volumeloesen', VolumesLoesen),
+                                          ('/volumeaussnapshoterzeugen', VolumeausSnapshotErzeugen),
+                                          ('/volumeaussnapshoterzeugen_definiv', VolumeausSnapshotErzeugenDefinitiv),
                                           ('/alle_volumes_loeschen', AlleVolumesLoeschenFrage),
                                           ('/alle_volumes_loeschen_definitiv', AlleVolumesLoeschenDefinitiv)],
                                           debug=True)

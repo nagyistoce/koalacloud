@@ -293,7 +293,7 @@ class Volumes(webapp.RequestHandler):
                         volumestabelle += '<td colspan="2" align="right"><b>Datum:</b></td>'
                       else:
                         volumestabelle += '<td colspan="2" align="right"><b>Creation Date:</b></td>'
-                      volumestabelle += '<td>'
+                      volumestabelle += '<td align="center">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_erzeugung = parse(liste_volumes[i].create_time)
                       volumestabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
@@ -308,7 +308,7 @@ class Volumes(webapp.RequestHandler):
                       if liste_volumes[i].snapshot_id == "":
                         volumestabelle += '<td align="center">---</td>'
                       else:
-                        volumestabelle += '<td>'+str(liste_volumes[i].snapshot_id)+'</td>'
+                        volumestabelle += '<td align="center">'+str(liste_volumes[i].snapshot_id)+'</td>'
                       
                       volumestabelle += '</tr>'
                       volumestabelle += '<tr>'
