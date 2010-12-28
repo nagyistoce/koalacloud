@@ -138,18 +138,31 @@ class Snapshots(webapp.RequestHandler):
                       counter += 1
                       
                       snapshotstabelle += '<tr>'
-                      snapshotstabelle += '<td align="left">'
+                      snapshotstabelle += '<td colspan="2" align="left">'
                       snapshotstabelle += '<a href="/snapshotsentfernen?snapshot='
                       snapshotstabelle += liste_snapshots[i].id
                       snapshotstabelle += "&amp;mobile="
                       snapshotstabelle += str(mobile)
+                      snapshotstabelle += "&amp;ami=own"
                       if sprache == "de":
                         snapshotstabelle += '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
                       else:
                         snapshotstabelle += '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
                       snapshotstabelle += '</td>'
-  
-                      snapshotstabelle += '<td align="right"><b>ID:</b></td>'
+                      snapshotstabelle += '<td align="center">'
+                      snapshotstabelle += '<a href="/volumeaussnapshoterzeugen?snapshot='
+                      snapshotstabelle += liste_snapshots[i].id
+                      snapshotstabelle += "&amp;mobile="
+                      snapshotstabelle += str(mobile)
+                      if sprache == "de":
+                        snapshotstabelle += '" title="Volume erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Volume erzeugen"></a>'
+                      else:
+                        snapshotstabelle += '" title="create volume"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create volume"></a>'
+                      snapshotstabelle += '</td>'
+                      snapshotstabelle += '</tr>'
+                        
+                      snapshotstabelle += '<tr>'
+                      snapshotstabelle += '<td colspan="2" align="right"><b>ID:</b></td>'
                       snapshotstabelle += '<td align="center">'+liste_snapshots[i].id+'</td>'
                       snapshotstabelle += '</tr>'
                       
@@ -232,14 +245,25 @@ class Snapshots(webapp.RequestHandler):
                       snapshotstabelle += liste_snapshots[i].id
                       snapshotstabelle += "&amp;mobile="
                       snapshotstabelle += str(mobile)
+                      snapshotstabelle += "&amp;ami=own"
                       if sprache == "de":
                         snapshotstabelle += '" title="Snapshot l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Snapshot l&ouml;schen"></a>'
                       else:
                         snapshotstabelle += '" title="erase snapshot"><img src="bilder/delete.png" width="16" height="16" border="0" alt="snapshot volume"></a>'
                       snapshotstabelle += '</td>'
 
-                      snapshotstabelle += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
-                      
+                      snapshotstabelle += '<td colspan="3" bgcolor="#D4D4D4">'
+                      snapshotstabelle += '<a href="/volumeaussnapshoterzeugen?snapshot='
+                      snapshotstabelle += liste_snapshots[i].id
+                      snapshotstabelle += "&amp;mobile="
+                      snapshotstabelle += str(mobile)
+                      if sprache == "de":
+                        snapshotstabelle += '" title="Volume erzeugen"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Volume erzeugen"></a>'
+                      else:
+                        snapshotstabelle += '" title="create volume"><img src="bilder/plus.png" width="16" height="16" border="0" alt="create volume"></a>'
+                      snapshotstabelle += '</td>'
+
+                                          
                       snapshotstabelle += '</tr>'                      
                       snapshotstabelle += '<tr>'
                       
@@ -290,16 +314,14 @@ class Snapshots(webapp.RequestHandler):
                         snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Datum:</b></td>'
                       else:
                         snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Start Time:</b></td>'
-                      snapshotstabelle += '<td align="left">'
+                      snapshotstabelle += '<td colspan="3" align="left">'
                       # Den ISO8601 Zeitstring umwandeln, damit es besser aussieht.
                       datum_der_erzeugung = parse(liste_snapshots[i].start_time)                      
                       snapshotstabelle += str(datum_der_erzeugung.strftime("%Y-%m-%d  %H:%M:%S"))
                       snapshotstabelle += '</td>'
                       
-                      snapshotstabelle += '<td align="left" colspan="2">&nbsp;</td>'
-                      
-                      snapshotstabelle += '<tr>'
                       snapshotstabelle += '</tr>'
+                      snapshotstabelle += '<tr>'
                       
                       if sprache == "de":
                         snapshotstabelle += '<td align="right" bgcolor="#D4D4D4"><b>Beschreibung:</b></td>'
