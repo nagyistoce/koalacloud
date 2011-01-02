@@ -242,8 +242,10 @@ class BucketInhaltPur(webapp.RequestHandler):
                     bucket_keys_tabelle += '</tr>'
                     bucket_keys_tabelle += '<tr>'    
 
+                    # In S3 and Google Storage, each MD5 checksum is enclosed by double quotes.
+                    # Eliminate them with .replace('"','')
                     bucket_keys_tabelle += '<td align="right" colspan="2"><b>MD5:</b></td>'
-                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
+                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag.replace('"',''))+'</td>'
                     bucket_keys_tabelle += '</tr>'
                 bucket_keys_tabelle += '</table>'              
               
@@ -339,9 +341,11 @@ class BucketInhaltPur(webapp.RequestHandler):
                     else:
                       bucket_keys_tabelle += '" title="view/edit">view/edit</a>'
                     bucket_keys_tabelle += '</td>'
-
+                    
+                    # In S3 and Google Storage, each MD5 checksum is enclosed by double quotes.
+                    # Eliminate them with .replace('"','')
                     bucket_keys_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>MD5:</b></td>'
-                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag)+'</td>'
+                    bucket_keys_tabelle += '<td align="left">'+str(liste_keys[i].etag.replace('"',''))+'</td>'
                     bucket_keys_tabelle += '</tr>'
                 bucket_keys_tabelle += '</table>'    
                 
