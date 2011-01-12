@@ -147,7 +147,7 @@ class Keys(webapp.RequestHandler):
                         keytabelle += str(mobile)
                         keytabelle += '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
                         keytabelle += '</td>'
-                        keytabelle += '<td><tt>'+liste_key_pairs[i].name+'</tt></td>'
+                        keytabelle += '<td>'+liste_key_pairs[i].name+'</td>'
                         keytabelle += '</tr>'
 #                        keytabelle += '<tr>'
 #                        keytabelle += '<td>&nbsp;</td>'
@@ -174,7 +174,7 @@ class Keys(webapp.RequestHandler):
                         keytabelle += str(mobile)
                         keytabelle += '"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Schl&uuml;sselpaar l&ouml;schen"></a>'
                         keytabelle += '</td>'
-                        keytabelle += '<td><tt>'+liste_key_pairs[i].name+'</tt></td>'
+                        keytabelle += '<td>'+liste_key_pairs[i].name+'</td>'
                         keytabelle += '<td><tt>'+liste_key_pairs[i].fingerprint+'</tt></td>'
                         keytabelle += '</tr>'
                     keytabelle = keytabelle + '</table>'
