@@ -40,11 +40,11 @@ At first you need to log in with your Google account.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial0_login_small.png]
 
-Inside the *Regions* window you can manage your credentials. It is easy to create new region data for all supported IaaS solutions. If you log in the first time into KOALA, you don't have any credentials.
+Inside the *Regions* window you can import your credentials. It is easy to create new region data for all supported IaaS solutions. If you log in the first time into KOALA, you don't have any credentials.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial1_regions_empty_small.png]
 
-Create an AWS account and insert your Access Key and Secret Access Key. Both will be stored inside the Google Datastore. The Secret Access Key will be stored encrypted.
+Import your AWS account credentials (Access Key and Secret Access Key). Both will be stored inside the Google Datastore. The Secret Access Key will be stored encrypted.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial2_regions_create_AWS_small.png]
 
@@ -52,7 +52,7 @@ If your credentials were correct, you have can see the Amazon entry in the table
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial3_regions_AWS_small.png]
 
-After you have inserted your credentials for at least a single IaaS, you can see that the pull-down menu in the center of the header is not empty any longer. With this pull-down menu, you can choose what IaaS shall be used by KOALA. If you have more cretentials for IaaS regions you can use this pull-down menu to switch over to another region.
+After you have import your credentials for at least a single IaaS, you can see that the pull-down list in the center of the header is not empty any longer. With this pull-down menu, you can choose what IaaS shall be used by KOALA. If you have cretentials for more than just a single IaaS region you can use this pull-down menu to switch over to another region.
 
 EC2 itself has four regions and with your AWS credentials you can use them all automatically.
 
