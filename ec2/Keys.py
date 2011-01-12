@@ -126,7 +126,10 @@ class Keys(webapp.RequestHandler):
               laenge_liste_keys = len(liste_key_pairs)
   
               if laenge_liste_keys == 0:
-                keytabelle = 'Es sind keine Schl&uuml;sselpaare in der Zone vorhanden.'
+                if sprache == "de":
+                  keytabelle = 'Sie haben keine Schl&uuml;sselpaare in dieser Region.'
+                else:
+                  keytabelle = 'You have no keypairs inside this region.'
               else:
                 if mobile == "true":
                     keytabelle = ''
