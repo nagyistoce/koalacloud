@@ -169,9 +169,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                     tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister instance"></a>'
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<td colspan="2">\n'
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tt>\n'
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + liste_load_balancers[0].instances[z].id
-                  tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tt>\n'
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</td>\n'
                   tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '</tr>\n'
               tabelle_instanz_anhaengen = tabelle_instanz_anhaengen + '<tr>\n'
@@ -274,9 +272,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                       tabelle_zonen_aendern = tabelle_zonen_aendern + '<img src="bilder/stop.png" width="16" height="16" border="0" alt="deregister zone"></a>'
                   tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
                   tabelle_zonen_aendern = tabelle_zonen_aendern + '<td colspan="2">\n'
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '<tt>\n'
                   tabelle_zonen_aendern = tabelle_zonen_aendern + liste_load_balancers[0].availability_zones[z]
-                  tabelle_zonen_aendern = tabelle_zonen_aendern + '</tt>\n'
                   tabelle_zonen_aendern = tabelle_zonen_aendern + '</td>\n'
                   tabelle_zonen_aendern = tabelle_zonen_aendern + '</tr>\n'
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '<tr>\n'
