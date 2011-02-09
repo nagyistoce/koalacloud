@@ -10,8 +10,15 @@ from internal.Datastore import *
 class Sprache(webapp.RequestHandler):
     def get(self):
         # Die ausgewählte Sprache holen
+        # Get the chosen language
         lang = self.request.get('lang')
+        # Den Pfad holen
+        # Get the path      
+        path = self.request.get('path')
+        if not path:
+          path = ''
         # Den Usernamen erfahren
+        # Get the username
         username = users.get_current_user()
 
         if username:
@@ -28,14 +35,18 @@ class Sprache(webapp.RequestHandler):
           logindaten = KoalaCloudDatenbankSprache(sprache=lang,
                                                   user=username)
 
+
           try:
             # In den Datastore schreiben
+            # Write into the datastore
             logindaten.put()
           except:
             # Wenn es nicht klappt...
+            # If it didn't work...
             self.redirect('/')
           else:
             # Wenn es geklappt hat...
-            self.redirect('/')
+            # If it worked...
+            self.redirect('/'+path)
         else:
           self.redirect('/')

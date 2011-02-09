@@ -56,6 +56,8 @@ class Instanzen(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=instanzen'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -63,6 +65,7 @@ class Instanzen(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -129,7 +132,7 @@ class Instanzen(webapp.RequestHandler):
                 if sprache == "de":
                   instanzentabelle = 'Sie haben keine Instanzen in dieser Region.'
                 else:
-                  instanzentabelle = 'You have no instances inside region.'
+                  instanzentabelle = 'You have no instances inside this region.'
               else:
                             
                 if mobile == "true":
@@ -866,6 +869,7 @@ class Instanzen(webapp.RequestHandler):
             else:
               alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
 
+            path = '&amp;path=instanzen'
 
             template_values = {
             'navigations_bar': navigations_bar,
@@ -878,6 +882,7 @@ class Instanzen(webapp.RequestHandler):
             'input_error_message': input_error_message,
             'alle_instanzen_loeschen_button': alle_instanzen_loeschen_button,
             'mobile': mobile,
+            'path': path,
             }
   
             if mobile == "true":

@@ -104,7 +104,7 @@ class S3(webapp.RequestHandler):
                 # Mobile version
                 
                 bucketstabelle = ''
-                bucketstabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+                bucketstabelle += '<table border="0" cellspacing="0" cellpadding="5">'
                 for i in range(laenge_liste_buckets):
                     bucketstabelle += '<tr>'
                     bucketstabelle += '<td align="left">'
@@ -179,9 +179,7 @@ class S3(webapp.RequestHandler):
                     else:
                       bucketstabelle += '" title="erase bucket"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase bucket"></a>'
                     bucketstabelle += '</td>'
-                    bucketstabelle += '<td>'
-                    bucketstabelle += str(liste_buckets[i].name)
-                    bucketstabelle += '</td>'
+                    bucketstabelle += '<td>'+str(liste_buckets[i].name)+'</td>'
                     bucketstabelle += '<td align="center">'
                     bucketstabelle += '<a href="/bucket_inhalt_pure?bucket='
                     bucketstabelle += str(liste_buckets[i].name)
@@ -201,6 +199,8 @@ class S3(webapp.RequestHandler):
                     bucketstabelle += '</tr>'
                 bucketstabelle += '</table>'
 
+          path = '&amp;path=s3'
+
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -211,6 +211,7 @@ class S3(webapp.RequestHandler):
           'bucketstabelle': bucketstabelle,
           'input_error_message': input_error_message,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

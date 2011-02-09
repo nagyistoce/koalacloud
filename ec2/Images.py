@@ -61,6 +61,8 @@ class Images(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=images'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -68,6 +70,7 @@ class Images(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -792,7 +795,8 @@ class Images(webapp.RequestHandler):
                     quickstart_tabelle += '</tr>'
                 quickstart_tabelle += '</table>'
                   
-                
+
+              path = '&amp;path=images'
 
   
               template_values = {
@@ -807,6 +811,7 @@ class Images(webapp.RequestHandler):
               'input_error_message': input_error_message,
               'quickstart_tabelle': quickstart_tabelle,
               'mobile': mobile,
+              'path': path,
               }
   
               if mobile == "true":
@@ -1092,6 +1097,8 @@ class Images(webapp.RequestHandler):
                       imagestabelle += '</tr>'
                     imagestabelle += '</table>'
   
+              path = '&amp;path=images'
+  
               template_values = {
               'navigations_bar': navigations_bar,
               'url': url,
@@ -1101,6 +1108,7 @@ class Images(webapp.RequestHandler):
               'imagestabelle': imagestabelle,
               'zonen_liste': zonen_liste,
               'mobile': mobile,
+              'path': path,
               }
   
               if mobile == "true":

@@ -61,6 +61,8 @@ class Elastic_IPs(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=elastic_ips'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -68,6 +70,7 @@ class Elastic_IPs(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
   
             if mobile == "true":
@@ -188,6 +191,8 @@ class Elastic_IPs(webapp.RequestHandler):
                     adressentabelle += '</tr>'
                 adressentabelle += '</table>'
   
+            path = '&amp;path=elastic_ips'
+  
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -198,6 +203,7 @@ class Elastic_IPs(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             'input_error_message': input_error_message,
             'mobile': mobile,
+            'path': path,
             }
 
             if mobile == "true":
