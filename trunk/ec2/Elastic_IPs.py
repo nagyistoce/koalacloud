@@ -61,7 +61,7 @@ class Elastic_IPs(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=elastic_ips'
+            path = '&amp;path=elastic_ips&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -191,7 +191,7 @@ class Elastic_IPs(webapp.RequestHandler):
                     adressentabelle += '</tr>'
                 adressentabelle += '</table>'
   
-            path = '&amp;path=elastic_ips'
+            path = '&amp;path=elastic_ips&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

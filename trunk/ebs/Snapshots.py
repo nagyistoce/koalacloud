@@ -58,7 +58,7 @@ class Snapshots(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=snapshots'
+            path = '&amp;path=snapshots&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -358,7 +358,7 @@ class Snapshots(webapp.RequestHandler):
             else:  
                 ansicht_amazon_button = ""
                 
-            path = '&amp;path=snapshots'
+            path = '&amp;path=snapshots&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

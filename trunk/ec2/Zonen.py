@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class Zonen(webapp.RequestHandler):
     def get(self):
+        # self.response.out.write('posted!')
         mobile = self.request.get('mobile')
         if mobile != "true":
             mobile = "false"
@@ -55,7 +56,7 @@ class Zonen(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=zonen'
+            path = '&amp;path=zonen&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -116,7 +117,7 @@ class Zonen(webapp.RequestHandler):
                   zonentabelle = zonentabelle + '</tr>'
               zonentabelle = zonentabelle + '</table>'
 
-            path = '&amp;path=zonen'
+            path = '&amp;path=zonen&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

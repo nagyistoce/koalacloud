@@ -25,6 +25,7 @@ from boto.ec2.connection import *
 
 class SecurityGroups(webapp.RequestHandler):
     def get(self):
+        # self.response.out.write('posted!')
         mobile = self.request.get('mobile')
         if mobile != "true":
             mobile = "false"
@@ -55,7 +56,7 @@ class SecurityGroups(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
   
-            path = '&amp;path=securitygroups'
+            path = '&amp;path=securitygroups&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -226,7 +227,7 @@ class SecurityGroups(webapp.RequestHandler):
                       gruppentabelle += '</tr>'
                   gruppentabelle += '</table>'  
   
-            path = '&amp;path=securitygroups'
+            path = '&amp;path=securitygroups&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

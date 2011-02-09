@@ -352,7 +352,7 @@ class SnapshotsAmazonAll(webapp.RequestHandler):
             else:  
                 ansicht_amazon_button = ""
   
-            path = '&amp;path=snapshots_amazon_all'
+            path = '&amp;path=snapshots_amazon_all&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

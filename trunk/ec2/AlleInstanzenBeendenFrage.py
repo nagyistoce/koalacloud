@@ -44,7 +44,7 @@ class AlleInstanzenBeendenFrage(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
-          path = '&amp;path=alle_instanzen_beenden'
+          path = '&amp;path=alle_instanzen_beenden&amp;mobile='+mobile
 
           template_values = {
           'navigations_bar': navigations_bar,

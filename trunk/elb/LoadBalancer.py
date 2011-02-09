@@ -65,7 +65,7 @@ class LoadBalancer(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=loadbalancer'
+            path = '&amp;path=loadbalancer&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -332,7 +332,7 @@ class LoadBalancer(webapp.RequestHandler):
                         loadbalancertabelle += '</tr>'
                     loadbalancertabelle += '</table>'
                     
-              path = '&amp;path=loadbalancer'
+              path = '&amp;path=loadbalancer&amp;mobile='+mobile
   
               template_values = {
               'navigations_bar': navigations_bar,

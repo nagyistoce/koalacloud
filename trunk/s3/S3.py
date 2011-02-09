@@ -199,7 +199,7 @@ class S3(webapp.RequestHandler):
                     bucketstabelle += '</tr>'
                 bucketstabelle += '</table>'
 
-          path = '&amp;path=s3'
+          path = '&amp;path=s3&amp;mobile='+mobile
 
           template_values = {
           'navigations_bar': navigations_bar,

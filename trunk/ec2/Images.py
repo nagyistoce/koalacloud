@@ -61,7 +61,7 @@ class Images(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=images'
+            path = '&amp;path=images&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -796,7 +796,7 @@ class Images(webapp.RequestHandler):
                 quickstart_tabelle += '</table>'
                   
 
-              path = '&amp;path=images'
+              path = '&amp;path=images&amp;mobile='+mobile
 
   
               template_values = {
@@ -1097,7 +1097,7 @@ class Images(webapp.RequestHandler):
                       imagestabelle += '</tr>'
                     imagestabelle += '</table>'
   
-              path = '&amp;path=images'
+              path = '&amp;path=images&amp;mobile='+mobile
   
               template_values = {
               'navigations_bar': navigations_bar,

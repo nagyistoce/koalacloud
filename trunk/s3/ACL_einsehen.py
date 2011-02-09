@@ -184,7 +184,7 @@ class ACL_einsehen(webapp.RequestHandler):
             else:
               eucalyptus_warnung = '<B>Attention!</B> With Eucalyptus 1.6 and 1.6.1 changing the ACL is broken.</B>'
             
-          path = '&amp;path=s3'
+          path = '&amp;path=s3&amp;mobile='+mobile
           
           template_values = {
           'navigations_bar': navigations_bar,

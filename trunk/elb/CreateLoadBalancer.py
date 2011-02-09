@@ -201,7 +201,7 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</table>'
             elb_erzeugen_tabelle += '</form>'
 
-        path = '&amp;path=create_load_balancer'
+        path = '&amp;path=create_load_balancer&amp;mobile='+mobile
               
         template_values = {
         'navigations_bar': navigations_bar,

@@ -512,7 +512,7 @@ class ImageStarten(webapp.RequestHandler):
             tabelle_ec2_instanztypen = ''
             t1_micro_warnung = ''
           
-          path = '&amp;path=images'
+          path = '&amp;path=images&amp;mobile='+mobile
           
           template_values = {
           'navigations_bar': navigations_bar,
