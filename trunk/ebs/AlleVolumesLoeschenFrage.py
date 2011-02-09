@@ -43,7 +43,7 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
-          path = '&amp;path=volumes'
+          path = '&amp;path=alle_volumes_loeschen'
           
           template_values = {
           'navigations_bar': navigations_bar,

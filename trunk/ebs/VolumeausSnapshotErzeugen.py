@@ -131,7 +131,7 @@ class VolumeausSnapshotErzeugen(webapp.RequestHandler):
         volume_aus_snapshot_erzeugen_tabelle += '</table>'
         volume_aus_snapshot_erzeugen_tabelle += '</form>'
 
-        path = '&amp;path=snapshots'
+        path = '&amp;path=volumeaussnapshoterzeugen&amp;snapshot='+snapshot
           
         template_values = {
         'navigations_bar': navigations_bar,

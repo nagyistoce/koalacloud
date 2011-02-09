@@ -17,6 +17,50 @@ class Sprache(webapp.RequestHandler):
         path = self.request.get('path')
         if not path:
           path = ''
+
+        if path == 'snapshoterzeugen':
+          volume = self.request.get('volume')
+          if not volume:
+            volume = ''
+          path = path + '?volume='+volume
+
+        if path == 'volumeaussnapshoterzeugen':
+          snapshot = self.request.get('snapshot')
+          if not snapshot:
+            snapshot = ''
+          path = path + '?snapshot='+snapshot
+
+        if path == 'associate_address':
+          address = self.request.get('address')
+          if not address:
+            address = ''
+          path = path + '?address='+address
+
+        if path == 'gruppenaendern':
+          gruppe = self.request.get('gruppe')
+          if not gruppe:
+            gruppe = ''
+          path = path + '?gruppe='+gruppe
+          
+        if path == 'loadbalanceraendern':
+          name = self.request.get('name')
+          if not name:
+            name = ''
+          path = path + '?name='+name
+          
+        if path == 'bucket_inhalt_pure':
+          bucket = self.request.get('bucket')
+          if not bucket:
+            bucket = ''
+          path = path + '?bucket='+bucket
+          
+        if path == 'bucket_inhalt':
+          bucket = self.request.get('bucket')
+          if not bucket:
+            bucket = ''
+          path = path + '?bucket='+bucket
+          
+          
         # Den Usernamen erfahren
         # Get the username
         username = users.get_current_user()

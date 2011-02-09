@@ -148,7 +148,7 @@ class GruppeAendern(webapp.RequestHandler):
                       regelntabelle += '</tr>'
                   regelntabelle += '</table>'
 
-          path = '&amp;path=securitygroups'
+          path = '&amp;path=gruppenaendern&amp;gruppe='+gruppe
             
           template_values = {
           'navigations_bar': navigations_bar,

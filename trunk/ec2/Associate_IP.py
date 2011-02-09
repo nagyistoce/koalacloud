@@ -136,6 +136,8 @@ class Associate_IP(webapp.RequestHandler):
             tabelle_instanz_anhaengen += '</table>\n'
             tabelle_instanz_anhaengen += '</form>\n'
 
+            path = '&amp;path=associate_address&amp;address='+address
+
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -145,6 +147,7 @@ class Associate_IP(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
             'mobile': mobile,
+            'path': path,
             }
 
             if mobile == "true":
