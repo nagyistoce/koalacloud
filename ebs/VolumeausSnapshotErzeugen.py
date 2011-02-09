@@ -131,7 +131,8 @@ class VolumeausSnapshotErzeugen(webapp.RequestHandler):
         volume_aus_snapshot_erzeugen_tabelle += '</table>'
         volume_aus_snapshot_erzeugen_tabelle += '</form>'
 
-
+        path = '&amp;path=snapshots'
+          
         template_values = {
         'navigations_bar': navigations_bar,
         'url': url,
@@ -141,6 +142,7 @@ class VolumeausSnapshotErzeugen(webapp.RequestHandler):
         'volume_aus_snapshot_erzeugen_tabelle': volume_aus_snapshot_erzeugen_tabelle,
         'input_error_message': input_error_message,
         'zonen_liste': zonen_liste,
+        'path': path,
         }
 
         if mobile == "true":

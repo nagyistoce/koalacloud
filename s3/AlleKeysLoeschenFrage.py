@@ -52,6 +52,8 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
+          path = '&amp;path=s3'
+          
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -62,6 +64,7 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
           'bucketname': bucketname,
           's3_ansicht': s3_ansicht,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

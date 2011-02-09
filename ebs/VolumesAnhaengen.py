@@ -169,6 +169,8 @@ class VolumesAnhaengen(webapp.RequestHandler):
           else:                        # Wenn die Region Amazon EC2 ist...
             ebs_volumes_eucalyptus_warnung = "<p>&nbsp;</p>"
   
+          path = '&amp;path=volumes'
+  
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -178,6 +180,7 @@ class VolumesAnhaengen(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           'tabelle_anhaengen': tabelle_anhaengen,
           'ebs_volumes_eucalyptus_warnung': ebs_volumes_eucalyptus_warnung,
+          'path': path,
           }
   
           if mobile == "true":

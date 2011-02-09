@@ -530,6 +530,8 @@ class BucketInhaltPur(webapp.RequestHandler):
           else:
             alle_keys_loeschen_button = ''
 
+          path = '&amp;path=s3'
+          
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -544,6 +546,7 @@ class BucketInhaltPur(webapp.RequestHandler):
           #'eucalyptus_warnung': eucalyptus_warnung,
           'alle_keys_loeschen_button': alle_keys_loeschen_button,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

@@ -148,6 +148,8 @@ class GruppeAendern(webapp.RequestHandler):
                       regelntabelle += '</tr>'
                   regelntabelle += '</table>'
 
+          path = '&amp;path=securitygroups'
+            
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -159,6 +161,7 @@ class GruppeAendern(webapp.RequestHandler):
           'input_error_message': input_error_message,
           'zonen_liste': zonen_liste,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

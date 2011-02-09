@@ -300,6 +300,8 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
 
 
+              path = '&amp;path=loadbalancer'
+              
               template_values = {
               'navigations_bar': navigations_bar,
               'url': url,
@@ -311,6 +313,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
               'tabelle_instanz_anhaengen': tabelle_instanz_anhaengen,
               'tabelle_zonen_aendern': tabelle_zonen_aendern,
               'input_error_message': input_error_message,
+              'path': path,
               }
 
               if mobile == "true":
