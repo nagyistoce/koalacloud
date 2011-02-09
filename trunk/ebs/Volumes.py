@@ -57,6 +57,8 @@ class Volumes(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=volumes'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -64,6 +66,7 @@ class Volumes(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -573,6 +576,8 @@ class Volumes(webapp.RequestHandler):
             else:
               alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
   
+            path = '&amp;path=volumes'
+  
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -584,7 +589,8 @@ class Volumes(webapp.RequestHandler):
             'input_error_message': input_error_message,
             'zonen_liste': zonen_liste,
             'alle_volumes_loeschen_button': alle_volumes_loeschen_button,
-            'mobile': mobile
+            'mobile': mobile,
+            'path': path,
             }
   
             if mobile == "true":

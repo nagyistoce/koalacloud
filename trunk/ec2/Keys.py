@@ -67,6 +67,8 @@ class Keys(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=schluessel'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -74,6 +76,7 @@ class Keys(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
             if mobile == "true":
                 path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_google_storage.html")
@@ -259,6 +262,8 @@ class Keys(webapp.RequestHandler):
                   new_keypair_secretkey = ""
                   new_keypair_secretkey_download_link = ""
   
+              path = '&amp;path=schluessel'
+  
               template_values = {
               'navigations_bar': navigations_bar,
               'url': url,
@@ -273,6 +278,7 @@ class Keys(webapp.RequestHandler):
               'mobile': mobile,
               'new_keypair_secretkey': new_keypair_secretkey,
               'new_keypair_secretkey_download_link': new_keypair_secretkey_download_link,
+              'path': path,
               }
   
               if mobile == "true":

@@ -58,6 +58,8 @@ class Snapshots(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=snapshots'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -65,6 +67,7 @@ class Snapshots(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -354,6 +357,8 @@ class Snapshots(webapp.RequestHandler):
                   ansicht_amazon_button += '<p>&nbsp;</p>\n'
             else:  
                 ansicht_amazon_button = ""
+                
+            path = '&amp;path=snapshots'
   
             template_values = {
             'navigations_bar': navigations_bar,
@@ -365,6 +370,7 @@ class Snapshots(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             'input_error_message': input_error_message,
             'ansicht_amazon_button': ansicht_amazon_button,
+            'path': path,
             }
   
             if mobile == "true":

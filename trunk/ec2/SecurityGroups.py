@@ -54,6 +54,8 @@ class SecurityGroups(webapp.RequestHandler):
 
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
+  
+            path = '&amp;path=securitygroups'
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -62,6 +64,7 @@ class SecurityGroups(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -223,6 +226,8 @@ class SecurityGroups(webapp.RequestHandler):
                       gruppentabelle += '</tr>'
                   gruppentabelle += '</table>'  
   
+            path = '&amp;path=securitygroups'
+  
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -233,6 +238,7 @@ class SecurityGroups(webapp.RequestHandler):
             'input_error_message': input_error_message,
             'zonen_liste': zonen_liste,
             'mobile': mobile,
+            'path': path,
             }
   
             if mobile == "true":

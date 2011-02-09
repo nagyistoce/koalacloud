@@ -352,6 +352,8 @@ class SnapshotsAmazonAll(webapp.RequestHandler):
             else:  
                 ansicht_amazon_button = ""
   
+            path = '&amp;path=snapshots_amazon_all'
+  
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -362,6 +364,7 @@ class SnapshotsAmazonAll(webapp.RequestHandler):
             'zonen_liste': zonen_liste,
             'input_error_message': input_error_message,
             'ansicht_amazon_button': ansicht_amazon_button,
+            'path': path,
             }
   
             if mobile == "true":

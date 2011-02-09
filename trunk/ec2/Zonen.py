@@ -55,6 +55,8 @@ class Zonen(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
+            path = '&amp;path=zonen'
+            
             template_values = {
             'navigations_bar': navigations_bar,
             'url': url,
@@ -62,6 +64,7 @@ class Zonen(webapp.RequestHandler):
             'zone': regionname,
             'zone_amazon': zone_amazon,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
 
             if mobile == "true":
@@ -112,6 +115,8 @@ class Zonen(webapp.RequestHandler):
                   zonentabelle = zonentabelle + '</td>'
                   zonentabelle = zonentabelle + '</tr>'
               zonentabelle = zonentabelle + '</table>'
+
+            path = '&amp;path=zonen'
   
             template_values = {
             'navigations_bar': navigations_bar,
@@ -121,6 +126,7 @@ class Zonen(webapp.RequestHandler):
             'zone_amazon': zone_amazon,
             'zonenliste': zonentabelle,
             'zonen_liste': zonen_liste,
+            'path': path,
             }
   
             if mobile == "true":
