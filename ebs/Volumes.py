@@ -57,7 +57,7 @@ class Volumes(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=volumes'
+            path = '&amp;path=volumes&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -576,7 +576,7 @@ class Volumes(webapp.RequestHandler):
             else:
               alle_volumes_loeschen_button = '<p>&nbsp;</p>\n'
   
-            path = '&amp;path=volumes'
+            path = '&amp;path=volumes&amp;mobile='+mobile
   
             template_values = {
             'navigations_bar': navigations_bar,

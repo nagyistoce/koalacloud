@@ -840,7 +840,7 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '</table>'
             keys_upload_formular += '</form>'
 
-          path = '&amp;path=bucket_inhalt&amp;bucket='+bucketname
+          path = '&amp;path=bucket_inhalt&amp;bucket='+bucketname+'&amp;mobile='+mobile
 
           template_values = {
           'navigations_bar': navigations_bar,

@@ -136,7 +136,7 @@ class Associate_IP(webapp.RequestHandler):
             tabelle_instanz_anhaengen += '</table>\n'
             tabelle_instanz_anhaengen += '</form>\n'
 
-            path = '&amp;path=associate_address&amp;address='+address
+            path = '&amp;path=associate_address&amp;address='+address+'&amp;mobile='+mobile
 
             template_values = {
             'navigations_bar': navigations_bar,

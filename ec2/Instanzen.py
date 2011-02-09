@@ -56,7 +56,7 @@ class Instanzen(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=instanzen'
+            path = '&amp;path=instanzen&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -869,7 +869,7 @@ class Instanzen(webapp.RequestHandler):
             else:
               alle_instanzen_loeschen_button = '<p>&nbsp;</p>\n'
 
-            path = '&amp;path=instanzen'
+            path = '&amp;path=instanzen&amp;mobile='+mobile
 
             template_values = {
             'navigations_bar': navigations_bar,

@@ -9,56 +9,77 @@ from internal.Datastore import *
 
 class Sprache(webapp.RequestHandler):
     def get(self):
+        attributes = ''
         # Die ausgewählte Sprache holen
         # Get the chosen language
         lang = self.request.get('lang')
+                  
         # Den Pfad holen
         # Get the path      
         path = self.request.get('path')
         if not path:
           path = ''
+        
+        mobile = self.request.get('mobile')
+        if mobile == 'true':
+          mobile_to_path = '?mobile=true'
+        else:
+          mobile_to_path = '?mobile=false'
+                     
+                          
 
         if path == 'snapshoterzeugen':
           volume = self.request.get('volume')
           if not volume:
             volume = ''
-          path = path + '?volume='+volume
+          attributes = '&volume='+volume
 
+        if path == 'volumeanhaengen':
+          volume = self.request.get('volume')
+          if not volume:
+            volume = ''
+          zone = self.request.get('zone')
+          if not zone:
+            zone = ''            
+          attributes = '&volume='+volume+'&zone='+zone
+
+
+        
         if path == 'volumeaussnapshoterzeugen':
           snapshot = self.request.get('snapshot')
           if not snapshot:
             snapshot = ''
-          path = path + '?snapshot='+snapshot
+          attributes = '&snapshot='+snapshot
 
         if path == 'associate_address':
           address = self.request.get('address')
           if not address:
             address = ''
-          path = path + '?address='+address
+          attributes = '&address='+address
 
         if path == 'gruppenaendern':
           gruppe = self.request.get('gruppe')
           if not gruppe:
             gruppe = ''
-          path = path + '?gruppe='+gruppe
+          attributes = '&gruppe='+gruppe
           
         if path == 'loadbalanceraendern':
           name = self.request.get('name')
           if not name:
             name = ''
-          path = path + '?name='+name
+          attributes = '&name='+name
           
         if path == 'bucket_inhalt_pure':
           bucket = self.request.get('bucket')
           if not bucket:
             bucket = ''
-          path = path + '?bucket='+bucket
+          attributes = '&bucket='+bucket
           
         if path == 'bucket_inhalt':
           bucket = self.request.get('bucket')
           if not bucket:
             bucket = ''
-          path = path + '?bucket='+bucket
+          attributes = '&bucket='+bucket
           
           
         # Den Usernamen erfahren
@@ -91,6 +112,6 @@ class Sprache(webapp.RequestHandler):
           else:
             # Wenn es geklappt hat...
             # If it worked...
-            self.redirect('/'+path)
+            self.redirect('/'+path + mobile_to_path + attributes)
         else:
           self.redirect('/')

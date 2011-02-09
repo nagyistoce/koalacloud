@@ -530,7 +530,7 @@ class BucketInhaltPur(webapp.RequestHandler):
           else:
             alle_keys_loeschen_button = ''
 
-          path = '&amp;path=bucket_inhalt_pure&amp;bucket='+bucketname
+          path = '&amp;path=bucket_inhalt_pure&amp;bucket='+bucketname+'&amp;mobile='+mobile
           
           template_values = {
           'navigations_bar': navigations_bar,

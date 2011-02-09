@@ -79,7 +79,7 @@ class SnapshotsErzeugen(webapp.RequestHandler):
           tabelle_snapshot += '</form>'
 
           # path = '&amp;path=volumes'
-          path = '&amp;path=snapshoterzeugen&amp;volume='+volume
+          path = '&amp;path=snapshoterzeugen&amp;volume='+volume+'&amp;mobile='+mobile
  
           template_values = {
           'navigations_bar': navigations_bar,

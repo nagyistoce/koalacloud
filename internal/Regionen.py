@@ -831,7 +831,7 @@ class Regionen(webapp.RequestHandler):
             else:
               port_warnung = '<p>&nbsp;</p>'
 
-            path = '&amp;path=regionen'
+            path = '&amp;path=regionen&amp;mobile='+mobile
 
             template_values = {
             'navigations_bar': navigations_bar,

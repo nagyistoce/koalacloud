@@ -27,6 +27,7 @@ from boto.ec2.connection import *
 
 class Keys(webapp.RequestHandler):
     def get(self):
+        # self.response.out.write('posted!')
         mobile = self.request.get('mobile')
         if mobile != "true":
             mobile = "false"
@@ -67,7 +68,7 @@ class Keys(webapp.RequestHandler):
           # It is Google Storage and not am IaaS  
           if regionname == "GoogleStorage":
             
-            path = '&amp;path=schluessel'
+            path = '&amp;path=schluessel&amp;mobile='+mobile
             
             template_values = {
             'navigations_bar': navigations_bar,
@@ -262,7 +263,7 @@ class Keys(webapp.RequestHandler):
                   new_keypair_secretkey = ""
                   new_keypair_secretkey_download_link = ""
   
-              path = '&amp;path=schluessel'
+              path = '&amp;path=schluessel&amp;mobile='+mobile
   
               template_values = {
               'navigations_bar': navigations_bar,
