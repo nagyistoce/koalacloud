@@ -300,7 +300,7 @@ class LoadBalancer_Aendern(webapp.RequestHandler):
                 tabelle_zonen_aendern = tabelle_zonen_aendern + '</form>'
 
 
-              path = '&amp;path=loadbalancer'
+              path = '&amp;path=loadbalanceraendern&amp;name='+loadbalancer_name
               
               template_values = {
               'navigations_bar': navigations_bar,
