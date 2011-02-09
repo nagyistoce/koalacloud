@@ -201,6 +201,8 @@ class CreateLoadBalancer(webapp.RequestHandler):
             elb_erzeugen_tabelle += '</table>'
             elb_erzeugen_tabelle += '</form>'
 
+        path = '&amp;path=loadbalancer'
+              
         template_values = {
         'navigations_bar': navigations_bar,
         'url': url,
@@ -210,6 +212,7 @@ class CreateLoadBalancer(webapp.RequestHandler):
         'elb_erzeugen_tabelle': elb_erzeugen_tabelle,
         'input_error_message': input_error_message,
         'zonen_liste': zonen_liste,
+        'path': path,
         }
 
         if mobile == "true":

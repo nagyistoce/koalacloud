@@ -390,7 +390,7 @@ class ImageStarten(webapp.RequestHandler):
                 tabelle_ec2_instanztypen += '<th>Memory</th>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>t1.micro</tt></td>'
+              tabelle_ec2_instanztypen += '<td>t1.micro</td>'
               tabelle_ec2_instanztypen += '<td align="center">32</td>'
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
@@ -400,14 +400,14 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">613 MB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m1.small</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m1.small</td>'
               tabelle_ec2_instanztypen += '<td align="center">32</td>'
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>c1.medium</tt></td>'
+              tabelle_ec2_instanztypen += '<td>c1.medium</td>'
               tabelle_ec2_instanztypen += '<td align="center">32</td>'
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">5</td>'
@@ -452,42 +452,42 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">613 MB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m1.large</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m1.large</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">7.5 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m1.xlarge</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m1.xlarge</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">15 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m2.xlarge</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m2.xlarge</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">6.5</td>'
               tabelle_ec2_instanztypen += '<td align="center">17.1 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m2.2xlarge</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m2.2xlarge</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">13</td>'
               tabelle_ec2_instanztypen += '<td align="center">34.2 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>m2.4xlarge</tt></td>'
+              tabelle_ec2_instanztypen += '<td>m2.4xlarge</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">26</td>'
               tabelle_ec2_instanztypen += '<td align="center">68.4 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>c1.xlarge</tt></td>'
+              tabelle_ec2_instanztypen += '<td>c1.xlarge</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">20</td>'
@@ -511,7 +511,9 @@ class ImageStarten(webapp.RequestHandler):
             # wenn es Eucalyptus ist
             tabelle_ec2_instanztypen = ''
             t1_micro_warnung = ''
-
+          
+          path = '&amp;path=images'
+          
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -529,6 +531,7 @@ class ImageStarten(webapp.RequestHandler):
           't1_micro_warnung': t1_micro_warnung,
           'instanz_starten_tabelle': instanz_starten_tabelle,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

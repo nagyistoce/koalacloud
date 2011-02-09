@@ -43,6 +43,8 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
+          path = '&amp;path=volumes'
+          
           template_values = {
           'navigations_bar': navigations_bar,
           'url': url,
@@ -51,6 +53,7 @@ class AlleVolumesLoeschenFrage(webapp.RequestHandler):
           'zone_amazon': zone_amazon,
           'zonen_liste': zonen_liste,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

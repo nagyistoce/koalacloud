@@ -840,7 +840,7 @@ class BucketInhalt(webapp.RequestHandler):
             keys_upload_formular += '</table>'
             keys_upload_formular += '</form>'
 
-
+          path = '&amp;path=s3'
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -857,6 +857,7 @@ class BucketInhalt(webapp.RequestHandler):
           'verzeichnis_warnung': verzeichnis_warnung,
           #'eucalyptus_warnung': eucalyptus_warnung,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":

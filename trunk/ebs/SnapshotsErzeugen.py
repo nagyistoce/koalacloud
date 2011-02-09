@@ -23,11 +23,13 @@ class SnapshotsErzeugen(webapp.RequestHandler):
         mobile = self.request.get('mobile')
         if mobile != "true":
             mobile = "false"
-        # Name des zu anzuhängenden Volumes holen
+        # Den Namen des Volumes holen
+        # Get the name of the volume
         volume = self.request.get('volume')
         # Name der Zone holen
         volume_zone  = self.request.get('zone')
         # Den Usernamen erfahren
+        # Get the username
         username = users.get_current_user()
         if not username:
           self.redirect('/')
@@ -76,6 +78,7 @@ class SnapshotsErzeugen(webapp.RequestHandler):
           tabelle_snapshot += '</table>'
           tabelle_snapshot += '</form>'
 
+          path = '&amp;path=volumes'
 
           template_values = {
           'navigations_bar': navigations_bar,
@@ -86,6 +89,7 @@ class SnapshotsErzeugen(webapp.RequestHandler):
           'zonen_liste': zonen_liste,
           'tabelle_snapshot': tabelle_snapshot,
           'mobile': mobile,
+          'path': path,
           }
 
           if mobile == "true":
