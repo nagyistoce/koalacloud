@@ -52,7 +52,7 @@ class AlleKeysLoeschenFrage(webapp.RequestHandler):
 
           zonen_liste = zonen_liste_funktion(username,sprache,mobile)
 
-          path = '&amp;path=s3&amp;mobile='+mobile
+          path = '&amp;path=alle_keys_loeschen&amp;mobile='+mobile+'&amp;s3_ansicht='+s3_ansicht+'&amp;bucket_name='+bucketname
           
           template_values = {
           'navigations_bar': navigations_bar,
