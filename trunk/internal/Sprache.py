@@ -43,6 +43,15 @@ class Sprache(webapp.RequestHandler):
             zone = ''            
           attributes = '&volume='+volume+'&zone='+zone
 
+        if path == 'alle_keys_loeschen':
+          s3_ansicht = self.request.get('s3_ansicht')
+          if not s3_ansicht:
+            s3_ansicht = ''
+          bucket_name = self.request.get('bucket_name')
+          if not bucket_name:
+            bucket_name = ''            
+          attributes = '&s3_ansicht='+s3_ansicht+'&bucket_name='+bucket_name
+          
 
         
         if path == 'volumeaussnapshoterzeugen':
