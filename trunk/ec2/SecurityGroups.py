@@ -133,7 +133,7 @@ class SecurityGroups(webapp.RequestHandler):
                       counter += 1
                     
                       gruppentabelle += '<tr>'
-                      gruppentabelle += '<td>'
+                      gruppentabelle += '<td width="75">'
                       gruppentabelle += '<a href="/gruppenentfernen?gruppe='
                       gruppentabelle += liste_security_groups[i].name
                       gruppentabelle += "&amp;mobile="
@@ -143,7 +143,7 @@ class SecurityGroups(webapp.RequestHandler):
                       else:
                         gruppentabelle += '" title="erase security group"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase security group"></a>'
                       gruppentabelle += '</td>'
-                      gruppentabelle += '<td align="center">'
+                      gruppentabelle += '<td align="left">'
                       gruppentabelle += '<a href="/gruppenaendern?gruppe='
                       gruppentabelle += liste_security_groups[i].name
                       gruppentabelle += "&amp;mobile="
@@ -153,21 +153,24 @@ class SecurityGroups(webapp.RequestHandler):
                       else:
                         gruppentabelle += '" title="check/alter rules"><img src="bilder/einstellungen.png" width="58" height="18" border="0" alt="check/alter rules"></a>'
                       gruppentabelle += '</td>'
+                      gruppentabelle += '</tr>'
+                      gruppentabelle += '<tr>'
+                      gruppentabelle += '<td align="right"><b>ID:</b></td>'
                       gruppentabelle += '<td>'+liste_security_groups[i].name+'</td>'
                       gruppentabelle += '</tr>'
                       gruppentabelle += '<tr>'
                       if sprache == "de":
-                        gruppentabelle += '<td colspan="2" align="right"><b>Beschreibung:</b></td>'
+                        gruppentabelle += '<td align="right"><b>Beschreibung:</b></td>'
                       else:
-                        gruppentabelle += '<td colspan="2" align="right"><b>Description:</b></td>'
+                        gruppentabelle += '<td align="right"><b>Description:</b></td>'
                       
                       gruppentabelle += '<td>'+liste_security_groups[i].description+'</td>'
                       gruppentabelle += '</tr>'
                       gruppentabelle += '<tr>'
                       if sprache == "de":
-                        gruppentabelle += '<td colspan="2" align="right"><b>Besitzer:</b></td>'
+                        gruppentabelle += '<td align="right"><b>Besitzer:</b></td>'
                       else:
-                        gruppentabelle += '<td colspan="2" align="right"><b>Owner:</b></td>'
+                        gruppentabelle += '<td align="right"><b>Owner:</b></td>'
                       
                       gruppentabelle += '<td>'+liste_security_groups[i].owner_id+'</td>'
                       gruppentabelle += '</tr>'
