@@ -200,8 +200,9 @@ class ImageStarten(webapp.RequestHandler):
               gruppen_liste = '<font color="red">Es sind keine Sicherheitsgruppen in der Zone vorhanden</font>'
             else:
               gruppen_liste = '<font color="red">No Security Groups exist inside this security zone</font>'
-          elif laenge_liste_security_groups == 1:
-            gruppen_liste = liste_security_groups[0].name
+          # This is not workling. We need a list to get the value to the class that starts the instance
+          #elif laenge_liste_security_groups == 1:
+          #  gruppen_liste = liste_security_groups[0].name
           else:
             gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="1">'
             for i in range(laenge_liste_security_groups):
@@ -442,7 +443,7 @@ class ImageStarten(webapp.RequestHandler):
                 tabelle_ec2_instanztypen += '<th>Memory</th>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
-              tabelle_ec2_instanztypen += '<td><tt>t1.micro</tt></td>'
+              tabelle_ec2_instanztypen += '<td>t1.micro</td>'
               tabelle_ec2_instanztypen += '<td align="center">64</td>'
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
