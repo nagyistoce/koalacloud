@@ -136,12 +136,8 @@ class GruppeAendern(webapp.RequestHandler):
                       regelntabelle += '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
                       regelntabelle += '</td>'
                       regelntabelle += '<td align="center">'
-                      if str(liste_regeln[i].ip_protocol) == "tcp":
-                        regelntabelle += 'TCP'
-                      if str(liste_regeln[i].ip_protocol) == "udp":
-                        regelntabelle += 'UDP'
-                      if str(liste_regeln[i].ip_protocol) == "icmp":
-                        regelntabelle += 'ICMP'
+                      # upper() sorgt für die Großbuchstaben
+                      regelntabelle += str(liste_regeln[i].ip_protocol).upper()
                       regelntabelle += '</td>'
                       regelntabelle += '<td align="center">'+str(liste_regeln[i].from_port)+'</td>'
                       regelntabelle += '<td align="center">'+str(liste_regeln[i].to_port)+'</td>'
