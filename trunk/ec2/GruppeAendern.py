@@ -135,10 +135,9 @@ class GruppeAendern(webapp.RequestHandler):
                       regelntabelle += gruppe
                       regelntabelle += '" title="Regel l&ouml;schen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Regel l&ouml;schen"></a>'
                       regelntabelle += '</td>'
-                      regelntabelle += '<td align="center">'
                       # upper() sorgt für die Großbuchstaben
-                      regelntabelle += str(liste_regeln[i].ip_protocol).upper()
-                      regelntabelle += '</td>'
+                      # upper() converts a string to uppercase
+                      regelntabelle += '<td align="center">'+str(liste_regeln[i].ip_protocol).upper()+'</td>'
                       regelntabelle += '<td align="center">'+str(liste_regeln[i].from_port)+'</td>'
                       regelntabelle += '<td align="center">'+str(liste_regeln[i].to_port)+'</td>'
                       regelntabelle += '</tr>'
