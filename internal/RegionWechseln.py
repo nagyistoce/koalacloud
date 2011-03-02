@@ -29,8 +29,11 @@ class RegionWechseln(webapp.RequestHandler):
         elif 'EU West' in regionen:
           zone = "eu-west-1"
           zugangstyp = "Amazon"
-        elif 'Asia Pacific' in regionen:
+        elif 'Asia Pacific Singapore' in regionen:
           zone = "ap-southeast-1"
+          zugangstyp = "Amazon"
+        elif 'Asia Pacific Tokyo' in regionen:
+          zone = "ap-northeast-1"
           zugangstyp = "Amazon"
         else:
           zone = regionen

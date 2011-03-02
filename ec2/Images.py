@@ -196,6 +196,17 @@ class Images(webapp.RequestHandler):
                   quickstart = KoalaQuickStartAMIs(ami=ami[i],
                                                  zone=zone_temp,
                                                  user=username)
+                  
+                ami = []
+                zone_temp = "ap-northeast-1"   
+                ami.append("ami-8e08a38f") # Basic 32-bit Amazon Linux AMI 2010.11.1 Beta
+                ami.append("ami-9008a391") # Basic 64-bit Amazon Linux AMI 2010.11.1 Beta
+                laenge_liste_ami = len(ami)
+                for i in range(laenge_liste_ami):
+                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+                                                 zone=zone_temp,
+                                                 user=username)
+                  
                   # In den Datastore schreiben
                   quickstart.put()
                   
