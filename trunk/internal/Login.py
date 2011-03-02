@@ -19,8 +19,10 @@ class Login(webapp.RequestHandler):
           regionname = "us-east-1"
         if cloud_region == "Amazon EC2 US West":
           regionname = "us-west-1"
-        if cloud_region == "Amazon EC2 Asia Pacific":
+        if cloud_region == "Amazon EC2 Asia Pacific Singapore":
           regionname = "ap-southeast-1"
+        if cloud_region == "Amazon EC2 Asia Pacific Tokyo":
+          regionname = "ap-northeast-1"
         if cloud_region == "Eucalyptus":
           regionname = "eucalyptus"
 

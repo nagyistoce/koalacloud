@@ -174,10 +174,11 @@ class ImageStarten(webapp.RequestHandler):
               keys_liste = '<font color="red">Es sind keine Schl&uuml in der Zone vorhanden</font>'
             else:
               keys_liste = '<font color="red">No keypairs exist inside this security zone</font>'
-          elif laenge_liste_keys == 1:
-            keys_liste = '<input name="keys_liste" type="text" size="70" maxlength="70" value="'
-            keys_liste = keys_liste + liste_key_pairs[0].name
-            keys_liste = keys_liste + '" readonly>'
+          # This is not workling. We need a list to get the value to the class that starts the instance
+          #elif laenge_liste_keys == 1:
+          #  keys_liste = '<input name="keys_liste" type="text" size="70" maxlength="70" value="'
+          #  keys_liste = keys_liste + liste_key_pairs[0].name
+          #  keys_liste = keys_liste + '" readonly>'
           else:
             keys_liste = keys_liste + '<select name="keys_liste" size="1">'
             for i in range(laenge_liste_keys):

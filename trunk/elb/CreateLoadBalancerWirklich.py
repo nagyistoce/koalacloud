@@ -11,6 +11,8 @@ from google.appengine.ext import db
 from library import loginelb
 from library import login
 
+from boto.ec2.connection import *
+
 class CreateLoadBalancerWirklich(webapp.RequestHandler):
     def post(self):
         mobile = self.request.get('mobile')
@@ -30,6 +32,7 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
         euwest1b = self.request.get('eu-west-1b')
         apsoutheast1a = self.request.get('ap-southeast-1a')
         apsoutheast1b = self.request.get('ap-southeast-1b')
+        apnortheast1a = self.request.get('ap-northeast-1a')
 
         # Der Name muss ein String sein
         elb_name = str(elb_name)
@@ -143,6 +146,9 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
               zones_elb.append('ap-southeast-1a')
             if apsoutheast1b != "":
               zones_elb.append('ap-southeast-1b')
+          if aktivezone == "ap-northeast-1":
+            if apnortheast1a != "":
+              zones_elb.append('ap-northeast-1a')
           listeners_elb = []
           listeners_elb.append((ELBPort,InstPort,elb_protokoll))
 

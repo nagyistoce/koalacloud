@@ -36,7 +36,7 @@ def login(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -54,7 +54,7 @@ def login(username):
       port = db_eintrag.port
       regionname = db_eintrag.regionname
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1":
+    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1" or zoneinderdb == "ap-northeast-1":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_region = boto.ec2.connect_to_region(zoneinderdb,
@@ -220,6 +220,8 @@ def amazon_region(username):
             zone_amazon = "(us-west-1)"
         elif result.aktivezone == "ap-southeast-1":
             zone_amazon = "(ap-southeast-1)"
+        elif result.aktivezone == "ap-northeast-1":
+            zone_amazon = "(ap-northeast-1)"
         else:
             zone_amazon = ""
 
@@ -251,7 +253,10 @@ def zonen_liste_funktion(username,sprache,mobile):
                 zonen_liste = zonen_liste + 'Amazon EC2 (EU West)'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific)'
+                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific Singapore)'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'Amazon EC2 (Asia Pacific Tokyo)'
             else:
                 #zonen_liste = zonen_liste + 'Eucalyptus'
                 #zonen_liste = zonen_liste + ' ('
@@ -292,7 +297,7 @@ def loginelb(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -351,6 +356,16 @@ def loginelb(username):
                               host=hostname,
                               #port=8773,
                               path="/")
+    elif zoneinderdb == "ap-northeast-1":
+      hostname = "elasticloadbalancing.ap-northeast-1.amazonaws.com"
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+                              aws_secret_access_key=secretaccesskey,
+                              is_secure=False,
+                              host=hostname,
+                              #port=8773,
+                              path="/")
       regionname = aktuellezone
     else:
       regionname = "---"
@@ -365,7 +380,7 @@ def logins3(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -381,7 +396,7 @@ def logins3(username):
       endpointurl = db_eintrag.endpointurl
       port = db_eintrag.port
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
