@@ -393,13 +393,19 @@ class BucketInhaltPur(webapp.RequestHandler):
             endpointurl = endpointurl_erhalten(username,regionname)
             port = port_erhalten(username,regionname) 
             keys_upload_formular += '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           elif zugangstyp == "GoogleStorage":
             keys_upload_formular += '<form action="http://commondatastorage.googleapis.com/'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+          elif zugangstyp == "HostEuropeCloudStorage":
+            keys_upload_formular += '<form action="http://'+bucketname+'.cs.hosteurope.de'
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           else:
             keys_upload_formular += '<form action="http://s3.amazonaws.com/'
-            
-          keys_upload_formular += bucketname
-          keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           
           if mobile == "true":
             # mobile version...

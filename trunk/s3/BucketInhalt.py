@@ -709,17 +709,37 @@ class BucketInhalt(webapp.RequestHandler):
           signature = base64.b64encode(hmac.new(AWSSecretAccessKeyId, policy, sha).digest())
 
 
+#          keys_upload_formular = ''
+#          if zugangstyp == "Eucalyptus":
+#            endpointurl = endpointurl_erhalten(username,regionname)
+#            port = port_erhalten(username,regionname)
+#            keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+#          elif zugangstyp == "GoogleStorage":
+#            keys_upload_formular = keys_upload_formular + '<form action="http://commondatastorage.googleapis.com/'
+#          else:
+#            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
+#          keys_upload_formular = keys_upload_formular + bucketname
+#          keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
+
           keys_upload_formular = ''
           if zugangstyp == "Eucalyptus":
             endpointurl = endpointurl_erhalten(username,regionname)
-            port = port_erhalten(username,regionname)
-            keys_upload_formular = keys_upload_formular + '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+            port = port_erhalten(username,regionname) 
+            keys_upload_formular += '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           elif zugangstyp == "GoogleStorage":
-            keys_upload_formular = keys_upload_formular + '<form action="http://commondatastorage.googleapis.com/'
+            keys_upload_formular += '<form action="http://commondatastorage.googleapis.com/'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+          elif zugangstyp == "HostEuropeCloudStorage":
+            keys_upload_formular += '<form action="http://'+bucketname+'.cs.hosteurope.de'
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           else:
-            keys_upload_formular = keys_upload_formular + '<form action="http://s3.amazonaws.com/'
-          keys_upload_formular = keys_upload_formular + bucketname
-          keys_upload_formular = keys_upload_formular + '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular += '<form action="http://s3.amazonaws.com/'
+            keys_upload_formular += bucketname
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+
           
           if mobile == "true":
             # mobile version...
