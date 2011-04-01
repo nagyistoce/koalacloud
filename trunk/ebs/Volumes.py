@@ -75,6 +75,29 @@ class Volumes(webapp.RequestHandler):
                 path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
             
+          # It is Host Europe Cloud Storage and not am IaaS  
+          elif regionname == "HostEuropeCloudStorage":
+            
+            path = '&amp;path=zonen&amp;mobile='+mobile
+            
+            template_values = {
+            'navigations_bar': navigations_bar,
+            'url': url,
+            'url_linktext': url_linktext,
+            'zone': regionname,
+            'zone_amazon': zone_amazon,
+            'zonen_liste': zonen_liste,
+            'path': path,
+            }
+
+            if mobile == "true":
+                path = os.path.join(os.path.dirname(__file__), "../templates/mobile", sprache, "not_implemente_with_host_europe_storage.html")
+            else:
+                path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_host_europe_storage.html")
+            self.response.out.write(template.render(path,template_values))
+            
+
+            
           # It is not Google Storage. It is an IaaS
           else:   
             
