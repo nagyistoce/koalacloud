@@ -30,7 +30,7 @@ Don't fear you account or data here. No new account at the IaaS is created or da
 
 == Buckets and Keys ==
 
-The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. The service can be used via a SOAP interface and a REST interface. Bucket names and keys are addressable using HTTP URLs automatically:
+The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. Additionally each object has a key assigned which is used to access the object. The service can be used via a SOAP interface and a REST interface. Bucket names and objects keys are addressable using HTTP URLs automatically:
 
 *http://s3.amazonaws.com/bucket/key
 
@@ -42,7 +42,9 @@ In [http://www.hosteurope.de Host Europe Cloud Storage], Bucket names and keys a
 
 *http://cs.hosteurope.de/bucket/key
 
-Keys are stored in so called buckets and a bucket cannot include another bucket. Because S3 has a flat name space, every buckets name has be unique. This means S3 has provides nothing like directories.
+It is impossible to upload objects with KOALA into Host Europe Cloud Storage. This is because Host Europe does not support uploading objects via HTTP POST at all. More Information (in German language): [http://faq.hosteurope.de/index.php?cpid=16676]
+
+Objects are stored in so called buckets and a bucket cannot include another bucket. Because S3 has a flat name space, every buckets name has be unique. This means S3 has provides nothing like directories.
 
 Inside the *S3* window you can see a table with a list of you buckets and here you can create new buckets and erase existing ones.
 
