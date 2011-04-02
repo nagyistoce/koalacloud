@@ -28,17 +28,17 @@ If you have already created an AWS account and inserted your Access Key and Secr
 
 Don't fear you account or data here. No new account at the IaaS is created or data  over-written. You just import your credentials into KOALA this way. 
 
-== Buckets and Keys ==
+== Buckets and Objects (Keys) ==
 
 The _Simple_ in Simple Storage Service means not using this service is simple for the user. It means that there are just a few features provided. S3 is a simple key-based object store. Each object stores up to 5 GB, each accompanied by up to 2 KB of metadata. Additionally each object has a key assigned which is used to access the object. The service can be used via a SOAP interface and a REST interface. Bucket names and objects keys are addressable using HTTP URLs automatically:
 
 *http://s3.amazonaws.com/bucket/key
 
-In [http://code.google.com/intl/de/apis/storage/ Google Storage], Bucket names and keys are also addressable using HTTP URLs following this schema:
+In [http://code.google.com/intl/de/apis/storage/ Google Storage], Bucket names and objects are also addressable using HTTP URLs following this schema:
 
 *http://commondatastorage.googleapis.com/bucket/key
 
-In [http://www.hosteurope.de Host Europe Cloud Storage], Bucket names and keys are also addressable using HTTP URLs following this schema:
+In [http://www.hosteurope.de Host Europe Cloud Storage], Bucket names and objects are also addressable using HTTP URLs following this schema:
 
 *http://cs.hosteurope.de/bucket/key
 
@@ -50,7 +50,7 @@ Inside the *S3* window you can see a table with a list of you buckets and here y
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_1_list_of_buckets_small.png]
 
-For every bucket you have the decision to use the pure S3 mode and a S3 mode with more comfort. The pure S3 mode presents the contend of the buckets exactly the way it is. Just the keys inside the bucket are printed out.
+For every bucket you have the decision to use the pure S3 mode and a S3 mode with more comfort. The pure S3 mode presents the contend of the buckets exactly the way it is. Just the objects inside the bucket are printed out.
 
 The S3 mode with more comfort simulates folders with clever use of key names. Here, keys that end with *`_`$folder$* are used as directory placeholders. A key that is meant staying inside are folder has a name following this schema *folder/subfolder/filename*. It is the same approach the famous Firefox plugin [http://www.s3fox.net S3Fox] uses.
 
@@ -60,25 +60,25 @@ When jumped into a bucket for the first time in the pure S3 mode, the bucket is 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_2_pure_s3_mode_inside_bucket_small.png]
 
-With the HTML form it is easy to upload files into the bucket. Beside the file itself you have to chose the access rights, called Access Controll List, of the key and the mime type. 
+With the HTML form it is easy to upload files into the bucket. Beside the file itself you have to chose the access rights, called Access Controll List, of the object and the mime type. 
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_3_upload_key_small.png]
 
-After the successful upload the key is listed inside the bucket.
+After the successful upload the object is listed inside the bucket.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_4_key_is_uploaded_small.png]
 
-The table that contains the keys inside the bucket, allows to open and erase keys and change the Access Controll List (ACL).
+The table that contains the objects inside the bucket, allows to open and erase objects and change the Access Controll List (ACL).
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_5_change_ACL_of_key_small.png]
 
 == S3 mode with more comfort ==
 
-When jumped into a bucket in the S3 mode with more comfort, you can see a new HTML form that allows to create folders. These are emulated via the keyname as described before. In the table it's easy to differentiate between standard keys and keys that emulate folders. Icons before the keyname show the keys designation. Folders can be erased and their ACL can be alterd the same way like standard keys.
+When jumped into a bucket in the S3 mode with more comfort, you can see a new HTML form that allows to create folders. These are emulated via the keyname as described before. In the table it's easy to differentiate between standard keys and keys that emulate folders. Icons before the keyname show the objects designation. Folders can be erased and their ACL can be alterd the same way like objects with standard keys.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_6_s3_mode_with_more_comfort_small.png]
 
-You can jump into folders and upload keys into these folders.
+You can jump into folders and upload objects into these folders.
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_7_folder_created_small.png]
 
@@ -86,4 +86,4 @@ It's also possible to create subfolders. And with the green arrow it's easy to j
 
 [http://koalacloud.googlecode.com/svn/trunk/tutorial/images/smaller/tutorial_s3_8_subfolder_small.png]
 
-For a deeper look how the S3 mode with more comfort works it's a good idea to creating some folders and subfolders with some keys and check the content of the bucket via the pure S3 mode.
+For a deeper look how the S3 mode with more comfort works it's a good idea to creating some folders and subfolders with some objects and check the content of the bucket via the pure S3 mode.
