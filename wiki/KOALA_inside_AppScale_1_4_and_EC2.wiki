@@ -5,11 +5,11 @@
 
 This tutorial shows how to start AppScale 1.4 inside EC2 and upload KOALA into the AppScale PaaS.
 
-= What AppScale is ==
+= What [http://appscale.cs.ucsb.edu AppScale] is ==
 
 AppScale is a platform that allows users to deploy and host their own Google App Engine applications. AppScale executes automatically over [http://aws.amazon.com/ec2/ Amazon EC2] and [http://open.eucalyptus.com Eucalyptus] as well as [http://www.xen.org Xen] and [http://www.linux-kvm.org KVM] and supports both the python and java Google App Engine platforms.
 
-= Installation of AppScale and KOALA = 
+= Installation of [http://appscale.cs.ucsb.edu AppScale] and KOALA = 
 
 At first you neet do install the [http://code.google.com/p/appscale/wiki/AppScale_Tools_Usage AppScale Tools].
 
