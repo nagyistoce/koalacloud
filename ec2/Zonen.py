@@ -73,7 +73,7 @@ class Zonen(webapp.RequestHandler):
             else:
                 path = os.path.join(os.path.dirname(__file__), "../templates", sprache, "not_implemente_with_google_storage.html")
             self.response.out.write(template.render(path,template_values))
-          # It is Google Storage and not am IaaS  
+          # It is Host Europe Cloud Storage and not am IaaS  
           elif regionname == "HostEuropeCloudStorage":
             
             path = '&amp;path=zonen&amp;mobile='+mobile
