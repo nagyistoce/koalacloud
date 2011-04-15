@@ -121,22 +121,22 @@ class Zonen(webapp.RequestHandler):
               laenge_liste_zonen = len(liste_zonen)
   
               zonentabelle = ''
-              zonentabelle = zonentabelle + '<table border="0" cellspacing="0" cellpadding="5">'
+              zonentabelle += '<table border="0" cellspacing="0" cellpadding="5">'
               for i in range(laenge_liste_zonen):
-                  zonentabelle = zonentabelle + '<tr>'
-                  zonentabelle = zonentabelle + '<td>'+str(liste_zonen[i].name)+'</td>'
+                  zonentabelle += '<tr>'
+                  zonentabelle += '<td>'+str(liste_zonen[i].name)+'</td>'
                   if liste_zonen[i].state == u'available':
-                    zonentabelle = zonentabelle + '<td bgcolor="#c3ddc3" align="center">'
+                    zonentabelle += '<td bgcolor="#c3ddc3" align="center">'
                     if sprache == "de":
-                      zonentabelle = zonentabelle + 'verf&uuml;gbar'
+                      zonentabelle += 'verf&uuml;gbar'
                     else:
-                      zonentabelle = zonentabelle + str(liste_zonen[i].state)
+                      zonentabelle += str(liste_zonen[i].state)
                   else:
-                    zonentabelle = zonentabelle + '<td align="center">'
-                    zonentabelle = zonentabelle + str(liste_zonen[i].state)
-                  zonentabelle = zonentabelle + '</td>'
-                  zonentabelle = zonentabelle + '</tr>'
-              zonentabelle = zonentabelle + '</table>'
+                    zonentabelle += '<td align="center">'
+                    zonentabelle += str(liste_zonen[i].state)
+                  zonentabelle += '</td>'
+                  zonentabelle += '</tr>'
+              zonentabelle += '</table>'
 
             path = '&amp;path=zonen&amp;mobile='+mobile
   
