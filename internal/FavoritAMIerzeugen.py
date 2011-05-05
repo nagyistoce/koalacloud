@@ -65,6 +65,12 @@ class FavoritAMIerzeugen(webapp.RequestHandler):
             except EC2ResponseError:
               fehlermeldung = "88"
               self.redirect('/images?mobile='+str(mobile)+'&message='+fehlermeldung)
+            except DownloadError:
+                # Diese Exception hilft gegen diese beiden Fehler:
+                # DownloadError: ApplicationError: 2 timed out
+                # DownloadError: ApplicationError: 5
+              fehlermeldung = "8"
+              self.redirect('/images?mobile='+str(mobile)+'&message='+fehlermeldung)
             else:
               # Favorit erzeugen
               # Festlegen, was in den Datastore geschrieben werden soll
