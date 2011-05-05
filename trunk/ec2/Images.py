@@ -137,115 +137,117 @@ class Images(webapp.RequestHandler):
               aktivezone = db.GqlQuery("SELECT * FROM KoalaQuickStartAMIs WHERE zone = :zone_db", zone_db=zone_in_der_wir_uns_befinden)
               results = aktivezone.fetch(1000)
               
-              if results:                  
-                # Eine leere Liste mit den AMIs der Quick Start Images erzeugen
-                liste_quickstart_amis = []
-                # Die Ergebnisse des SELECT durchlaufen
-                for result in results:
-                  # Die AMIs der Quick Start Images in die Liste einfügen
-                  liste_quickstart_amis.append(result.ami)
-  
-                liste_quickstart_amis_images = conn_region.get_all_images(image_ids=liste_quickstart_amis)
-                laenge_liste_quickstart_amis_images = len(liste_quickstart_amis_images)
-                
-              else:
-                # Quick Start Images erzeugen
-                # Festlegen, was in den Datastore geschrieben werden soll
-                ami = []
-                zone_temp = "us-east-1"
-                ami.append("ami-4a0df923") # Ubuntu 10.04 LTS 64-bit ebs 
-                ami.append("ami-da0cf8b3") # Ubuntu 10.04 LTS 64-bit instance store 
-                ami.append("ami-480df921") # Ubuntu 10.04 LTS 32-bit ebs 
-                ami.append("ami-a403f7cd") # Ubuntu 10.04 LTS 32-bit instance store  
-                ami.append("ami-548c783d") # Ubuntu 10.10 LTS 64-bit ebs 
-                ami.append("ami-688c7801") # Ubuntu 10.10 LTS 64-bit instance store 
-                ami.append("ami-508c7839") # Ubuntu 10.10 LTS 32-bit ebs 
-                ami.append("ami-1a837773") # Ubuntu 10.10 LTS 32-bit instance store  
-                laenge_liste_ami = len(ami)
-                for i in range(laenge_liste_ami):
-                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
-                                                 zone=zone_temp,
-                                                 user=username)
-                  # In den Datastore schreiben
-                  quickstart.put()
-                  
-                ami = []
-                zone_temp = "eu-west-1"                
-                ami.append("ami-f6340182") # Ubuntu 10.04 LTS 64-bit ebs 
-                ami.append("ami-1e34016a") # Ubuntu 10.04 LTS 64-bit instance store 
-                ami.append("ami-f4340180") # Ubuntu 10.04 LTS 32-bit ebs 
-                ami.append("ami-4a34013e") # Ubuntu 10.04 LTS 32-bit instance store  
-                ami.append("ami-405c6934") # Ubuntu 10.10 LTS 64-bit ebs 
-                ami.append("ami-505c6924") # Ubuntu 10.10 LTS 64-bit instance store 
-                ami.append("ami-465c6932") # Ubuntu 10.10 LTS 32-bit ebs 
-                ami.append("ami-7e5c690a") # Ubuntu 10.10 LTS 32-bit instance store  
-                laenge_liste_ami = len(ami)
-                for i in range(laenge_liste_ami):
-                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
-                                                 zone=zone_temp,
-                                                 user=username)
-                  # In den Datastore schreiben
-                  quickstart.put()
-
-                ami = []
-                zone_temp = "us-west-1"   
-                ami.append("ami-880c5ccd") # Ubuntu 10.04 LTS 64-bit ebs 
-                ami.append("ami-860c5cc3") # Ubuntu 10.04 LTS 64-bit instance store 
-                ami.append("ami-8c0c5cc9") # Ubuntu 10.04 LTS 32-bit ebs 
-                ami.append("ami-e80c5cad") # Ubuntu 10.04 LTS 32-bit instance store  
-                ami.append("ami-ca1f4f8f") # Ubuntu 10.10 LTS 64-bit ebs 
-                ami.append("ami-cc1f4f89") # Ubuntu 10.10 LTS 64-bit instance store 
-                ami.append("ami-c81f4f8d") # Ubuntu 10.10 LTS 32-bit ebs 
-                ami.append("ami-2a1f4f6f") # Ubuntu 10.10 LTS 32-bit instance store  
-                laenge_liste_ami = len(ami)
-                for i in range(laenge_liste_ami):
-                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
-                                                 zone=zone_temp,
-                                                 user=username)
-                  # In den Datastore schreiben
-                  quickstart.put()
-
-                ami = []
-                zone_temp = "ap-southeast-1"   
-                ami.append("ami-06067854") # Ubuntu 10.04 LTS 64-bit ebs 
-                ami.append("ami-14067846") # Ubuntu 10.04 LTS 64-bit instance store 
-                ami.append("ami-00067852") # Ubuntu 10.04 LTS 32-bit ebs 
-                ami.append("ami-60067832") # Ubuntu 10.04 LTS 32-bit instance store 
-                ami.append("ami-68136d3a") # Ubuntu 10.10 LTS 64-bit ebs 
-                ami.append("ami-64136d36") # Ubuntu 10.10 LTS 64-bit instance store 
-                ami.append("ami-6a136d38") # Ubuntu 10.10 LTS 32-bit ebs 
-                ami.append("ami-7c136d2e") # Ubuntu 10.10 LTS 32-bit instance store  
-                laenge_liste_ami = len(ami)
-                for i in range(laenge_liste_ami):
-                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
-                                                 zone=zone_temp,
-                                                 user=username)
-                  
-                ami = []
-                zone_temp = "ap-northeast-1"   
-                ami.append("ami-8e08a38f") # Basic 32-bit Amazon Linux AMI 2010.11.1 Beta
-                ami.append("ami-9008a391") # Basic 64-bit Amazon Linux AMI 2010.11.1 Beta
-                laenge_liste_ami = len(ami)
-                for i in range(laenge_liste_ami):
-                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
-                                                 zone=zone_temp,
-                                                 user=username)
-                  
-                  # In den Datastore schreiben
-                  quickstart.put()
-                  
-                aktivezone = db.GqlQuery("SELECT * FROM KoalaQuickStartAMIs WHERE zone = :zone_db", zone_db=zone_in_der_wir_uns_befinden)
-                results = aktivezone.fetch(1000)
-
-                # Eine leere Liste mit den AMIs der Quick Start Images erzeugen
-                liste_quickstart_amis = []
-                # Die Ergebnisse des SELECT durchlaufen
-                for result in results:
-                  # Die AMIs der Quick Start Images in die Liste einfügen
-                  liste_quickstart_amis.append(result.ami)
-  
-                liste_quickstart_amis_images = conn_region.get_all_images(image_ids=liste_quickstart_amis)
-                laenge_liste_quickstart_amis_images = len(liste_quickstart_amis_images)
+              
+############ Quick Start Images ############              
+#              if results:                  
+#                # Eine leere Liste mit den AMIs der Quick Start Images erzeugen
+#                liste_quickstart_amis = []
+#                # Die Ergebnisse des SELECT durchlaufen
+#                for result in results:
+#                  # Die AMIs der Quick Start Images in die Liste einfügen
+#                  liste_quickstart_amis.append(result.ami)
+#  
+#                liste_quickstart_amis_images = conn_region.get_all_images(image_ids=liste_quickstart_amis)
+#                laenge_liste_quickstart_amis_images = len(liste_quickstart_amis_images)
+#                
+#              else:
+#                # Quick Start Images erzeugen
+#                # Festlegen, was in den Datastore geschrieben werden soll
+#                ami = []
+#                zone_temp = "us-east-1"
+#                ami.append("ami-4a0df923") # Ubuntu 10.04 LTS 64-bit ebs 
+#                ami.append("ami-da0cf8b3") # Ubuntu 10.04 LTS 64-bit instance store 
+#                ami.append("ami-480df921") # Ubuntu 10.04 LTS 32-bit ebs 
+#                ami.append("ami-a403f7cd") # Ubuntu 10.04 LTS 32-bit instance store  
+#                ami.append("ami-548c783d") # Ubuntu 10.10 LTS 64-bit ebs 
+#                ami.append("ami-688c7801") # Ubuntu 10.10 LTS 64-bit instance store 
+#                ami.append("ami-508c7839") # Ubuntu 10.10 LTS 32-bit ebs 
+#                ami.append("ami-1a837773") # Ubuntu 10.10 LTS 32-bit instance store  
+#                laenge_liste_ami = len(ami)
+#                for i in range(laenge_liste_ami):
+#                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+#                                                 zone=zone_temp,
+#                                                 user=username)
+#                  # In den Datastore schreiben
+#                  quickstart.put()
+#                  
+#                ami = []
+#                zone_temp = "eu-west-1"                
+#                ami.append("ami-f6340182") # Ubuntu 10.04 LTS 64-bit ebs 
+#                ami.append("ami-1e34016a") # Ubuntu 10.04 LTS 64-bit instance store 
+#                ami.append("ami-f4340180") # Ubuntu 10.04 LTS 32-bit ebs 
+#                ami.append("ami-4a34013e") # Ubuntu 10.04 LTS 32-bit instance store  
+#                ami.append("ami-405c6934") # Ubuntu 10.10 LTS 64-bit ebs 
+#                ami.append("ami-505c6924") # Ubuntu 10.10 LTS 64-bit instance store 
+#                ami.append("ami-465c6932") # Ubuntu 10.10 LTS 32-bit ebs 
+#                ami.append("ami-7e5c690a") # Ubuntu 10.10 LTS 32-bit instance store  
+#                laenge_liste_ami = len(ami)
+#                for i in range(laenge_liste_ami):
+#                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+#                                                 zone=zone_temp,
+#                                                 user=username)
+#                  # In den Datastore schreiben
+#                  quickstart.put()
+#
+#                ami = []
+#                zone_temp = "us-west-1"   
+#                ami.append("ami-880c5ccd") # Ubuntu 10.04 LTS 64-bit ebs 
+#                ami.append("ami-860c5cc3") # Ubuntu 10.04 LTS 64-bit instance store 
+#                ami.append("ami-8c0c5cc9") # Ubuntu 10.04 LTS 32-bit ebs 
+#                ami.append("ami-e80c5cad") # Ubuntu 10.04 LTS 32-bit instance store  
+#                ami.append("ami-ca1f4f8f") # Ubuntu 10.10 LTS 64-bit ebs 
+#                ami.append("ami-cc1f4f89") # Ubuntu 10.10 LTS 64-bit instance store 
+#                ami.append("ami-c81f4f8d") # Ubuntu 10.10 LTS 32-bit ebs 
+#                ami.append("ami-2a1f4f6f") # Ubuntu 10.10 LTS 32-bit instance store  
+#                laenge_liste_ami = len(ami)
+#                for i in range(laenge_liste_ami):
+#                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+#                                                 zone=zone_temp,
+#                                                 user=username)
+#                  # In den Datastore schreiben
+#                  quickstart.put()
+#
+#                ami = []
+#                zone_temp = "ap-southeast-1"   
+#                ami.append("ami-06067854") # Ubuntu 10.04 LTS 64-bit ebs 
+#                ami.append("ami-14067846") # Ubuntu 10.04 LTS 64-bit instance store 
+#                ami.append("ami-00067852") # Ubuntu 10.04 LTS 32-bit ebs 
+#                ami.append("ami-60067832") # Ubuntu 10.04 LTS 32-bit instance store 
+#                ami.append("ami-68136d3a") # Ubuntu 10.10 LTS 64-bit ebs 
+#                ami.append("ami-64136d36") # Ubuntu 10.10 LTS 64-bit instance store 
+#                ami.append("ami-6a136d38") # Ubuntu 10.10 LTS 32-bit ebs 
+#                ami.append("ami-7c136d2e") # Ubuntu 10.10 LTS 32-bit instance store  
+#                laenge_liste_ami = len(ami)
+#                for i in range(laenge_liste_ami):
+#                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+#                                                 zone=zone_temp,
+#                                                 user=username)
+#                  
+#                ami = []
+#                zone_temp = "ap-northeast-1"   
+#                ami.append("ami-8e08a38f") # Basic 32-bit Amazon Linux AMI 2010.11.1 Beta
+#                ami.append("ami-9008a391") # Basic 64-bit Amazon Linux AMI 2010.11.1 Beta
+#                laenge_liste_ami = len(ami)
+#                for i in range(laenge_liste_ami):
+#                  quickstart = KoalaQuickStartAMIs(ami=ami[i],
+#                                                 zone=zone_temp,
+#                                                 user=username)
+#                  
+#                  # In den Datastore schreiben
+#                  quickstart.put()
+#                  
+#                aktivezone = db.GqlQuery("SELECT * FROM KoalaQuickStartAMIs WHERE zone = :zone_db", zone_db=zone_in_der_wir_uns_befinden)
+#                results = aktivezone.fetch(1000)
+#
+#                # Eine leere Liste mit den AMIs der Quick Start Images erzeugen
+#                liste_quickstart_amis = []
+#                # Die Ergebnisse des SELECT durchlaufen
+#                for result in results:
+#                  # Die AMIs der Quick Start Images in die Liste einfügen
+#                  liste_quickstart_amis.append(result.ami)
+#  
+#                liste_quickstart_amis_images = conn_region.get_all_images(image_ids=liste_quickstart_amis)
+#                laenge_liste_quickstart_amis_images = len(liste_quickstart_amis_images)
 
                 
                 
@@ -264,9 +266,26 @@ class Images(webapp.RequestHandler):
                 liste_ami_favoriten = []
                 # Die Ergebnisse des SELECT durchlaufen
                 for result in results:
-                  # Die AMIs in die Liste einfügen
-                  liste_ami_favoriten.append(result.ami)
-  
+                  
+                  try:
+                    # Liste mit den Images
+                    liste_images = conn_region.get_all_images(image_ids=str(result.ami))
+                  except:
+                    # Wenn es nicht klappt...
+                    # Favorit aus dem Datastore holen
+                    holen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankFavouritenAMIs WHERE user = :username_db AND ami = :ami_db AND zone = :zone_db", username_db=username, ami_db=str(result.ami), zone_db=zone_in_der_wir_uns_befinden)
+                    holenresults = holen.fetch(100)
+                    for holenresult in holenresults:
+                      # Favorit aus dem Datastore löschen
+                      holenresult.delete()
+                  else:
+                    # Wenn es geklappt hat...                                
+                  
+                    # Die AMIs in die Liste einfügen
+                    liste_ami_favoriten.append(result.ami)
+                    
+                
+                # Wenn die Liste vollständig ist... 
                 liste_favoriten_ami_images = conn_region.get_all_images(image_ids=liste_ami_favoriten)
                 laenge_liste_favoriten_ami_images = len(liste_favoriten_ami_images)
   
@@ -558,277 +577,278 @@ class Images(webapp.RequestHandler):
                   liste_favouriten += '</table>'
                   
 
-              if mobile == "true":
-                # mobile version
-                quickstart_tabelle = ''
-                quickstart_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
-                
-                counter = 0
-                for i in range(laenge_liste_quickstart_amis_images):
-                    if counter > 0:
-                        quickstart_tabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
-                    counter += 1
-                    
-                    quickstart_tabelle += '<tr>'
-                    #quickstart_tabelle += '<td>&nbsp;</td>'
-                    quickstart_tabelle += '<td>'
-                    if liste_quickstart_amis_images[i].type == u'machine':
-                      if sprache == "de":
-                        quickstart_tabelle += '<a href="/imagestarten?image='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].id
-                        quickstart_tabelle += '&amp;arch='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
-                        quickstart_tabelle += '&amp;root='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
-                        quickstart_tabelle += "&amp;mobile="
-                        quickstart_tabelle +=  str(mobile)
-                        quickstart_tabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
-                      else:
-                        quickstart_tabelle += '<a href="/imagestarten?image='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].id
-                        quickstart_tabelle += '&amp;arch='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
-                        quickstart_tabelle += '&amp;root='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
-                        quickstart_tabelle += "&amp;mobile="
-                        quickstart_tabelle +=  str(mobile)
-                        quickstart_tabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
-                    else:
-                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                      quickstart_tabelle += '&nbsp;'
-                    quickstart_tabelle += '</td>'
-                    
-                    quickstart_tabelle += '<td align="center">'
-                    beschreibung_in_kleinbuchstaben = liste_quickstart_amis_images[i].location.lower()
-                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                      quickstart_tabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                      quickstart_tabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                      quickstart_tabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                      quickstart_tabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                      quickstart_tabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                      quickstart_tabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                      quickstart_tabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    else:
-                      quickstart_tabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
-                    quickstart_tabelle += '</td>'
-
-                    quickstart_tabelle += '<td align="right">'
-                    if sprache == "de":
-                      quickstart_tabelle += '<a href="/favoritentfernen?ami='
-                      quickstart_tabelle += liste_quickstart_amis_images[i].id
-                      quickstart_tabelle += '&amp;zone='
-                      quickstart_tabelle += zone_in_der_wir_uns_befinden
-                      quickstart_tabelle += "&amp;mobile="
-                      quickstart_tabelle +=  str(mobile)
-                      quickstart_tabelle += '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
-                    else:
-                      quickstart_tabelle += '<a href="/favoritentfernen?ami='
-                      quickstart_tabelle += liste_quickstart_amis_images[i].id
-                      quickstart_tabelle += '&amp;zone='
-                      quickstart_tabelle += zone_in_der_wir_uns_befinden
-                      quickstart_tabelle += "&amp;mobile="
-                      quickstart_tabelle +=  str(mobile)
-                      quickstart_tabelle += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
-                    quickstart_tabelle += '</td>'
-
-                    # Hier kommt die Spalte mit der Image-ID
-                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].id)+'</td>'
-
- 
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-  
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
-                    # Hier kommt die Spalte mit dem Instanztyp
-                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].type)+'</td>'
-                  
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                  
-                    quickstart_tabelle += '<td align="right" colspan="3"><b>Manifest:</b></td>'
-                    # Hier kommt die Spalte mit der Manifest-Datei
-                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].location)+'</td>'
-                    
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Architektur:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Architecture:</b></td>'
-                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].architecture)+'</td>'
-                    
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    quickstart_tabelle += '<td align="right" colspan="3"><b>Status:</b></td>'                         
-                    if liste_quickstart_amis_images[i].state == u'available':
-                      quickstart_tabelle += '<td bgcolor="#c3ddc3" align="center" colspan="2">'+str(liste_quickstart_amis_images[i].state)+'</td>'
-                    else:
-                      quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].state)+'</td>'
-                    
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    quickstart_tabelle += '<td align="right" colspan="3"><b>Root:</b></td>'     
-                    quickstart_tabelle += '<td align="center">'+liste_quickstart_amis_images[i].root_device_type+'</td>'                  
-                    
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
-                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].ownerId)+'</td>'
-                    quickstart_tabelle += '</tr>'
-                quickstart_tabelle += '</table>'
-                
-              else:
-                # not the mobile version
-                quickstart_tabelle = ''
-                quickstart_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="600">'
-                
-                counter = 0
-                for i in range(laenge_liste_quickstart_amis_images):
-                    if counter > 0:
-                        quickstart_tabelle += '<tr><td colspan="6">&nbsp;</td></tr>'
-                    counter += 1
-                    
-                    quickstart_tabelle += '<tr>'
-                    #quickstart_tabelle += '<td>&nbsp;</td>'
-                    quickstart_tabelle += '<td bgcolor="#D4D4D4">'
-                    if liste_quickstart_amis_images[i].type == u'machine':
-                      if sprache == "de":
-                        quickstart_tabelle += '<a href="/imagestarten?image='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].id
-                        quickstart_tabelle += '&amp;arch='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
-                        quickstart_tabelle += '&amp;root='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
-                        quickstart_tabelle += "&amp;mobile="
-                        quickstart_tabelle +=  str(mobile)
-                        quickstart_tabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
-                      else:
-                        quickstart_tabelle += '<a href="/imagestarten?image='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].id
-                        quickstart_tabelle += '&amp;arch='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
-                        quickstart_tabelle += '&amp;root='
-                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
-                        quickstart_tabelle += "&amp;mobile="
-                        quickstart_tabelle +=  str(mobile)
-                        quickstart_tabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
-                    else:
-                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
-                      quickstart_tabelle += '&nbsp;'
-                    quickstart_tabelle += '</td>'
-                    
-                    quickstart_tabelle += '<td align="center" bgcolor="#D4D4D4">'
-                    beschreibung_in_kleinbuchstaben = liste_quickstart_amis_images[i].location.lower()
-                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
-                      quickstart_tabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
-                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
-                      quickstart_tabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
-                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
-                      quickstart_tabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
-                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
-                      quickstart_tabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
-                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
-                      quickstart_tabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
-                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
-                      quickstart_tabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
-                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
-                      quickstart_tabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
-                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
-                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('win') != -1:
-                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
-                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
-                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
-                    else:
-                      quickstart_tabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
-                    quickstart_tabelle += '</td>'
-                
-                    quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4">'
-                    quickstart_tabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'
-                    quickstart_tabelle += '</td>'
-                    
-                    quickstart_tabelle += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
-                
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'  
-                    # Hier kommt die Spalte mit der Image-ID
-                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].id)+'</td>'
-                
-                    quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'                         
-                    if liste_quickstart_amis_images[i].state == u'available':
-                      quickstart_tabelle += '<td bgcolor="#c3ddc3" align="left" colspan="2">'+str(liste_quickstart_amis_images[i].state)+'</td>'
-                    else:
-                      quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].state)+'</td>'
-                
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                                          
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architektur:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architecture:</b></td>'
-                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].architecture)+'</td>'
-                                         
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Typ:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Type:</b></td>'
-                    # Hier kommt die Spalte mit dem Instanztyp
-                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].type)+'</td>'
-                  
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Root:</b></td>'     
-                    quickstart_tabelle += '<td align="left">'+liste_quickstart_amis_images[i].root_device_type+'</td>'                  
-                    
-                    if sprache == "de":
-                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
-                    else:
-                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Owner:</b></td>'
-                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].ownerId)+'</td>'
-                
-                    quickstart_tabelle += '</tr>'
-                    quickstart_tabelle += '<tr>'
-                    
-                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Manifest:</b></td>'
-                    # Hier kommt die Spalte mit der Manifest-Datei
-                    quickstart_tabelle += '<td align="left" colspan="3">'+str(liste_quickstart_amis_images[i].location)+'</td>'
-                
-                    quickstart_tabelle += '</tr>'
-                quickstart_tabelle += '</table>'
+############ Quick Start Images ############    
+#              if mobile == "true":
+#                # mobile version
+#                quickstart_tabelle = ''
+#                quickstart_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">'
+#                
+#                counter = 0
+#                for i in range(laenge_liste_quickstart_amis_images):
+#                    if counter > 0:
+#                        quickstart_tabelle += '<tr><td colspan="4">&nbsp;</td></tr>'
+#                    counter += 1
+#                    
+#                    quickstart_tabelle += '<tr>'
+#                    #quickstart_tabelle += '<td>&nbsp;</td>'
+#                    quickstart_tabelle += '<td>'
+#                    if liste_quickstart_amis_images[i].type == u'machine':
+#                      if sprache == "de":
+#                        quickstart_tabelle += '<a href="/imagestarten?image='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                        quickstart_tabelle += '&amp;arch='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
+#                        quickstart_tabelle += '&amp;root='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
+#                        quickstart_tabelle += "&amp;mobile="
+#                        quickstart_tabelle +=  str(mobile)
+#                        quickstart_tabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+#                      else:
+#                        quickstart_tabelle += '<a href="/imagestarten?image='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                        quickstart_tabelle += '&amp;arch='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
+#                        quickstart_tabelle += '&amp;root='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
+#                        quickstart_tabelle += "&amp;mobile="
+#                        quickstart_tabelle +=  str(mobile)
+#                        quickstart_tabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+#                    else:
+#                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+#                      quickstart_tabelle += '&nbsp;'
+#                    quickstart_tabelle += '</td>'
+#                    
+#                    quickstart_tabelle += '<td align="center">'
+#                    beschreibung_in_kleinbuchstaben = liste_quickstart_amis_images[i].location.lower()
+#                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+#                      quickstart_tabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+#                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+#                      quickstart_tabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+#                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+#                      quickstart_tabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+#                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+#                      quickstart_tabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+#                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+#                      quickstart_tabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+#                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+#                      quickstart_tabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+#                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+#                      quickstart_tabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+#                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+#                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+#                    elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+#                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+#                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    else:
+#                      quickstart_tabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+#                    quickstart_tabelle += '</td>'
+#
+#                    quickstart_tabelle += '<td align="right">'
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<a href="/favoritentfernen?ami='
+#                      quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                      quickstart_tabelle += '&amp;zone='
+#                      quickstart_tabelle += zone_in_der_wir_uns_befinden
+#                      quickstart_tabelle += "&amp;mobile="
+#                      quickstart_tabelle +=  str(mobile)
+#                      quickstart_tabelle += '"title="Favorit entfernen"><img src="bilder/delete.png" width="16" height="16" border="0" alt="Favorit entfernen"></a>'
+#                    else:
+#                      quickstart_tabelle += '<a href="/favoritentfernen?ami='
+#                      quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                      quickstart_tabelle += '&amp;zone='
+#                      quickstart_tabelle += zone_in_der_wir_uns_befinden
+#                      quickstart_tabelle += "&amp;mobile="
+#                      quickstart_tabelle +=  str(mobile)
+#                      quickstart_tabelle += '"title="erase from list"><img src="bilder/delete.png" width="16" height="16" border="0" alt="erase from list"></a>'
+#                    quickstart_tabelle += '</td>'
+#
+#                    # Hier kommt die Spalte mit der Image-ID
+#                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].id)+'</td>'
+#
+# 
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#  
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Typ:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Type:</b></td>'
+#                    # Hier kommt die Spalte mit dem Instanztyp
+#                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].type)+'</td>'
+#                  
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                  
+#                    quickstart_tabelle += '<td align="right" colspan="3"><b>Manifest:</b></td>'
+#                    # Hier kommt die Spalte mit der Manifest-Datei
+#                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].location)+'</td>'
+#                    
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Architektur:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Architecture:</b></td>'
+#                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].architecture)+'</td>'
+#                    
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    quickstart_tabelle += '<td align="right" colspan="3"><b>Status:</b></td>'                         
+#                    if liste_quickstart_amis_images[i].state == u'available':
+#                      quickstart_tabelle += '<td bgcolor="#c3ddc3" align="center" colspan="2">'+str(liste_quickstart_amis_images[i].state)+'</td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].state)+'</td>'
+#                    
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    quickstart_tabelle += '<td align="right" colspan="3"><b>Root:</b></td>'     
+#                    quickstart_tabelle += '<td align="center">'+liste_quickstart_amis_images[i].root_device_type+'</td>'                  
+#                    
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Besitzer:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" colspan="3"><b>Owner:</b></td>'
+#                    quickstart_tabelle += '<td align="center">'+str(liste_quickstart_amis_images[i].ownerId)+'</td>'
+#                    quickstart_tabelle += '</tr>'
+#                quickstart_tabelle += '</table>'
+#                
+#              else:
+#                # not the mobile version
+#                quickstart_tabelle = ''
+#                quickstart_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="600">'
+#                
+#                counter = 0
+#                for i in range(laenge_liste_quickstart_amis_images):
+#                    if counter > 0:
+#                        quickstart_tabelle += '<tr><td colspan="6">&nbsp;</td></tr>'
+#                    counter += 1
+#                    
+#                    quickstart_tabelle += '<tr>'
+#                    #quickstart_tabelle += '<td>&nbsp;</td>'
+#                    quickstart_tabelle += '<td bgcolor="#D4D4D4">'
+#                    if liste_quickstart_amis_images[i].type == u'machine':
+#                      if sprache == "de":
+#                        quickstart_tabelle += '<a href="/imagestarten?image='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                        quickstart_tabelle += '&amp;arch='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
+#                        quickstart_tabelle += '&amp;root='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
+#                        quickstart_tabelle += "&amp;mobile="
+#                        quickstart_tabelle +=  str(mobile)
+#                        quickstart_tabelle += '"title="Instanz starten"><img src="bilder/plus.png" width="16" height="16" border="0" alt="Instanz starten"></a>'
+#                      else:
+#                        quickstart_tabelle += '<a href="/imagestarten?image='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].id
+#                        quickstart_tabelle += '&amp;arch='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].architecture
+#                        quickstart_tabelle += '&amp;root='
+#                        quickstart_tabelle += liste_quickstart_amis_images[i].root_device_type
+#                        quickstart_tabelle += "&amp;mobile="
+#                        quickstart_tabelle +=  str(mobile)
+#                        quickstart_tabelle += '"title="start instance"><img src="bilder/plus.png" width="16" height="16" border="0" alt="start instance"></a>'
+#                    else:
+#                      # Wenn es kein Machine-Image ist, dann das Feld leer lassen
+#                      quickstart_tabelle += '&nbsp;'
+#                    quickstart_tabelle += '</td>'
+#                    
+#                    quickstart_tabelle += '<td align="center" bgcolor="#D4D4D4">'
+#                    beschreibung_in_kleinbuchstaben = liste_quickstart_amis_images[i].location.lower()
+#                    if beschreibung_in_kleinbuchstaben.find('fedora') != -1:
+#                      quickstart_tabelle += '<img src="bilder/fedora_icon_48.png" width="24" height="24" border="0" alt="Fedora">'
+#                    elif beschreibung_in_kleinbuchstaben.find('ubuntu') != -1:
+#                      quickstart_tabelle += '<img src="bilder/ubuntu_icon_48.png" width="24" height="24" border="0" alt="Ubuntu">'
+#                    elif beschreibung_in_kleinbuchstaben.find('debian') != -1:
+#                      quickstart_tabelle += '<img src="bilder/debian_icon_48.png" width="24" height="24" border="0" alt="Debian">'
+#                    elif beschreibung_in_kleinbuchstaben.find('gentoo') != -1:
+#                      quickstart_tabelle += '<img src="bilder/gentoo_icon_48.png" width="24" height="24" border="0" alt="Gentoo">'
+#                    elif beschreibung_in_kleinbuchstaben.find('suse') != -1:
+#                      quickstart_tabelle += '<img src="bilder/suse_icon_48.png" width="24" height="24" border="0" alt="SUSE">'
+#                    elif beschreibung_in_kleinbuchstaben.find('centos') != -1:
+#                      quickstart_tabelle += '<img src="bilder/centos_icon_48.png" width="24" height="24" border="0" alt="CentOS">'
+#                    elif beschreibung_in_kleinbuchstaben.find('redhat') != -1:
+#                      quickstart_tabelle += '<img src="bilder/redhat_icon_48.png" width="24" height="24" border="0" alt="RedHat">'
+#                    elif beschreibung_in_kleinbuchstaben.find('windows') != -1:
+#                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+#                    elif beschreibung_in_kleinbuchstaben.find('win') != -1:
+#                      quickstart_tabelle += '<img src="bilder/windows_icon_48.png" width="24" height="24" border="0" alt="Windows">'
+#                    elif beschreibung_in_kleinbuchstaben.find('opensolaris') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    elif beschreibung_in_kleinbuchstaben.find('solaris') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    elif beschreibung_in_kleinbuchstaben.find('osol') != -1:
+#                      quickstart_tabelle += '<img src="bilder/opensolaris_icon_48.png" width="24" height="24" border="0" alt="Open Solaris">'
+#                    else:
+#                      quickstart_tabelle += '<img src="bilder/linux_icon_48.gif" width="24" height="24" border="0" alt="Other Linux">'
+#                    quickstart_tabelle += '</td>'
+#                
+#                    quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4">'
+#                    quickstart_tabelle += '<img src="bilder/platzhalter.png" width="16" height="16" border="0" alt="">'
+#                    quickstart_tabelle += '</td>'
+#                    
+#                    quickstart_tabelle += '<td colspan="3" bgcolor="#D4D4D4">&nbsp;</td>'
+#                
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>ID:</b></td>'  
+#                    # Hier kommt die Spalte mit der Image-ID
+#                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].id)+'</td>'
+#                
+#                    quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Status:</b></td>'                         
+#                    if liste_quickstart_amis_images[i].state == u'available':
+#                      quickstart_tabelle += '<td bgcolor="#c3ddc3" align="left" colspan="2">'+str(liste_quickstart_amis_images[i].state)+'</td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].state)+'</td>'
+#                
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                                          
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architektur:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Architecture:</b></td>'
+#                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].architecture)+'</td>'
+#                                         
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Typ:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Type:</b></td>'
+#                    # Hier kommt die Spalte mit dem Instanztyp
+#                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].type)+'</td>'
+#                  
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Root:</b></td>'     
+#                    quickstart_tabelle += '<td align="left">'+liste_quickstart_amis_images[i].root_device_type+'</td>'                  
+#                    
+#                    if sprache == "de":
+#                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Besitzer:</b></td>'
+#                    else:
+#                      quickstart_tabelle += '<td align="right" bgcolor="#D4D4D4"><b>Owner:</b></td>'
+#                    quickstart_tabelle += '<td align="left">'+str(liste_quickstart_amis_images[i].ownerId)+'</td>'
+#                
+#                    quickstart_tabelle += '</tr>'
+#                    quickstart_tabelle += '<tr>'
+#                    
+#                    quickstart_tabelle += '<td align="right" colspan="3" bgcolor="#D4D4D4"><b>Manifest:</b></td>'
+#                    # Hier kommt die Spalte mit der Manifest-Datei
+#                    quickstart_tabelle += '<td align="left" colspan="3">'+str(liste_quickstart_amis_images[i].location)+'</td>'
+#                
+#                    quickstart_tabelle += '</tr>'
+#                quickstart_tabelle += '</table>'
                   
 
               path = '&amp;path=images&amp;mobile='+mobile
@@ -844,7 +864,7 @@ class Images(webapp.RequestHandler):
               'liste_favouriten': liste_favouriten,
               'zone_in_der_wir_uns_befinden': zone_in_der_wir_uns_befinden,
               'input_error_message': input_error_message,
-              'quickstart_tabelle': quickstart_tabelle,
+#              'quickstart_tabelle': quickstart_tabelle,
               'mobile': mobile,
               'path': path,
               }
