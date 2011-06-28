@@ -190,186 +190,201 @@ class ImageStarten(webapp.RequestHandler):
               keys_liste = keys_liste + '</option>'
             keys_liste = keys_liste + '</select>'
 
-          # Liste mit den Security Groups
-          liste_security_groups = conn_region.get_all_security_groups()
-          # Anzahl der Elemente in der Liste
-          laenge_liste_security_groups = len(liste_security_groups)
 
-          gruppen_liste = ''
-          if laenge_liste_security_groups == 0:
-            if sprache == "de":
-              gruppen_liste = '<font color="red">Es sind keine Sicherheitsgruppen in der Zone vorhanden</font>'
-            else:
-              gruppen_liste = '<font color="red">No Security Groups exist inside this security zone</font>'
-          # This is not workling. We need a list to get the value to the class that starts the instance
-          #elif laenge_liste_security_groups == 1:
-          #  gruppen_liste = liste_security_groups[0].name
+          try:
+            # Liste mit den Security Groups
+            liste_security_groups = conn_region.get_all_security_groups()
+          except EC2ResponseError:
+            # Wenn es nicht geklappt hat
+            fehlermeldung = "78"
+            self.redirect('/images?mobile='+str(mobile)+'&message='+fehlermeldung)
+          except DownloadError:
+            # Diese Exception hilft gegen diese beiden Fehler:
+            # DownloadError: ApplicationError: 2 timed out
+            # DownloadError: ApplicationError: 5
+            fehlermeldung = "8"
+            self.redirect('/images?mobile='+str(mobile)+'&message='+fehlermeldung)
           else:
-            gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="1">'
-            for i in range(laenge_liste_security_groups):
-              if i == 0:
-                gruppen_liste = gruppen_liste + '<option selected="selected">'
+            # Wenn es geklappt hat
+            
+            # Anzahl der Elemente in der Liste
+            laenge_liste_security_groups = len(liste_security_groups)
+  
+            gruppen_liste = ''
+            if laenge_liste_security_groups == 0:
+              if sprache == "de":
+                gruppen_liste = '<font color="red">Es sind keine Sicherheitsgruppen in der Zone vorhanden</font>'
               else:
-                gruppen_liste = gruppen_liste + '<option>'
-              gruppen_liste = gruppen_liste + liste_security_groups[i].name
-              #gruppen_liste = gruppen_liste + ' ('
-              #gruppen_liste = gruppen_liste + liste_security_groups[i].owner_id
-              #gruppen_liste = gruppen_liste + ')'
-              gruppen_liste = gruppen_liste + '</option>'
-            gruppen_liste = gruppen_liste + '</select>'
-
-
-
-          instanz_starten_tabelle = ''
-          if mobile == "true":
-            # Mobile version
-            instanz_starten_tabelle += '<form action="/instanzanlegen" method="post" accept-charset="utf-8">\n'
-            instanz_starten_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
-            instanz_starten_tabelle += '<input type="hidden" name="image_id" value="'+image+'">\n'
-            instanz_starten_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>AMI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+image+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Manifest:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+manifest+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Root:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+root+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>AKI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="aki_id" type="text" size="12" maxlength="12"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>ARI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="ari_id" type="text" size="12" maxlength="12"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Typ:</b></td>\n'
+                gruppen_liste = '<font color="red">No Security Groups exist inside this security zone</font>'
+            # This is not workling. We need a list to get the value to the class that starts the instance
+            #elif laenge_liste_security_groups == 1:
+            #  gruppen_liste = liste_security_groups[0].name
             else:
-              instanz_starten_tabelle += '<td align="right"><b>Type:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'
-            instanz_starten_tabelle += '<select name="instance_type" size="1">'+instance_types_liste+'</select>\n'
-            instanz_starten_tabelle += '</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Zone:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'
-            instanz_starten_tabelle += '<select name="zonen_auswahl" size="1">'+zonen_in_der_region+'</select>\n'
-            instanz_starten_tabelle += '</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Max:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Schl&uuml;ssel:</b></td>\n'
+              gruppen_liste = gruppen_liste + '<select name="gruppen_liste" size="1">'
+              for i in range(laenge_liste_security_groups):
+                if i == 0:
+                  gruppen_liste = gruppen_liste + '<option selected="selected">'
+                else:
+                  gruppen_liste = gruppen_liste + '<option>'
+                gruppen_liste = gruppen_liste + liste_security_groups[i].name
+                #gruppen_liste = gruppen_liste + ' ('
+                #gruppen_liste = gruppen_liste + liste_security_groups[i].owner_id
+                #gruppen_liste = gruppen_liste + ')'
+                gruppen_liste = gruppen_liste + '</option>'
+              gruppen_liste = gruppen_liste + '</select>'
+  
+  
+  
+            instanz_starten_tabelle = ''
+            if mobile == "true":
+              # Mobile version
+              instanz_starten_tabelle += '<form action="/instanzanlegen" method="post" accept-charset="utf-8">\n'
+              instanz_starten_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+              instanz_starten_tabelle += '<input type="hidden" name="image_id" value="'+image+'">\n'
+              instanz_starten_tabelle += '<table border="0" cellspacing="0" cellpadding="5" width="300">\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>AMI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+image+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Manifest:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+manifest+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Root:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+root+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>AKI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="aki_id" type="text" size="12" maxlength="12"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>ARI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="ari_id" type="text" size="12" maxlength="12"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Typ:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Type:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'
+              instanz_starten_tabelle += '<select name="instance_type" size="1">'+instance_types_liste+'</select>\n'
+              instanz_starten_tabelle += '</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Zone:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'
+              instanz_starten_tabelle += '<select name="zonen_auswahl" size="1">'+zonen_in_der_region+'</select>\n'
+              instanz_starten_tabelle += '</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Max:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Schl&uuml;ssel:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Keypair:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+keys_liste+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Gruppe:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Group:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+gruppen_liste+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td colspan="2" align="left">'
+              if sprache == "de":
+                instanz_starten_tabelle += '<input type="submit" value="Instanz starten">'
+              else:
+                instanz_starten_tabelle += '<input type="submit" value="create Instance">'
+              instanz_starten_tabelle += '</td>\n'          
+              instanz_starten_tabelle += '</tr>\n'            
+              instanz_starten_tabelle += '</table>\n'
+              instanz_starten_tabelle += '</form>\n'
+              
             else:
-              instanz_starten_tabelle += '<td align="right"><b>Keypair:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+keys_liste+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Gruppe:</b></td>\n'
-            else:
-              instanz_starten_tabelle += '<td align="right"><b>Group:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+gruppen_liste+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td colspan="2" align="left">'
-            if sprache == "de":
-              instanz_starten_tabelle += '<input type="submit" value="Instanz starten">'
-            else:
-              instanz_starten_tabelle += '<input type="submit" value="create Instance">'
-            instanz_starten_tabelle += '</td>\n'          
-            instanz_starten_tabelle += '</tr>\n'            
-            instanz_starten_tabelle += '</table>\n'
-            instanz_starten_tabelle += '</form>\n'
-            
-          else:
-            # Not the mobile version...
-            
-            instanz_starten_tabelle += '<form action="/instanzanlegen" method="post" accept-charset="utf-8">\n'
-            instanz_starten_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
-            instanz_starten_tabelle += '<input type="hidden" name="image_id" value="'+image+'">\n'
-            instanz_starten_tabelle += '<table border="0" cellspacing="0" cellpadding="5">\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>AMI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+image+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Manifest:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+manifest+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Root:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+root+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>AKI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="aki_id" type="text" size="12" maxlength="12"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>ARI:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="ari_id" type="text" size="12" maxlength="12"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Typ:</b></td>\n'
-            else:
-              instanz_starten_tabelle += '<td align="right"><b>Type:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'
-            instanz_starten_tabelle += '<select name="instance_type" size="1">'+instance_types_liste+'</select>\n'
-            instanz_starten_tabelle += '</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Zone:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'
-            instanz_starten_tabelle += '<select name="zonen_auswahl" size="1">'+zonen_in_der_region+'</select>\n'
-            instanz_starten_tabelle += '</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td align="right"><b>Max:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left"><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"></td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Schl&uuml;ssel:</b></td>\n'
-            else:
-              instanz_starten_tabelle += '<td align="right"><b>Keypair:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+keys_liste+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            if sprache == "de":
-              instanz_starten_tabelle += '<td align="right"><b>Gruppe:</b></td>\n'
-            else:
-              instanz_starten_tabelle += '<td align="right"><b>Group:</b></td>\n'
-            instanz_starten_tabelle += '<td align="left">'+gruppen_liste+'</td>\n'
-            instanz_starten_tabelle += '</tr>\n'
-            instanz_starten_tabelle += '<tr>\n'
-            instanz_starten_tabelle += '<td colspan="2" align="left">'
-            if sprache == "de":
-              instanz_starten_tabelle += '<input type="submit" value="Instanz starten">'
-            else:
-              instanz_starten_tabelle += '<input type="submit" value="create Instance">'
-            instanz_starten_tabelle += '</td>\n'          
-            instanz_starten_tabelle += '</tr>\n'            
-            instanz_starten_tabelle += '</table>\n'
-            instanz_starten_tabelle += '</form>\n'
-            
+              # Not the mobile version...
+              
+              instanz_starten_tabelle += '<form action="/instanzanlegen" method="post" accept-charset="utf-8">\n'
+              instanz_starten_tabelle += '<input type="hidden" name="mobile" value="'+mobile+'">\n'
+              instanz_starten_tabelle += '<input type="hidden" name="image_id" value="'+image+'">\n'
+              instanz_starten_tabelle += '<table border="0" cellspacing="0" cellpadding="5">\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>AMI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+image+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Manifest:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+manifest+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Root:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+root+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>AKI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="aki_id" type="text" size="12" maxlength="12"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>ARI:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="ari_id" type="text" size="12" maxlength="12"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Typ:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Type:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'
+              instanz_starten_tabelle += '<select name="instance_type" size="1">'+instance_types_liste+'</select>\n'
+              instanz_starten_tabelle += '</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Zone:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'
+              instanz_starten_tabelle += '<select name="zonen_auswahl" size="1">'+zonen_in_der_region+'</select>\n'
+              instanz_starten_tabelle += '</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Min:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="number_instances_min" type="text" size="2" maxlength="2" value="1"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td align="right"><b>Max:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left"><input name="number_instances_max" type="text" size="2" maxlength="2" value="1"></td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Schl&uuml;ssel:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Keypair:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+keys_liste+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              if sprache == "de":
+                instanz_starten_tabelle += '<td align="right"><b>Gruppe:</b></td>\n'
+              else:
+                instanz_starten_tabelle += '<td align="right"><b>Group:</b></td>\n'
+              instanz_starten_tabelle += '<td align="left">'+gruppen_liste+'</td>\n'
+              instanz_starten_tabelle += '</tr>\n'
+              instanz_starten_tabelle += '<tr>\n'
+              instanz_starten_tabelle += '<td colspan="2" align="left">'
+              if sprache == "de":
+                instanz_starten_tabelle += '<input type="submit" value="Instanz starten">'
+              else:
+                instanz_starten_tabelle += '<input type="submit" value="create Instance">'
+              instanz_starten_tabelle += '</td>\n'          
+              instanz_starten_tabelle += '</tr>\n'            
+              instanz_starten_tabelle += '</table>\n'
+              instanz_starten_tabelle += '</form>\n'
+              
 
           # Wenn es Amazon EC2 ist
           if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1"):

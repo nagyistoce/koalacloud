@@ -60,7 +60,7 @@ def login(username):
       conn_region = boto.ec2.connect_to_region(zoneinderdb,
                                                 aws_access_key_id=accesskey,
                                                 aws_secret_access_key=secretaccesskey,
-                                                is_secure = False)
+                                                is_secure=False)
 
       regionname = aktuellezone
     elif regionname == "nimbus":
@@ -75,7 +75,7 @@ def login(username):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       conn_region = boto.connect_s3(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
-                                    is_secure=False,
+                                    is_secure=True,
                                     host="commondatastorage.googleapis.com",
                                     calling_format=calling_format,
                                     path="/")
@@ -87,7 +87,7 @@ def login(username):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       conn_region = boto.connect_s3(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
-                                    is_secure=True,
+                                    is_secure=False,
                                     host="cs.hosteurope.de",
                                     calling_format=calling_format,
                                     path="/")
