@@ -251,7 +251,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               else:
                 # Wenn die Zugangsdaten für Google Storage korrekt sind, dann wird hier weiter gemacht...
                 # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
-                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="GoogleStorage")
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="HostEuropeCloudStorage")
                 # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
                 results = testen.fetch(100)
                 for result in results:
