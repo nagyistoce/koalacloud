@@ -27,6 +27,7 @@ The following table shows the cloud infrastructures available that are compatibl
 || [http://open.eucalyptus.com Eucalyptus] || Private Cloud          || GPL v3      || yes ||
 || [http://www.nimbusproject.org Nimbus]   || Private Cloud          || Apache License v2.0  || yes ||
 || [http://www.opennebula.org OpenNebula]  || Private Cloud          || Apache License v2.0  || yes ||
+|| [http://openstack.org OpenStack] _Nova_ || Private Cloud          || Apache License v2.0  || np ||
 || [http://cloud.com Cloud.com]            || Private Cloud          || GPL v3      || no  ||
 || [http://nimbula.com Nimbula]            || Public Cloud           || proprietary || no  ||
 
