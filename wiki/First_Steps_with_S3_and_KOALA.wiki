@@ -25,7 +25,7 @@ If you don't have any S3 compatible Private Cloud services running, the most eas
 
 This tutorial focuses on [http://aws.amazon.com/s3/ Amazon S3] because it is the most common use case for KOALA and the Private Cloud S3 solutions have not the same level of stability and functionality.
 
-If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/s3/ Amazon S3] when you switch to one of the four AWS regions with the pull-down menu in the center of the header.
+If you have already created an AWS account and inserted your Access Key and Secret Access Key inside the *Regions* window, you can start working with [http://aws.amazon.com/s3/ Amazon S3] when you switch to one of the five AWS regions with the pull-down menu in the center of the header.
 
 Don't fear you account or data here. No new account at the IaaS is created or data  over-written. You just import your credentials into KOALA this way. 
 
