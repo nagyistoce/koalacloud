@@ -319,7 +319,7 @@ def loginelb(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
