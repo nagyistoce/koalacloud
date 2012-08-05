@@ -22,17 +22,26 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
         elb_protokoll = self.request.get('elb_protokoll')
         ELBPort = self.request.get('ELBPort')
         InstPort = self.request.get('InstPort')
-        useast1a = self.request.get('us-east-1a')
+        useast1a = self.request.get('us-east-1a') # Virginia
         useast1b = self.request.get('us-east-1b')
         useast1c = self.request.get('us-east-1c')
         useast1d = self.request.get('us-east-1d')
-        uswest1a = self.request.get('us-west-1a')
+        useast1e = self.request.get('us-east-1e')
+        uswest1a = self.request.get('us-west-1a') # Northern California
         uswest1b = self.request.get('us-west-1b')
-        euwest1a = self.request.get('eu-west-1a')
+        uswest1c = self.request.get('us-west-1c')
+        uswest2a = self.request.get('us-west-2a') # Oregon
+        uswest2b = self.request.get('us-west-2b')
+        uswest2c = self.request.get('us-west-2c')
+        euwest1a = self.request.get('eu-west-1a') # Irland
         euwest1b = self.request.get('eu-west-1b')
-        apsoutheast1a = self.request.get('ap-southeast-1a')
+        euwest1c = self.request.get('eu-west-1c')
+        apsoutheast1a = self.request.get('ap-southeast-1a') # Singapur
         apsoutheast1b = self.request.get('ap-southeast-1b')
-        apnortheast1a = self.request.get('ap-northeast-1a')
+        apnortheast1a = self.request.get('ap-northeast-1a') # Tokio
+        apnortheast1b = self.request.get('ap-northeast-1b')
+        saeast1a = self.request.get('sa-east-1a') # Sao Paulo
+        saeast1b = self.request.get('sa-east-1b')
 
         # Der Name muss ein String sein
         elb_name = str(elb_name)
