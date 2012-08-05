@@ -140,16 +140,29 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
               zones_elb.append('us-east-1c')
             if useast1d != "":
               zones_elb.append('us-east-1d')
+            if useast1e != "":
+              zones_elb.append('us-east-1e')
           if aktivezone == "us-west-1":
             if uswest1a != "":
               zones_elb.append('us-west-1a')
             if uswest1b != "":
               zones_elb.append('us-west-1b')
+            if uswest1c != "":
+              zones_elb.append('us-west-1c')
+          if aktivezone == "us-west-2":
+            if uswest2a != "":
+              zones_elb.append('us-west-2a')
+            if uswest2b != "":
+              zones_elb.append('us-west-2b')
+            if uswest2c != "":
+              zones_elb.append('us-west-2c')
           if aktivezone == "eu-west-1":
             if euwest1a != "":
               zones_elb.append('eu-west-1a')
             if euwest1b != "":
               zones_elb.append('eu-west-1b')
+            if euwest1c != "":
+              zones_elb.append('eu-west-1c')
           if aktivezone == "ap-southeast-1":
             if apsoutheast1a != "":
               zones_elb.append('ap-southeast-1a')
@@ -158,6 +171,13 @@ class CreateLoadBalancerWirklich(webapp.RequestHandler):
           if aktivezone == "ap-northeast-1":
             if apnortheast1a != "":
               zones_elb.append('ap-northeast-1a')
+            if apnortheast1b != "":
+              zones_elb.append('ap-northeast-1b')
+          if aktivezone == "sa-east-1":
+            if saeast1a != "":
+              zones_elb.append('sa-east-1a')
+            if saeast1b != "":
+              zones_elb.append('sa-east-1b')
           listeners_elb = []
           listeners_elb.append((ELBPort,InstPort,elb_protokoll))
 
