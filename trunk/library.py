@@ -36,7 +36,7 @@ def login(username):
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -54,7 +54,7 @@ def login(username):
       port = db_eintrag.port
       regionname = db_eintrag.regionname
 
-    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "ap-southeast-1" or zoneinderdb == "ap-northeast-1":
+    if zoneinderdb == "us-east-1" or zoneinderdb == "eu-west-1" or zoneinderdb == "us-west-1" or zoneinderdb == "us-west-2" or zoneinderdb == "ap-southeast-1" or zoneinderdb == "ap-northeast-1" or zoneinderdb == "sa-east-1":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_region = boto.ec2.connect_to_region(zoneinderdb,
@@ -230,10 +230,14 @@ def amazon_region(username):
             zone_amazon = "(eu-west-1)"
         elif result.aktivezone == "us-west-1":
             zone_amazon = "(us-west-1)"
+        elif result.aktivezone == "us-west-2":
+            zone_amazon = "(us-west-2)"
         elif result.aktivezone == "ap-southeast-1":
             zone_amazon = "(ap-southeast-1)"
         elif result.aktivezone == "ap-northeast-1":
             zone_amazon = "(ap-northeast-1)"
+        elif result.aktivezone == "sa-east-1":
+            zone_amazon = "(sa-east-1)"
         else:
             zone_amazon = ""
 
@@ -256,19 +260,25 @@ def zonen_liste_funktion(username,sprache,mobile):
         for test in results:
             zonen_liste = zonen_liste + '<option>'
             if test.eucalyptusname == "Amazon":
-                zonen_liste = zonen_liste + 'EC2 US East'
+                zonen_liste = zonen_liste + 'EC2 US East Virginia'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'EC2 US West'
+                zonen_liste = zonen_liste + 'EC2 US West Northern California'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
-                zonen_liste = zonen_liste + 'EC2 EU West'
+                zonen_liste = zonen_liste + 'EC2 US West Oregon'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'EC2 EU West Ireland'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
                 zonen_liste = zonen_liste + 'EC2 Asia Pacific Singapore'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
                 zonen_liste = zonen_liste + 'EC2 Asia Pacific Tokyo'
+                zonen_liste = zonen_liste + '</option>'
+                zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'EC2 South America Sao Paulo'
             else:
                 #zonen_liste = zonen_liste + 'Eucalyptus'
                 #zonen_liste = zonen_liste + ' ('
@@ -326,7 +336,7 @@ def loginelb(username):
       port = db_eintrag.port
 
     if zoneinderdb == "us-east-1":
-      hostname = "us-east-1.elasticloadbalancing.amazonaws.com"
+      hostname = "elasticloadbalancing.us-east-1.amazonaws.com"
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
@@ -337,7 +347,7 @@ def loginelb(username):
                               path="/")
       regionname = aktuellezone
     elif zoneinderdb == "eu-west-1":
-      hostname = "eu-west-1.elasticloadbalancing.amazonaws.com"
+      hostname = "elasticloadbalancing.eu-west-1.amazonaws.com"
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
@@ -348,7 +358,18 @@ def loginelb(username):
                               path="/")
       regionname = aktuellezone
     elif zoneinderdb == "us-west-1":
-      hostname = "us-west-1.elasticloadbalancing.amazonaws.com"
+      hostname = "elasticloadbalancing.us-west-1.amazonaws.com"
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+                              aws_secret_access_key=secretaccesskey,
+                              is_secure=False,
+                              host=hostname,
+                              #port=8773,
+                              path="/")
+      regionname = aktuellezone
+    elif zoneinderdb == "us-west-2":
+      hostname = "elasticloadbalancing.us-west-2.amazonaws.com"
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
@@ -359,7 +380,7 @@ def loginelb(username):
                               path="/")
       regionname = aktuellezone
     elif zoneinderdb == "ap-southeast-1":
-      hostname = "ap-southeast-1.elasticloadbalancing.amazonaws.com"
+      hostname = "elasticloadbalancing.ap-southeast-1.amazonaws.com"
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
@@ -368,8 +389,20 @@ def loginelb(username):
                               host=hostname,
                               #port=8773,
                               path="/")
+      regionname = aktuellezone
     elif zoneinderdb == "ap-northeast-1":
       hostname = "elasticloadbalancing.ap-northeast-1.amazonaws.com"
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+                              aws_secret_access_key=secretaccesskey,
+                              is_secure=False,
+                              host=hostname,
+                              #port=8773,
+                              path="/")
+      regionname = aktuellezone
+    elif zoneinderdb == "sa-east-1":
+      hostname = "elasticloadbalancing.sa-east-1.amazonaws.com"
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
@@ -391,8 +424,7 @@ def logins3(username):
 
   for db_eintrag in aktivezone:
     zoneinderdb = db_eintrag.aktivezone
-
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       aktuellezone = "Amazon"
     else:
       aktuellezone = zoneinderdb
@@ -408,7 +440,7 @@ def logins3(username):
       endpointurl = db_eintrag.endpointurl
       port = db_eintrag.port
 
-    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "ap-southeast-1", "ap-northeast-1"):
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       calling_format=boto.s3.connection.OrdinaryCallingFormat()
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
