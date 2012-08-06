@@ -402,6 +402,9 @@ class BucketInhaltPur(webapp.RequestHandler):
           elif zugangstyp == "HostEuropeCloudStorage":
             keys_upload_formular += '<form action="http://'+bucketname+'.cs.hosteurope.de'
             keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+          elif zugangstyp == "DunkelCloudStorage":
+            keys_upload_formular += '<form action="http://'+bucketname+'.dcs.dunkel.de'
+            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           else:
             keys_upload_formular += '<form action="http://s3.amazonaws.com/'
             keys_upload_formular += bucketname
