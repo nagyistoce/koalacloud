@@ -34,6 +34,8 @@ class Instanzen(webapp.RequestHandler):
           self.redirect('/')
         # Eventuell vorhande Fehlermeldung holen
         message = self.request.get('message') 
+        # Eventuell vorhande Fehlernachricht holen
+        fehlernachricht = self.request.get('fehlernachricht') 
 
         # Nachsehen, ob eine Region/Zone ausgewählte wurde
         aktivezone = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
@@ -98,7 +100,7 @@ class Instanzen(webapp.RequestHandler):
             
 
             
-          # It is not Google Storage. It is an IaaS
+          # It is not Google Storage or Host Europe Cloud Storage => it is an IaaS
           else:          
 
             if sprache != "de":
@@ -117,6 +119,8 @@ class Instanzen(webapp.RequestHandler):
             # Ansonsten wird die Nachricht rot formatiert
             elif message in ("8", "9", "10", "74", "75", "76", "78", "80", "82", "122", "124", "126"):
               input_error_message = format_error_message_red(input_error_message)
+              if fehlernachricht != None:
+                input_error_message += format_error_message_red(fehlernachricht)
             else:
               input_error_message = ""
   

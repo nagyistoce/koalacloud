@@ -392,13 +392,9 @@ class BucketInhaltPur(webapp.RequestHandler):
           if zugangstyp == "Eucalyptus":
             endpointurl = endpointurl_erhalten(username,regionname)
             port = port_erhalten(username,regionname) 
-            keys_upload_formular += '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'
-            keys_upload_formular += bucketname
-            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular += '<form action="http://'+str(endpointurl)+':'+str(port)+'/services/Walrus/'+bucketname+'" method="post" enctype="multipart/form-data">\n'
           elif zugangstyp == "GoogleStorage":
-            keys_upload_formular += '<form action="http://commondatastorage.googleapis.com/'
-            keys_upload_formular += bucketname
-            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular += '<form action="http://commondatastorage.googleapis.com/'+bucketname+'" method="post" enctype="multipart/form-data">\n'
           elif zugangstyp == "HostEuropeCloudStorage":
             keys_upload_formular += '<form action="http://'+bucketname+'.cs.hosteurope.de'
             keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
@@ -406,15 +402,13 @@ class BucketInhaltPur(webapp.RequestHandler):
             keys_upload_formular += '<form action="http://'+bucketname+'.dcs.dunkel.de'
             keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
           else:
-            keys_upload_formular += '<form action="http://s3.amazonaws.com/'
-            keys_upload_formular += bucketname
-            keys_upload_formular += '" method="post" enctype="multipart/form-data">\n'
+            keys_upload_formular += '<form action="http://s3.amazonaws.com/'+bucketname+'" method="post" enctype="multipart/form-data">\n'
           
           if mobile == "true":
             # mobile version...
-            keys_upload_formular += '<table border="0" cellspacing="0" cellpadding="5">'
-            keys_upload_formular += '<tr>'
-            keys_upload_formular += '<td>'
+            keys_upload_formular += '<table border="0" cellspacing="0" cellpadding="5">\n'
+            keys_upload_formular += '<tr>\n'
+            keys_upload_formular += '<td>\n'
             keys_upload_formular += '<input type="hidden" name="key" value="${filename}">\n'
             keys_upload_formular += '<select name="acl" size="1">\n'
             keys_upload_formular += '<option selected="selected">public-read</option>\n'
