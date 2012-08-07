@@ -58,9 +58,9 @@ def login(username):
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
       conn_region = boto.ec2.connect_to_region(zoneinderdb,
-                                                aws_access_key_id=accesskey,
-                                                aws_secret_access_key=secretaccesskey,
-                                                is_secure=False)
+                                               aws_access_key_id=accesskey,
+                                               aws_secret_access_key=secretaccesskey,
+                                               is_secure=True)
 
       regionname = aktuellezone
     elif regionname == "nimbus":
