@@ -355,7 +355,6 @@ def loginelb(username):
                               aws_access_key_id=accesskey,
                               aws_secret_access_key=secretaccesskey,
                               is_secure=True,
-                              #host=hostname,
                               #port=8773,
                               path="/")
       regionname = aktuellezone
