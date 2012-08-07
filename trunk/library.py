@@ -347,80 +347,15 @@ def loginelb(username):
       endpointurl = db_eintrag.endpointurl
       port = db_eintrag.port
 
-    if zoneinderdb == "us-east-1":
-      hostname = "elasticloadbalancing.us-east-1.amazonaws.com"
+
+    if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):   
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
+      conn_elb = boto.ec2.elb.connect_to_region(zoneinderdb,
+                              aws_access_key_id=accesskey,
                               aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "eu-west-1":
-      hostname = "elasticloadbalancing.eu-west-1.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "us-west-1":
-      hostname = "elasticloadbalancing.us-west-1.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "us-west-2":
-      hostname = "elasticloadbalancing.us-west-2.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "ap-southeast-1":
-      hostname = "elasticloadbalancing.ap-southeast-1.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "ap-northeast-1":
-      hostname = "elasticloadbalancing.ap-northeast-1.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
-                              #port=8773,
-                              path="/")
-      regionname = aktuellezone
-    elif zoneinderdb == "sa-east-1":
-      hostname = "elasticloadbalancing.sa-east-1.amazonaws.com"
-      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
-      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_elb = boto.ec2.elb.ELBConnection(aws_access_key_id=accesskey,
-                              aws_secret_access_key=secretaccesskey,
-                              is_secure=False,
-                              host=hostname,
+                              is_secure=True,
+                              #host=hostname,
                               #port=8773,
                               path="/")
       regionname = aktuellezone
