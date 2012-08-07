@@ -110,10 +110,13 @@ class InstanzAnlegen(webapp.RequestHandler):
                                                   placement=zonen_auswahl,
                                                   kernel_id=aki_id,
                                                   ramdisk_id=ari_id)
-        except EC2ResponseError:
+        except EC2ResponseError, fehlernachricht:
+          # Zum Testen: self.response.out.write(fehlernachricht)
           # Wenn es nicht geklappt hat
           fehlermeldung = "78"
-          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung)
+          #So geht es auch und dann wird nur der hintere Teil der Fehlermeldung ausgegeben.
+          #self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung+'&fehlernachricht='+str(fehlernachricht.endElement))
+          self.redirect('/instanzen?mobile='+str(mobile)+'&message='+fehlermeldung+'&fehlernachricht='+str(fehlernachricht))
         except DownloadError:
           # Diese Exception hilft gegen diese beiden Fehler:
           # DownloadError: ApplicationError: 2 timed out
