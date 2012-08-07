@@ -236,20 +236,9 @@ def amazon_region(username):
     results = aktivezone.fetch(10)
 
     for result in results:
-        if result.aktivezone == "us-east-1":
-            zone_amazon = "(us-east-1)"
-        elif result.aktivezone == "eu-west-1":
-            zone_amazon = "(eu-west-1)"
-        elif result.aktivezone == "us-west-1":
-            zone_amazon = "(us-west-1)"
-        elif result.aktivezone == "us-west-2":
-            zone_amazon = "(us-west-2)"
-        elif result.aktivezone == "ap-southeast-1":
-            zone_amazon = "(ap-southeast-1)"
-        elif result.aktivezone == "ap-northeast-1":
-            zone_amazon = "(ap-northeast-1)"
-        elif result.aktivezone == "sa-east-1":
-            zone_amazon = "(sa-east-1)"
+        if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
+            # Hier wird einach nur der Text in result.aktivezone von runden Klammern umschlossen 
+            zone_amazon = '(' + str(result.aktivezone) + ')'
         else:
             zone_amazon = ""
 
