@@ -113,7 +113,7 @@ class ImageStarten(webapp.RequestHandler):
                 liste_instanztypen_eucalyptus = ["m1.small", "c1.medium"]
             else:
               # Liste mit den Instanz-Typen wenn es ein 64-Bit Image ist
-              liste_instanztypen_eucalyptus = ["t1.micro", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.xlarge"]
+              liste_instanztypen_eucalyptus = ["t1.micro", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge", "cc1.4xlarge", "cc2.8xlarge", "cg1.4xlarge"]
             # Anzahl der Elemente in der Liste
             laenge_liste_instanztypen_eucalyptus = len(liste_instanztypen_eucalyptus)
 
@@ -402,9 +402,13 @@ class ImageStarten(webapp.RequestHandler):
                 tabelle_ec2_instanztypen += '<th>Cores</th>'
               tabelle_ec2_instanztypen += '<th align="center">ECU</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
-                tabelle_ec2_instanztypen += '<th>Speicher</th>'
+                tabelle_ec2_instanztypen += '<th align="center">RAM</th>'
               else:               # Wenn die Sprache Englisch ist...
-                tabelle_ec2_instanztypen += '<th>Memory</th>'
+                tabelle_ec2_instanztypen += '<th align="center">RAM</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen += '<th align="center">Speicher</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen += '<th align="center">Storage</th>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>t1.micro</td>'
@@ -415,6 +419,10 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen += '<td align="center">up to 2</td>'
               tabelle_ec2_instanztypen += '<td align="center">613 MB</td>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen += '<td align="center">nur EBS</td>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen += '<td align="center">only EBS</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m1.small</td>'
@@ -422,6 +430,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               tabelle_ec2_instanztypen += '<td align="center">1</td>'
               tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">160 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>c1.medium</td>'
@@ -429,6 +438,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">5</td>'
               tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">350 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '</table>'
             
@@ -454,9 +464,13 @@ class ImageStarten(webapp.RequestHandler):
                 tabelle_ec2_instanztypen += '<th>Cores</th>'
               tabelle_ec2_instanztypen += '<th align="center">ECU</th>'
               if sprache == "de": # Wenn die Sprache Deutsch ist...
-                tabelle_ec2_instanztypen += '<th>Speicher</th>'
+                tabelle_ec2_instanztypen += '<th align="center">RAM</th>'
               else:               # Wenn die Sprache Englisch ist...
-                tabelle_ec2_instanztypen += '<th>Memory</th>'
+                tabelle_ec2_instanztypen += '<th align="center">RAM</th>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen += '<th align="center">Speicher</th>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen += '<th align="center">Storage</th>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>t1.micro</td>'
@@ -467,6 +481,26 @@ class ImageStarten(webapp.RequestHandler):
               else:               # Wenn die Sprache Englisch ist...
                 tabelle_ec2_instanztypen += '<td align="center">up to 2</td>'
               tabelle_ec2_instanztypen += '<td align="center">613 MB</td>'
+              if sprache == "de": # Wenn die Sprache Deutsch ist...
+                tabelle_ec2_instanztypen += '<td align="center">nur EBS</td>'
+              else:               # Wenn die Sprache Englisch ist...
+                tabelle_ec2_instanztypen += '<td align="center">only EBS</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>m1.small</td>'
+              tabelle_ec2_instanztypen += '<td align="center">32</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">160 GB</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>m1.medium</td>'
+              tabelle_ec2_instanztypen += '<td align="center">32</td>'
+              tabelle_ec2_instanztypen += '<td align="center">2</td>'
+              tabelle_ec2_instanztypen += '<td align="center">5</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">410 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m1.large</td>'
@@ -474,6 +508,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">7.5 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">850 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m1.xlarge</td>'
@@ -481,6 +516,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">15 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1690 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m2.xlarge</td>'
@@ -488,6 +524,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">2</td>'
               tabelle_ec2_instanztypen += '<td align="center">6.5</td>'
               tabelle_ec2_instanztypen += '<td align="center">17.1 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">420 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m2.2xlarge</td>'
@@ -495,6 +532,7 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">4</td>'
               tabelle_ec2_instanztypen += '<td align="center">13</td>'
               tabelle_ec2_instanztypen += '<td align="center">34.2 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">850 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>m2.4xlarge</td>'
@@ -502,6 +540,15 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">26</td>'
               tabelle_ec2_instanztypen += '<td align="center">68.4 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1690 GB</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>c1.medium</td>'
+              tabelle_ec2_instanztypen += '<td align="center">32</td>'
+              tabelle_ec2_instanztypen += '<td align="center">2</td>'
+              tabelle_ec2_instanztypen += '<td align="center">5</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1.7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">350 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '<tr>'
               tabelle_ec2_instanztypen += '<td>c1.xlarge</td>'
@@ -509,6 +556,31 @@ class ImageStarten(webapp.RequestHandler):
               tabelle_ec2_instanztypen += '<td align="center">8</td>'
               tabelle_ec2_instanztypen += '<td align="center">20</td>'
               tabelle_ec2_instanztypen += '<td align="center">7 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1690 GB</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>cc1.4xlarge</td>'
+              tabelle_ec2_instanztypen += '<td align="center">64</td>'
+              tabelle_ec2_instanztypen += '<td align="center">8</td>'
+              tabelle_ec2_instanztypen += '<td align="center">33,5</td>'
+              tabelle_ec2_instanztypen += '<td align="center">23 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1690 GB</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>cc2.8xlarge</td>'
+              tabelle_ec2_instanztypen += '<td align="center">64</td>'
+              tabelle_ec2_instanztypen += '<td align="center">16</td>'
+              tabelle_ec2_instanztypen += '<td align="center">88</td>'
+              tabelle_ec2_instanztypen += '<td align="center">60.5 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">3370 GB</td>'
+              tabelle_ec2_instanztypen += '</tr>'
+              tabelle_ec2_instanztypen += '<tr>'
+              tabelle_ec2_instanztypen += '<td>cg1.4xlarge</td>'
+              tabelle_ec2_instanztypen += '<td align="center">64</td>'
+              tabelle_ec2_instanztypen += '<td align="center">8</td>'
+              tabelle_ec2_instanztypen += '<td align="center">33,5</td>'
+              tabelle_ec2_instanztypen += '<td align="center">22 GB</td>'
+              tabelle_ec2_instanztypen += '<td align="center">1690 GB</td>'
               tabelle_ec2_instanztypen += '</tr>'
               tabelle_ec2_instanztypen += '</table>'
               
