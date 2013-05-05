@@ -7,13 +7,13 @@ Sind sie ganz sicher, dass Sie <b>alle</b> Ihre Volumes l&ouml;schen wollen?
 <tr>
 <td align="center">
 <form action="/alle_volumes_loeschen_definitiv" method="get">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <input type="submit" value="Ja! Alle Volumes l&ouml;schen">
 </form>
 </td>
 <td align="center">
 <form action="/volumes" method="get">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <input type="submit" value="Nein">
 </form>
 </td>

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-<b>Load Balancer {{ load_balancer_name }} &auml;ndern</b>
+<b>Load Balancer {{ load_balancer_name|safe }} &auml;ndern</b>
 
 <p>&nbsp;</p>
 
@@ -11,7 +11,7 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_zonen_aendern }}
+{{ tabelle_zonen_aendern|safe }}
 
 <p>&nbsp;</p>
 
@@ -19,6 +19,6 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_instanz_anhaengen }}
+{{ tabelle_instanz_anhaengen|safe }}
 
 {% endblock %}

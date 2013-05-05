@@ -7,13 +7,13 @@ Are you absolutely sure, you want to erase <b>all</b> volumes?
 <tr>
 <td align="center">
 <form action="/alle_volumes_loeschen_definitiv" method="get">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <input type="submit" value="yes! erase all volumes">
 </form>
 </td>
 <td align="center">
 <form action="/volumes" method="get">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <input type="submit" value="no">
 </form>
 </td>

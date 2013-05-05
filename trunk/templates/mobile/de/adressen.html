@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <form action="/allocate_address" method="post" accept-charset="utf-8">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <input type="submit" value="Neue elastische IP erzeugen">
 </form>
 
@@ -14,7 +14,7 @@
 
 <p>&nbsp;</p>
 
-{{ adressentabelle }}
+{{ adressentabelle|safe }}
 
 
 {% endblock %}

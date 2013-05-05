@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-{{ reservationliste }}
+{{ reservationliste|safe }}
 
-{{ alle_instanzen_loeschen_button }}
+{{ alle_instanzen_loeschen_button|safe }}
 
 {% endblock %}

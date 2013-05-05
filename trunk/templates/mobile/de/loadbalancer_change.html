@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <b>Elastischen Lastverteiler &auml;ndern</b>
 
@@ -11,7 +11,7 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_zonen_aendern }}
+{{ tabelle_zonen_aendern|safe }}
 
 <p>&nbsp;</p>
 
@@ -19,6 +19,6 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_instanz_anhaengen }}
+{{ tabelle_instanz_anhaengen|safe }}
 
 {% endblock %}

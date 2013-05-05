@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-{{ elb_erzeugen_tabelle }}
+{{ elb_erzeugen_tabelle|safe }}
 
 {% endblock %}

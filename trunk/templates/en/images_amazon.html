@@ -10,24 +10,24 @@ As a workaround, a list of favorite AMIs can be created by yourself and used to 
 <p>&nbsp;</p>
 
 <h3>
-<b>Your favorite AMIs inside the zone {{ zone_in_der_wir_uns_befinden }}</b>
+<b>Your favorite AMIs inside the zone {{ zone_in_der_wir_uns_befinden|safe }}</b>
 </h3>
 
 <p>&nbsp;</p>
 
 <form action="/favoritamierzeugen" method="post" accept-charset="utf-8">
-<input type="hidden" name="zone" value="{{ zone_in_der_wir_uns_befinden }}">
+<input type="hidden" name="zone" value="{{ zone_in_der_wir_uns_befinden|safe }}">
 <input name="ami" type="text" size="12" maxlength="12">
 <input type="submit" value="create favorite">
 </form>
 
 <p>Please use this schema: <tt>ami-12345678</tt></p>
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <p>&nbsp;</p>
 
-{{ liste_favouriten }}
+{{ liste_favouriten|safe }}
 
 <!--
 <p>&nbsp;</p>
@@ -36,7 +36,7 @@ As a workaround, a list of favorite AMIs can be created by yourself and used to 
 
 <p>&nbsp;</p>
 
-{{ quickstart_tabelle }}
+{{ quickstart_tabelle|safe }}
 -->
 
 {% endblock %}s

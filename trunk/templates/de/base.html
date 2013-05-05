@@ -31,34 +31,34 @@ if((navigator.userAgent.match(/iPhone/i)) ||
 </script>
 
 </head>
-<body {{ bodycommand }}>
+<body {{ bodycommand|safe }}>
 
 <div id="head">
 
 <table width="100%" border="0">
 <tr>
 <td width="120"><h3>
-<a href="{{ url }}">{{ url_linktext }}</a></h3></td>
-<td ALIGN="center">{{ zonen_liste }}</td>
+<a href="{{ url|safe }}">{{ url_linktext|safe }}</a></h3></td>
+<td ALIGN="center">{{ zonen_liste|safe }}</td>
 <td rowspan="2" ALIGN="right" width="120">
-<a href="/sprache?lang=de{{ path }}" title="Deutsch"><img src="bilder/german.png" width="37" height="20" border="0" alt="Deutsch"></a>
-<a href="/sprache?lang=en{{ path }}" title="Englisch"><img src="bilder/english.png" width="37" height="20" border="0" alt="English"></a>
+<a href="/sprache?lang=de{{ path|safe }}" title="Deutsch"><img src="bilder/german.png" width="37" height="20" border="0" alt="Deutsch"></a>
+<a href="/sprache?lang=en{{ path|safe }}" title="Englisch"><img src="bilder/english.png" width="37" height="20" border="0" alt="English"></a>
 </td>
 </tr>
 <tr>
-<td colspan="2"><h3>Region: {{ zone }} {{ zone_amazon }}</h3></td>
+<td colspan="2"><h3>Region: {{ zone|safe }} {{ zone_amazon|safe }}</h3></td>
 </tr>
 </table>
 </div>
 
 
 
-{{ javascript_funktion }}
+{{ javascript_funktion|safe }}
 
   <div id="navigationsBar">
   <div id="innerNavigationsBar">
   <h3>
-{{ navigations_bar }}
+{{ navigations_bar|safe }}
   </h3>
   </div>
   </div>

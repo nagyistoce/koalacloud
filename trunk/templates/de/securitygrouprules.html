@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <form action="/grupperegelanlegen" method="post" accept-charset="utf-8">
-<input type="hidden" name="gruppe" value="{{ gruppe }}">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="gruppe" value="{{ gruppe|safe }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
   <td align="right">Protokoll:</td>
@@ -28,10 +28,10 @@
 
 <p>&nbsp;</p>
 
-<b>Regeln in der Sicherheitsgruppe {{ gruppe }}</b>
+<b>Regeln in der Sicherheitsgruppe {{ gruppe|safe }}</b>
 
 <p>&nbsp;</p>
 
-{{ regelntabelle }}
+{{ regelntabelle|safe }}
 
 {% endblock %}

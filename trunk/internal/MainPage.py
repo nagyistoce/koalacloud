@@ -2,9 +2,10 @@
 # -*- coding: iso-8859-15 -*-
 
 import os
+import webapp2 as webapp
 
 from google.appengine.api import users
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api.urlfetch import DownloadError

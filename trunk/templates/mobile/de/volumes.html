@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <form action="/volumeerzeugen" method="post" accept-charset="utf-8">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
 <td>Gr&ouml;&szlig;e:</td>
@@ -22,7 +22,7 @@ Verf&uuml;gbarkeitszone:
 </td>
 <td colspan="2" align="left">
 <select name="zone" size="1">
-{{ zonen_in_der_region }}
+{{ zonen_in_der_region|safe }}
 </select><br>
 </td>
 </tr>
@@ -40,8 +40,8 @@ Verf&uuml;gbarkeitszone:
 
 <p>&nbsp;</p>
 
-{{ volumestabelle }}
+{{ volumestabelle|safe }}
 
-{{ alle_volumes_loeschen_button }}
+{{ alle_volumes_loeschen_button|safe }}
 
 {% endblock %}
