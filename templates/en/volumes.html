@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <form action="/volumeerzeugen" method="post" accept-charset="utf-8">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
 <td>Size:</td>
@@ -16,7 +16,7 @@
     </select>
   </td>
   <td>Availabiliy Zone:</td>
-  <td align="left"><select name="zone" size="1">{{ zonen_in_der_region }}</select></td>
+  <td align="left"><select name="zone" size="1">{{ zonen_in_der_region|safe }}</select></td>
 </tr>
 <tr>
   <td colspan="5"><input type="submit" value="create new EBS volume"></td>
@@ -26,12 +26,12 @@
 
 <p>&nbsp;</p>
 
-<b>Your EBS volumes inside the region {{ zone }}</b>
+<b>Your EBS volumes inside the region {{ zone|safe }}</b>
 
 <p>&nbsp;</p>
 
-{{ volumestabelle }}
+{{ volumestabelle|safe }}
 
-{{ alle_volumes_loeschen_button }}
+{{ alle_volumes_loeschen_button|safe }}
 
 {% endblock %}

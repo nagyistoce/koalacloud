@@ -22,6 +22,7 @@ import sys
 import cgi
 import time
 import re
+import webapp2 as webapp
 
 from ebs.VolumesLoesen import *
 from ebs.VolumesEntfernen import *
@@ -341,7 +342,8 @@ def main():
                                           ('/alle_volumes_loeschen', AlleVolumesLoeschenFrage),
                                           ('/alle_volumes_loeschen_definitiv', AlleVolumesLoeschenDefinitiv)],
                                           debug=True)
-    wsgiref.handlers.CGIHandler().run(application)
+    run_wsgi_app(application)
+    #wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-{{ ansicht_amazon_button }}
+{{ ansicht_amazon_button|safe }}
 
-{{ snapshotstabelle }}
+{{ snapshotstabelle|safe }}
 
 {% endblock %}

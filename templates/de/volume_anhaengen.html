@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ neues_fenster }}
+{{ neues_fenster|safe }}
 
 <h3>
 <b>Volume anhaengen</b>
@@ -9,10 +9,10 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_anhaengen }}
+{{ tabelle_anhaengen|safe }}
 
 <p>&nbsp;</p>
 
-{{ ebs_volumes_eucalyptus_warnung }}
+{{ ebs_volumes_eucalyptus_warnung|safe }}
 
 {% endblock %}

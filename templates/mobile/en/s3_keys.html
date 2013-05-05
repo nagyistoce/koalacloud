@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-{{ keys_upload_formular }}
-
-<p>&nbsp;</p>
-
-{{ eingabeformular_neues_verzeichnis }}
+{{ keys_upload_formular|safe }}
 
 <p>&nbsp;</p>
 
-<b>List of keys inside the bucket {{ bucketname }}</b>
+{{ eingabeformular_neues_verzeichnis|safe }}
 
 <p>&nbsp;</p>
 
-{{ bucket_keys_tabelle }}
-
-{{ alle_keys_loeschen_button }}
+<b>List of keys inside the bucket {{ bucketname|safe }}</b>
 
 <p>&nbsp;</p>
 
-{{ verzeichnis_warnung }}
+{{ bucket_keys_tabelle|safe }}
+
+{{ alle_keys_loeschen_button|safe }}
 
 <p>&nbsp;</p>
 
-{{ eucalyptus_warnung }}
+{{ verzeichnis_warnung|safe }}
+
+<p>&nbsp;</p>
+
+{{ eucalyptus_warnung|safe }}
 
 {% endblock %}
 

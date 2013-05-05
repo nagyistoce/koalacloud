@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block sideBarContent %}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
 <form action="/bucketerzeugen" method="post" accept-charset="utf-8">
-<input type="hidden" name="mobile" value="{{ mobile }}">
+<input type="hidden" name="mobile" value="{{ mobile|safe }}">
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
 <td>
@@ -21,11 +21,11 @@
 
 <p>&nbsp;</p>
 
-<b>Your buckets inside the region {{ zone }}</b>
+<b>Your buckets inside the region {{ zone|safe }}</b>
 
 <p>&nbsp;</p>
 
-{{ bucketstabelle }}
+{{ bucketstabelle|safe }}
 
 <p>&nbsp;</p>
 

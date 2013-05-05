@@ -5,7 +5,7 @@
 
 <p>&nbsp;</p>
 
-{{ tabelle_logins }}
+{{ tabelle_logins|safe }}
 
 <p>&nbsp;</p>
 
@@ -20,7 +20,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="ec2">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -30,7 +30,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="GoogleStorage">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -40,7 +40,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="HostEuropeCloudStorage">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -50,7 +50,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="DunkelCloudStorage">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -60,7 +60,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="eucalyptus">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -70,7 +70,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="nimbus">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -80,7 +80,7 @@
     <td align="center">
       <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="opennebula">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
@@ -88,13 +88,13 @@
   </tr>
 </table>
 
-{{ eingabefelder }}
+{{ eingabefelder|safe }}
 
-{{ input_error_message }}
+{{ input_error_message|safe }}
 
-{{ version_warnung }}
+{{ version_warnung|safe }}
 
-{{ port_warnung }}
+{{ port_warnung|safe }}
 
 <p>&nbsp;</p>
 
@@ -104,7 +104,7 @@
   <tr>
     <td align="center">
       <form action="/persoenliche_datan_loeschen" method="get">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="erase all your personal data in KOALA">
       </form>
     </td>
@@ -115,7 +115,7 @@
   <tr>
     <td align="center">
       <form action="/persoenliche_favoriten_loeschen" method="get">
-        <input type="hidden" name="mobile" value="{{ mobile }}">   
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="erase only your EC2 favorites in KOALA">
       </form>
     </td>
