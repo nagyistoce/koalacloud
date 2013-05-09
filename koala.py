@@ -280,7 +280,7 @@ def main():
                                           ('/images', Images),
                                           ('/imagestarten', ImageStarten),
                                           ('/console_output', ConsoleOutput),
-                                          ('/login', Login),
+                                         # ('/login', Login), #This can be erased!
                                           ('/schluessel', Keys),
                                           ('/schluesselentfernen', KeyEntfernen),
                                           ('/schluesselerzeugen', KeyErzeugen),

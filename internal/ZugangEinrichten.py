@@ -67,6 +67,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 connection = boto.connect_ec2(aws_access_key_id=accesskey,
                                             aws_secret_access_key=secretaccesskey,
                                             is_secure=False,
+                                            validate_certs=False,
                                             region=region,
                                             #port=8773,
                                             path="/")
@@ -150,6 +151,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 connection = boto.connect_s3(aws_access_key_id=accesskey,
                                                 aws_secret_access_key=secretaccesskey,
                                                 is_secure=False,
+                                                validate_certs=False,
                                                 host="commondatastorage.googleapis.com",
                                                 calling_format=calling_format,
                                                 path="/")
@@ -237,6 +239,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 connection = boto.connect_s3(aws_access_key_id=accesskey,
                                                 aws_secret_access_key=secretaccesskey,
                                                 is_secure=True,
+                                                validate_certs=False,
                                                 host="cs.hosteurope.de",
                                                 calling_format=calling_format,
                                                 path="/")
@@ -325,6 +328,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 connection = boto.connect_s3(aws_access_key_id=accesskey,
                                                 aws_secret_access_key=secretaccesskey,
                                                 is_secure=True,
+                                                validate_certs=False,
                                                 host="dcs.dunkel.de",
                                                 calling_format=calling_format,
                                                 path="/")
@@ -523,7 +527,7 @@ class ZugangEinrichten(webapp.RequestHandler):
               # Prüfen, ob die Zugangsdaten für Eucalyptus korrekt sind
               try:
                 # Zugangsdaten testen
-                connection = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, port=int(port))
+                connection = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, validate_certs=False, port=int(port))
                 connection.host = endpointurl
 
                 instances = connection.get_all_instances()
@@ -625,6 +629,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 connection = boto.connect_ec2(aws_access_key_id=accesskey,
                                               aws_secret_access_key=secretaccesskey,
                                               is_secure=False,
+                                              validate_certs=False,
                                               region=region,
                                               port=port,
                                               path="/services/Eucalyptus")

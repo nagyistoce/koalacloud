@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
+#This can be erased!
+
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -25,16 +27,39 @@ class Login(webapp.RequestHandler):
           regionname = "ap-northeast-1"
         if cloud_region == "Eucalyptus":
           regionname = "eucalyptus"
+          
+          
+#                zonen_liste = zonen_liste + 'EC2 US East Virginia'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 US West N.California'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 US West Oregon'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 EU West Ireland'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 AP Singapore'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 AP Tokyo'
+#                zonen_liste = zonen_liste + '</option>'
+#                zonen_liste = zonen_liste + '<option>'
+#                zonen_liste = zonen_liste + 'EC2 S.America Sao Paulo'  
 
         if cloud_region == "Amazon EC2 EU West" or cloud_region == "Amazon EC2 US East" or cloud_region == "Amazon EC2 US West" or cloud_region == "Amazon EC2 Asia Pacific":
           conn_region = boto.ec2.connect_to_region(regionname,
                                                    aws_access_key_id=accesskey,
                                                    aws_secret_access_key=secretaccesskey,
-                                                   is_secure = False)
+                                                   is_secure = False,
+                                                   validate_certs=False)
         if cloud_region == "Eualyptus":
           conn_region = boto.connect_ec2(aws_access_key_id=accesskey,
                                          aws_secret_access_key=secretaccesskey,
                                          is_secure=False,
+                                         validate_certs=False,
                                          region=RegionInfo(name="eucalyptus", endpoint=endpointurl),
                                          port=8773,
                                          path="/services/Eucalyptus")
