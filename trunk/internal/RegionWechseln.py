@@ -23,7 +23,7 @@ class RegionWechseln(webapp.RequestHandler):
         if 'US East Virginia' in regionen:
           zone = "us-east-1"
           zugangstyp = "Amazon"
-        elif 'US West Northern California' in regionen:
+        elif 'US West N.California' in regionen:
           zone = "us-west-1"
           zugangstyp = "Amazon"
         elif 'US West Oregon' in regionen:
@@ -32,13 +32,13 @@ class RegionWechseln(webapp.RequestHandler):
         elif 'EU West Ireland' in regionen:
           zone = "eu-west-1"
           zugangstyp = "Amazon"
-        elif 'Asia Pacific Singapore' in regionen:
+        elif 'AP Singapore' in regionen:
           zone = "ap-southeast-1"
           zugangstyp = "Amazon"
-        elif 'Asia Pacific Tokyo' in regionen:
+        elif 'AP Tokyo' in regionen:
           zone = "ap-northeast-1"
           zugangstyp = "Amazon"
-        elif 'South America Sao Paulo' in regionen:
+        elif 'S.America Sao Paulo' in regionen:
           zone = "sa-east-1"
           zugangstyp = "Amazon"
         else:
