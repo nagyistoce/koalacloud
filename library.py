@@ -60,7 +60,8 @@ def login(username):
       conn_region = boto.ec2.connect_to_region(zoneinderdb,
                                                aws_access_key_id=accesskey,
                                                aws_secret_access_key=secretaccesskey,
-                                               is_secure=True)
+                                               is_secure=True,
+                                               validate_certs=False)
 
       regionname = aktuellezone
     elif regionname == "nimbus":
@@ -76,6 +77,7 @@ def login(username):
       conn_region = boto.connect_s3(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=True,
+                                    validate_certs=False,
                                     host="commondatastorage.googleapis.com",
                                     calling_format=calling_format,
                                     path="/")
@@ -88,6 +90,7 @@ def login(username):
       conn_region = boto.connect_s3(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=False,
+                                    validate_certs=False,
                                     host="cs.hosteurope.de",
                                     calling_format=calling_format,
                                     path="/")
@@ -100,6 +103,7 @@ def login(username):
       conn_region = boto.connect_s3(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=True,
+                                    validate_certs=False,
                                     host="dcs.dunkel.de",
                                     calling_format=calling_format,
                                     path="/")
@@ -108,7 +112,7 @@ def login(username):
     elif regionname == "opennebula":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_region = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, port=int(port))
+      conn_region = boto.connect_ec2(accesskey, secretaccesskey, is_secure=False, validate_certs=False, port=int(port))
       conn_region.host = endpointurl
 
       regionname = aktuellezone
@@ -119,6 +123,7 @@ def login(username):
       conn_region = boto.connect_ec2(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=False,
+                                    validate_certs=False,
                                     region=RegionInfo(name="eucalyptus", endpoint=endpointurl),
                                     port=port,
                                     path="/services/Eucalyptus")
@@ -344,6 +349,7 @@ def loginelb(username):
                               aws_access_key_id=accesskey,
                               aws_secret_access_key=secretaccesskey,
                               is_secure=True,
+                              validate_certs=False,
                               #port=8773,
                               path="/")
       regionname = aktuellezone
@@ -382,6 +388,7 @@ def logins3(username):
       conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                         aws_secret_access_key=secretaccesskey,
                                         is_secure=False,
+                                        validate_certs=False,
                                         host="s3.amazonaws.com",
                                         calling_format=calling_format,
                                         path="/")
@@ -394,6 +401,7 @@ def logins3(username):
       conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=False,
+                                    validate_certs=False,
                                     host="commondatastorage.googleapis.com",
                                     calling_format=calling_format,
                                     path="/")
@@ -406,6 +414,7 @@ def logins3(username):
       conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=False,
+                                    validate_certs=False,
                                     host="cs.hosteurope.de",
                                     calling_format=calling_format,
                                     path="/")
@@ -418,6 +427,7 @@ def logins3(username):
       conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                     aws_secret_access_key=secretaccesskey,
                                     is_secure=True,
+                                    validate_certs=False,
                                     host="dcs.dunkel.de",
                                     calling_format=calling_format,
                                     path="/")
@@ -431,6 +441,7 @@ def logins3(username):
       conn_s3 = boto.s3.connection.S3Connection(aws_access_key_id=accesskey,
                                         aws_secret_access_key=secretaccesskey,
                                         is_secure=False,
+                                        validate_certs=False,
                                         host=endpointurl,
                                         port=port,
                                         calling_format=calling_format,
