@@ -266,6 +266,8 @@ def zonen_liste_funktion(username,sprache,mobile):
         for test in results:
             zonen_liste = zonen_liste + '<option>'
             if test.eucalyptusname == "Amazon":
+                # Änderungen hier müssen auch in RegionWechseln.py berücksichtigt werden
+                # Changes made in this List need to be done in RegionWechseln.py too
                 zonen_liste = zonen_liste + 'EC2 US East Virginia'
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
