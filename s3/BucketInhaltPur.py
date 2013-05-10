@@ -526,9 +526,9 @@ class BucketInhaltPur(webapp.RequestHandler):
             alle_keys_loeschen_button += '<input type="hidden" name="s3_ansicht" value="pur"> \n'
             alle_keys_loeschen_button += '<input type="hidden" name="bucket_name" value="'+bucketname+'"> \n'
             if sprache == "de":
-              alle_keys_loeschen_button += '<input type="submit" value="Alle Keys l&ouml;schen">\n'
+              alle_keys_loeschen_button += '<input type="submit" value="Alle Objekte l&ouml;schen">\n'
             else:
-              alle_keys_loeschen_button += '<input type="submit" value="Erase all keys">\n'
+              alle_keys_loeschen_button += '<input type="submit" value="Erase all objects">\n'
             alle_keys_loeschen_button += '</form>\n'
           else:
             alle_keys_loeschen_button = ''
