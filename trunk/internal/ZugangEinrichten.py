@@ -173,9 +173,9 @@ class ZugangEinrichten(webapp.RequestHandler):
                 for result in results:
                   result.delete()
 
-                secretaccesskey_encrypted = xor_crypt_string(str(secretaccesskey), key=str(accesskey_new))
+                secretaccesskey_encrypted = xor_crypt_string(str(secretaccesskey), key=str(username))
                 secretaccesskey_base64encoded = base64.b64encode(secretaccesskey_encrypted)
-                logindaten = KoalaCloudDatenbank(regionname="us-west",
+                logindaten = KoalaCloudDatenbank(regionname="us_west",
                                                 eucalyptusname="HP",
                                                 accesskey=accesskey_new,
                                                 endpointurl="az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com",
@@ -194,7 +194,7 @@ class ZugangEinrichten(webapp.RequestHandler):
                 for result in results:
                   result.delete()
 
-                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone="us-east",
+                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone="us_west",
                                                            user=username,
                                                            zugangstyp="HP")
                 # In den Datastore schreiben

@@ -42,10 +42,10 @@ class RegionWechseln(webapp.RequestHandler):
           zone = "sa-east-1"
           zugangstyp = "Amazon"
         elif 'HP US East' in regionen:
-          zone = "us-east"
+          zone = "us_east"
           zugangstyp = "HP"
         elif 'HP US West' in regionen:
-          zone = "us-west"
+          zone = "us_west"
           zugangstyp = "HP"
         else:
           zone = regionen
