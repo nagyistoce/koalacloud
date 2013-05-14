@@ -23,6 +23,9 @@ class ZugangEinrichten(webapp.RequestHandler):
         nameregion = self.request.get('nameregion')
         endpointurl = self.request.get('endpointurl')
         port = self.request.get('port')
+        # Die projectid brauchen wir für die HP Cloud
+        # We need the projectid for the HP Cloud
+        projectid = self.request.get('projectid')
         accesskey = self.request.get('accesskey')
         secretaccesskey = self.request.get('secretaccesskey')
         typ = self.request.get('typ')
@@ -115,6 +118,91 @@ class ZugangEinrichten(webapp.RequestHandler):
 
                 self.redirect('/regionen')
 
+          # Wenn ein HP Cloud-Zugang angelegt werden soll
+          elif typ == "HP":
+
+            if accesskey == "" and secretaccesskey == "":
+              # Wenn kein Access Key und kein Secret Access Key angegeben wurde
+              #fehlermeldung = "Sie haben keinen Access Key und keinen Secret Access Key angegeben"
+              fehlermeldung = "89"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif accesskey == "": 
+              #fehlermeldung = "Sie haben keinen Access Key angegeben"
+              fehlermeldung = "90"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif secretaccesskey == "": 
+              # Wenn kein Secret Access Key angegeben wurde
+              #fehlermeldung = "Sie haben keinen Secret Access Key angegeben"
+              fehlermeldung = "91"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif re.search(r'[^a-zA-Z0-9]', accesskey) != None:
+              # Wenn der Access Key nicht erlaubte Zeichen enthält
+              #fehlermeldung = "Ihr eingegebener Access Key enthielt nicht erlaubte Zeichen"
+              fehlermeldung = "94"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            elif re.search(r'[^\/a-zA-Z0-9+=]', secretaccesskey) != None:
+              # Wenn der Secret Access Key nicht erlaubte Zeichen enthält
+              #fehlermeldung = "Ihr eingegebener Secret Access Key enthielt nicht erlaubte Zeichen"
+              fehlermeldung = "95"
+              self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+            else: # Access Key und Secret Access Key wurden angegeben
+              # Prüfen, ob die Zugangsdaten für EC2 korrekt sind
+              try:
+                # Zugangsdaten testen
+                region = RegionInfo(name="hpcloud", endpoint="az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com")
+                accesskey_new = projectid+':'+accesskey
+                connection = boto.connect_ec2(aws_access_key_id=accesskey_new,
+                                            aws_secret_access_key=secretaccesskey,
+                                            is_secure=True,
+                                            validate_certs=False,
+                                            region=region,
+                                            #port=8773,
+                                            path="/services/Cloud/")
+
+                liste_zonen = connection.get_all_zones()
+              except EC2ResponseError:
+                # Wenn die Zugangsdaten falsch sind, dann wird umgeleitet zur Regionenseite
+                fehlermeldung = "98"
+                self.redirect('/regionen?neuerzugang='+typ+'&message='+fehlermeldung)
+              else:
+                # Wenn die Zugangsdaten für EC2 korrekt sind, dann wird hier weiter gemacht...
+                # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbank WHERE user = :username_db AND eucalyptusname = :eucalyptusname_db", username_db=username, eucalyptusname_db="HP")
+                # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+                results = testen.fetch(100)
+                for result in results:
+                  result.delete()
+
+                secretaccesskey_encrypted = xor_crypt_string(str(secretaccesskey), key=str(accesskey_new))
+                secretaccesskey_base64encoded = base64.b64encode(secretaccesskey_encrypted)
+                logindaten = KoalaCloudDatenbank(regionname="us-west",
+                                                eucalyptusname="HP",
+                                                accesskey=accesskey_new,
+                                                endpointurl="az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com",
+                                                zugangstyp="HP",
+                                                secretaccesskey=secretaccesskey_base64encoded,
+                                                port=None,
+                                                user=username)
+                # In den Datastore schreiben
+                logindaten.put()
+
+                # Erst überprüfen, ob schon ein Eintrag dieses Benutzers vorhanden ist.
+                testen = db.GqlQuery("SELECT * FROM KoalaCloudDatenbankAktiveZone WHERE user = :username_db", username_db=username)
+
+                # Wenn Einträge vorhanden sind, werden sie aus der DB geholt und gelöscht
+                results = testen.fetch(100)
+                for result in results:
+                  result.delete()
+
+                logindaten = KoalaCloudDatenbankAktiveZone(aktivezone="us-east",
+                                                           user=username,
+                                                           zugangstyp="HP")
+                # In den Datastore schreiben
+                logindaten.put()
+
+                self.redirect('/regionen')
+
+
           # Wenn ein Google Storage-Zugang angelegt werden soll
           elif typ == "GoogleStorage":
 
@@ -201,6 +289,8 @@ class ZugangEinrichten(webapp.RequestHandler):
                 logindaten.put()
 
                 self.redirect('/regionen')
+
+
 
 
           # Wenn ein Host Europe Cloud Storage-Zugang angelegt werden soll

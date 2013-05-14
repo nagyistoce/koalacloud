@@ -29,12 +29,22 @@
   <tr>
     <td align="center">
       <form action="/regionen" method="get">
+        <input type="hidden" name="neuerzugang" value="HP">
+        <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
+        <input type="submit" value="create account">
+      </form>
+    </td>
+    <td align="left">HP Cloud Services</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <form action="/regionen" method="get">
         <input type="hidden" name="neuerzugang" value="GoogleStorage">
         <input type="hidden" name="mobile" value="{{ mobile|safe }}">   
         <input type="submit" value="create account">
       </form>
     </td>
-    <td align="left">GoogleStorage</td>
+    <td align="left">Google Storage</td>
   </tr>
   <tr>
     <td align="center">

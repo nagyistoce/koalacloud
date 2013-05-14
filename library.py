@@ -38,6 +38,8 @@ def login(username):
 
     if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       aktuellezone = "Amazon"
+    elif zoneinderdb in ("us-east", "us-west"):
+      aktuellezone = "HP"
     else:
       aktuellezone = zoneinderdb
 
@@ -62,7 +64,17 @@ def login(username):
                                                aws_secret_access_key=secretaccesskey,
                                                is_secure=True,
                                                validate_certs=False)
-
+      regionname = aktuellezone
+    elif zoneinderdb == "us-east" or zoneinderdb == "us-west":
+      # HP Cloud
+      secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
+      secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
+      conn_region = boto.ec2.connect_to_region(zoneinderdb,
+                                               aws_access_key_id=accesskey,
+                                               aws_secret_access_key=secretaccesskey,
+                                               is_secure=True,
+                                               validate_certs=False,
+                                               path="/services/Cloud/")
       regionname = aktuellezone
     elif regionname == "nimbus":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
@@ -244,6 +256,9 @@ def amazon_region(username):
         if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
             # Hier wird einach nur der Text in result.aktivezone von runden Klammern umschlossen 
             zone_amazon = '(' + str(result.aktivezone) + ')'
+        elif result.aktivezone in ("us-east", "us-west"):
+            # Hier wird einach nur der Text in result.aktivezone von runden Klammern umschlossen 
+            zone_amazon = '(' + str(result.aktivezone) + ')'
         else:
             zone_amazon = ""
 
@@ -287,6 +302,13 @@ def zonen_liste_funktion(username,sprache,mobile):
                 zonen_liste = zonen_liste + '</option>'
                 zonen_liste = zonen_liste + '<option>'
                 zonen_liste = zonen_liste + 'EC2 S.America Sao Paulo'
+            elif test.eucalyptusname == "HP":
+                # Änderungen hier müssen auch in RegionWechseln.py berücksichtigt werden
+                # Changes made in this List need to be done in RegionWechseln.py too
+                #zonen_liste = zonen_liste + 'HP US East'
+                #zonen_liste = zonen_liste + '</option>'
+                #zonen_liste = zonen_liste + '<option>'
+                zonen_liste = zonen_liste + 'HP US West'
             else:
                 #zonen_liste = zonen_liste + 'Eucalyptus'
                 #zonen_liste = zonen_liste + ' ('

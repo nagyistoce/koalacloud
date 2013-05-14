@@ -20,27 +20,33 @@ class RegionWechseln(webapp.RequestHandler):
         username = users.get_current_user()
 
         suchen = ""
-        if 'US East Virginia' in regionen:
+        if 'EC2 US East Virginia' in regionen:
           zone = "us-east-1"
           zugangstyp = "Amazon"
-        elif 'US West N.California' in regionen:
+        elif 'EC2 US West N.California' in regionen:
           zone = "us-west-1"
           zugangstyp = "Amazon"
-        elif 'US West Oregon' in regionen:
+        elif 'EC2 US West Oregon' in regionen:
           zone = "us-west-2"
           zugangstyp = "Amazon"
-        elif 'EU West Ireland' in regionen:
+        elif 'EC2 EU West Ireland' in regionen:
           zone = "eu-west-1"
           zugangstyp = "Amazon"
-        elif 'AP Singapore' in regionen:
+        elif 'EC2 AP Singapore' in regionen:
           zone = "ap-southeast-1"
           zugangstyp = "Amazon"
-        elif 'AP Tokyo' in regionen:
+        elif 'EC2 AP Tokyo' in regionen:
           zone = "ap-northeast-1"
           zugangstyp = "Amazon"
-        elif 'S.America Sao Paulo' in regionen:
+        elif 'EC2 S.America Sao Paulo' in regionen:
           zone = "sa-east-1"
           zugangstyp = "Amazon"
+        elif 'HP US East' in regionen:
+          zone = "us-east"
+          zugangstyp = "HP"
+        elif 'HP US West' in regionen:
+          zone = "us-west"
+          zugangstyp = "HP"
         else:
           zone = regionen
           zugangstyp = "keinAmazon"
