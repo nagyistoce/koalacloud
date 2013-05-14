@@ -38,7 +38,7 @@ def login(username):
 
     if zoneinderdb in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
       aktuellezone = "Amazon"
-    elif zoneinderdb in ("us-east", "us-west"):
+    elif zoneinderdb in ("us_east", "us_west"):
       aktuellezone = "HP"
     else:
       aktuellezone = zoneinderdb
@@ -65,17 +65,17 @@ def login(username):
                                                is_secure=True,
                                                validate_certs=False)
       regionname = aktuellezone
-    elif zoneinderdb == "us-east" or zoneinderdb == "us-west":
+    elif zoneinderdb == "us_east" or zoneinderdb == "us_west":
       # HP Cloud
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
-      conn_region = boto.ec2.connect_to_region(zoneinderdb,
-                                               aws_access_key_id=accesskey,
+      conn_region = boto.connect_ec2(aws_access_key_id=accesskey,
                                                aws_secret_access_key=secretaccesskey,
                                                is_secure=True,
                                                validate_certs=False,
+                                               region=RegionInfo(name="hpcloud", endpoint=endpointurl),
                                                path="/services/Cloud/")
-      regionname = aktuellezone
+      regionname = aktuellezone     
     elif regionname == "nimbus":
       secretaccesskey_base64decoded = base64.b64decode(str(secretaccesskey))
       secretaccesskey = xor_crypt_string(secretaccesskey_base64decoded, key=str(username))
@@ -256,7 +256,7 @@ def amazon_region(username):
         if result.aktivezone in ("us-east-1", "eu-west-1", "us-west-1", "us-west-2", "ap-southeast-1", "ap-northeast-1", "sa-east-1"):
             # Hier wird einach nur der Text in result.aktivezone von runden Klammern umschlossen 
             zone_amazon = '(' + str(result.aktivezone) + ')'
-        elif result.aktivezone in ("us-east", "us-west"):
+        elif result.aktivezone in ("us_east", "us_west"):
             # Hier wird einach nur der Text in result.aktivezone von runden Klammern umschlossen 
             zone_amazon = '(' + str(result.aktivezone) + ')'
         else:
